@@ -1,0 +1,31 @@
+claims:
+  - id: claim-001
+    title: Single entrypoint for content capabilities
+    source: user framing
+    source_ref: "conversation context"
+    priority: critical
+    area: orchestration
+    statement: "content-toolkit should act as one access layer over multiple content-related capabilities."
+    business_expectation: "A user can start from the toolkit instead of learning each downstream repo."
+    evidence_needed: "Show multiple tasks routed through the toolkit successfully."
+    status: planned
+  - id: claim-002
+    title: Correct downstream routing
+    source: user framing
+    source_ref: "conversation context"
+    priority: critical
+    area: orchestration
+    statement: "content-toolkit should choose the correct downstream capability for a user request."
+    business_expectation: "Users should not have to manually choose downloader, extractor, or rewriter in normal cases."
+    evidence_needed: "Run representative prompts and inspect which capability is invoked."
+    status: planned
+  - id: claim-003
+    title: End-to-end workflow completion
+    source: user framing
+    source_ref: "conversation context"
+    priority: high
+    area: orchestration
+    statement: "The toolkit should complete realistic content workflows across multiple steps."
+    business_expectation: "A user can ask for a real task and receive a usable result without stitching steps manually."
+    evidence_needed: "Run at least one multi-step workflow through the toolkit."
+    status: planned

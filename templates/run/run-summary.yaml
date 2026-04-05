@@ -1,0 +1,10 @@
+run_name: RUN_NAME
+date: YYYY-MM-DD
+area: core
+scenario: ""
+fixtures:
+  - ""
+result: pending
+notes: ""
+artifacts:
+  - ""

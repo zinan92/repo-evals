@@ -1,0 +1,11 @@
+claims:
+  - id: claim-001
+    title: Main claim
+    source: README
+    source_ref: ""
+    priority: critical
+    area: core
+    statement: ""
+    business_expectation: ""
+    evidence_needed: ""
+    status: untested

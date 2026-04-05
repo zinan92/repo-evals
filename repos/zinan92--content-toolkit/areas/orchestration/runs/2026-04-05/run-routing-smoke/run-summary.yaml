@@ -1,0 +1,10 @@
+run_name: routing-smoke
+date: 2026-04-05
+area: orchestration
+scenario: ""
+fixtures:
+  - ""
+result: pending
+notes: ""
+artifacts:
+  - ""

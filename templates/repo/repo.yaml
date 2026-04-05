@@ -1,0 +1,10 @@
+owner: OWNER
+repo: REPO
+display_name: DISPLAY_NAME
+repo_url: https://github.com/OWNER/REPO
+repo_type: skill
+complexity: simple
+uses_areas: false
+status: planned
+current_bucket: unknown
+notes: ""
