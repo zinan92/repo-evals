@@ -33,6 +33,7 @@ For each run, the technical layer stores:
 - Raw outputs and produced artifacts
 - Failures, retries, and anomalies
 - Structured run summaries
+- Provenance for who ran the evaluation, when, and against which repo revision
 
 The main artifact lives under:
 
@@ -47,6 +48,39 @@ The main artifact lives under:
 5. Execute planned test runs.
 6. Save technical evidence for each run.
 7. Decide the final reliability bucket.
+
+## Provenance Is Mandatory
+
+An eval is not fully auditable unless a later reviewer can answer:
+
+- Which commit of the target repo was evaluated?
+- Which commit of `repo-evals` defined the framework at the time?
+- Who or what ran the evaluation?
+- Which terminal or agent session produced the result?
+
+Every run summary should capture, when available:
+
+- `repo_evals_commit`
+- `target_repo_ref`
+- `target_repo_commit`
+- `runner`
+- `agent`
+- `model`
+- `terminal_session_id`
+- `agent_session_id`
+- `evaluated_at`
+
+If an older run did not capture these, mark provenance as partial instead of pretending it exists.
+
+## Evidence Must Be Portable
+
+Technical evidence should remain reviewable from GitHub alone.
+
+That means:
+
+- Prefer paths relative to the run folder, not `/tmp/...`
+- Copy or mirror representative artifacts into `runs/.../artifacts/`
+- Treat local scratch paths as transient implementation details, not durable evidence
 
 ## What To Evaluate For Skill Repos
 
@@ -101,4 +135,25 @@ The verdict depends on both:
 That means:
 
 - A repo can pass all tests and still only be `usable`
+- A hybrid repo cannot score above the strongest layer that was actually validated
 - A repo should not be called `recommendable` unless the plan included multiple realistic scenarios and repeatability checks
+
+## Hybrid Repos
+
+Some repos have multiple evidence layers.
+
+Common example:
+
+- A prompt or skill layer that defines the real user-facing value
+- A deterministic script layer that only supports that value
+
+For these hybrid repos:
+
+- If only the support layer is tested, the verdict can describe that support layer as strong
+- But the overall repo verdict is capped by the untested core layer
+
+Practical rule:
+
+- Untested core user-facing layer → overall verdict capped at `usable`
+- Tested core layer across realistic scenarios → eligible for `reusable`
+- Broad, repeated, trustworthy core coverage → eligible for `recommendable`

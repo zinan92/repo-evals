@@ -4,7 +4,7 @@
 
 - **Name:** zarazhangrui/frontend-slides
 - **Date:** 2026-04-07
-- **Final bucket:** `reusable`
+- **Final bucket:** `usable`
 
 ## Why This Bucket
 
@@ -40,11 +40,11 @@ B 层（端到端 LLM 生成）完全没碰，是评测的天花板限制。
 >
 > 但 skill 真正的价值在 SKILL.md 那 322 行 prompt 里，能不能让 LLM 真的产出 viewport-fit、风格独特、不像 AI slop 的 deck —— **这次没验证**。要给 `recommendable`，必须再跑一次完整的 `/frontend-slides` 端到端会话，拿到产物用 export-pdf 截图后对照 12 个 preset 的视觉契约打分。"
 
-定位 = `reusable`：A 层执行/结构/打包全过，所有 README 承诺在静态层面都对得上。**不能**评 `recommendable`，因为最关键的"LLM 真的能按这个 prompt 产出好 deck 吗"没验证 —— 评测原则规定弱 plan 不能给强 verdict，缺端到端验证就不是强 plan。
+定位 = `usable`：A 层执行/结构/打包全过，说明 supporting layer 很强；但最关键的核心用户价值层，也就是 LLM 真的能不能按这个 skill 产出好 deck，还没被验证。按更新后的框架规则，**untested core layer 会把整体 verdict 封顶在 `usable`**。
 
 跟 content-downloader 对比：
 - content-downloader = `usable`：4 个平台 2 个 silent fail，违反自己的 fail 契约
-- frontend-slides = `reusable`：可执行部分零问题，唯一的 gap 是 LLM 端到端没跑
+- frontend-slides = `usable`：support layer 很强，但核心 LLM 层未测
 
 ## Remaining Risks
 

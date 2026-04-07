@@ -2,18 +2,36 @@ run_name: scripts-and-structure
 date: 2026-04-07
 area: core
 scenario: A-layer (executable parts) — extract + export-pdf + structure checks
+provenance:
+  captured: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: ""
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: ""
+  target_repo_path: ""
+  target_repo_ref: ""
+  target_repo_commit: ""
+  evaluated_at: ""
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
 fixtures:
   - "ppt: /Users/wendy/Documents/New project/How To Be Successful - Sam Altman.pptx (15 slides, image-heavy)"
   - "ppt: /Users/wendy/work/content-co/binary-choices/binary-choices.pptx (8 slides, mixed)"
   - "html: /tmp/fs-eval/sample-deck.html (3 .slide divs)"
   - "html: /tmp/fs-eval/no-slides.html (no .slide elements)"
   - "html: /tmp/fs-eval/nonexistent.html (does not exist)"
+commands:
+  - "Not captured in this legacy run"
 result: pass-with-untested-llm-layer
 artifacts:
-  - /tmp/fs-eval/extract-test/extracted-slides.json
-  - /tmp/fs-eval/extract-test/assets/  (15 PNGs)
-  - /tmp/fs-eval/extract-test2/extracted-slides.json
-  - /tmp/fs-eval/sample-deck.pdf  (3 pages, 42KB, valid PDF 1.4)
+  - artifacts/extract-pptx-15slides.json
+  - artifacts/extract-pptx-8slides.json
+  - artifacts/sample-deck.html
+  - artifacts/sample-deck.pdf
 results_by_claim:
   claim-001-plugin-marketplace: pass
   claim-002-skill-md-references: pass
@@ -25,6 +43,9 @@ results_by_claim:
   claim-008-end-to-end-llm: untested
   claim-009-deploy-vercel: untested
 notes: |
+  Provenance is partial for this run. The eval was preserved after the fact, but the
+  original terminal session id and exact target repo commit were not captured.
+
   A 层全部通过：
     - .claude-plugin/marketplace.json + plugins/frontend-slides/.claude-plugin/plugin.json
       结构合法；plugins/ 下镜像了所有 SKILL 文件（diff -q SKILL.md 完全一致）

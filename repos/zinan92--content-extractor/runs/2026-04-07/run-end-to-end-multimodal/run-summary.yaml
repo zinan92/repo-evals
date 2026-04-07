@@ -2,18 +2,37 @@ run_name: end-to-end-multimodal
 date: 2026-04-07
 area: core
 scenario: video + article + bare-audio + failure modes + batch idempotency + test collect
+provenance:
+  captured: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: ""
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: ""
+  target_repo_path: ""
+  target_repo_ref: ""
+  target_repo_commit: ""
+  evaluated_at: ""
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
 fixtures:
   - "video: /tmp/ce-eval/short-video/ (30s clip from real Douyin 170MB MP4, Chinese)"
   - "article: /tmp/cd-eval-output/wechat_oa/.../Bo3K6P... (0-byte article.html from upstream)"
   - "bare-audio: /tmp/ce-eval-audio.mp3 (4.6MB Chinese podcast clip)"
   - "bad-path: /tmp/nonexistent-blah"
   - "bad-json: /tmp/ce-bad/content_item.json (literal 'not json')"
+commands:
+  - "Not captured in this legacy run"
 result: mixed
 artifacts:
-  - /tmp/ce-eval/short-video/transcript.json
-  - /tmp/ce-eval/short-video/analysis.json
-  - /tmp/ce-eval/short-video/structured_text.md
-  - /tmp/ce-eval/short-video/extraction_status.json
+  - artifacts/video-transcript.json
+  - artifacts/video-analysis.json
+  - artifacts/video-structured_text.md
+  - artifacts/video-extraction_status.json
+  - artifacts/article-empty-extraction_status.json
 results_by_claim:
   claim-001-video-extract: pass
   claim-002-article-empty: pass-with-concerns
@@ -24,6 +43,9 @@ results_by_claim:
   claim-007-mac-perf: fail-design
   claim-008-hallucination-field: pass-partial
 notes: |
+  Provenance is partial for this run. The eval was preserved after the fact, but the
+  original terminal session id and exact target repo commit were not captured.
+
   ✅ 视频核心路径全通：
     - 30s 中文 Douyin clip → 7 segments、131 words、language=zh
     - Whisper 正确识别中英混读片段

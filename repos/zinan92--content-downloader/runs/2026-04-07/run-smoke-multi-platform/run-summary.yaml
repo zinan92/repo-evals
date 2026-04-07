@@ -2,19 +2,36 @@ run_name: smoke-multi-platform
 date: 2026-04-07
 area: core
 scenario: 4-platform smoke + dedup + bad-URL
+provenance:
+  captured: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: ""
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: ""
+  target_repo_path: ""
+  target_repo_ref: ""
+  target_repo_commit: ""
+  evaluated_at: ""
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
 fixtures:
   - "douyin: https://www.douyin.com/video/7621048932151414054"
   - "wechat_oa: https://mp.weixin.qq.com/s/Bo3K6PAj5O22fHwJZSQNTw"
   - "wechat_oa: https://mp.weixin.qq.com/s/uvJzYU0lOHeNGBMaq2vudA"
   - "x: https://x.com/elonmusk/status/1849889982030823521"
   - "bad: https://example.com/foo"
+commands:
+  - "Not captured in this legacy run"
 result: mixed
 artifacts:
-  - /tmp/cd-eval-output/manifest.jsonl
-  - /tmp/cd-eval-output/douyin/102174692353/7621048932151414054/
-  - /tmp/cd-eval-output/wechat_oa/unknown/Bo3K6PAj5O22fHwJZSQNTw/
-  - /tmp/cd-eval-output/wechat_oa/unknown/uvJzYU0lOHeNGBMaq2vudA/
-  - /tmp/cd-eval-output/x/1849889982030823521/
+  - artifacts/manifest.jsonl
+  - artifacts/douyin-good-content_item.json
+  - artifacts/wechat_oa-empty-content_item.json
+  - artifacts/x-empty-content_item.json
 results_by_claim:
   claim-001-douyin-video: pass
   claim-002-douyin-dedup: pass-with-concerns
@@ -24,6 +41,9 @@ results_by_claim:
   claim-006-unified-output: pass-with-concerns
   claim-007-xhs: untested
 notes: |
+  Provenance is partial for this run. The eval was preserved after the fact, but the
+  original terminal session id and exact target repo commit were not captured.
+
   Douyin 路径意外强健：API 签名失败 (3 次重试) 后 Playwright fallback 成功提取
   178MB 视频 + 真实 metadata（title/author/likes/comments/shares 全有）。
 

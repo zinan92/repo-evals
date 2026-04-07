@@ -20,6 +20,7 @@ Typical signs:
 - One or two basic scenarios work
 - Edge cases are shaky
 - Repeatability is only partially proven
+- The support layer may be strong, but the core user-facing layer is still only lightly tested
 
 ## `reusable`
 
@@ -30,6 +31,7 @@ Typical signs:
 - Core scenarios pass repeatedly
 - Inputs vary and results remain acceptable
 - Failure boundaries are becoming clear
+- The actual user-facing layer has been validated, not just supporting scripts or packaging
 
 ## `recommendable`
 
@@ -41,3 +43,9 @@ Typical signs:
 - Stable repeated performance
 - Clear boundaries and known failure cases
 - Documentation and behavior mostly match
+
+## Ceiling Rules
+
+- Weak plan + all-pass does not automatically justify a strong verdict
+- Untested core layer caps the overall verdict at `usable`
+- Strong support-layer evidence can still appear in the narrative, even when the final bucket stays conservative

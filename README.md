@@ -20,13 +20,13 @@ out eval scaffold (claims + plan + runs + verdict)
 
 fail target not <owner/repo>     → exit + usage hint
 fail scaffold already exists     → keep existing files (idempotent)
-fail tests pass on a weak plan   → verdict still capped at "usable"
+fail support layer passes but core layer untested → overall verdict capped at "usable"
 ```
 
 评测分两层：
 
 - **业务层** — 非技术人员也能读懂的 `eval-plan.md`，定义"测什么场景、跑几次、过线标准"
-- **技术层** — `runs/` 下保存每一次执行的输入、命令、产物、失败、重试
+- **技术层** — `runs/` 下保存每一次执行的输入、命令、产物、失败、重试，以及 provenance
 
 每个被评测的 repo 最终落入且只落入**一个**可靠性桶。
 
@@ -39,7 +39,7 @@ fail tests pass on a weak plan   → verdict still capped at "usable"
 | `reusable` | 多个真实场景下稳定可用 | 内部重复使用 |
 | `recommendable` | 边界清晰、稳定、敢推荐给别人 | 对外推荐 |
 
-> **决策规则**：弱 plan 即使全过，也最多只能给 `usable`。强 verdict 必须配强 plan。
+> **决策规则**：强 verdict 必须配强 plan。尤其是 hybrid repo，如果真正的核心用户价值层没测到，整体 verdict 最高只能是 `usable`。
 
 ## 示例输出
 
@@ -56,7 +56,10 @@ repos/owner--repo/
 ├── runs/                              # 每次执行的技术证据
 │   └── 2026-04-07/run-<slug>/
 │       ├── run-summary.yaml
-│       └── business-notes.md
+│       ├── business-notes.md
+│       ├── logs/
+│       ├── artifacts/
+│       └── screenshots/
 ├── areas/                             # 复杂 repo 的能力分区 (可选)
 └── verdicts/
     └── 2026-04-07-final-verdict.md    # 最终判定 + 桶
@@ -83,7 +86,7 @@ repos/owner--repo/
 2. 在 `repo.yaml` 里写 metadata
 3. 在 `claims/claim-map.yaml` 里抽 claim
 4. 在 `plans/YYYY-MM-DD-eval-plan.md` 里写业务可读 plan
-5. 在 `runs/` 下保存每次执行的证据
+5. 在 `runs/` 下保存每次执行的证据和 provenance
 6. 在 `verdicts/` 下写最终 verdict + 桶
 
 ## 快速开始
@@ -102,6 +105,7 @@ scripts/new-area.sh owner--repo area-slug
 # 4. 创建一次新的执行记录
 scripts/new-run.sh owner--repo run-slug
 scripts/new-run.sh owner--repo run-slug area-slug
+scripts/new-run.sh owner--repo run-slug area-slug /path/to/target-repo
 ```
 
 ## 评测维度（针对 skill 类 repo）
@@ -112,6 +116,13 @@ scripts/new-run.sh owner--repo run-slug area-slug
 | **Scenario Breadth** | 能不能处理多种真实输入，而不是只有一个幸运 case？ |
 | **Repeatability** | 同一个 workflow 跑多次结果是否一致？ |
 | **Failure Transparency** | 失败的时候是不是清晰报错，而不是假装成功？ |
+
+## Evidence Rules
+
+- 证据应当尽量放进 repo 自己的 `runs/.../artifacts/`
+- `run-summary.yaml` 里的 artifact 路径默认使用相对路径
+- 每次 run 尽量记录 target repo commit、runner、session id、model
+- 只写 `/tmp/...` 不算完整证据链
 
 ## 项目结构
 
@@ -154,7 +165,7 @@ capability:
   fail:
     - "target not in owner/repo form → exit with usage"
     - "scaffold exists → idempotent, preserves existing files"
-    - "weak plan + all-pass → verdict capped at 'usable'"
+    - "untested core layer → overall verdict capped at 'usable'"
   buckets: [unusable, usable, reusable, recommendable]
 cli_commands:
   - cmd: scripts/new-repo-eval.sh
@@ -164,7 +175,7 @@ cli_commands:
     args: ["<owner--repo>", "<area-slug>"]
     description: Add a capability area to a complex repo
   - cmd: scripts/new-run.sh
-    args: ["<owner--repo>", "<run-slug>", "[area-slug]"]
+    args: ["<owner--repo>", "<run-slug>", "[area-slug]", "[target-repo-path]"]
     description: Create a run folder for one concrete test pass
 artifacts:
   plan: plans/YYYY-MM-DD-eval-plan.md

@@ -2,9 +2,27 @@ run_name: RUN_NAME
 date: YYYY-MM-DD
 area: core
 scenario: ""
+provenance:
+  captured: false
+  runner: ""
+  agent: ""
+  model: ""
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: ""
+  target_repo_path: ""
+  target_repo_ref: ""
+  target_repo_commit: ""
+  evaluated_at: ""
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
 fixtures:
   - ""
-result: pending
-notes: ""
-artifacts:
+commands:
   - ""
+result: pending
+artifacts:
+  - "artifacts/"
+notes: ""
