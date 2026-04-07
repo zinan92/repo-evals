@@ -1,0 +1,35 @@
+name: api-service
+description: |
+  A repo that exposes an HTTP API (REST, GraphQL, or RPC). The user
+  value is requests in → responses out with stable shape, auth,
+  error semantics, and rate limits.
+
+  Examples: a FastAPI backend, an Express server, a gRPC service.
+
+default_verdict_ceiling: none
+# API services are fully testable against a running instance. The
+# verdict calculator does not apply hybrid ceilings to this archetype.
+
+evaluation_dimensions:
+  - endpoint_coverage:     "Every documented endpoint actually exists and responds"
+  - contract_conformance:  "Responses match the documented request/response schema"
+  - auth_enforcement:      "Protected routes reject unauthenticated requests"
+  - error_semantics:       "Error codes match documentation (4xx vs 5xx vs specific codes)"
+  - rate_limit_behavior:   "Rate limits produce documented error codes, not silent drops"
+  - stability_under_load:  "Repeated calls on the same input return consistent responses"
+  - observability:         "Server logs + error responses are enough to debug a failing call"
+
+recommended_evidence:
+  - "at least one successful request per documented endpoint (status + body)"
+  - "at least one failed auth request on a protected endpoint"
+  - "at least one documented-error-code request per error class"
+  - "response body samples committed alongside the schema"
+  - "deterministic replay: same input twice, diff the responses"
+
+default_claim_prompts:
+  - "Every endpoint in the OpenAPI / README surface responds to a real request"
+  - "Response shapes match the documented schema for both success and error"
+  - "Protected routes reject unauthenticated requests with the documented status"
+  - "Documented error codes are returned for their documented conditions"
+  - "Rate limits surface a clear error instead of silently dropping requests"
+  - "The same input produces a consistent response across repeated calls"

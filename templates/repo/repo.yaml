@@ -3,6 +3,9 @@ repo: REPO
 display_name: DISPLAY_NAME
 repo_url: https://github.com/OWNER/REPO
 repo_type: skill
+# Archetype drives scaffolding and verdict-calculator ceiling rules.
+# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
+archetype: unknown
 complexity: simple
 uses_areas: false
 status: planned

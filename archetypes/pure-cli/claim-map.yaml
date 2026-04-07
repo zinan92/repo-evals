@@ -1,0 +1,77 @@
+# Starter claim map for a pure-cli archetype.
+# Edit these before running any eval — they are prompts, not truths.
+
+claims:
+  - id: claim-001
+    title: 主命令 happy-path 成功
+    source: README
+    source_ref: ""
+    priority: critical
+    area: core
+    statement: |
+      给定文档里列出的最小合法参数集，主命令执行成功，退出码为 0，
+      stdout 包含文档承诺的输出结构。
+    business_expectation: |
+      用户照 README 第一条命令跑，就能拿到有效结果。
+    evidence_needed: |
+      完整命令行 + stdout + 退出码。
+    status: untested
+
+  - id: claim-002
+    title: 所有已文档化的 subcommand 至少能跑一次
+    source: README + --help
+    source_ref: ""
+    priority: critical
+    area: core
+    statement: |
+      README 或 --help 列出的每一个 subcommand 都至少在一个合法输入上
+      成功执行一次。
+    business_expectation: |
+      文档和实际功能对齐，没有 ghost command。
+    evidence_needed: |
+      对每个 subcommand 的调用记录 + 退出码。
+    status: untested
+
+  - id: claim-003
+    title: 未知 subcommand / 非法参数清晰报错
+    source: README
+    source_ref: ""
+    priority: high
+    area: failure-transparency
+    statement: |
+      给出未知 subcommand 或缺失必需参数时，CLI 以非零退出码退出，
+      stderr 列出可用 subcommand / 说明缺失参数。
+    business_expectation: |
+      用户或 agent 能立即知道下一步做什么。
+    evidence_needed: |
+      stderr 文本 + 非零退出码。
+    status: untested
+
+  - id: claim-004
+    title: 同一输入可重复得到相同结果
+    source: framework
+    source_ref: "repeatability dimension"
+    priority: high
+    area: repeatability
+    statement: |
+      同一条命令、同一输入、同一版本，连续多次运行得到相同 stdout。
+    business_expectation: |
+      下游 pipeline 可以 cache / diff 结果。
+    evidence_needed: |
+      至少两次完整运行的 stdout diff。
+    status: untested
+
+  - id: claim-005
+    title: --help 与真实 subcommand 对齐
+    source: --help
+    source_ref: ""
+    priority: medium
+    area: doc-consistency
+    statement: |
+      --help 列出的 subcommand 和 flag 与代码中实际暴露的一致，
+      没有过时残留也没有遗漏。
+    business_expectation: |
+      用户不会被 --help 误导去用不存在的 flag。
+    evidence_needed: |
+      --help 输出 + 对应源代码交叉检查。
+    status: untested

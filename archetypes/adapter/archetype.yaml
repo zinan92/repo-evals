@@ -1,0 +1,35 @@
+name: adapter
+description: |
+  A repo that wraps an external platform, API, or protocol behind a
+  stable internal interface. The user value is the adapter *hiding*
+  the quirks of the external system.
+
+  Examples: `zinan92/content-downloader` (douyin / wechat / x / xhs),
+  an S3 client wrapper, a Twitter API adapter.
+
+default_verdict_ceiling: none
+# Adapters are fully testable. The verdict calculator does not apply
+# the hybrid ceiling, but adapters are often graded harshly on their
+# handling of the external system's failure modes.
+
+evaluation_dimensions:
+  - platform_coverage:         "Every claimed external platform is actually supported"
+  - shape_conformance:         "Every adapter produces the same normalized output shape"
+  - unsupported_handling:      "Unknown input produces a clear error, never a silent pass"
+  - auth_and_rate_limits:      "Auth errors and rate-limit errors are surfaced, not swallowed"
+  - upstream_drift_transparency: "When the external system changes, the adapter fails loudly"
+  - deduplication:             "Re-running the same input does not double-produce artifacts"
+
+recommended_evidence:
+  - "one happy-path run per claimed platform with normalized output committed"
+  - "one deliberately unsupported input showing the actual error"
+  - "manifest of all normalized output fields so downstream consumers can see the schema"
+  - "deduplication smoke: run the same input twice and show the second run was a no-op"
+
+default_claim_prompts:
+  - "Every platform listed in the README happy-path table actually succeeds"
+  - "Every adapter produces the same ContentItem / normalized-output shape"
+  - "An unsupported URL is rejected loudly, not silently accepted"
+  - "Auth failures are surfaced with an actionable error"
+  - "Rate limits do not corrupt partial output"
+  - "Re-running the same input twice does not duplicate artifacts"

@@ -1,0 +1,35 @@
+name: orchestrator
+description: |
+  A repo whose user value is coordinating multiple underlying tools,
+  skills, or capabilities into a pipeline. The orchestrator's own
+  value is routing, wiring, and end-to-end flow — not individual
+  capability correctness (those come from the downstream repos).
+
+  Examples: `zinan92/content-toolkit` (downloader → extractor → rewriter),
+  a multi-step agent workflow runner, a CI pipeline manager.
+
+default_verdict_ceiling: none
+# Orchestrators can reach `recommendable`, but only if each downstream
+# area gets its own coverage. Use `repo.yaml: uses_areas: true` and
+# scaffold one area per downstream capability.
+
+evaluation_dimensions:
+  - routing_correctness:      "Does the orchestrator send the right input to the right downstream tool?"
+  - error_propagation:        "When a downstream fails, does the orchestrator surface that failure clearly?"
+  - partial_failure_handling: "When one downstream fails, do the others still produce usable output?"
+  - end_to_end_happy_path:    "Does a full input-to-final-output happy path exist?"
+  - per_area_coverage:        "Every downstream area has its own claims and runs"
+  - observability:            "Can a human trace a failed run to the exact downstream call?"
+
+recommended_evidence:
+  - "one end-to-end happy-path trace"
+  - "one induced downstream failure showing error propagation"
+  - "per-area claim maps and runs under areas/<slug>/"
+  - "orchestration log showing which downstream was called with what input"
+
+default_claim_prompts:
+  - "Inputs are routed to the correct downstream based on documented rules"
+  - "An end-to-end happy path runs from initial input to final output"
+  - "A downstream failure surfaces at the orchestrator boundary with enough info to act"
+  - "Partial failures do not silently produce an incomplete 'success'"
+  - "Every downstream area has its own claim map under areas/<slug>/claims/"

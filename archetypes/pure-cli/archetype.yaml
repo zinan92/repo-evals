@@ -1,0 +1,34 @@
+name: pure-cli
+description: |
+  A deterministic command-line tool. Given arguments and a stable
+  environment, the tool produces predictable output. There is no
+  LLM-driven core layer, no external platform adapter, and no long-lived
+  service surface.
+
+  Examples: a markdown linter, a file converter, a local data processor.
+
+default_verdict_ceiling: none
+# The CLI itself IS the core user-facing layer, so the verdict calculator's
+# hybrid ceiling does not apply. A pure-cli can reach `recommendable` if
+# its claims are broadly covered.
+
+evaluation_dimensions:
+  - core_outcome:        "Does the happy-path command actually succeed?"
+  - scenario_breadth:    "Does it work across multiple realistic inputs?"
+  - exit_codes:          "Do success and failure exit codes match documentation?"
+  - repeatability:       "Does the same input produce the same output?"
+  - failure_transparency: "When it fails, does stderr explain why?"
+  - help_output:         "Does --help match the actual subcommand surface?"
+
+recommended_evidence:
+  - "stdout capture for at least one happy-path invocation per subcommand"
+  - "stderr capture + exit code for every documented failure mode"
+  - "input + output pair for at least one repeatability run"
+  - "version output so re-evals can detect drift"
+
+default_claim_prompts:
+  - "Every subcommand listed in --help runs at least once successfully"
+  - "Every subcommand listed in README runs at least once successfully"
+  - "Unknown subcommand returns non-zero exit and lists valid subcommands"
+  - "Required arguments are validated before the main work begins"
+  - "Output format matches what the docs promise"

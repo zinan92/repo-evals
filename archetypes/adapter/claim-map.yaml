@@ -1,0 +1,89 @@
+# Starter claim map for an adapter archetype.
+
+claims:
+  - id: claim-001
+    title: 每个已声明平台 happy-path 成功
+    source: README
+    source_ref: "supported platforms table"
+    priority: critical
+    area: platform-coverage
+    statement: |
+      README 中列出的每一个支持平台都至少能用一个真实输入跑通 happy path。
+    business_expectation: |
+      用户照 README 的平台清单来调用，不会踩到未实现的 adapter。
+    evidence_needed: |
+      每个平台的一次成功运行 + 产出文件。
+    status: untested
+
+  - id: claim-002
+    title: 所有 adapter 输出结构一致
+    source: README/schema
+    source_ref: "normalized output / ContentItem"
+    priority: critical
+    area: shape-conformance
+    statement: |
+      无论哪个平台，输出都符合同一个 normalized shape（字段名、类型、
+      必填性一致）。
+    business_expectation: |
+      下游消费者只需要写一份解析代码。
+    evidence_needed: |
+      每个平台的 normalized 输出样本 + schema diff。
+    status: untested
+
+  - id: claim-003
+    title: 不支持的输入响亮报错
+    source: README
+    source_ref: "fail unsupported"
+    priority: critical
+    area: failure-transparency
+    statement: |
+      给一个不属于任何已实现 adapter 的输入，CLI / API 立即报错并提示
+      支持的平台清单，没有 silent fallback，没有空输出。
+    business_expectation: |
+      Agent 调用时不会被欺骗认为 "成功"。
+    evidence_needed: |
+      stderr / 错误对象 + 非零退出码 / 错误状态码。
+    status: untested
+
+  - id: claim-004
+    title: 认证失败清晰报错
+    source: README/source
+    source_ref: ""
+    priority: high
+    area: auth
+    statement: |
+      过期 token、缺 cookie、被封 IP 等 auth 失败情境返回可操作的错误。
+    business_expectation: |
+      用户知道去哪补凭证，而不是收到 "空结果"。
+    evidence_needed: |
+      至少一个 auth 失败场景的重现 + 错误信息。
+    status: untested
+
+  - id: claim-005
+    title: 重复输入不重复产出
+    source: README
+    source_ref: "dedupe section"
+    priority: high
+    area: deduplication
+    statement: |
+      相同输入连续跑两次时，第二次不重复下载/写文件/追加 manifest。
+    business_expectation: |
+      批量运行幂等，不会消耗多余的带宽/配额。
+    evidence_needed: |
+      两次运行的 manifest diff + 第二次 "skipped" 证据。
+    status: untested
+
+  - id: claim-006
+    title: 上游漂移时响亮失败
+    source: framework
+    source_ref: "adapter drift"
+    priority: medium
+    area: upstream-drift
+    statement: |
+      外部平台接口变化（签名、字段、结构）时，adapter 报错而不是输出
+      "看起来对但实际缺字段" 的假成功。
+    business_expectation: |
+      Pipeline 不会悄悄消费坏数据。
+    evidence_needed: |
+      人工构造一个接口变化场景 + 观察 adapter 行为。
+    status: untested

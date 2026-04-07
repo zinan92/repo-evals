@@ -1,0 +1,34 @@
+name: prompt-skill
+description: |
+  A repo whose user value is almost entirely defined by prompt material
+  (SKILL.md, references/, templates/). There is no meaningful
+  deterministic code path that delivers the promised outcome; the LLM
+  is the engine.
+
+  Examples: a "write better commit messages" skill, a "review this PR
+  like a senior engineer" agent instruction set.
+
+default_verdict_ceiling: "usable when core_layer_tested=false"
+# prompt-skill repos require real LLM sessions to validate. Until such
+# sessions are captured, the verdict calculator caps overall bucket at
+# 'usable' regardless of how clean the static structure is.
+
+evaluation_dimensions:
+  - skill_completeness:   "Does SKILL.md cover every capability the README claims?"
+  - reference_integrity:  "Do in-prompt references (./x.md, templates/...) resolve?"
+  - instruction_clarity:  "Can a fresh agent understand and follow the workflow?"
+  - anti_slop_compliance: "Does the skill avoid patterns the author explicitly banned?"
+  - live_run_output:      "When an agent actually runs the skill, does the output match the promised quality contract?"
+
+recommended_evidence:
+  - "file existence proof for every ./ reference in SKILL.md"
+  - "at least one live LLM session transcript exercising the skill"
+  - "screenshots or artifacts produced by that live run"
+  - "anti-slop checklist comparison for the produced artifacts"
+
+default_claim_prompts:
+  - "SKILL.md frontmatter is valid and declares every required field"
+  - "Every relative reference in SKILL.md resolves to a real file"
+  - "Every capability listed in README is covered by the skill workflow"
+  - "A live agent run on a realistic prompt produces an output that matches the quality contract in SKILL.md"
+  - "Anti-slop rules the skill declares are actually respected by the produced output"

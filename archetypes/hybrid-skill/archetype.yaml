@@ -1,0 +1,35 @@
+name: hybrid-skill
+description: |
+  A repo that ships both a prompt / SKILL.md layer and deterministic
+  supporting code (scripts, templates, install logic). The prompt layer
+  defines the real user value; the code layer supports it.
+
+  Examples: `nicobailon/visual-explainer` (HTML templates + slash commands),
+  any "generate X" skill that ships rendering scripts beside the SKILL.md.
+
+default_verdict_ceiling: "usable when core_layer_tested=false"
+# This archetype is the prototypical hybrid-cap case. If the user-facing
+# LLM layer is not exercised, every support-layer strength still caps
+# at 'usable'. The verdict calculator enforces this in code.
+
+evaluation_dimensions:
+  - support_layer_correctness: "Do scripts, installers, and templates work in clean environments?"
+  - skill_integrity:           "Does SKILL.md reference real files and cover every promised capability?"
+  - core_llm_output:           "What does the skill actually produce when an agent runs it?"
+  - repeatability_of_support:  "Do deterministic parts produce identical output on repeat?"
+  - repeatability_of_core:     "Does the LLM layer produce acceptable output across multiple runs?"
+  - failure_transparency:      "Do scripts fail loudly and do skills fail without hallucinating?"
+
+recommended_evidence:
+  - "fresh-environment install log + exit code"
+  - "screenshots or renders of every shipped template"
+  - "at least one live agent session transcript (core layer)"
+  - "anti-slop / quality contract comparison for the live run's artifact"
+  - "SKILL.md reference resolution log"
+
+default_claim_prompts:
+  - "Installer / packaging works in a clean environment"
+  - "Every template ships in a state that a browser or renderer can open without errors"
+  - "SKILL.md references are all live"
+  - "A real agent run on a realistic prompt produces output matching the SKILL.md quality contract"
+  - "The skill fails transparently when it cannot meet the contract, instead of producing a fallback"

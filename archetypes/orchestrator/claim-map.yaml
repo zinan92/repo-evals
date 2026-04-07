@@ -1,0 +1,78 @@
+# Starter claim map for an orchestrator archetype.
+# Orchestrators typically use areas/ — every downstream capability gets
+# its own area with its own claim map. Keep THIS claim map for the
+# orchestration layer itself.
+
+claims:
+  - id: claim-001
+    title: 路由规则按文档派发到正确下游
+    source: README
+    source_ref: "routing section"
+    priority: critical
+    area: routing
+    statement: |
+      输入根据文档化的路由规则被正确派发到对应的下游工具 / skill。
+    business_expectation: |
+      用户不需要手动决定用哪个下游。
+    evidence_needed: |
+      多种输入类型的路由追踪日志 + 预期下游对照表。
+    status: untested
+
+  - id: claim-002
+    title: 端到端 happy path 能跑通
+    source: README
+    source_ref: "end-to-end example"
+    priority: critical
+    area: end-to-end
+    statement: |
+      给定 README 示例输入，执行完整流水线，得到 README 承诺的最终产出。
+    business_expectation: |
+      新用户照 README 一条命令就能拿到可用结果。
+    evidence_needed: |
+      完整调用链日志 + 最终产出文件。
+    status: untested
+
+  - id: claim-003
+    title: 下游失败被响亮地冒泡
+    source: framework
+    source_ref: "error propagation"
+    priority: critical
+    area: error-propagation
+    statement: |
+      当某个下游 tool 失败，orchestrator 不 swallow 错误：
+      错误在最终输出/日志中可追溯到具体下游 + 具体输入。
+    business_expectation: |
+      失败可以被 debug，而不是神秘消失。
+    evidence_needed: |
+      故意让一个下游失败的实验 + orchestrator 的错误输出。
+    status: untested
+
+  - id: claim-004
+    title: 部分失败不伪装成完全成功
+    source: framework
+    source_ref: "partial failure"
+    priority: high
+    area: error-propagation
+    statement: |
+      当多个下游中的一部分失败时，最终结果清楚标记哪部分成功哪部分
+      失败，不会输出一个看起来"完整"但实际缺失的产物。
+    business_expectation: |
+      下游消费者不会被骗去处理不完整数据。
+    evidence_needed: |
+      故意构造部分失败场景 + 最终输出检查。
+    status: untested
+
+  - id: claim-005
+    title: 每个下游能力都有独立 area 覆盖
+    source: framework
+    source_ref: "per-area coverage"
+    priority: high
+    area: structure
+    statement: |
+      每个 README 声明的下游能力在 areas/<slug>/ 下有独立的 claim map
+      和至少一次 run。
+    business_expectation: |
+      下游能力的覆盖度不会被 orchestrator 的平均分数掩盖。
+    evidence_needed: |
+      areas/*/claims/claim-map.yaml 存在 + 每个 area 至少一个 run。
+    status: untested

@@ -1,0 +1,91 @@
+# Starter claim map for an api-service archetype.
+
+claims:
+  - id: claim-001
+    title: 所有已文档化 endpoint 都真实响应
+    source: README / OpenAPI
+    source_ref: ""
+    priority: critical
+    area: endpoint-coverage
+    statement: |
+      文档（README 或 OpenAPI）中列出的每一个 endpoint 都对真实请求
+      返回非 404 响应。
+    business_expectation: |
+      客户端不会拿到幽灵路由。
+    evidence_needed: |
+      每个 endpoint 的一次真实请求 + 状态码 + body 样本。
+    status: untested
+
+  - id: claim-002
+    title: 响应 shape 符合文档 schema
+    source: OpenAPI / README
+    source_ref: "response schema"
+    priority: critical
+    area: contract-conformance
+    statement: |
+      成功响应 body 的字段、类型和必填性符合 schema。
+    business_expectation: |
+      客户端可以 type-safe 地解析。
+    evidence_needed: |
+      响应样本 + schema 校验结果。
+    status: untested
+
+  - id: claim-003
+    title: 受保护路由拒绝未认证请求
+    source: README
+    source_ref: "auth section"
+    priority: critical
+    area: auth
+    statement: |
+      所有声明为 protected 的路由在无 token / 无效 token 时返回文档化
+      的 401 / 403，而不是 200 空响应或 500。
+    business_expectation: |
+      没有泄漏风险。
+    evidence_needed: |
+      每条 protected route 的一次无 token 请求。
+    status: untested
+
+  - id: claim-004
+    title: 错误码与文档一致
+    source: README / OpenAPI
+    source_ref: "error codes section"
+    priority: high
+    area: error-semantics
+    statement: |
+      README / OpenAPI 声明的每一类错误码 (404, 422, 429, ...) 在对应
+      条件下真的被返回，不是笼统的 500。
+    business_expectation: |
+      客户端可以针对错误码写 branch 处理。
+    evidence_needed: |
+      每一类错误码的一次触发请求 + 响应样本。
+    status: untested
+
+  - id: claim-005
+    title: Rate limit 触发时返回清晰的错误
+    source: README
+    source_ref: "rate limit section"
+    priority: high
+    area: rate-limits
+    statement: |
+      超过速率限制时返回 429 + Retry-After（或文档声明的其他形式），
+      而不是静默丢弃或普通 500。
+    business_expectation: |
+      客户端知道怎么退避。
+    evidence_needed: |
+      人工压测触发 rate limit + 响应样本。
+    status: untested
+
+  - id: claim-006
+    title: 重复请求得到一致响应
+    source: framework
+    source_ref: "repeatability"
+    priority: medium
+    area: repeatability
+    statement: |
+      同一请求、同一服务实例下，连续多次调用返回相同 body
+      （除时间戳等已知易变字段外）。
+    business_expectation: |
+      下游可以 cache / diff。
+    evidence_needed: |
+      两次响应 body 的 diff。
+    status: untested

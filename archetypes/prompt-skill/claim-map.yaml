@@ -1,0 +1,75 @@
+# Starter claim map for a prompt-skill archetype.
+
+claims:
+  - id: claim-001
+    title: SKILL.md 结构合法
+    source: SKILL.md
+    source_ref: "frontmatter"
+    priority: critical
+    area: skill-structure
+    statement: |
+      SKILL.md 有效的 YAML frontmatter，包含 name / description 等必填字段。
+    business_expectation: |
+      Agent 加载 skill 时不会因 parse 错误而 fallback。
+    evidence_needed: |
+      YAML parse 成功 + 必填字段非空。
+    status: untested
+
+  - id: claim-002
+    title: 内部引用都能解析
+    source: SKILL.md
+    source_ref: "./references/ / ./templates/ / ./commands/"
+    priority: critical
+    area: skill-integrity
+    statement: |
+      SKILL.md 中引用的每一个相对路径都指向一个真实存在的文件。
+    business_expectation: |
+      LLM 执行 skill 时不会因为找不到文件而瞎写。
+    evidence_needed: |
+      grep + 文件存在检查的完整输出。
+    status: untested
+
+  - id: claim-003
+    title: README 承诺的每个能力在 SKILL 里都有对应 workflow
+    source: README + SKILL.md
+    source_ref: ""
+    priority: critical
+    area: coverage
+    statement: |
+      README 的功能列表中的每一项，在 SKILL.md 或 commands/ 下都能找到
+      对应的执行路径。
+    business_expectation: |
+      用户看 README 期待的能力，agent 真的会去尝试。
+    evidence_needed: |
+      一一对应表 + 证据引用。
+    status: untested
+
+  - id: claim-004
+    title: 真实 LLM 会话产出达到 SKILL 承诺的质量
+    source: SKILL.md
+    source_ref: "quality contract section"
+    priority: critical
+    area: end-to-end-llm
+    statement: |
+      在真实 Claude Code / Codex / Pi 会话里跑至少一个真实 prompt，
+      产出符合 SKILL.md 声明的质量契约（格式、长度、风格、anti-slop）。
+    business_expectation: |
+      用户拿到的不是占位符或 fallback，而是真正好用的产出。
+    evidence_needed: |
+      transcript + 产物文件 + 对照 quality contract 的逐项打分。
+    status: untested
+
+  - id: claim-005
+    title: Anti-slop 规则真的被遵守
+    source: SKILL.md
+    source_ref: "anti-patterns / constraints section"
+    priority: high
+    area: end-to-end-llm
+    statement: |
+      SKILL.md 里显式禁止的模式（neon 配色、AI slop emoji 滥用等）在真实
+      产出里确实没有出现。
+    business_expectation: |
+      风格契约不只是许愿清单。
+    evidence_needed: |
+      产出对照 anti-slop 列表的 pass/fail。
+    status: untested
