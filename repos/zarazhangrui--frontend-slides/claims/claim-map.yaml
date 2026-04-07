@@ -1,0 +1,140 @@
+claims:
+  - id: claim-001
+    title: Plugin marketplace 安装路径有效
+    source: README
+    source_ref: "Installation / Via Plugin Marketplace"
+    priority: critical
+    area: packaging
+    statement: |
+      用户可以通过 `/plugin marketplace add zarazhangrui/frontend-slides` +
+      `/plugin install frontend-slides@frontend-slides` 安装。
+    business_expectation: |
+      Marketplace JSON 和 plugin.json 结构合法、source path 正确、技能文件
+      在 plugin source 下都存在。
+    evidence_needed: |
+      .claude-plugin/marketplace.json 存在且引用 ./plugins/frontend-slides；
+      plugins/frontend-slides/.claude-plugin/plugin.json 存在；
+      plugins/frontend-slides/skills/frontend-slides/SKILL.md 等所有文件存在。
+    status: passed
+
+  - id: claim-002
+    title: SKILL.md 内部引用都解析得到
+    source: SKILL.md
+    source_ref: "Supporting Files 表 + 各 Phase 内 Read 指令"
+    priority: high
+    area: skill-integrity
+    statement: |
+      SKILL.md 在各个 Phase 引用 STYLE_PRESETS.md / viewport-base.css /
+      html-template.md / animation-patterns.md / scripts/*，所有引用都必须
+      指向真实存在的文件。
+    business_expectation: |
+      Claude 在执行 skill 时不会因为找不到文件而 fallback 到瞎写。
+    evidence_needed: |
+      grep markdown 链接 → 每个目标文件 ls -e 通过。
+    status: passed
+
+  - id: claim-003
+    title: PPT 提取脚本能从真实 .pptx 拿到结构化 JSON + 图片
+    source: README
+    source_ref: "PPT Conversion / extract-pptx.py"
+    priority: critical
+    area: ppt-conversion
+    statement: |
+      `python scripts/extract-pptx.py <input.pptx> <out>` 输出
+      extracted-slides.json + assets/ 目录，JSON 包含 number/title/content/images/notes。
+    business_expectation: |
+      下游可以直接吃 JSON + assets 进入 Phase 2 风格选择。
+    evidence_needed: |
+      在两个真实 PPT 上跑通；JSON 结构正确；图片真实落盘。
+    status: passed_with_concerns
+
+  - id: claim-004
+    title: PDF 导出脚本能把 .slide HTML 转成有效 PDF
+    source: README
+    source_ref: "Export to PDF / export-pdf.sh"
+    priority: critical
+    area: pdf-export
+    statement: |
+      `bash scripts/export-pdf.sh <html> [out.pdf]` 启动 Playwright + 本地服务器，
+      逐 slide 截图后合成 PDF。N 个 .slide → N 页 PDF。
+    business_expectation: |
+      用户拿到一份能在邮件 / Slack / 打印里用的标准 PDF。
+    evidence_needed: |
+      3-slide 测试 deck → 3-page valid PDF；headless chromium 自动下载；
+      缺 .slide 时清晰报错；不存在文件清晰报错。
+    status: passed
+
+  - id: claim-005
+    title: 失败模式有清晰错误 + 非零退出码
+    source: README/SKILL.md
+    source_ref: "PDF export gotchas: 'Slides must use class=slide'"
+    priority: high
+    area: failure-transparency
+    statement: |
+      没有 .slide 元素 → 报错 + 提示用正确 class；文件不存在 → 报错；
+      两种情况退出码都非 0。
+    business_expectation: |
+      Pipeline / 用户能立即知道出了什么问题、下一步做什么。
+    evidence_needed: |
+      实测两种失败场景：错误信息清晰、退出码 = 1。
+    status: passed
+
+  - id: claim-006
+    title: 12 个 curated style preset
+    source: README
+    source_ref: "Included Styles + STYLE_PRESETS.md"
+    priority: high
+    area: style-system
+    statement: |
+      README 列了 12 个 preset (4 dark + 4 light + 4 specialty)，
+      STYLE_PRESETS.md 必须有完整的 12 个定义（颜色 + 字体 + signature elements）。
+    business_expectation: |
+      LLM 在 Phase 2 有真实可选的范围，不会自己瞎编。
+    evidence_needed: |
+      grep '^### [0-9]' STYLE_PRESETS.md → count == 12；每个有 colors + typography 块。
+    status: passed
+
+  - id: claim-007
+    title: Viewport-fitting 规则可强制
+    source: SKILL.md
+    source_ref: "Viewport Fitting Rules + viewport-base.css"
+    priority: high
+    area: skill-integrity
+    statement: |
+      SKILL.md 把 viewport fitting 列为 NON-NEGOTIABLE，要求每个生成的 deck
+      include viewport-base.css 全文，所有字号用 clamp() 不用 px。
+    business_expectation: |
+      生成的 slide 在不同屏幕都不溢出、不滚动。
+    evidence_needed: |
+      viewport-base.css 真实存在且包含 .slide overflow:hidden + clamp() vars + dvh。
+      （注：是否真的强制只能在端到端跑后验证。）
+    status: passed_design_only
+
+  - id: claim-008
+    title: 端到端 — 给个话题 → 拿到一份能用的 deck
+    source: README
+    source_ref: "Usage / Create a New Presentation"
+    priority: critical
+    area: end-to-end-llm
+    statement: |
+      用户在 Claude Code 里说 "做一个 X 主题的 deck"，skill 走完 Phase 1-5
+      产出一份 viewport-fitting、风格独特、内容准确的 HTML deck。
+    business_expectation: |
+      非设计师用户拿到的 deck 能直接 demo / 分享 / 导出 PDF。
+    evidence_needed: |
+      在 Claude Code 里跑一次完整 /frontend-slides 会话，验证产物质量。
+    status: untested
+
+  - id: claim-009
+    title: deploy.sh 能把 deck 推到 Vercel
+    source: README
+    source_ref: "Deploy to a Live URL / scripts/deploy.sh"
+    priority: medium
+    area: deploy
+    statement: |
+      `bash scripts/deploy.sh <path>` 调用 Vercel CLI 部署 deck，输出公网 URL。
+    business_expectation: |
+      用户一条命令拿到分享链接。
+    evidence_needed: |
+      实际跑一次 deploy（会创建真实 Vercel 部署）。
+    status: untested

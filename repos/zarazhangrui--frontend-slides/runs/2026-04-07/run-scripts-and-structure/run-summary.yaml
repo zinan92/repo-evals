@@ -1,0 +1,56 @@
+run_name: scripts-and-structure
+date: 2026-04-07
+area: core
+scenario: A-layer (executable parts) — extract + export-pdf + structure checks
+fixtures:
+  - "ppt: /Users/wendy/Documents/New project/How To Be Successful - Sam Altman.pptx (15 slides, image-heavy)"
+  - "ppt: /Users/wendy/work/content-co/binary-choices/binary-choices.pptx (8 slides, mixed)"
+  - "html: /tmp/fs-eval/sample-deck.html (3 .slide divs)"
+  - "html: /tmp/fs-eval/no-slides.html (no .slide elements)"
+  - "html: /tmp/fs-eval/nonexistent.html (does not exist)"
+result: pass-with-untested-llm-layer
+artifacts:
+  - /tmp/fs-eval/extract-test/extracted-slides.json
+  - /tmp/fs-eval/extract-test/assets/  (15 PNGs)
+  - /tmp/fs-eval/extract-test2/extracted-slides.json
+  - /tmp/fs-eval/sample-deck.pdf  (3 pages, 42KB, valid PDF 1.4)
+results_by_claim:
+  claim-001-plugin-marketplace: pass
+  claim-002-skill-md-references: pass
+  claim-003-extract-pptx: pass-with-concerns
+  claim-004-export-pdf: pass
+  claim-005-failure-transparency: pass
+  claim-006-12-style-presets: pass
+  claim-007-viewport-fitting-css: pass-design-only
+  claim-008-end-to-end-llm: untested
+  claim-009-deploy-vercel: untested
+notes: |
+  A 层全部通过：
+    - .claude-plugin/marketplace.json + plugins/frontend-slides/.claude-plugin/plugin.json
+      结构合法；plugins/ 下镜像了所有 SKILL 文件（diff -q SKILL.md 完全一致）
+    - SKILL.md 引用的 7 个文件（STYLE_PRESETS / viewport-base / html-template /
+      animation-patterns / scripts/{extract,export-pdf,deploy}）全部存在
+    - extract-pptx.py 在两个真实 PPT 上跑通：15-slide 和 8-slide PPT 都生成了
+      合法 JSON + assets/ 下的 PNG 文件
+    - export-pdf.sh 把 3-slide HTML 转成 3 页 PDF（file 命令确认 PDF 1.4 格式）
+    - 失败模式：no-slides → "ERROR: No .slide elements found" + exit 1；
+      nonexistent → "File not found" + exit 1
+    - STYLE_PRESETS.md 包含 12 个 numbered presets（Bold Signal..Paper & Ink），
+      全部带 colors + typography + signature elements 块
+    - viewport-base.css 包含 .slide overflow:hidden + height: 100dvh + clamp() 字号
+
+  小问题（pass-with-concerns）：
+    - extract-pptx.py 的 title 检测在两个测试 PPT 上都返回空字符串（"(no title)"）。
+      原因是 `if shape == slide.shapes.title:` 在 title placeholder 为 None 时
+      永远 False。文本仍然进入 content 数组，所以信息没丢，但下游会拿不到 title 字段。
+    - extract-pptx.py 不过滤空 text frame，content 数组里有大量 {"type":"text","content":""}
+      占位项，会让 LLM 在 Phase 4 confirm 时看一堆噪音。
+
+  设计层验证（passed_design_only）：
+    - viewport-fitting 规则在 SKILL.md / viewport-base.css 里写得很死；clamp()、
+      height:100dvh、overflow:hidden 都齐了。但"LLM 是否真的会遵守"只能在端到端
+      会话里验证，本次未做。
+
+  完全未测：
+    - claim-008（端到端 LLM 生成）— 需要在 Claude Code 里跑一次 /frontend-slides
+    - claim-009（deploy.sh → Vercel）— 会创建真实部署，跳过

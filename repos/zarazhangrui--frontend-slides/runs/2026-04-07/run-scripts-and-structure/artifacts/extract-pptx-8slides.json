@@ -1,0 +1,298 @@
+[
+  {
+    "number": 1,
+    "title": "",
+    "content": [
+      {
+        "type": "text",
+        "content": "01 / 04"
+      },
+      {
+        "type": "text",
+        "content": "Build Myself"
+      },
+      {
+        "type": "text",
+        "content": ""
+      },
+      {
+        "type": "text",
+        "content": ""
+      },
+      {
+        "type": "text",
+        "content": "vs"
+      },
+      {
+        "type": "text",
+        "content": "Fork"
+      },
+      {
+        "type": "text",
+        "content": "\u522b\u4eba\u8e29\u8fc7\u7684\u5751\u6bd4\u4f60\u7684\u4ee3\u7801\u503c\u94b1"
+      }
+    ],
+    "images": [
+      {
+        "path": "assets/slide1_img1.png",
+        "width": 731520,
+        "height": 731520
+      },
+      {
+        "path": "assets/slide1_img2.png",
+        "width": 731520,
+        "height": 731520
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "number": 2,
+    "title": "",
+    "content": [
+      {
+        "type": "text",
+        "content": "Build Myself  \u2192  Fork"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u6210\u719f\u9879\u76ee\u6709\u4e0a\u767e\u4e2a edge case \u5df2\u7ecf\u5904\u7406\u597d\u4e86"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u4f60\u7684\u65f6\u95f4\u5e94\u8be5\u82b1\u5728\u4e1a\u52a1\u903b\u8f91\uff0c\u4e0d\u662f\u8f6e\u5b50"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 Fork \u2192 \u6539 \u2192 \u8fed\u4ee3\uff0c\u6bd4\u4ece\u96f6\u5f00\u59cb\u5feb 10 \u500d"
+      }
+    ],
+    "images": [],
+    "notes": ""
+  },
+  {
+    "number": 3,
+    "title": "",
+    "content": [
+      {
+        "type": "text",
+        "content": "02 / 04"
+      },
+      {
+        "type": "text",
+        "content": "Open Claude"
+      },
+      {
+        "type": "text",
+        "content": ""
+      },
+      {
+        "type": "text",
+        "content": ""
+      },
+      {
+        "type": "text",
+        "content": "vs"
+      },
+      {
+        "type": "text",
+        "content": "Claude Code"
+      },
+      {
+        "type": "text",
+        "content": "\u7f51\u9875\u7248\u662f\u5bf9\u8bdd\uff0cCode \u662f\u6267\u884c"
+      }
+    ],
+    "images": [
+      {
+        "path": "assets/slide3_img1.png",
+        "width": 731520,
+        "height": 731520
+      },
+      {
+        "path": "assets/slide3_img2.png",
+        "width": 731520,
+        "height": 731520
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "number": 4,
+    "title": "",
+    "content": [
+      {
+        "type": "text",
+        "content": "Open Claude  \u2192  Claude Code"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u76f4\u63a5\u8bfb\u5199\u4f60\u7684\u4ee3\u7801\u5e93"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u4e00\u4e2a\u6307\u4ee4\u5b8c\u6210\uff1a\u5206\u6790 \u2192 \u4fee\u6539 \u2192 \u6d4b\u8bd5 \u2192 \u63d0\u4ea4"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u4e0a\u4e0b\u6587\u4e0d\u662f\u4f60\u7c98\u8d34\u7684\uff0c\u662f\u5b83\u81ea\u5df1\u8bfb\u7684"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 Terminal = \u65e0\u9650\u80fd\u529b\u8fb9\u754c"
+      }
+    ],
+    "images": [],
+    "notes": ""
+  },
+  {
+    "number": 5,
+    "title": "",
+    "content": [
+      {
+        "type": "text",
+        "content": "03 / 04"
+      },
+      {
+        "type": "text",
+        "content": "\u591a Agent"
+      },
+      {
+        "type": "text",
+        "content": ""
+      },
+      {
+        "type": "text",
+        "content": ""
+      },
+      {
+        "type": "text",
+        "content": "vs"
+      },
+      {
+        "type": "text",
+        "content": "Single Agent"
+      },
+      {
+        "type": "text",
+        "content": "\u590d\u6742\u5ea6\u662f\u654c\u4eba\uff0c\u4e0d\u662f\u670b\u53cb"
+      }
+    ],
+    "images": [
+      {
+        "path": "assets/slide5_img1.png",
+        "width": 731520,
+        "height": 731520
+      },
+      {
+        "path": "assets/slide5_img2.png",
+        "width": 731520,
+        "height": 731520
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "number": 6,
+    "title": "",
+    "content": [
+      {
+        "type": "text",
+        "content": "\u591a Agent  \u2192  Single Agent"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u591a Agent \u7684\u534f\u8c03\u6210\u672c\u88ab\u4e25\u91cd\u4f4e\u4f30"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u4e0a\u4e0b\u6587\u5728 Agent \u4e4b\u95f4\u4f20\u9012\u4f1a\u4e22\u5931"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u4e00\u4e2a Agent + Skills + Hooks = \u65e2\u4e13\u6ce8\u53c8\u5168\u80fd"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u590d\u6742\u5ea6\u662f\u654c\u4eba\uff0c\u4e0d\u662f\u670b\u53cb"
+      }
+    ],
+    "images": [],
+    "notes": ""
+  },
+  {
+    "number": 7,
+    "title": "",
+    "content": [
+      {
+        "type": "text",
+        "content": "04 / 04"
+      },
+      {
+        "type": "text",
+        "content": "LLM Only"
+      },
+      {
+        "type": "text",
+        "content": ""
+      },
+      {
+        "type": "text",
+        "content": ""
+      },
+      {
+        "type": "text",
+        "content": "vs"
+      },
+      {
+        "type": "text",
+        "content": "\u811a\u672c + LLM"
+      },
+      {
+        "type": "text",
+        "content": "\u80fd\u7528\u4ee3\u7801\u786e\u5b9a\u7684\u4e8b\uff0c\u522b\u8ba9\u6982\u7387\u6a21\u578b\u731c"
+      }
+    ],
+    "images": [
+      {
+        "path": "assets/slide7_img1.png",
+        "width": 731520,
+        "height": 731520
+      },
+      {
+        "path": "assets/slide7_img2.png",
+        "width": 731520,
+        "height": 731520
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "number": 8,
+    "title": "",
+    "content": [
+      {
+        "type": "text",
+        "content": "LLM Only  \u2192  \u811a\u672c + LLM"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u811a\u672c\u5904\u7406\u786e\u5b9a\u6027\u903b\u8f91\uff08\u683c\u5f0f\u3001\u6821\u9a8c\u3001\u6d41\u7a0b\uff09"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 LLM \u5904\u7406\u4e0d\u786e\u5b9a\u6027\uff08\u7406\u89e3\u3001\u5224\u65ad\u3001\u751f\u6210\uff09"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 \u6df7\u5408\u67b6\u6784 = \u53ef\u9760 + \u667a\u80fd"
+      },
+      {
+        "type": "text",
+        "content": "\u2014 Prompt \u662f\u5efa\u8bae\uff0cCode \u662f\u6267\u884c"
+      }
+    ],
+    "images": [],
+    "notes": ""
+  }
+]
