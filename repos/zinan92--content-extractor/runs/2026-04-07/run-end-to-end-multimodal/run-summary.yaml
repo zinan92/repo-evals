@@ -1,0 +1,82 @@
+run_name: end-to-end-multimodal
+date: 2026-04-07
+area: core
+scenario: video + article + bare-audio + failure modes + batch idempotency + test collect
+fixtures:
+  - "video: /tmp/ce-eval/short-video/ (30s clip from real Douyin 170MB MP4, Chinese)"
+  - "article: /tmp/cd-eval-output/wechat_oa/.../Bo3K6P... (0-byte article.html from upstream)"
+  - "bare-audio: /tmp/ce-eval-audio.mp3 (4.6MB Chinese podcast clip)"
+  - "bad-path: /tmp/nonexistent-blah"
+  - "bad-json: /tmp/ce-bad/content_item.json (literal 'not json')"
+result: mixed
+artifacts:
+  - /tmp/ce-eval/short-video/transcript.json
+  - /tmp/ce-eval/short-video/analysis.json
+  - /tmp/ce-eval/short-video/structured_text.md
+  - /tmp/ce-eval/short-video/extraction_status.json
+results_by_claim:
+  claim-001-video-extract: pass
+  claim-002-article-empty: pass-with-concerns
+  claim-003-bare-file-audio: fail-partial
+  claim-004-failure-transparency: pass
+  claim-005-batch-idempotent: pass-partial
+  claim-006-test-suite-221: fail
+  claim-007-mac-perf: fail-design
+  claim-008-hallucination-field: pass-partial
+notes: |
+  ✅ 视频核心路径全通：
+    - 30s 中文 Douyin clip → 7 segments、131 words、language=zh
+    - Whisper 正确识别中英混读片段
+    - Claude LLM analysis 拿出 7 topics、2 viewpoints、5 takeaways、sentiment
+    - structured_text.md 是真正可读的研究简报，header 带原视频元数据 +
+      engagement 数据 + summary + takeaways + 全文 + analysis
+    - extraction_status.json 报告 transcript:ok / analysis:ok（正确）
+    - is_suspicious 字段存在 (None) — 但本次 clip 没触发 suspicious 标记，
+      所以 hallucination 检测的端到端只验证了 schema，没验证 detection 逻辑
+
+  ⚠️ Article 空输入降级：
+    - extraction_status.json 报 transcript:ok / analysis:ok 即使两者都完全为空
+    - Words: 0 在 stdout 出现是诚实的
+    - structured_text.md 是空白模板（"No analysis available"）
+    - 严格说不算 silent failure（status 字段可作为信号），但 "ok" 在 0-byte
+      输入上仍然有歧义
+
+  ❌ 裸 .mp3 文件 — README 撒谎：
+    - README bare_file_support 明确列出 .mp3 .wav .m4a .aac .ogg .flac
+    - 实测：CLI 'Detected bare media file. Wrapping as ContentItem...' →
+      'Error: No extractor registered for content_type=audio. Supported:
+       [article, gallery, image, video]'
+    - cli.py 里 auto-wrap 把音频文件设成 content_type='audio'，但 router
+      只有 4 个 adapter，没 audio adapter
+    - 退出码 1（这点是好的）但承诺的功能根本不存在
+    - 这是文档↔代码硬不对齐，跟 content-downloader 的 silent failure 是
+      同一类问题但程度不同：这里至少 CLI 报错了
+
+  ❌ 测试套件 — README badge 撒谎：
+    - README: "221 tests passing / 96% coverage"
+    - 实测 pytest --collect-only：tests/test_llm.py 直接 ImportError
+      ('cannot import name LLMRateLimitError from content_extractor.llm')
+    - 整个 collection 就 fail 了，连跑都跑不起来
+    - ignore 掉这个文件后只剩 207 tests，比 README 少 14 个
+    - llm.py 里只有 LLMError / LLMConfigError / LLMAPIError，
+      LLMRateLimitError 似乎是被删掉但 test 没同步
+
+  ❌ Mac 性能 — 明显次优：
+    - transcribe.py:78-82 用 WhisperModel(device="auto", compute_type="int8")
+    - faster-whisper 的 CTranslate2 后端不支持 Apple Silicon GPU/MPS，
+      所以 Mac 上 device="auto" 永远 fallback 到 CPU
+    - 实测：30 秒 audio 用了 25.8s wall time（用户 CPU 60s）≈ 实时
+    - 之前跑 170MB / ~10min Douyin 视频，28 分钟还没跑完就被杀掉
+    - mlx-whisper（Apple 官方 MLX 框架）同样输入快 5-10x，README 没提
+    - 不是 bug，是架构选择，但对 Mac 用户来说非常痛
+
+  ✅ 失败模式：
+    - nonexistent path → "Error: Path does not exist: ..." + exit 1
+    - bad JSON → "Error: Invalid JSON in ...: invalid literal: line 1 column 1" + exit 1
+    - unsupported audio → "Error: No extractor registered for content_type='audio'" + exit 1
+    - 三个都很清晰，跟 content-downloader 的 silent fail 形成强对比
+
+  ✅ Batch 幂等：
+    - 第二次跑 extract-batch /tmp/ce-eval/ → 'Processed 1 items: 0 succeeded,
+      1 skipped, 0 failed' + 进度条秒过
+    - 没测错误隔离（需要混合好坏 item，本次只有 1 个 item）

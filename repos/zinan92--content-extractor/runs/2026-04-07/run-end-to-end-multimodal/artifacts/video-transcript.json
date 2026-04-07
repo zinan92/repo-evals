@@ -1,0 +1,58 @@
+{
+  "content_id": "short-test-30s",
+  "content_type": "video",
+  "language": "zh",
+  "segments": [
+    {
+      "text": "有一句话叫,在crypto能赚到钱的人只有两类人,智商20和智商和200的人才能赚到钱。",
+      "start": 0.0,
+      "end": 7.68,
+      "confidence": 0.8403666160634857,
+      "is_suspicious": false
+    },
+    {
+      "text": "What's the look of absolute certainty on his face when he talked about sending large rockets to moon?",
+      "start": 7.68,
+      "end": 13.48,
+      "confidence": 0.8403666160634857,
+      "is_suspicious": false
+    },
+    {
+      "text": "就这个人是不是a force of nature?",
+      "start": 13.76,
+      "end": 15.88,
+      "confidence": 0.8403666160634857,
+      "is_suspicious": false
+    },
+    {
+      "text": "什么叫force of nature?就是宇宙会不会帮助这个人?",
+      "start": 16.1,
+      "end": 20.0,
+      "confidence": 0.8403666160634857,
+      "is_suspicious": false
+    },
+    {
+      "text": "你看到那些说不努力成功的人,即使你看到了,如果真的不努力,他也成功了。",
+      "start": 20.36,
+      "end": 25.8,
+      "confidence": 0.8403666160634857,
+      "is_suspicious": false
+    },
+    {
+      "text": "你假设他就是上天放在那儿给你的一个限制。",
+      "start": 25.86,
+      "end": 29.69,
+      "confidence": 0.8403666160634857,
+      "is_suspicious": false
+    },
+    {
+      "text": "今天",
+      "start": 29.69,
+      "end": 30.45,
+      "confidence": 0.4823796021760521,
+      "is_suspicious": false
+    }
+  ],
+  "full_text": "有一句话叫,在crypto能赚到钱的人只有两类人,智商20和智商和200的人才能赚到钱。 What's the look of absolute certainty on his face when he talked about sending large rockets to moon? 就这个人是不是a force of nature? 什么叫force of nature?就是宇宙会不会帮助这个人? 你看到那些说不努力成功的人,即使你看到了,如果真的不努力,他也成功了。 你假设他就是上天放在那儿给你的一个限制。 今天",
+  "schema_version": "1.0"
+}

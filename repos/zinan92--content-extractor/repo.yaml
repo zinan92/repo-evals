@@ -1,0 +1,26 @@
+owner: zinan92
+repo: content-extractor
+display_name: content-extractor
+repo_url: https://github.com/zinan92/content-extractor
+repo_type: skill
+complexity: medium
+uses_areas: false
+status: evaluated
+current_bucket: usable
+notes: |
+  视频核心路径工作得相当好：30s 中文 Douyin clip → 真实 transcript (7 段) +
+  Claude LLM 分析 (7 topics, 5 takeaways) + structured_text.md，全部都是
+  下游可用的内容。失败模式 (nonexistent / bad JSON / unsupported audio) 都
+  返回退出码 1 + 清晰错误。
+
+  但有三个文档↔代码不对齐的硬伤：
+  1. README 列了 .mp3/.wav/.m4a/.aac/.ogg/.flac 作为 bare_file_support，但
+     CLI auto-wrap 把它们设成 content_type='audio'，router 没有 audio adapter，
+     直接报错 — 这是承诺过但没实现的功能。
+  2. README badge 写 "221 tests / 96% coverage"，实际 tests/test_llm.py 有
+     ImportError (LLMRateLimitError 不存在)，测试套件根本无法 collect。
+     ignore 这个文件后只剩 207 tests。
+  3. 在 Mac 上用 faster-whisper + CTranslate2 + device="auto" — CTranslate2
+     不支持 Apple Silicon GPU/MPS，所以 auto 永远 fallback 到 CPU。Mac 用户
+     转录速度大约是实时 (30s 音频用 25.8s)。mlx-whisper 同样输入快 5-10x，
+     README 完全没提这个 trade-off。

@@ -1,0 +1,32 @@
+{
+  "content_id": "short-test-30s",
+  "content_type": "video",
+  "topics": [
+    "cryptocurrency investing",
+    "intelligence and success",
+    "Elon Musk",
+    "natural talent vs effort",
+    "cosmic forces",
+    "success patterns",
+    "rocket technology"
+  ],
+  "viewpoints": [
+    "Only people with very low or very high IQ can profit in crypto",
+    "Some individuals are 'forces of nature' with cosmic assistance",
+    "Success can come without effort for certain people",
+    "The universe may favor specific individuals",
+    "Natural limitations exist that are divinely placed"
+  ],
+  "sentiment": {
+    "overall": "mixed",
+    "confidence": 0.7
+  },
+  "takeaways": [
+    "Success in crypto may require either extreme simplicity or high intelligence",
+    "Recognize when someone has natural advantages beyond normal effort",
+    "Accept that some people may have inherent cosmic support",
+    "Don't assume all success comes from hard work alone",
+    "Understand that natural limitations may be part of a larger design"
+  ],
+  "schema_version": "1.0"
+}

@@ -1,0 +1,118 @@
+claims:
+  - id: claim-001
+    title: 视频 ContentItem 提取 — 转录 + 分析 + structured_text
+    source: README
+    source_ref: "示例输出 + 功能一览"
+    priority: critical
+    area: video
+    statement: |
+      给一个 content-downloader 输出的视频 ContentItem 目录，跑完 whisper 转录
+      + Claude LLM 分析，输出 transcript.json + analysis.json + structured_text.md。
+    business_expectation: |
+      下游研究/写作 pipeline 能直接读 structured_text.md 当作研究简报。
+    evidence_needed: |
+      transcript.json 包含真实段落和时间戳；analysis.json 包含真实 topics/
+      viewpoints/sentiment/takeaways；structured_text.md 是合法 markdown 且
+      包含 summary + 全文 + 分析。
+    status: passed
+
+  - id: claim-002
+    title: 文章 ContentItem 提取 — 空输入降级
+    source: README
+    source_ref: "fail LLM 分析失败 → 降级为空白 analysis"
+    priority: high
+    area: article
+    statement: |
+      给一个空 article.html (上游 wechat_oa adapter 写出的 0 字节文件)，
+      不崩溃，输出 Words: 0 + 空 analysis 占位。
+    business_expectation: |
+      上游脏数据不会让下游 pipeline 整体挂掉。
+    evidence_needed: |
+      退出码 0，三个输出文件都生成，Words: 0 在 stdout 可见。
+    status: passed_with_concerns
+
+  - id: claim-003
+    title: 裸视频/音频文件直接提取 (auto-wrap)
+    source: README
+    source_ref: "in 裸视频/音频文件 (.mp4/.mp3/.wav/.m4a/等) bare_file_support"
+    priority: critical
+    area: bare-file
+    statement: |
+      `content-extractor extract ./recording.mp4` 或 `./audio.mp3` 不需要
+      content_item.json，自动包装为 ContentItem 后跑提取。
+    business_expectation: |
+      用户可以把任意视频/音频文件直接喂给 CLI，无需手工准备目录结构。
+    evidence_needed: |
+      .mp4 路径跑通；README 列出的 .mp3 .wav .m4a .aac .ogg .flac 也跑通。
+    status: failed_partial
+
+  - id: claim-004
+    title: 失败模式 — 清晰错误 + 非零退出码
+    source: README/SKILL
+    source_ref: "fail unsupported content_type / fail invalid content_item.json"
+    priority: high
+    area: failure-transparency
+    statement: |
+      不存在路径、无效 JSON、不支持的 content_type 都返回清晰错误 + 退出码 1。
+    business_expectation: |
+      Pipeline 集成时立即知道失败原因。
+    evidence_needed: |
+      三种场景实测：错误信息可操作，exit=1。
+    status: passed
+
+  - id: claim-005
+    title: 批量处理 — 错误隔离 + 幂等
+    source: README
+    source_ref: "功能一览：批量处理 - Rich 进度条 + 错误隔离 + 幂等"
+    priority: high
+    area: batch
+    statement: |
+      `extract-batch` 扫描目录、显示进度条、单个失败不影响其他、
+      已提取的内容自动 skip。
+    business_expectation: |
+      可以反复跑同一个根目录而不会重复消耗 whisper/LLM 调用。
+    evidence_needed: |
+      第二次 batch 跑同一目录，所有 item 进入 skipped 计数。
+    status: passed_partial
+
+  - id: claim-006
+    title: 测试套件 — 221 tests / 96% coverage
+    source: README badge
+    source_ref: "[![Tests](https://img.shields.io/badge/tests-221%20passing)]()"
+    priority: high
+    area: testing
+    statement: |
+      README badge 声称 221 tests passing 和 96% coverage。
+    business_expectation: |
+      用户/集成方相信测试套件能复现这个数字。
+    evidence_needed: |
+      `pytest --collect-only` 报告的 test 数等于 221，且能跑通。
+    status: failed
+
+  - id: claim-007
+    title: Mac 用户性能 — 本地 whisper 是合理选择
+    source: README
+    source_ref: "技术栈：faster-whisper 1.2+ CTranslate2 后端"
+    priority: medium
+    area: performance
+    statement: |
+      faster-whisper turbo 在 Mac 上是合理的本地转录选择。
+    business_expectation: |
+      Mac 用户拿到的转录速度应当是合理的（接近 GPU 加速水平）。
+    evidence_needed: |
+      检查 device 配置和实际 wall time。
+    status: failed_design
+
+  - id: claim-008
+    title: 幻觉检测 — is_suspicious + warnings
+    source: README
+    source_ref: "fail whisper 幻觉检测 → is_suspicious=true + hallucination_warnings"
+    priority: high
+    area: video-quality
+    statement: |
+      Transcript 输出包含 is_suspicious 字段和 hallucination_warnings 列表。
+    business_expectation: |
+      下游可以根据 is_suspicious 决定是否信任这条转录。
+    evidence_needed: |
+      transcript.json 包含 is_suspicious 字段（即使是 None/false）。
+    status: passed_partial
