@@ -156,7 +156,10 @@ class SnapshotLoader:
     """Loads repo state at a given ref using Git when possible."""
 
     def __init__(self, repo_evals_root: pathlib.Path, repo_dir: pathlib.Path):
-        self.root = repo_evals_root
+        # Resolve both sides. On macOS, /var is a symlink to /private/var,
+        # so tmp paths produced via tempfile often need canonicalization
+        # before relative_to() will succeed.
+        self.root = repo_evals_root.resolve()
         self.repo_dir = repo_dir.resolve()
         self.rel = self.repo_dir.relative_to(self.root)
 
