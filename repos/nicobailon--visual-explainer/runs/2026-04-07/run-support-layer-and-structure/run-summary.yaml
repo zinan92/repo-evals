@@ -1,0 +1,126 @@
+run_name: support-layer-and-structure
+date: 2026-04-07
+area: core
+scenario: A-layer (packaging + SKILL refs + 4 templates render + install-pi + share.sh failure modes)
+provenance:
+  captured: true
+  runner: "cc"
+  agent: "Claude Code"
+  model: "claude-opus-4-6"
+  terminal_session_id: ""
+  agent_session_id: "44a35afe-e5ad-4221-ab16-0aadbc6a7f69"
+  repo_evals_commit: "21f90eb"
+  target_repo_path: "/tmp/visual-explainer"
+  target_repo_ref: "main"
+  target_repo_commit: "9a97a58"
+  evaluated_at: "2026-04-07T04:25:54Z"
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
+fixtures:
+  - "marketplace.json: /tmp/visual-explainer/.claude-plugin/marketplace.json"
+  - "plugin.json: /tmp/visual-explainer/plugins/visual-explainer/.claude-plugin/plugin.json"
+  - "SKILL.md: /tmp/visual-explainer/plugins/visual-explainer/SKILL.md"
+  - "templates × 4: architecture.html / data-table.html / mermaid-flowchart.html / slide-deck.html"
+  - "install-pi: HOME=/tmp/ve-install-test bash install-pi.sh (sandbox)"
+  - "share.sh fail × 3: no args / nonexistent file / no vercel-deploy skill"
+commands:
+  - "python3 -c 'import json; ...' (parse marketplace.json + plugin.json, compare versions)"
+  - "grep -oE '\\./[a-zA-Z][^ )\"`]*\\.(md|html|sh)' SKILL.md → file existence loop"
+  - "ls plugins/visual-explainer/commands/ vs grep '^\\| `' SKILL.md"
+  - "node render-templates.mjs (Playwright headless Chromium, CDN blocked, 4 templates)"
+  - "rm -rf /tmp/ve-install-test && HOME=/tmp/ve-install-test bash install-pi.sh  (failed: no parent mkdir)"
+  - "mkdir -p /tmp/ve-install-test/.pi/agent/skills && HOME=/tmp/ve-install-test bash install-pi.sh  (succeeded)"
+  - "bash share.sh  /  bash share.sh /tmp/nonexistent.html  /  bash share.sh /tmp/ve-real.html"
+result: pass-with-bugs-and-untested-llm-layer
+artifacts:
+  - artifacts/render-templates.mjs
+  - artifacts/render-results.json
+  - screenshots/architecture.png
+  - screenshots/data-table.png
+  - screenshots/mermaid-flowchart.png
+  - screenshots/slide-deck.png
+results_by_claim:
+  claim-001-plugin-marketplace: pass-with-concerns
+  claim-002-skill-md-references: pass
+  claim-003-templates-render: pass
+  claim-004-install-pi-clean: fail
+  claim-005-share-vercel: fail-partial
+  claim-006-failure-transparency: pass
+  claim-007-end-to-end-llm: untested
+  claim-008-proactive-table-rendering: untested
+notes: |
+  ✅ Plugin manifests parse cleanly:
+    - .claude-plugin/marketplace.json: 1 plugin entry, source=./plugins/visual-explainer (path exists)
+    - plugins/visual-explainer/.claude-plugin/plugin.json: name=visual-explainer, version=0.6.3
+    - SKILL.md frontmatter: version=0.6.3 (matches plugin.json)
+
+  ❌ Version mismatch found:
+    - marketplace.json plugins[0].version = "0.5.1"
+    - plugin.json version = "0.6.3"
+    - SKILL.md frontmatter version = "0.6.3"
+    - marketplace.json is 2 minors behind. Marketplace listings will show stale
+      version even after install pulls 0.6.3.
+
+  ✅ SKILL.md cross-references:
+    - 9 ./… markdown links (4 references + 4 templates + 1 commands/share.md) all OK
+    - 8 commands listed in "Available Commands" table all exist as commands/*.md
+
+  ✅ 4 HTML templates render in headless Chromium (Playwright, CDN blocked):
+    - architecture.html: title "Architecture Diagram — Reference Template", 1134 chars, 0 errors, 215KB shot
+    - data-table.html: title "Requirements Audit — Reference Template", 1560 chars, 0 errors, 241KB shot
+    - mermaid-flowchart.html: title "CI/CD Pipeline — Reference Template", 656 chars, 1 section, 0 errors
+      (Mermaid SVG itself not rendered because jsdelivr CDN was blocked in sandbox;
+       page structure renders cleanly — the CDN dependency would work for online users)
+    - slide-deck.html: title "API Gateway Redesign — Reference Slide Deck", 11 slides == 11 sections,
+      0 errors. Screenshot is small (6KB) because slides default to display:none until JS shows
+      the first; matches the slide-deck pattern. Page structure is sound.
+
+  ❌ install-pi.sh has a real bug (claim-004 = fail):
+    Reproduction:
+      $ rm -rf /tmp/ve-install-test
+      $ HOME=/tmp/ve-install-test bash install-pi.sh
+      → Cloning visual-explainer...
+      → Installing skill to /tmp/ve-install-test/.pi/agent/skills/visual-explainer...
+      → cp: /tmp/ve-install-test/.pi/agent/skills/visual-explainer: No such file or directory
+      → exit 1 (because of `set -e`)
+    Root cause: install-pi.sh:23 does `cp -r plugins/visual-explainer "$SKILL_DIR"` without first
+    `mkdir -p "$(dirname "$SKILL_DIR")"`. If ~/.pi/agent/skills/ doesn't exist, cp fails.
+    The script DOES `mkdir -p "$PROMPTS_DIR"` later (line 35), but that's after the cp.
+    Fix: 1 line: `mkdir -p "$(dirname "$SKILL_DIR")"` before line 22's `rm -rf "$SKILL_DIR"`.
+    Once parent dir exists, install works correctly:
+      - all SKILL files copied to ~/.pi/agent/skills/visual-explainer/
+      - {{skill_dir}} placeholder substituted to real path (verified: 0 remaining; share.sh
+        invocation lines now use absolute path)
+      - prompts copied to ~/.pi/agent/prompts/
+
+  ❌ share.sh has undocumented external dependency (claim-005 = fail-partial):
+    - README says: "/share | Deploy an HTML page to Vercel and get a live URL"
+    - Reality: share.sh does NOT call vercel CLI directly. It searches for an external
+      `vercel-deploy` skill at:
+        ~/.pi/agent/skills/vercel-deploy/scripts/deploy.sh
+        /mnt/skills/user/vercel-deploy/scripts/deploy.sh
+    - Without that skill installed, share.sh exits 1 with "vercel-deploy skill not found.
+      Install it with: pi install npm:vercel-deploy"
+    - This dependency is NOT mentioned in README's Install section, Commands table, or
+      How It Works section. New users running /share will hit this error and have to
+      go find the dependency themselves.
+    - The error message itself is good (tells you the install command), but the
+      undocumented requirement is a UX trap.
+
+  ✅ Failure modes (claim-006):
+    - bash share.sh                          → "Error: Please provide an HTML file" + exit 1
+    - bash share.sh /tmp/nonexistent.html    → "Error: File not found" + exit 1
+    - bash share.sh /tmp/ve-real.html        → "Error: vercel-deploy skill not found.
+                                                Install it with: pi install npm:vercel-deploy"
+                                              + exit 1
+    - All three return exit 1 with actionable errors.
+
+  ⚪ Untested (B layer, hybrid-cap applies):
+    - claim-007: 8 LLM-driven commands (generate-web-diagram / diff-review / plan-review /
+      project-recap / fact-check / generate-visual-plan / generate-slides / share)
+    - claim-008: Proactive table rendering trigger (4+ rows or 3+ cols)
+    - aesthetic compliance (anti-AI-slop, varied palettes, etc.)
+    - whether LLM actually reads references/ + templates/ before generating
+    - Cannot be evaluated without running real Claude Code / Pi / Codex sessions

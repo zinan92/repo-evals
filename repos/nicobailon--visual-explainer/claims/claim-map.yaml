@@ -1,0 +1,130 @@
+claims:
+  - id: claim-001
+    title: Plugin marketplace 安装路径有效（Claude Code）
+    source: README
+    source_ref: "Install / Claude Code (marketplace)"
+    priority: critical
+    area: packaging
+    statement: |
+      用户可以通过 `/plugin marketplace add nicobailon/visual-explainer` +
+      `/plugin install visual-explainer@visual-explainer-marketplace` 安装。
+    business_expectation: |
+      .claude-plugin/marketplace.json + plugin.json 结构合法，所有引用文件存在，
+      版本号一致。
+    evidence_needed: |
+      JSON parse 通过；marketplace.json 的 source path 存在；
+      marketplace.json plugin version == plugin.json version == SKILL.md frontmatter version。
+    status: passed_with_concerns
+
+  - id: claim-002
+    title: SKILL.md 内部引用全部解析得到
+    source: SKILL.md
+    source_ref: "Workflow / 各 Phase 内 Read 指令 + Available Commands 表"
+    priority: high
+    area: skill-integrity
+    statement: |
+      SKILL.md 引用 4 个 references/、4 个 templates/、1 个 commands/，加上
+      表格中列出的 8 个命令名 — 都必须指向真实存在的文件。
+    business_expectation: |
+      LLM 在执行 skill 时不会因为找不到文件而 fallback 到瞎写。
+    evidence_needed: |
+      grep markdown 链接 → 每个目标文件 ls -e 通过；
+      ls commands/ 跟 SKILL.md 表格列出的 8 个命令一一对应。
+    status: passed
+
+  - id: claim-003
+    title: 4 个 HTML 参考模板可以在浏览器里渲染
+    source: README + SKILL.md
+    source_ref: "How It Works / templates/ 列出的 4 个 HTML 文件"
+    priority: critical
+    area: templates
+    statement: |
+      architecture.html / data-table.html / mermaid-flowchart.html /
+      slide-deck.html 都是 self-contained HTML，能在浏览器里直接打开渲染，
+      没有 JS 报错。
+    business_expectation: |
+      LLM 生成时直接读这些模板抄结构；agent users 也可以直接打开这些模板
+      作为 reference 学习。
+    evidence_needed: |
+      headless Chromium 加载 4 个文件：title 非空、visible text 非空、
+      0 page errors、screenshot 落盘。
+    status: passed
+
+  - id: claim-004
+    title: install-pi.sh 能在干净环境装上 skill
+    source: README
+    source_ref: "Install / Pi"
+    priority: high
+    area: install
+    statement: |
+      `bash install-pi.sh` 把 plugins/visual-explainer 拷贝到
+      ~/.pi/agent/skills/visual-explainer，替换 {{skill_dir}} 占位符，
+      复制 prompts。
+    business_expectation: |
+      Pi 用户照 README 跑一行就能装上。
+    evidence_needed: |
+      在沙箱 HOME 跑 install-pi.sh，目录创建成功，{{skill_dir}} 占位符
+      被实际路径替换，prompts 被复制。
+    status: failed
+
+  - id: claim-005
+    title: share.sh 能把 HTML 部署到 Vercel
+    source: README
+    source_ref: "Commands 表 / share / Deploy an HTML page to Vercel"
+    priority: medium
+    area: share
+    statement: |
+      `bash plugins/visual-explainer/scripts/share.sh <html-file>` 部署
+      HTML 到 Vercel 并返回 live URL。
+    business_expectation: |
+      用户照 README 一行命令就能拿到分享链接。
+    evidence_needed: |
+      script 存在 + 失败模式有清晰错误 + 退出码 1；外部依赖在 README 里
+      被文档化。
+    status: failed_partial
+
+  - id: claim-006
+    title: 失败模式 — 清晰错误 + 非零退出码
+    source: SKILL/script
+    source_ref: "share.sh 的 error 分支"
+    priority: high
+    area: failure-transparency
+    statement: |
+      share.sh 的三种失败（无参数 / 文件不存在 / vercel-deploy skill 不存在）
+      都给清晰错误 + 退出码 1。
+    business_expectation: |
+      Pipeline / 用户能立即知道下一步做什么。
+    evidence_needed: |
+      实测三种场景：错误信息可操作、exit=1。
+    status: passed
+
+  - id: claim-007
+    title: 8 个 LLM-driven 命令真的能产出 styled HTML
+    source: README
+    source_ref: "Commands 表（generate-web-diagram / diff-review / plan-review / etc.）"
+    priority: critical
+    area: end-to-end-llm
+    statement: |
+      用户在 Claude Code / Pi / Codex 里调用任一命令，agent 会读 references/
+      + templates/ 然后产出真正的 styled HTML 而不是 ASCII 表格 fallback。
+    business_expectation: |
+      用户拿到符合 SKILL.md 美学契约（避开 AI slop、变化 aesthetic、
+      domain-fit 信息密度）的 HTML，自动在浏览器里打开。
+    evidence_needed: |
+      在 Claude Code / Pi 跑一次真实命令，验证产物质量。
+    status: untested
+
+  - id: claim-008
+    title: Proactive table rendering — 4+ rows / 3+ cols 自动转 HTML
+    source: SKILL.md
+    source_ref: "Proactive table rendering."
+    priority: high
+    area: end-to-end-llm
+    statement: |
+      Agent 在准备渲染 4+ 行或 3+ 列的表格时，自动生成 HTML 而不是 ASCII。
+    business_expectation: |
+      用户不用每次手动喊 "make this a HTML page"。
+    evidence_needed: |
+      在真实 Claude Code 会话里测一次"compare 5 frameworks across 4 dimensions"
+      之类的提示，看 agent 是否真的自动 trigger HTML 生成。
+    status: untested

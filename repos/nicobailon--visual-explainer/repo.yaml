@@ -1,0 +1,34 @@
+owner: nicobailon
+repo: visual-explainer
+display_name: visual-explainer
+repo_url: https://github.com/nicobailon/visual-explainer
+repo_type: skill
+complexity: medium
+uses_areas: false
+status: evaluated
+current_bucket: usable
+notes: |
+  Hybrid repo: Claude Code skill (8 LLM-driven slash commands + 4 HTML reference
+  templates + 1 install script + 1 share script). Evaluated under repo-evals
+  framework v21f90eb (provenance + hybrid-repo cap rule).
+
+  Support layer is strong: 9 SKILL.md cross-references all resolve, 8/8 commands
+  exist, all 4 HTML templates render in headless Chromium with zero JS errors,
+  share.sh has clean failure modes with exit 1.
+
+  Two real bugs found:
+  - install-pi.sh missing `mkdir -p` for parent of $SKILL_DIR — fresh installs
+    (where ~/.pi/agent/skills/ doesn't exist) fail at the cp -r line
+  - Version mismatch between .claude-plugin/marketplace.json (0.5.1) and
+    plugins/visual-explainer/.claude-plugin/plugin.json (0.6.3); SKILL.md
+    frontmatter agrees with plugin.json but not marketplace.json
+
+  One undocumented dependency:
+  - share.sh requires a separate `vercel-deploy` skill at
+    ~/.pi/agent/skills/vercel-deploy/scripts/deploy.sh that README never mentions
+
+  Core LLM-driven layer (8 slash commands) completely untested — same hybrid
+  cap as frontend-slides: overall verdict capped at `usable` per the framework's
+  hybrid-repo rule. Promotion to `reusable` requires running real Claude Code /
+  Pi / Codex sessions and inspecting the generated HTML against the SKILL.md
+  aesthetic contract.

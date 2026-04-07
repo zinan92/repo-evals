@@ -1,0 +1,40 @@
+[
+  {
+    "template": "architecture.html",
+    "title": "Architecture Diagram — Reference Template",
+    "visibleTextLen": 1134,
+    "slides": 0,
+    "sections": 0,
+    "screenshotKB": 215,
+    "pageErrors": []
+  },
+  {
+    "template": "data-table.html",
+    "title": "Requirements Audit — Reference Template",
+    "visibleTextLen": 1560,
+    "slides": 0,
+    "sections": 0,
+    "screenshotKB": 241,
+    "pageErrors": []
+  },
+  {
+    "template": "mermaid-flowchart.html",
+    "title": "CI/CD Pipeline — Reference Template",
+    "visibleTextLen": 656,
+    "slides": 0,
+    "sections": 1,
+    "screenshotKB": 62,
+    "pageErrors": [],
+    "note": "External CDN (jsdelivr mermaid + elk) blocked in sandbox; mermaid SVG not generated, but page structure renders cleanly"
+  },
+  {
+    "template": "slide-deck.html",
+    "title": "API Gateway Redesign — Reference Slide Deck",
+    "visibleTextLen": 2356,
+    "slides": 11,
+    "sections": 11,
+    "screenshotKB": 6,
+    "pageErrors": [],
+    "note": "11 slides match 11 sections; first slide may be hidden by JS until interaction"
+  }
+]
