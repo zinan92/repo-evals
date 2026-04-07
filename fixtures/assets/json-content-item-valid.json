@@ -1,0 +1,23 @@
+{
+  "content_id": "fixture-douyin-0001",
+  "platform": "douyin",
+  "url": "https://www.douyin.com/video/7300000000000000000",
+  "title": "合成测试视频 — fixture",
+  "author": {
+    "id": "fixture_author",
+    "name": "Fixture 作者",
+    "avatar": null
+  },
+  "media": [
+    { "kind": "video", "path": "media/video.mp4", "duration_sec": 42, "width": 1080, "height": 1920 },
+    { "kind": "image", "path": "media/cover.jpg", "role": "cover" }
+  ],
+  "metrics": {
+    "likes": 1234,
+    "comments": 56,
+    "shares": 7
+  },
+  "text": "这是一个测试用的合成 ContentItem，用于下游消费者的 smoke test。",
+  "downloaded_at": "2026-04-07T00:00:00Z",
+  "schema_version": 1
+}

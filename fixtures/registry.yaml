@@ -1,0 +1,134 @@
+# Shared fixture registry for repo-evals.
+#
+# Purpose:
+#   Stop every evaluator from hunting or inventing realistic inputs from
+#   scratch. Fixtures listed here are reusable across repos and re-evals.
+#
+# How to add a fixture:
+#   1. Put the actual bytes somewhere stable (this repo under
+#      fixtures/assets/, or an external URL / file path that is unlikely
+#      to move).
+#   2. Add a new entry below with full metadata.
+#   3. Run: scripts/fixtures.py list      (to confirm it's discoverable)
+#   4. Run: scripts/fixtures.py show <id> (to confirm the metadata renders)
+#   5. Reference it from a run-summary.yaml via `fixtures: ["registry:<id>"]`
+#
+# Field reference — see docs/FIXTURE-REGISTRY.md for the full schema.
+
+registry_version: 1
+
+# Known enums — kept here so tests and CLIs can cross-check entries.
+enums:
+  media_type:
+    - text
+    - markdown
+    - html
+    - json
+    - yaml
+    - image
+    - audio
+    - video
+    - pdf
+    - archive
+    - code
+    - url
+    - mixed
+  complexity:
+    - trivial      # one tiny input, smoke-test only
+    - simple       # single realistic input
+    - moderate     # multi-file / multi-field realistic input
+    - complex      # stress / edge / adversarial
+  privacy:
+    - public       # safe to commit, no PII
+    - synthetic    # fabricated but shaped like real data
+    - sanitized    # real data with identifying fields removed
+    - restricted   # cannot be committed — reference by external path only
+  applicable_archetypes:
+    - pure-cli
+    - prompt-skill
+    - hybrid-skill
+    - adapter
+    - orchestrator
+    - api-service
+
+fixtures:
+  - id: douyin-video-url-public
+    description: |
+      A public, well-known Douyin short video URL useful as an adapter /
+      downloader smoke test. Produces a deterministic ContentItem for any
+      pipeline that claims Douyin support.
+    media_type: url
+    language: zh
+    complexity: simple
+    applicable_archetypes: [adapter, pure-cli, orchestrator]
+    privacy: public
+    known_caveats: |
+      - Douyin may rotate anti-bot signatures; a run that used to pass can
+        start failing without the fixture itself changing.
+      - The URL is for a content creator account, so treat extracted
+        metadata as public but do not scrape private fields.
+    location: "external:https://www.douyin.com/video/7300000000000000000"
+    added_at: "2026-04-07"
+
+  - id: wechat-oa-article-url-public
+    description: |
+      A public WeChat OA article URL with images and embedded audio id.
+      Exercises the html + image + metadata path of a content downloader.
+    media_type: url
+    language: zh
+    complexity: moderate
+    applicable_archetypes: [adapter, orchestrator]
+    privacy: public
+    known_caveats: |
+      - WeChat periodically expires article links; verify reachability
+        before reusing in a verdict-blocking run.
+    location: "external:https://mp.weixin.qq.com/s/exampleArticleId"
+    added_at: "2026-04-07"
+
+  - id: markdown-readme-small-en
+    description: |
+      A tiny synthetic English README used to smoke-test claim extraction
+      and doc parsers. Contains a Features section, a Commands table, a
+      numeric claim ("supports 3 formats"), and a deliberate bad link.
+    media_type: markdown
+    language: en
+    complexity: simple
+    applicable_archetypes: [pure-cli, prompt-skill, hybrid-skill, adapter]
+    privacy: synthetic
+    known_caveats: |
+      - Intentionally imperfect — the bad link is there so parsers that
+        "always succeed" get caught.
+    location: "fixtures/assets/markdown-readme-small-en.md"
+    added_at: "2026-04-07"
+
+  - id: html-slide-deck-minimal
+    description: |
+      A minimal self-contained HTML slide deck (3 slides, no external
+      assets) useful for testing HTML renderers, screenshot pipelines, and
+      presentation tooling.
+    media_type: html
+    language: en
+    complexity: simple
+    applicable_archetypes: [hybrid-skill, prompt-skill]
+    privacy: synthetic
+    known_caveats: |
+      - No JavaScript. If your tool expects slide-framework JS, this
+        fixture will not exercise that path.
+    location: "fixtures/assets/html-slide-deck-minimal.html"
+    added_at: "2026-04-07"
+
+  - id: json-content-item-valid
+    description: |
+      A canonical ContentItem JSON blob conforming to the shape produced
+      by content-downloader. Useful for downstream tools that *consume*
+      ContentItems and need a positive smoke input.
+    media_type: json
+    language: zh
+    complexity: simple
+    applicable_archetypes: [adapter, orchestrator, prompt-skill]
+    privacy: synthetic
+    known_caveats: |
+      - Schema tracks content-downloader main branch; bump if that schema
+        changes.
+    location: "fixtures/assets/json-content-item-valid.json"
+    added_at: "2026-04-07"
