@@ -1,0 +1,14 @@
+owner: zinan92
+repo: content-downloader
+display_name: content-downloader
+repo_url: https://github.com/zinan92/content-downloader
+repo_type: skill
+complexity: medium
+uses_areas: false
+status: evaluated
+current_bucket: usable
+notes: |
+  Douyin adapter works end-to-end (Playwright fallback caught the API signing failure
+  and produced full media + metadata). WeChat OA and X adapters silently produce
+  empty output (0-byte article.html, blank content_item stubs) while CLI reports
+  "Downloaded". Unsupported-URL path errors clearly. Dedup works on rerun.

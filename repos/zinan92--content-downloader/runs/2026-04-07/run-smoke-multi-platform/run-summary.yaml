@@ -1,0 +1,40 @@
+run_name: smoke-multi-platform
+date: 2026-04-07
+area: core
+scenario: 4-platform smoke + dedup + bad-URL
+fixtures:
+  - "douyin: https://www.douyin.com/video/7621048932151414054"
+  - "wechat_oa: https://mp.weixin.qq.com/s/Bo3K6PAj5O22fHwJZSQNTw"
+  - "wechat_oa: https://mp.weixin.qq.com/s/uvJzYU0lOHeNGBMaq2vudA"
+  - "x: https://x.com/elonmusk/status/1849889982030823521"
+  - "bad: https://example.com/foo"
+result: mixed
+artifacts:
+  - /tmp/cd-eval-output/manifest.jsonl
+  - /tmp/cd-eval-output/douyin/102174692353/7621048932151414054/
+  - /tmp/cd-eval-output/wechat_oa/unknown/Bo3K6PAj5O22fHwJZSQNTw/
+  - /tmp/cd-eval-output/wechat_oa/unknown/uvJzYU0lOHeNGBMaq2vudA/
+  - /tmp/cd-eval-output/x/1849889982030823521/
+results_by_claim:
+  claim-001-douyin-video: pass
+  claim-002-douyin-dedup: pass-with-concerns
+  claim-003-wechat-article: fail-silent
+  claim-004-x-tweet: fail-silent
+  claim-005-unsupported-url: pass
+  claim-006-unified-output: pass-with-concerns
+  claim-007-xhs: untested
+notes: |
+  Douyin 路径意外强健：API 签名失败 (3 次重试) 后 Playwright fallback 成功提取
+  178MB 视频 + 真实 metadata（title/author/likes/comments/shares 全有）。
+
+  WeChat OA 是系统性 silent failure：两个不同 URL 都生成 0-byte article.html，
+  content_item.json 的 title/author/publish_time 全部为空字符串，text.txt 不存在。
+  CLI 仍然打印 "Downloaded"。
+
+  X 推文同样 silent failure：无 metadata.json、无 media、无 text.txt，仅有一个
+  字段全空的 content_item.json 占位。CLI 仍然打印 "Downloaded"。
+
+  不支持平台路径表现良好：清晰列出 supported platforms 和 URL patterns。
+
+  Dedup 工作正常但有效率问题：第二次跑 douyin 时仍然先做 3 次 API 重试才发现
+  已下载，应该先查 manifest 再请求。

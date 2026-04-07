@@ -1,0 +1,104 @@
+claims:
+  - id: claim-001
+    title: 抖音视频下载（去水印 + 封面 + metadata）
+    source: README
+    source_ref: "功能一览表 / 各平台支持的内容类型表"
+    priority: critical
+    area: douyin
+    statement: |
+      给一个 douyin.com/video/* URL，输出去水印 MP4 + 封面图 + 平台 metadata +
+      标准化 ContentItem。当 API 签名被拒时自动回退到 Playwright 浏览器提取。
+    business_expectation: |
+      下游 (content-rewriter / content-intelligence) 能直接读 content_item.json
+      拿到 title/author/likes/视频文件路径。
+    evidence_needed: |
+      content_item.json 各字段非空，media/video.mp4 大小 > 0，cover.jpg 存在，
+      Playwright fallback 在 API 失败时确实接管。
+    status: passed
+
+  - id: claim-002
+    title: 抖音去重（已下载内容自动跳过）
+    source: README
+    source_ref: "功能一览：去重 — 已下载 content_id 自动跳过"
+    priority: high
+    area: douyin
+    statement: |
+      重复运行同一个 URL 时，跳过下载并打印 "Skipped (already downloaded)"。
+    business_expectation: |
+      Profile 批量增量下载不会重复消耗带宽和签名请求。
+    evidence_needed: |
+      第二次执行不重新写文件、manifest.jsonl 不追加新行。
+    status: passed_with_concerns
+
+  - id: claim-003
+    title: 公众号文章下载（HTML + 图片）
+    source: README
+    source_ref: "功能一览：公众号文章 — HTML + 图片 + 音频 ID"
+    priority: critical
+    area: wechat_oa
+    statement: |
+      给一个 mp.weixin.qq.com/s/* URL，输出文章 HTML + 内嵌图片 + text.txt 纯文本。
+    business_expectation: |
+      下游能拿到完整文章正文用于 rewriter / 摘要 / 索引。
+    evidence_needed: |
+      article.html 大小 > 0、content_item.json title/author 非空、text.txt 存在。
+    status: failed
+
+  - id: claim-004
+    title: X / Twitter 推文下载（视频 + 图片 + 文本）
+    source: README
+    source_ref: "功能一览：X 视频/图片/纯文字推文"
+    priority: critical
+    area: x
+    statement: |
+      给一个 x.com/*/status/* URL，输出 metadata + 媒体文件 + text.txt。
+    business_expectation: |
+      下游能消费推文内容（媒体或文本）。
+    evidence_needed: |
+      content_item.json 字段非空、media/* 至少一个文件 OR text.txt 存在。
+    status: failed
+
+  - id: claim-005
+    title: 不支持的平台清晰报错
+    source: README
+    source_ref: "fail unsupported platform → error + supported list"
+    priority: high
+    area: core
+    statement: |
+      给一个不属于任何已知平台的 URL，CLI 立即报错并列出支持的平台和 URL pattern。
+    business_expectation: |
+      Agent 能根据错误信息知道要去哪里加 adapter，不会假装成功。
+    evidence_needed: |
+      stderr 包含 "No adapter found"、列出 supported platforms 和 URL patterns、
+      退出码非 0。
+    status: passed
+
+  - id: claim-006
+    title: 统一输出结构 + manifest.jsonl
+    source: README
+    source_ref: "功能一览：统一 ContentItem / manifest.jsonl 全局 append-only 索引"
+    priority: high
+    area: core
+    statement: |
+      所有平台输出同一个目录结构（media/ + metadata.json + content_item.json
+      + text.txt），且 output/manifest.jsonl 是 append-only 全局索引。
+    business_expectation: |
+      下游消费者只需要写一份读 ContentItem 的代码即可处理所有平台。
+    evidence_needed: |
+      4 个平台输出结构一致；manifest.jsonl 每行一个 item；重复下载不重复追加。
+    status: passed_with_concerns
+
+  - id: claim-007
+    title: 小红书视频/图文下载（XHS-Downloader sidecar 自管理）
+    source: README
+    source_ref: "功能一览：小红书 sidecar 自管理"
+    priority: high
+    area: xhs
+    statement: |
+      给一个 xiaohongshu.com/explore/* URL，自动安装 + 启动 XHS-Downloader sidecar
+      并下载视频/图文。
+    business_expectation: |
+      用户零配置即可下载小红书内容。
+    evidence_needed: |
+      sidecar 进程被启动；至少一个媒体文件被下载。
+    status: untested
