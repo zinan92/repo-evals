@@ -109,7 +109,7 @@ if [[ ! -f "${RUN_DIR}/run-summary.yaml" ]]; then
     fi
   fi
 
-  # Runtime env provenance
+  # Runtime env provenance — fill every field the caller provided.
   CAPTURED_ANYTHING=0
   for pair in "runner:${RUNNER}" "agent:${AGENT}" "model:${MODEL}" \
               "terminal_session_id:${TERMINAL_SESSION_ID}" \
@@ -125,12 +125,27 @@ if [[ ! -f "${RUN_DIR}/run-summary.yaml" ]]; then
     fi
   done
 
-  if [[ ${CAPTURED_ANYTHING} -eq 1 ]]; then
+  # `captured` / `partial` semantics:
+  # - captured=true  ⇔ runner AND agent AND model are all filled
+  # - partial=true   ⇔ at least one of (runner, agent, model) is missing
+  # Optional fields (session ids, transcript, notes) are never enough on
+  # their own to call provenance "captured" — they don't identify *what*
+  # ran the eval.
+  HAS_TRIO=0
+  if [[ -n "${RUNNER}" && -n "${AGENT}" && -n "${MODEL}" ]]; then
+    HAS_TRIO=1
+  fi
+
+  if [[ ${HAS_TRIO} -eq 1 ]]; then
     patch_bool  "${SUMMARY}" "captured" "true"
     patch_field "${SUMMARY}" "provenance_source" "auto"
+    # partial stays false (template default)
+  elif [[ ${CAPTURED_ANYTHING} -eq 1 ]]; then
+    # Something was set, but not the critical trio → auto but partial.
+    patch_field "${SUMMARY}" "provenance_source" "auto"
+    patch_bool  "${SUMMARY}" "partial" "true"
   else
-    # No env-captured fields — mark provenance as manual so reviewers know
-    # this run expects a human to fill it in (not legacy).
+    # No env-captured fields at all — reviewer must fill in by hand.
     patch_field "${SUMMARY}" "provenance_source" "manual"
     patch_bool  "${SUMMARY}" "partial" "true"
   fi

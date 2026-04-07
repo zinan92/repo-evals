@@ -167,8 +167,10 @@ for k in ("size_bytes", "file_count"):
 text = text.rstrip() + "\n" + "\n".join(lines) + "\n"
 manifest.write_text(text)
 
-# If we dropped something into logs/, toggle evidence.logs_copied in run-summary.yaml
-if into == "logs":
+# Toggle evidence.logs_copied only when a log was actually stored in full.
+# A metadata-only stub doesn't put any bytes in logs/, so it shouldn't flip
+# the flag — that would be lying to reviewers.
+if into == "logs" and entry.get("stored") == "full":
     summary = pathlib.Path(run_dir) / "run-summary.yaml"
     if summary.exists():
         s = summary.read_text()
