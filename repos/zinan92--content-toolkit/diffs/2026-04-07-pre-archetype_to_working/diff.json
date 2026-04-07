@@ -1,0 +1,75 @@
+{
+  "repo": "zinan92--content-toolkit",
+  "from_ref": "HEAD~2",
+  "from_sha": "7127d8c",
+  "to_ref": "working",
+  "to_sha": null,
+  "baseline": {
+    "exists": true,
+    "provenance_quality": "missing",
+    "claim_count": 3,
+    "verdict_bucket": "unknown",
+    "archetype": null,
+    "errors": []
+  },
+  "head": {
+    "exists": true,
+    "provenance_quality": "missing",
+    "claim_count": 3,
+    "verdict_bucket": "unknown",
+    "archetype": "orchestrator",
+    "errors": []
+  },
+  "archetype_change": {
+    "from": null,
+    "to": "orchestrator",
+    "changed": true
+  },
+  "verdict": {
+    "from_bucket": "unknown",
+    "to_bucket": "unknown",
+    "bucket_change": "unchanged"
+  },
+  "claims": {
+    "added": [],
+    "removed": [],
+    "status_changes": [],
+    "priority_changes": [],
+    "title_changes": [],
+    "area_changes": []
+  },
+  "runs": {
+    "from_count": 1,
+    "to_count": 1,
+    "added": [],
+    "removed": []
+  },
+  "gap_report": {
+    "baseline_kind": "missing",
+    "head_kind": "structured",
+    "closed": [],
+    "opened": [],
+    "summary_delta": null
+  },
+  "summary": {
+    "claims_added": 0,
+    "claims_removed": 0,
+    "status_improvements": 0,
+    "status_regressions": 0,
+    "status_newly_failing": 0,
+    "status_unchanged": 0,
+    "bucket_change": "unchanged",
+    "runs_added": 0,
+    "runs_removed": 0,
+    "gaps_closed": 0,
+    "gaps_opened": 0
+  },
+  "comparison_confidence": {
+    "level": "medium",
+    "reasons": [
+      "baseline provenance quality is 'missing' — changes attributed to 'HEAD~2' may be historical artifacts, not genuine eval movement",
+      "head snapshot at 'working' has no run-level provenance",
+      "baseline verdict bucket is 'unknown' — bucket delta is not meaningful"
+    ]
+  }
+}
