@@ -3,6 +3,7 @@ repo: frontend-slides
 display_name: frontend-slides
 repo_url: https://github.com/zarazhangrui/frontend-slides
 repo_type: skill
+archetype: hybrid-skill
 complexity: medium
 uses_areas: false
 status: evaluated

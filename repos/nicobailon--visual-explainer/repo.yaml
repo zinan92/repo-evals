@@ -3,6 +3,7 @@ repo: visual-explainer
 display_name: visual-explainer
 repo_url: https://github.com/nicobailon/visual-explainer
 repo_type: skill
+archetype: hybrid-skill
 complexity: medium
 uses_areas: false
 status: evaluated

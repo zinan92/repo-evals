@@ -3,6 +3,7 @@ repo: content-downloader
 display_name: content-downloader
 repo_url: https://github.com/zinan92/content-downloader
 repo_type: skill
+archetype: adapter
 complexity: medium
 uses_areas: false
 status: evaluated

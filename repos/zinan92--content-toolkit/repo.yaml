@@ -3,6 +3,7 @@ repo: content-toolkit
 display_name: content-toolkit
 repo_url: https://github.com/zinan92/content-toolkit
 repo_type: orchestration
+archetype: orchestrator
 complexity: complex
 uses_areas: true
 status: planned
