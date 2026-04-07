@@ -3,7 +3,11 @@ date: YYYY-MM-DD
 area: core
 scenario: ""
 provenance:
+  # "auto" = captured by new-run.sh from env, "manual" = filled by hand,
+  # "legacy" = imported before provenance was required, "partial" = missing fields.
+  provenance_source: ""
   captured: false
+  partial: false
   runner: ""
   agent: ""
   model: ""
@@ -14,10 +18,14 @@ provenance:
   target_repo_ref: ""
   target_repo_commit: ""
   evaluated_at: ""
+  transcript_path: ""
+  command_log_path: ""
+  session_replay_notes: ""
 evidence:
   stored_in_repo: true
   artifact_paths_are_relative: true
   logs_copied: false
+  manifest_path: "artifacts/manifest.yaml"
 fixtures:
   - ""
 commands:

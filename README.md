@@ -123,6 +123,32 @@ scripts/new-run.sh owner--repo run-slug area-slug /path/to/target-repo
 - `run-summary.yaml` 里的 artifact 路径默认使用相对路径
 - 每次 run 尽量记录 target repo commit、runner、session id、model
 - 只写 `/tmp/...` 不算完整证据链
+- 用 `scripts/copy-evidence.sh` 把外部证据拷进 run 文件夹，自动生成
+  `artifacts/manifest.yaml`（size + sha256 + source）
+
+## Phase 1 Platform Tools
+
+Trust foundation — 让每次 eval 都可审计、可复现、可比较。详见各自的 doc：
+
+| 工具 | 作用 | Doc |
+|------|------|-----|
+| `scripts/new-run.sh` | 创建 run 脚手架 + 自动捕获 provenance (EVAL_* env vars) | [PROVENANCE.md](docs/PROVENANCE.md) |
+| `scripts/append-provenance.sh` | 往 legacy / partial run 补 provenance，不覆盖已有字段 | [PROVENANCE.md](docs/PROVENANCE.md) |
+| `scripts/copy-evidence.sh` | 把 `/tmp` / 外部证据拷进 `runs/.../artifacts`，生成 manifest | [EVIDENCE-COPIER.md](docs/EVIDENCE-COPIER.md) |
+| `scripts/verdict_calculator.py` | 规则驱动的 verdict 推荐（含 hybrid-cap rule），支持 override | [VERDICT-CALCULATOR.md](docs/VERDICT-CALCULATOR.md) |
+
+```bash
+# Typical Phase-1 flow
+export EVAL_RUNNER=cc EVAL_AGENT="Claude Code" EVAL_MODEL=claude-opus-4-6
+scripts/new-run.sh owner--repo smoke-run "" /path/to/target-repo
+
+# After running the actual eval
+scripts/copy-evidence.sh repos/owner--repo/runs/$(date +%F)/run-smoke-run \
+    /tmp/result.json --note "happy path"
+
+# Once claim-map.yaml statuses are filled in
+python3 scripts/verdict_calculator.py verdicts/verdict-input.yaml --md
+```
 
 ## 项目结构
 
@@ -211,6 +237,9 @@ subprocess.run(
 - [FRAMEWORK.md](docs/FRAMEWORK.md) — 评测框架完整定义
 - [NAMING-CONVENTIONS.md](docs/NAMING-CONVENTIONS.md) — 命名规范
 - [VERDICT-BUCKETS.md](docs/VERDICT-BUCKETS.md) — 四个桶的判定标准
+- [PROVENANCE.md](docs/PROVENANCE.md) — Phase 1: provenance 捕获与 legacy 迁移
+- [EVIDENCE-COPIER.md](docs/EVIDENCE-COPIER.md) — Phase 1: 把外部证据拷进 run
+- [VERDICT-CALCULATOR.md](docs/VERDICT-CALCULATOR.md) — Phase 1: 规则驱动的 verdict 推荐
 
 ## License
 

@@ -49,3 +49,7 @@ Typical signs:
 - Weak plan + all-pass does not automatically justify a strong verdict
 - Untested core layer caps the overall verdict at `usable`
 - Strong support-layer evidence can still appear in the narrative, even when the final bucket stays conservative
+
+These rules are encoded in `scripts/verdict_calculator.py` and covered by
+`tests/test_verdict_calculator.py`. See [VERDICT-CALCULATOR.md](VERDICT-CALCULATOR.md)
+for the full rule table, override path, and usage examples.
