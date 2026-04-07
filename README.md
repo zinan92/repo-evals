@@ -148,6 +148,18 @@ scripts/new-run.sh owner--repo run-slug area-slug /path/to/target-repo
 | `scripts/coverage_gap_detector.py` | 比对 claim-map + plan + runs，暴露 critical / warning / info 级别的覆盖缺口 | [COVERAGE-GAP-DETECTOR.md](docs/COVERAGE-GAP-DETECTOR.md) |
 | `scripts/extract_claims.py` | 从 README / SKILL.md 抽取保守的 draft claim-map，每条都标 `needs_review: true` | [CLAIM-EXTRACTION.md](docs/CLAIM-EXTRACTION.md) |
 
+## Phase 3 Platform Tools — Longitudinal Intelligence
+
+让 repo-evals 从一次性报告系统变成持续评测系统。
+
+| 工具 | 作用 | Doc |
+|------|------|-----|
+| `scripts/reeval_diff.py` | 对同一个 repo 的两次 eval 状态做结构化 diff — claim 级 status 迁移、bucket 变化、archetype、runs、coverage gap，附带 comparison confidence 与 provenance 诚实度声明 | [REEVAL-DIFF.md](docs/REEVAL-DIFF.md) |
+
+每次 re-eval 都可以生成一份 committable 的 diff artifact，保存在
+`repos/<slug>/diffs/<date>-<from>_to_<to>/` 下（`diff.yaml` + `diff.json` + `summary.md`）。
+5 个已评测 repo 已经有了一份 pre-archetype→working 的样例 diff 供参考。
+
 ```bash
 # Typical Phase-1 + Phase-2 flow
 export EVAL_RUNNER=cc EVAL_AGENT="Claude Code" EVAL_MODEL=claude-opus-4-6
@@ -270,6 +282,7 @@ subprocess.run(
 - [ARCHETYPES.md](docs/ARCHETYPES.md) — Phase 2: 六种 repo archetype 及其 scaffold
 - [COVERAGE-GAP-DETECTOR.md](docs/COVERAGE-GAP-DETECTOR.md) — Phase 2: 覆盖缺口检测
 - [CLAIM-EXTRACTION.md](docs/CLAIM-EXTRACTION.md) — Phase 2: 保守的 claim 抽取助手
+- [REEVAL-DIFF.md](docs/REEVAL-DIFF.md) — Phase 3: Re-Eval Diff Mode，两个快照之间的结构化对比
 
 ## License
 
