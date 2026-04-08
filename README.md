@@ -160,6 +160,28 @@ scripts/new-run.sh owner--repo run-slug area-slug /path/to/target-repo
 `repos/<slug>/diffs/<date>-<from>_to_<to>/` 下（`diff.yaml` + `diff.json` + `summary.md`）。
 5 个已评测 repo 已经有了一份 pre-archetype→working 的样例 diff 供参考。
 
+## Phase 4 Platform Tools — Operator Dashboard
+
+让 repo-evals 从“有很多文件”升级成“可以运营的评测平台”。
+
+| 工具 | 作用 | Doc |
+|------|------|-----|
+| `scripts/generate_dashboard.py` | 从 repo-evals 现有文件生成静态 dashboard，总览 repo 健康度、critical gaps、diff confidence、provenance 诚实度，以及每个 repo 的 drill-down 页面 | [DASHBOARD.md](docs/DASHBOARD.md) |
+
+Dashboard 输出在 `dashboard/` 下：
+
+```text
+dashboard/
+  index.html
+  repos/<slug>.html
+  data/index.json
+  data/repos/<slug>.json
+  assets/style.css
+  assets/app.js
+```
+
+它不会引入数据库；页面和 JSON 都直接从 `repos/` 里的真实评测文件生成。
+
 ```bash
 # Typical Phase-1 + Phase-2 flow
 export EVAL_RUNNER=cc EVAL_AGENT="Claude Code" EVAL_MODEL=claude-opus-4-6
@@ -186,6 +208,9 @@ scripts/coverage_gap_detector.py repos/nicobailon--visual-explainer --md
 
 # 7. Get a verdict recommendation (Phase 1)
 python3 scripts/verdict_calculator.py verdicts/verdict-input.yaml --md
+
+# 8. Generate the operator dashboard (Phase 4)
+python3 scripts/generate_dashboard.py
 ```
 
 ## 项目结构
@@ -203,7 +228,9 @@ repo-evals/
 ├── scripts/
 │   ├── new-repo-eval.sh       # 新建 repo 评测
 │   ├── new-area.sh            # 新建能力分区
-│   └── new-run.sh             # 新建一次 run
+│   ├── new-run.sh             # 新建一次 run
+│   └── generate_dashboard.py  # 生成静态 dashboard
+├── dashboard/                 # 生成后的 operator dashboard
 └── repos/                     # 所有被评测的 repo
     └── <owner>--<repo>/
 ```
@@ -283,6 +310,7 @@ subprocess.run(
 - [COVERAGE-GAP-DETECTOR.md](docs/COVERAGE-GAP-DETECTOR.md) — Phase 2: 覆盖缺口检测
 - [CLAIM-EXTRACTION.md](docs/CLAIM-EXTRACTION.md) — Phase 2: 保守的 claim 抽取助手
 - [REEVAL-DIFF.md](docs/REEVAL-DIFF.md) — Phase 3: Re-Eval Diff Mode，两个快照之间的结构化对比
+- [DASHBOARD.md](docs/DASHBOARD.md) — Phase 4: static operator dashboard generation
 
 ## License
 

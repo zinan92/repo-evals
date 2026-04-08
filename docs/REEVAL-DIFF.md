@@ -244,7 +244,7 @@ repos/<slug>/diffs/2026-04-07-pre-archetype_to_working/
     summary.md       # human summary
 ```
 
-These compare HEAD~2 (the Phase 2.4 commit, before archetypes were
+These compare commit `7127d8c` (the Phase 2.4 commit, before archetypes were
 stamped) against the working tree at the moment the Phase 3 prep was
 committed. Every one of them correctly surfaces the `archetype:
 None -> <name>` change and honestly downgrades confidence because
