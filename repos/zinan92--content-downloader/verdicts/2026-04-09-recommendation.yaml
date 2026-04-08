@@ -1,0 +1,23 @@
+repo: zinan92/content-downloader
+archetype: adapter
+recommended_bucket: unusable
+final_bucket: unusable
+confidence: medium
+ceiling_reasons: []
+blocking_issues:
+- critical claim claim-003 failed
+- critical claim claim-004 failed
+inputs_summary:
+  core_layer_tested: true
+  evidence_completeness: full
+  claims_total: 7
+  claims_passed: 4
+  claims_failed: 2
+  claims_untested: 1
+  critical_total: 3
+  critical_covered: 1
+  critical_failed: 2
+override:
+  applied: false
+  bucket: null
+  reason: null

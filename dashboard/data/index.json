@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-04-08T19:04:16Z",
-  "generated_from_commit": "ccf45ae",
+  "generated_at": "2026-04-08T19:30:03Z",
+  "generated_from_commit": "59b5b88",
   "repos": [
     {
       "slug": "zarazhangrui--frontend-slides",
@@ -124,9 +124,9 @@
       "repo_type": "skill",
       "archetype": "adapter",
       "status": "evaluated",
-      "current_bucket": "usable",
+      "current_bucket": "unusable",
       "uses_areas": false,
-      "notes_excerpt": "Douyin adapter works end-to-end (Playwright fallback caught the API signing failure and produced full media + metadata). WeChat OA and X adapters silently produce empty output (0-byte article.html, blank content_item stubs) while CLI reports \"Downloaded\". Unsupported-URL path er…",
+      "notes_excerpt": "Fresh live re-eval on 2026-04-09 confirms Douyin still works end-to-end (Playwright fallback catches API signing failure and produces full media + metadata), but WeChat OA and X still fail critical claims while the CLI reports \"Downloaded\". WeChat writes 0-byte article.html + bl…",
       "repo_path": "repos/zinan92--content-downloader",
       "claims_summary": {
         "total": 7,
@@ -140,10 +140,10 @@
         "high_total": 4
       },
       "runs_summary": {
-        "count": 1,
-        "provenance_quality": "missing",
+        "count": 2,
+        "provenance_quality": "partial",
         "counts": {
-          "full": 0,
+          "full": 1,
           "partial": 0,
           "missing": 1
         }
@@ -190,16 +190,15 @@
           }
         ],
         "info_items": [],
-        "path": "repos/zinan92--content-downloader/gap-reports/2026-04-07-baseline-gap-report.md"
+        "path": "repos/zinan92--content-downloader/gap-reports/2026-04-09-gap-report.md"
       },
       "latest_diff": {
-        "path": "repos/zinan92--content-downloader/diffs/2026-04-07-pre-archetype_to_working",
-        "headline": "Verdict did not change bucket (`usable` → `usable`).",
+        "path": "repos/zinan92--content-downloader/diffs/2026-04-09-59b5b88_to_working",
+        "headline": "Verdict regressed (`usable` → `unusable`). Runs: +1 / -0.",
         "comparison_confidence": {
           "level": "medium",
           "reasons": [
-            "baseline provenance quality is 'missing' — changes attributed to 'HEAD~2' may be historical artifacts, not genuine eval movement",
-            "head snapshot at 'working' has no run-level provenance"
+            "baseline provenance quality is 'missing' — changes attributed to '59b5b88' may be historical artifacts, not genuine eval movement"
           ]
         },
         "summary": {
@@ -209,29 +208,29 @@
           "status_regressions": 0,
           "status_newly_failing": 0,
           "status_unchanged": 0,
-          "bucket_change": "unchanged",
-          "runs_added": 0,
+          "bucket_change": "regression",
+          "runs_added": 1,
           "runs_removed": 0,
           "gaps_closed": 0,
           "gaps_opened": 0
         },
         "verdict": {
           "from_bucket": "usable",
-          "to_bucket": "usable",
-          "bucket_change": "unchanged"
+          "to_bucket": "unusable",
+          "bucket_change": "regression"
         },
         "archetype_change": {
-          "from": null,
+          "from": "adapter",
           "to": "adapter",
-          "changed": true
+          "changed": false
         },
-        "from_ref": "HEAD~2",
-        "from_sha": "7127d8c",
+        "from_ref": "59b5b88",
+        "from_sha": "59b5b88",
         "to_ref": "working"
       },
       "areas": [],
       "plan_path": "repos/zinan92--content-downloader/plans/2026-04-07-eval-plan.md",
-      "verdict_path": "repos/zinan92--content-downloader/verdicts/2026-04-07-final-verdict.md",
+      "verdict_path": "repos/zinan92--content-downloader/verdicts/2026-04-09-final-verdict.md",
       "attention_level": "high"
     },
     {
@@ -586,8 +585,8 @@
     "bucket_counts": {
       "recommendable": 0,
       "reusable": 0,
-      "usable": 4,
-      "unusable": 0,
+      "usable": 3,
+      "unusable": 1,
       "unknown": 1
     }
   }

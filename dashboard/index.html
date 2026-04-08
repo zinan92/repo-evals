@@ -12,8 +12,8 @@
       <h1>repo-evals operator dashboard</h1>
       <p>One place to see what is usable, what is still shaky, and what changed recently — without hiding low-confidence baselines or missing provenance.</p>
       <div class="meta-row">
-        <span class="chip">generated at 2026-04-08T19:04:16Z</span>
-        <span class="chip">source commit ccf45ae</span>
+        <span class="chip">generated at 2026-04-08T19:30:03Z</span>
+        <span class="chip">source commit 59b5b88</span>
         <a class="chip" href="data/index.json">raw dashboard data</a>
       </div>
     </section>
@@ -29,8 +29,8 @@
     <section class="grid stats">
       <div class="stat-card"><h3>Recommendable</h3><div class="stat-value">0</div></div>
       <div class="stat-card"><h3>Reusable</h3><div class="stat-value">0</div></div>
-      <div class="stat-card"><h3>Usable</h3><div class="stat-value">4</div></div>
-      <div class="stat-card"><h3>Unusable / Unknown</h3><div class="stat-value">1</div></div>
+      <div class="stat-card"><h3>Usable</h3><div class="stat-value">3</div></div>
+      <div class="stat-card"><h3>Unusable / Unknown</h3><div class="stat-value">2</div></div>
     </section>
 
     <h2 class="section-title">Needs attention first</h2>
@@ -47,10 +47,10 @@
           <h3><a href="repos/zinan92--content-downloader.html">content-downloader</a></h3>
           <p class="muted small">zinan92/content-downloader · adapter</p>
           <div class="meta-row">
-            <span class="badge bucket-usable">bucket: usable</span>
-            <span class="badge prov-missing">provenance: missing</span>
+            <span class="badge bucket-unusable">bucket: unusable</span>
+            <span class="badge prov-partial">provenance: partial</span>
           </div>
-          <p>Verdict did not change bucket (`usable` → `usable`).</p>
+          <p>Verdict regressed (`usable` → `unusable`). Runs: +1 / -0.</p>
         </div>
 <div class="panel">
           <h3><a href="repos/nicobailon--visual-explainer.html">visual-explainer</a></h3>
@@ -113,26 +113,26 @@
       </div>
     </article>
 <article class="panel repo-card attention-high" data-role="repo-card"
-      data-search="zinan92--content-downloader content-downloader content-downloader zinan92 adapter usable evaluated"
-      data-bucket="usable"
+      data-search="zinan92--content-downloader content-downloader content-downloader zinan92 adapter unusable evaluated"
+      data-bucket="unusable"
       data-confidence="medium">
       <header>
         <div>
           <h3><a href="repos/zinan92--content-downloader.html">content-downloader</a></h3>
           <p class="muted small">zinan92/content-downloader · skill · adapter</p>
         </div>
-        <div><span class="badge bucket-usable">bucket: usable</span></div>
+        <div><span class="badge bucket-unusable">bucket: unusable</span></div>
       </header>
       <div class="meta-row">
-        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge prov-partial">provenance: partial</span>
         <span class="badge conf-medium">diff confidence: medium</span>
         <span class="badge bucket-usable">status: evaluated</span>
       </div>
-      <p>Douyin adapter works end-to-end (Playwright fallback caught the API signing failure and produced full media + metadata). WeChat OA and X adapters silently produce empty output (0-byte article.html, blank content_item stubs) while CLI reports &quot;Downloaded&quot;. Unsupported-URL path er…</p>
-      <div class="headline">Verdict did not change bucket (`usable` → `usable`).</div>
+      <p>Fresh live re-eval on 2026-04-09 confirms Douyin still works end-to-end (Playwright fallback catches API signing failure and produces full media + metadata), but WeChat OA and X still fail critical claims while the CLI reports &quot;Downloaded&quot;. WeChat writes 0-byte article.html + bl…</p>
+      <div class="headline">Verdict regressed (`usable` → `unusable`). Runs: +1 / -0.</div>
       <div class="kv">
         <div><strong>Claims</strong>4 passed / 2 failed / 1 untested</div>
-        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Runs</strong>2 total</div>
         <div><strong>Unresolved Gaps</strong>5 critical gaps, 1 warnings</div>
         <div><strong>Areas</strong>0</div>
       </div>

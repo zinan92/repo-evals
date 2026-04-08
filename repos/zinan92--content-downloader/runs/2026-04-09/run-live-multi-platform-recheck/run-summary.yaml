@@ -1,0 +1,90 @@
+run_name: live-multi-platform-recheck
+date: 2026-04-09
+area: core
+scenario: "Fresh live re-eval: Douyin happy path + dedup, WeChat OA x2, X, unsupported URL, pytest sanity"
+provenance:
+  # "auto" = captured by new-run.sh from env, "manual" = filled by hand,
+  # "legacy" = imported before provenance was required, "partial" = missing fields.
+  provenance_source: "auto"
+  captured: true
+  partial: false
+  runner: "codex"
+  agent: "Codex"
+  model: "gpt-5"
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: "59b5b88"
+  target_repo_path: "/Users/wendy/work/content-co/content-downloader"
+  target_repo_ref: "main"
+  target_repo_commit: "e86ed97"
+  evaluated_at: "2026-04-08T19:18:46Z"
+  transcript_path: ""
+  command_log_path: "logs/commands.log"
+  session_replay_notes: "Fresh re-eval on local content-downloader checkout using repo-evals Phase 1-4 workflow."
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
+  manifest_path: "artifacts/manifest.yaml"
+fixtures:
+  - "douyin: https://www.douyin.com/video/7621048932151414054"
+  - "wechat_oa: https://mp.weixin.qq.com/s/Bo3K6PAj5O22fHwJZSQNTw"
+  - "wechat_oa: https://mp.weixin.qq.com/s/uvJzYU0lOHeNGBMaq2vudA"
+  - "x: https://x.com/elonmusk/status/1849889982030823521"
+  - "bad: https://example.com/foo"
+commands:
+  - "python3 -m content_downloader download 'https://example.com/foo' -o /tmp/content-downloader-eval-2026-04-09/bad"
+  - "python3 -m content_downloader download 'https://www.douyin.com/video/7621048932151414054' -o /tmp/content-downloader-eval-2026-04-09/douyin"
+  - "python3 -m content_downloader download 'https://www.douyin.com/video/7621048932151414054' -o /tmp/content-downloader-eval-2026-04-09/douyin  # rerun for dedup"
+  - "python3 -m content_downloader download 'https://mp.weixin.qq.com/s/Bo3K6PAj5O22fHwJZSQNTw' -o /tmp/content-downloader-eval-2026-04-09/wechat1"
+  - "python3 -m content_downloader download 'https://mp.weixin.qq.com/s/uvJzYU0lOHeNGBMaq2vudA' -o /tmp/content-downloader-eval-2026-04-09/wechat2"
+  - "python3 -m content_downloader download 'https://x.com/elonmusk/status/1849889982030823521' -o /tmp/content-downloader-eval-2026-04-09/x"
+  - "python3 -m pytest -q"
+result: mixed
+artifacts:
+  - "artifacts/manifest.yaml"
+  - "artifacts/douyin-content_item.json"
+  - "artifacts/douyin-metadata.json"
+  - "artifacts/douyin-cover.jpg"
+  - "artifacts/douyin-manifest.jsonl"
+  - "artifacts/wechat1-content_item.json"
+  - "artifacts/wechat1-metadata.json"
+  - "artifacts/wechat1-article.html"
+  - "artifacts/wechat2-content_item.json"
+  - "artifacts/wechat2-article.html"
+  - "artifacts/x-content_item-cli-location.json"
+  - "artifacts/x-content_item-unknown-author.json"
+  - "artifacts/x-metadata.json"
+  - "artifacts/x-output-dir/"
+results_by_claim:
+  claim-001-douyin-video: pass
+  claim-002-douyin-dedup: pass-with-concerns
+  claim-003-wechat-article: fail-silent
+  claim-004-x-tweet: fail-silent
+  claim-005-unsupported-url: pass
+  claim-006-unified-output: pass-with-concerns
+  claim-007-xhs: untested
+notes: |
+  This run was executed against local target repo commit e86ed97 on branch main.
+  The local checkout is one commit ahead of origin/main, but the extra commit is
+  documentation-only (`feat: add capability contract (SKILL.md + capability.json)`),
+  so runtime behavior should still represent the public repo.
+
+  Douyin still works well in real conditions: the signed API path fails three times,
+  then Playwright fallback takes over and downloads a 178 MB video plus cover and
+  populated metadata. The rerun still wastes the three API retries before printing
+  "Skipped (already downloaded)", so dedup remains correct but late.
+
+  WeChat OA still silently fails on two different article URLs. The CLI prints
+  "Downloaded", but article.html is 0 bytes and content_item.json / metadata.json
+  have empty title, author, and publish_time fields.
+
+  X still fails the repo's user-facing claim. The CLI prints "Downloaded" and writes
+  a text-shaped placeholder, but there is no text.txt, no media, and all substantive
+  metadata fields remain empty. The output structure is also inconsistent: the CLI
+  reports one content directory while metadata is written under an additional
+  `x/unknown/<tweet_id>/` path.
+
+  The repo's own test suite is not green on this machine: `python3 -m pytest -q`
+  produced 294 passed / 9 failed, with failures concentrated in the Douyin adapter
+  tests. Coverage reported by pytest was 75%, which does not match the README badge.

@@ -1,0 +1,30 @@
+repo: zinan92/content-downloader
+archetype: adapter
+core_layer_tested: true
+evidence_completeness: full
+claims:
+  - id: claim-001
+    priority: critical
+    status: passed
+  - id: claim-002
+    priority: high
+    status: passed_with_concerns
+  - id: claim-003
+    priority: critical
+    status: failed
+  - id: claim-004
+    priority: critical
+    status: failed
+  - id: claim-005
+    priority: high
+    status: passed
+  - id: claim-006
+    priority: high
+    status: passed_with_concerns
+  - id: claim-007
+    priority: high
+    status: untested
+override:
+  apply: false
+  bucket: null
+  reason: null

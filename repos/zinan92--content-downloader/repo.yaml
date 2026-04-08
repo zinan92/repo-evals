@@ -7,9 +7,13 @@ archetype: adapter
 complexity: medium
 uses_areas: false
 status: evaluated
-current_bucket: usable
+current_bucket: unusable
 notes: |
-  Douyin adapter works end-to-end (Playwright fallback caught the API signing failure
-  and produced full media + metadata). WeChat OA and X adapters silently produce
-  empty output (0-byte article.html, blank content_item stubs) while CLI reports
-  "Downloaded". Unsupported-URL path errors clearly. Dedup works on rerun.
+  Fresh live re-eval on 2026-04-09 confirms Douyin still works end-to-end
+  (Playwright fallback catches API signing failure and produces full media +
+  metadata), but WeChat OA and X still fail critical claims while the CLI reports
+  "Downloaded". WeChat writes 0-byte article.html + blank metadata on two real
+  URLs; X writes placeholder output with empty core fields and inconsistent
+  directory structure. Unsupported-URL path errors clearly. Dedup works on rerun
+  but still happens after wasted network retries. The repo's own pytest suite was
+  also not green on this machine (294 passed / 9 failed).

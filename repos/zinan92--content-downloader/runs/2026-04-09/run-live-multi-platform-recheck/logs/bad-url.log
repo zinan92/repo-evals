@@ -1,0 +1,8 @@
+Error: No adapter found for URL: 'https://example.com/foo'
+Supported platforms: douyin, fixture, wechat_oa, x, xhs
+Supported URL patterns:
+  douyin   : douyin.com/video/*, v.douyin.com/*, douyin.com/user/*
+  xhs      : xiaohongshu.com/explore/*, xiaohongshu.com/discovery/*, xhslink.com/*, xiaohongshu.com/user/profile/*
+  wechat_oa: mp.weixin.qq.com/s/*
+  x        : x.com/*/status/*, twitter.com/*/status/*
+  fixture  : fixture.test/video/*, fixture.test/image/*, fixture.test/user/*

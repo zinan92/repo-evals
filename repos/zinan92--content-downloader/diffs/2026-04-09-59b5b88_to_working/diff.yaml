@@ -1,0 +1,63 @@
+repo: zinan92--content-downloader
+from_ref: 59b5b88
+from_sha: 59b5b88
+to_ref: working
+to_sha: null
+baseline:
+  exists: true
+  provenance_quality: missing
+  claim_count: 7
+  verdict_bucket: usable
+  archetype: adapter
+  errors: []
+head:
+  exists: true
+  provenance_quality: partial
+  claim_count: 7
+  verdict_bucket: unusable
+  archetype: adapter
+  errors: []
+archetype_change:
+  from: adapter
+  to: adapter
+  changed: false
+verdict:
+  from_bucket: usable
+  to_bucket: unusable
+  bucket_change: regression
+claims:
+  added: []
+  removed: []
+  status_changes: []
+  priority_changes: []
+  title_changes: []
+  area_changes: []
+runs:
+  from_count: 1
+  to_count: 2
+  added:
+  - repos/zinan92--content-downloader/runs/2026-04-09/run-live-multi-platform-recheck/run-summary.yaml
+  removed: []
+gap_report:
+  baseline_kind: committed-markdown
+  head_kind: structured
+  closed: []
+  opened: []
+  summary_delta: null
+summary:
+  claims_added: 0
+  claims_removed: 0
+  status_improvements: 0
+  status_regressions: 0
+  status_newly_failing: 0
+  status_unchanged: 0
+  bucket_change: regression
+  runs_added: 1
+  runs_removed: 0
+  gaps_closed: 0
+  gaps_opened: 0
+comparison_confidence:
+  level: medium
+  reasons:
+  - baseline provenance quality is 'missing' — changes attributed to '59b5b88' may
+    be historical artifacts, not genuine eval movement

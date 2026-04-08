@@ -1,0 +1,772 @@
+.....F..FFFF......FF......................F.F........................... [ 23%]
+........................................................................ [ 47%]
+........................................................................ [ 71%]
+........................................................................ [ 95%]
+...............<unknown>:600: SyntaxWarning: invalid escape sequence '\/'
+/Users/wendy/work/content-co/content-downloader/content_downloader/adapters/douyin/api_client.py:600: SyntaxWarning: invalid escape sequence '\/'
+  /https?:\/\/v[0-9a-z-]+\.douyinvod\.com\/[^\s"'<>]+/g,
+<unknown>:600: SyntaxWarning: invalid escape sequence '\/'
+/Users/wendy/work/content-co/content-downloader/content_downloader/adapters/douyin/api_client.py:600: SyntaxWarning: invalid escape sequence '\/'
+  /https?:\/\/v[0-9a-z-]+\.douyinvod\.com\/[^\s"'<>]+/g,
+                                                          [100%]
+=================================== FAILURES ===================================
+_____ TestDownloadSingle.test_downloads_video_creates_directory_structure ______
+
+self = <tests.adapters.douyin.test_adapter.TestDownloadSingle object at 0x107ee8e10>
+tmp_path = PosixPath('/private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_downloads_video_creates_d0')
+
+    @pytest.mark.asyncio
+    async def test_downloads_video_creates_directory_structure(
+        self, tmp_path: Path
+    ) -> None:
+        fixture = _load_fixture("aweme_detail.json")
+        aweme = fixture["aweme_detail"]
+    
+        adapter = DouyinAdapter(cookies={"msToken": "fake"})
+    
+        # Mock the entire API client
+        mock_client = AsyncMock(spec=DouyinAPIClient)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        mock_client.get_video_detail = AsyncMock(return_value=aweme)
+        mock_client.resolve_short_url = AsyncMock(return_value=None)
+        mock_client.sign_url = MagicMock(
+            return_value=(
+                "https://v19-webapp.douyin.com/video/play/v0300fg10000cqt5ijbc77uftb2n5uag/?watermark=0&X-Bogus=fake",
+                "FakeUserAgent/1.0",
+            )
+        )
+        mock_client.build_signed_path = MagicMock(
+            return_value=(
+                "https://www.douyin.com/aweme/v1/play/?video_id=vid&X-Bogus=fake",
+                "FakeUserAgent/1.0",
+            )
+        )
+    
+        # Mock inner httpx client for file downloads
+        mock_http = AsyncMock()
+        mock_video_resp = MagicMock(spec=httpx.Response)
+        mock_video_resp.status_code = 200
+        mock_video_resp.content = _make_dummy_bytes()
+        mock_video_resp.raise_for_status = MagicMock()
+        mock_cover_resp = MagicMock(spec=httpx.Response)
+        mock_cover_resp.status_code = 200
+        mock_cover_resp.content = _make_dummy_image_bytes()
+        mock_cover_resp.raise_for_status = MagicMock()
+        mock_http.get = AsyncMock(
+            side_effect=[mock_video_resp, mock_cover_resp]
+        )
+        mock_client._client = mock_http
+    
+        with patch.object(adapter, "_make_client", return_value=mock_client):
+>           item = await adapter.download_single(
+                "https://www.douyin.com/video/7380308675841297704",
+                tmp_path,
+            )
+
+tests/adapters/douyin/test_adapter.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+content_downloader/adapters/douyin/adapter.py:198: in download_single
+    return await self._save_aweme(aweme_data, url, output_dir, client)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+content_downloader/adapters/douyin/adapter.py:249: in _save_aweme
+    await _download_file(client, video_url, video_dest)
+content_downloader/adapters/douyin/adapter.py:398: in _download_file
+    headers={**client.headers, **headers},
+               ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <AsyncMock spec='DouyinAPIClient' id='4430116384'>, name = 'headers'
+
+    def __getattr__(self, name):
+        if name in {'_mock_methods', '_mock_unsafe'}:
+            raise AttributeError(name)
+        elif self._mock_methods is not None:
+            if name not in self._mock_methods or name in _all_magics:
+>               raise AttributeError("Mock object has no attribute %r" % name)
+E               AttributeError: Mock object has no attribute 'headers'
+
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/unittest/mock.py:690: AttributeError
+------------------------------ Captured log call -------------------------------
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:409 Failed to download https://v19-webapp.douyin.com/video/play/v0300fg10000cqt5ijbc77uftb2n5uag/?watermark=0&X-Bogus=fake -> /private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_downloads_video_creates_d0/douyin/12345678/7380308675841297704/media/video.mp4: Mock object has no attribute 'headers'
+______________ TestDownloadSingle.test_media_files_list_populated ______________
+
+self = <tests.adapters.douyin.test_adapter.TestDownloadSingle object at 0x107e4b230>
+tmp_path = PosixPath('/private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_media_files_list_populate0')
+
+    @pytest.mark.asyncio
+    async def test_media_files_list_populated(self, tmp_path: Path) -> None:
+        fixture = _load_fixture("aweme_detail.json")
+        aweme = fixture["aweme_detail"]
+    
+        adapter = DouyinAdapter(cookies={"msToken": "fake"})
+        mock_client = AsyncMock(spec=DouyinAPIClient)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        mock_client.get_video_detail = AsyncMock(return_value=aweme)
+        mock_client.resolve_short_url = AsyncMock(return_value=None)
+        mock_client.sign_url = MagicMock(
+            return_value=("https://v19-webapp.douyin.com/video?watermark=0&X-Bogus=x", "UA")
+        )
+        mock_client.build_signed_path = MagicMock(
+            return_value=("https://www.douyin.com/aweme/v1/play/?X-Bogus=x", "UA")
+        )
+    
+        mock_http = AsyncMock()
+        mock_resp = MagicMock(spec=httpx.Response)
+        mock_resp.content = b"data"
+        mock_resp.raise_for_status = MagicMock()
+        mock_http.get = AsyncMock(return_value=mock_resp)
+        mock_client._client = mock_http
+    
+        with patch.object(adapter, "_make_client", return_value=mock_client):
+>           item = await adapter.download_single(
+                "https://www.douyin.com/video/7380308675841297704",
+                tmp_path,
+            )
+
+tests/adapters/douyin/test_adapter.py:186: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+content_downloader/adapters/douyin/adapter.py:198: in download_single
+    return await self._save_aweme(aweme_data, url, output_dir, client)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+content_downloader/adapters/douyin/adapter.py:249: in _save_aweme
+    await _download_file(client, video_url, video_dest)
+content_downloader/adapters/douyin/adapter.py:398: in _download_file
+    headers={**client.headers, **headers},
+               ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <AsyncMock spec='DouyinAPIClient' id='4431020448'>, name = 'headers'
+
+    def __getattr__(self, name):
+        if name in {'_mock_methods', '_mock_unsafe'}:
+            raise AttributeError(name)
+        elif self._mock_methods is not None:
+            if name not in self._mock_methods or name in _all_magics:
+>               raise AttributeError("Mock object has no attribute %r" % name)
+E               AttributeError: Mock object has no attribute 'headers'
+
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/unittest/mock.py:690: AttributeError
+------------------------------ Captured log call -------------------------------
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:409 Failed to download https://v19-webapp.douyin.com/video?watermark=0&X-Bogus=x -> /private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_media_files_list_populate0/douyin/12345678/7380308675841297704/media/video.mp4: Mock object has no attribute 'headers'
+___________ TestDownloadProfile.test_downloads_items_respects_limit ____________
+
+self = <tests.adapters.douyin.test_adapter.TestDownloadProfile object at 0x107ee91d0>
+tmp_path = PosixPath('/private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_downloads_items_respects_0')
+
+    @pytest.mark.asyncio
+    async def test_downloads_items_respects_limit(self, tmp_path: Path) -> None:
+        page1 = _load_fixture("user_post_page1.json")
+        page2 = _load_fixture("user_post_page2.json")
+    
+        adapter = DouyinAdapter(cookies={"msToken": "fake"})
+        mock_client = AsyncMock(spec=DouyinAPIClient)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+    
+        # Returns page1 first, then page2
+        mock_client.get_user_post = AsyncMock(
+            side_effect=[
+                DouyinAPIClient._normalize_paged_response(page1, item_keys=["aweme_list"]),
+                DouyinAPIClient._normalize_paged_response(page2, item_keys=["aweme_list"]),
+            ]
+        )
+        mock_client.sign_url = MagicMock(return_value=("https://signed.url", "UA"))
+        mock_client.build_signed_path = MagicMock(return_value=("https://signed.url", "UA"))
+    
+        mock_http = AsyncMock()
+        mock_resp = MagicMock(spec=httpx.Response)
+        mock_resp.content = b"data"
+        mock_resp.raise_for_status = MagicMock()
+        mock_http.get = AsyncMock(return_value=mock_resp)
+        mock_client._client = mock_http
+    
+        with patch.object(adapter, "_make_client", return_value=mock_client):
+            result = await adapter.download_profile(
+                "https://www.douyin.com/user/98765",
+                tmp_path,
+                limit=3,
+            )
+    
+>       assert result.success == 3
+E       assert 0 == 3
+E        +  where 0 = DownloadResult(items=[], errors=[DownloadError(content_id='1001', source_url='https://www.douyin.com/video/1001', erro...'network', message="Mock object has no attribute 'headers'", retryable=True)], total=3, success=0, failed=3, skipped=0).success
+
+tests/adapters/douyin/test_adapter.py:230: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:409 Failed to download https://signed.url -> /private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_downloads_items_respects_0/douyin/98765/1001/media/video.mp4: Mock object has no attribute 'headers'
+ERROR    content_downloader.adapters.douyin.adapter:adapter.py:347 Failed to download aweme_id=1001: Mock object has no attribute 'headers'
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:409 Failed to download https://signed.url -> /private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_downloads_items_respects_0/douyin/98765/1002/media/video.mp4: Mock object has no attribute 'headers'
+ERROR    content_downloader.adapters.douyin.adapter:adapter.py:347 Failed to download aweme_id=1002: Mock object has no attribute 'headers'
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:409 Failed to download https://signed.url -> /private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_downloads_items_respects_0/douyin/98765/1003/media/video.mp4: Mock object has no attribute 'headers'
+ERROR    content_downloader.adapters.douyin.adapter:adapter.py:347 Failed to download aweme_id=1003: Mock object has no attribute 'headers'
+____________ TestDownloadProfile.test_since_filter_skips_old_items _____________
+
+self = <tests.adapters.douyin.test_adapter.TestDownloadProfile object at 0x107ee9310>
+tmp_path = PosixPath('/private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_since_filter_skips_old_it0')
+
+    @pytest.mark.asyncio
+    async def test_since_filter_skips_old_items(self, tmp_path: Path) -> None:
+        page1 = _load_fixture("user_post_page1.json")
+    
+        adapter = DouyinAdapter(cookies={"msToken": "fake"})
+        mock_client = AsyncMock(spec=DouyinAPIClient)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+    
+        # page1 has items at create_time 1700001000 and 1700002000
+        # since = 1700001500 → only 1700002000 item passes
+        since_dt = datetime.fromtimestamp(1700001500, tz=timezone.utc)
+    
+        mock_client.get_user_post = AsyncMock(
+            side_effect=[
+                DouyinAPIClient._normalize_paged_response(page1, item_keys=["aweme_list"]),
+                DouyinAPIClient._normalize_paged_response(
+                    {"aweme_list": [], "has_more": 0, "max_cursor": 0},
+                    item_keys=["aweme_list"],
+                ),
+            ]
+        )
+        mock_client.sign_url = MagicMock(return_value=("https://signed.url", "UA"))
+        mock_client.build_signed_path = MagicMock(return_value=("https://signed.url", "UA"))
+    
+        mock_http = AsyncMock()
+        mock_resp = MagicMock(spec=httpx.Response)
+        mock_resp.content = b"data"
+        mock_resp.raise_for_status = MagicMock()
+        mock_http.get = AsyncMock(return_value=mock_resp)
+        mock_client._client = mock_http
+    
+        with patch.object(adapter, "_make_client", return_value=mock_client):
+            result = await adapter.download_profile(
+                "https://www.douyin.com/user/98765",
+                tmp_path,
+                since=since_dt,
+            )
+    
+        # Only 1 item passes the since filter (create_time 1700002000 > 1700001500)
+>       assert result.success == 1
+E       assert 0 == 1
+E        +  where 0 = DownloadResult(items=[], errors=[DownloadError(content_id='1002', source_url='https://www.douyin.com/video/1002', erro...'network', message="Mock object has no attribute 'headers'", retryable=True)], total=1, success=0, failed=1, skipped=0).success
+
+tests/adapters/douyin/test_adapter.py:274: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:409 Failed to download https://signed.url -> /private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_since_filter_skips_old_it0/douyin/98765/1002/media/video.mp4: Mock object has no attribute 'headers'
+ERROR    content_downloader.adapters.douyin.adapter:adapter.py:347 Failed to download aweme_id=1002: Mock object has no attribute 'headers'
+__________ TestDownloadProfile.test_stagnation_guard_stops_pagination __________
+
+self = <tests.adapters.douyin.test_adapter.TestDownloadProfile object at 0x107e4b360>
+tmp_path = PosixPath('/private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_stagnation_guard_stops_pa0')
+
+    @pytest.mark.asyncio
+    async def test_stagnation_guard_stops_pagination(self, tmp_path: Path) -> None:
+        """When cursor doesn't advance, pagination should stop."""
+        stagnant_page = {
+            "aweme_list": [
+                {
+                    "aweme_id": "9001",
+                    "desc": "stagnant",
+                    "create_time": 1700001000,
+                    "author": {"uid": "98765", "nickname": "Creator"},
+                    "statistics": {},
+                    "share_url": "https://www.douyin.com/video/9001",
+                    "video": {
+                        "play_addr": {"url_list": ["https://cdn.example.com/vid.mp4"]},
+                        "cover": {"url_list": ["https://cdn.example.com/cover.jpg"]},
+                    },
+                }
+            ],
+            "has_more": 1,
+            "max_cursor": 0,  # cursor stays at 0 — stagnation
+        }
+    
+        adapter = DouyinAdapter(cookies={"msToken": "fake"})
+        mock_client = AsyncMock(spec=DouyinAPIClient)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        mock_client.get_user_post = AsyncMock(
+            return_value=DouyinAPIClient._normalize_paged_response(
+                stagnant_page, item_keys=["aweme_list"]
+            )
+        )
+        mock_client.sign_url = MagicMock(return_value=("https://signed.url", "UA"))
+        mock_client.build_signed_path = MagicMock(return_value=("https://signed.url", "UA"))
+    
+        mock_http = AsyncMock()
+        mock_resp = MagicMock(spec=httpx.Response)
+        mock_resp.content = b"data"
+        mock_resp.raise_for_status = MagicMock()
+        mock_http.get = AsyncMock(return_value=mock_resp)
+        mock_client._client = mock_http
+    
+        with patch.object(adapter, "_make_client", return_value=mock_client):
+            result = await adapter.download_profile(
+                "https://www.douyin.com/user/98765",
+                tmp_path,
+            )
+    
+        # Should download the 1 item then stop (not loop forever)
+>       assert result.success >= 1
+E       assert 0 >= 1
+E        +  where 0 = DownloadResult(items=[], errors=[DownloadError(content_id='9001', source_url='https://www.douyin.com/video/9001', erro...'network', message="Mock object has no attribute 'headers'", retryable=True)], total=1, success=0, failed=1, skipped=0).success
+
+tests/adapters/douyin/test_adapter.py:324: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:409 Failed to download https://cdn.example.com/vid.mp4 -> /private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_stagnation_guard_stops_pa0/douyin/98765/9001/media/video.mp4: Mock object has no attribute 'headers'
+ERROR    content_downloader.adapters.douyin.adapter:adapter.py:347 Failed to download aweme_id=9001: Mock object has no attribute 'headers'
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:366 max_cursor did not advance (0), stopping pagination to avoid loop
+____________ TestGetVideoDetail.test_returns_none_on_empty_response ____________
+
+self = <tests.adapters.douyin.test_api_client.TestGetVideoDetail object at 0x107ee96d0>
+
+    @pytest.mark.asyncio
+    async def test_returns_none_on_empty_response(self) -> None:
+        client = DouyinAPIClient(cookies={"msToken": "fake_token"})
+        with patch.object(client, "_request_json", new=AsyncMock(return_value={})):
+>           result = await client.get_video_detail("nonexistent_id")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/adapters/douyin/test_api_client.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+content_downloader/adapters/douyin/api_client.py:660: in get_video_detail
+    return await self.get_video_detail_via_browser(aweme_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+content_downloader/adapters/douyin/api_client.py:358: in get_video_detail_via_browser
+    browser = await pw.chromium.launch(
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/playwright/async_api/_generated.py:14547: in launch
+    await self._impl_obj.launch(
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/playwright/_impl/_browser_type.py:97: in launch
+    await self._channel.send(
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x108316270>
+cb = <function Channel.send.<locals>.<lambda> at 0x108187ec0>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+E           Browser logs:
+E           
+E           <launching> /Users/wendy/Library/Caches/ms-playwright/chromium-1208/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --disable-blink-features=AutomationControlled --user-data-dir=/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/playwright_chromiumdev_profile-9kCgkH --remote-debugging-pipe --no-startup-window
+E           <launched> pid=35654
+E           [pid=35654][err] [0409/032432.612621:ERROR:third_party/crashpad/crashpad/util/mach/bootstrap.cc:65] bootstrap_check_in org.chromium.crashpad.child_port_handshake.35658.866702.PELHVETBITXVWBLX: Permission denied (1100)
+E           [pid=35654][err] [0409/032432.612838:ERROR:third_party/crashpad/crashpad/util/file/file_io.cc:103] ReadExactly: expected 4, observed 0
+E           [pid=35654][err] [0409/032432.613157:ERROR:third_party/crashpad/crashpad/util/mach/bootstrap.cc:65] bootstrap_check_in org.chromium.crashpad.child_port_handshake.35656.866700.MULEZGDJZZQGLEHB: Permission denied (1100)
+E           [pid=35654][err] [0409/032432.613300:ERROR:third_party/crashpad/crashpad/util/file/file_io.cc:103] ReadExactly: expected 4, observed 0
+E           [pid=35654][err] Received signal 6
+E           [pid=35654][err]  [0x00011d20cc74]
+E           [pid=35654][err]  [0x00011d210bdc]
+E           [pid=35654][err]  [0x00018ec2b744]
+E           [pid=35654][err]  [0x00018ec21888]
+E           [pid=35654][err]  [0x00018eb26850]
+E           [pid=35654][err]  [0x0001962cce40]
+E           [pid=35654][err]  [0x00018ea7ead4]
+E           [pid=35654][err]  [0x00018ea67a60]
+E           [pid=35654][err]  [0x00019629f8cc]
+E           [pid=35654][err]  [0x00019629f6e8]
+E           [pid=35654][err]  [0x000194090e8c]
+E           [pid=35654][err]  [0x000194091b2c]
+E           [pid=35654][err]  [0x000194090bb8]
+E           [pid=35654][err]  [0x000194094058]
+E           [pid=35654][err]  [0x0001930bace0]
+E           [pid=35654][err]  [0x0001930b8e38]
+E           [pid=35654][err]  [0x0001930b892c]
+E           [pid=35654][err]  [0x0001188bb2e8]
+E           [pid=35654][err]  [0x00011907b010]
+E           [pid=35654][err]  [0x00011907ae04]
+E           [pid=35654][err]  [0x000118551b3c]
+E           [pid=35654][err]  [0x000117ae0860]
+E           [pid=35654][err]  [0x0001161322f4]
+E           [pid=35654][err]  [0x0001041bc85c]
+E           [pid=35654][err]  [0x00018e859d54]
+E           [pid=35654][err] [end of stack trace]
+E           Call log:
+E             - <launching> /Users/wendy/Library/Caches/ms-playwright/chromium-1208/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --disable-blink-features=AutomationControlled --user-data-dir=/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/playwright_chromiumdev_profile-9kCgkH --remote-debugging-pipe --no-startup-window
+E             - <launched> pid=35654
+E             - [pid=35654][err] [0409/032432.612621:ERROR:third_party/crashpad/crashpad/util/mach/bootstrap.cc:65] bootstrap_check_in org.chromium.crashpad.child_port_handshake.35658.866702.PELHVETBITXVWBLX: Permission denied (1100)
+E             - [pid=35654][err] [0409/032432.612838:ERROR:third_party/crashpad/crashpad/util/file/file_io.cc:103] ReadExactly: expected 4, observed 0
+E             - [pid=35654][err] [0409/032432.613157:ERROR:third_party/crashpad/crashpad/util/mach/bootstrap.cc:65] bootstrap_check_in org.chromium.crashpad.child_port_handshake.35656.866700.MULEZGDJZZQGLEHB: Permission denied (1100)
+E             - [pid=35654][err] [0409/032432.613300:ERROR:third_party/crashpad/crashpad/util/file/file_io.cc:103] ReadExactly: expected 4, observed 0
+E             - [pid=35654][err] Received signal 6
+E             - [pid=35654][err]  [0x00011d20cc74]
+E             - [pid=35654][err]  [0x00011d210bdc]
+E             - [pid=35654][err]  [0x00018ec2b744]
+E             - [pid=35654][err]  [0x00018ec21888]
+E             - [pid=35654][err]  [0x00018eb26850]
+E             - [pid=35654][err]  [0x0001962cce40]
+E             - [pid=35654][err]  [0x00018ea7ead4]
+E             - [pid=35654][err]  [0x00018ea67a60]
+E             - [pid=35654][err]  [0x00019629f8cc]
+E             - [pid=35654][err]  [0x00019629f6e8]
+E             - [pid=35654][err]  [0x000194090e8c]
+E             - [pid=35654][err]  [0x000194091b2c]
+E             - [pid=35654][err]  [0x000194090bb8]
+E             - [pid=35654][err]  [0x000194094058]
+E             - [pid=35654][err]  [0x0001930bace0]
+E             - [pid=35654][err]  [0x0001930b8e38]
+E             - [pid=35654][err]  [0x0001930b892c]
+E             - [pid=35654][err]  [0x0001188bb2e8]
+E             - [pid=35654][err]  [0x00011907b010]
+E             - [pid=35654][err]  [0x00011907ae04]
+E             - [pid=35654][err]  [0x000118551b3c]
+E             - [pid=35654][err]  [0x000117ae0860]
+E             - [pid=35654][err]  [0x0001161322f4]
+E             - [pid=35654][err]  [0x0001041bc85c]
+E             - [pid=35654][err]  [0x00018e859d54]
+E             - [pid=35654][err] [end of stack trace]
+E             - [pid=35654] <gracefully close start>
+E             - [pid=35654] <kill>
+E             - [pid=35654] <will force kill>
+E             - [pid=35654] exception while trying to kill process: Error: kill EPERM
+E             - [pid=35654] <process did exit: exitCode=null, signal=SIGABRT>
+E             - [pid=35654] starting temporary directories cleanup
+E             - [pid=35654] finished temporary directories cleanup
+E             - [pid=35654] <gracefully close end>
+
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/playwright/_impl/_connection.py:559: TargetClosedError
+________ TestGetVideoDetail.test_returns_none_when_aweme_detail_missing ________
+
+self = <tests.adapters.douyin.test_api_client.TestGetVideoDetail object at 0x107e4b6f0>
+
+    @pytest.mark.asyncio
+    async def test_returns_none_when_aweme_detail_missing(self) -> None:
+        client = DouyinAPIClient(cookies={"msToken": "fake_token"})
+        with patch.object(
+            client, "_request_json", new=AsyncMock(return_value={"status_code": 0})
+        ):
+>           result = await client.get_video_detail("789")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/adapters/douyin/test_api_client.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+content_downloader/adapters/douyin/api_client.py:660: in get_video_detail
+    return await self.get_video_detail_via_browser(aweme_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+content_downloader/adapters/douyin/api_client.py:358: in get_video_detail_via_browser
+    browser = await pw.chromium.launch(
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/playwright/async_api/_generated.py:14547: in launch
+    await self._impl_obj.launch(
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/playwright/_impl/_browser_type.py:97: in launch
+    await self._channel.send(
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x108290690>
+cb = <function Channel.send.<locals>.<lambda> at 0x1083c0220>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+E           Browser logs:
+E           
+E           <launching> /Users/wendy/Library/Caches/ms-playwright/chromium-1208/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --disable-blink-features=AutomationControlled --user-data-dir=/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/playwright_chromiumdev_profile-rF9V6d --remote-debugging-pipe --no-startup-window
+E           <launched> pid=35661
+E           [pid=35661][err] [0409/032432.880866:ERROR:third_party/crashpad/crashpad/util/mach/bootstrap.cc:65] bootstrap_check_in org.chromium.crashpad.child_port_handshake.35665.866732.WSNKZQSENHMZRUOC: Permission denied (1100)
+E           [pid=35661][err] [0409/032432.881098:ERROR:third_party/crashpad/crashpad/util/file/file_io.cc:103] ReadExactly: expected 4, observed 0
+E           [pid=35661][err] [0409/032432.881415:ERROR:third_party/crashpad/crashpad/util/mach/bootstrap.cc:65] bootstrap_check_in org.chromium.crashpad.child_port_handshake.35663.866730.BXXNVOXLYXVBVZFG: Permission denied (1100)
+E           [pid=35661][err] [0409/032432.881593:ERROR:third_party/crashpad/crashpad/util/file/file_io.cc:103] ReadExactly: expected 4, observed 0
+E           [pid=35661][err] Received signal 6
+E           [pid=35661][err]  [0x000124ee4c74]
+E           [pid=35661][err]  [0x000124ee8bdc]
+E           [pid=35661][err]  [0x00018ec2b744]
+E           [pid=35661][err]  [0x00018ec21888]
+E           [pid=35661][err]  [0x00018eb26850]
+E           [pid=35661][err]  [0x0001962cce40]
+E           [pid=35661][err]  [0x00018ea7ead4]
+E           [pid=35661][err]  [0x00018ea67a60]
+E           [pid=35661][err]  [0x00019629f8cc]
+E           [pid=35661][err]  [0x00019629f6e8]
+E           [pid=35661][err]  [0x000194090e8c]
+E           [pid=35661][err]  [0x000194091b2c]
+E           [pid=35661][err]  [0x000194090bb8]
+E           [pid=35661][err]  [0x000194094058]
+E           [pid=35661][err]  [0x0001930bace0]
+E           [pid=35661][err]  [0x0001930b8e38]
+E           [pid=35661][err]  [0x0001930b892c]
+E           [pid=35661][err]  [0x0001205932e8]
+E           [pid=35661][err]  [0x000120d53010]
+E           [pid=35661][err]  [0x000120d52e04]
+E           [pid=35661][err]  [0x000120229b3c]
+E           [pid=35661][err]  [0x00011f7b8860]
+E           [pid=35661][err]  [0x00011de0a2f4]
+E           [pid=35661][err]  [0x000104f0085c]
+E           [pid=35661][err]  [0x00018e859d54]
+E           [pid=35661][err] [end of stack trace]
+E           Call log:
+E             - <launching> /Users/wendy/Library/Caches/ms-playwright/chromium-1208/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --enable-automation --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --disable-blink-features=AutomationControlled --user-data-dir=/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/playwright_chromiumdev_profile-rF9V6d --remote-debugging-pipe --no-startup-window
+E             - <launched> pid=35661
+E             - [pid=35661][err] [0409/032432.880866:ERROR:third_party/crashpad/crashpad/util/mach/bootstrap.cc:65] bootstrap_check_in org.chromium.crashpad.child_port_handshake.35665.866732.WSNKZQSENHMZRUOC: Permission denied (1100)
+E             - [pid=35661][err] [0409/032432.881098:ERROR:third_party/crashpad/crashpad/util/file/file_io.cc:103] ReadExactly: expected 4, observed 0
+E             - [pid=35661][err] [0409/032432.881415:ERROR:third_party/crashpad/crashpad/util/mach/bootstrap.cc:65] bootstrap_check_in org.chromium.crashpad.child_port_handshake.35663.866730.BXXNVOXLYXVBVZFG: Permission denied (1100)
+E             - [pid=35661][err] [0409/032432.881593:ERROR:third_party/crashpad/crashpad/util/file/file_io.cc:103] ReadExactly: expected 4, observed 0
+E             - [pid=35661][err] Received signal 6
+E             - [pid=35661][err]  [0x000124ee4c74]
+E             - [pid=35661][err]  [0x000124ee8bdc]
+E             - [pid=35661][err]  [0x00018ec2b744]
+E             - [pid=35661][err]  [0x00018ec21888]
+E             - [pid=35661][err]  [0x00018eb26850]
+E             - [pid=35661][err]  [0x0001962cce40]
+E             - [pid=35661][err]  [0x00018ea7ead4]
+E             - [pid=35661][err]  [0x00018ea67a60]
+E             - [pid=35661][err]  [0x00019629f8cc]
+E             - [pid=35661][err]  [0x00019629f6e8]
+E             - [pid=35661][err]  [0x000194090e8c]
+E             - [pid=35661][err]  [0x000194091b2c]
+E             - [pid=35661][err]  [0x000194090bb8]
+E             - [pid=35661][err]  [0x000194094058]
+E             - [pid=35661][err]  [0x0001930bace0]
+E             - [pid=35661][err]  [0x0001930b8e38]
+E             - [pid=35661][err]  [0x0001930b892c]
+E             - [pid=35661][err]  [0x0001205932e8]
+E             - [pid=35661][err]  [0x000120d53010]
+E             - [pid=35661][err]  [0x000120d52e04]
+E             - [pid=35661][err]  [0x000120229b3c]
+E             - [pid=35661][err]  [0x00011f7b8860]
+E             - [pid=35661][err]  [0x00011de0a2f4]
+E             - [pid=35661][err]  [0x000104f0085c]
+E             - [pid=35661][err]  [0x00018e859d54]
+E             - [pid=35661][err] [end of stack trace]
+E             - [pid=35661] <gracefully close start>
+E             - [pid=35661] <kill>
+E             - [pid=35661] <will force kill>
+E             - [pid=35661] exception while trying to kill process: Error: kill EPERM
+E             - [pid=35661] <process did exit: exitCode=null, signal=SIGABRT>
+E             - [pid=35661] starting temporary directories cleanup
+E             - [pid=35661] finished temporary directories cleanup
+E             - [pid=35661] <gracefully close end>
+
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/playwright/_impl/_connection.py:559: TargetClosedError
+_______ TestShortLinkResolution.test_short_url_resolved_before_download ________
+
+self = <tests.adapters.douyin.test_short_link.TestShortLinkResolution object at 0x107eea490>
+tmp_path = PosixPath('/private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_short_url_resolved_before0')
+
+    @pytest.mark.asyncio
+    async def test_short_url_resolved_before_download(self, tmp_path: Path) -> None:
+        aweme_data = {
+            "aweme_id": "7380308675841297704",
+            "desc": "resolved video",
+            "create_time": 1700000000,
+            "author": {"uid": "12345678", "nickname": "测试"},
+            "statistics": {"digg_count": 0, "comment_count": 0, "share_count": 0,
+                           "collect_count": 0, "play_count": 0},
+            "share_url": "https://www.douyin.com/video/7380308675841297704",
+            "video": {
+                "play_addr": {
+                    "url_list": [
+                        "https://v19-webapp.douyin.com/video?watermark=0"
+                    ]
+                },
+                "cover": {"url_list": ["https://p3.douyinpic.com/cover.jpg"]},
+            },
+        }
+    
+        adapter = DouyinAdapter(cookies={"msToken": "fake"})
+        mock_client = AsyncMock(spec=DouyinAPIClient)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+    
+        # Short URL resolves to canonical video URL
+        resolved = "https://www.douyin.com/video/7380308675841297704"
+        mock_client.resolve_short_url = AsyncMock(return_value=resolved)
+        mock_client.get_video_detail = AsyncMock(return_value=aweme_data)
+        mock_client.sign_url = MagicMock(
+            return_value=("https://v19-webapp.douyin.com/video?watermark=0&X-Bogus=x", "UA")
+        )
+        mock_client.build_signed_path = MagicMock(
+            return_value=("https://www.douyin.com/aweme/v1/play/?X-Bogus=x", "UA")
+        )
+    
+        mock_http = AsyncMock()
+        mock_resp = MagicMock(spec=httpx.Response)
+        mock_resp.content = b"video_bytes"
+        mock_resp.raise_for_status = MagicMock()
+        mock_http.get = AsyncMock(return_value=mock_resp)
+        mock_client._client = mock_http
+    
+        with patch.object(adapter, "_make_client", return_value=mock_client):
+>           item = await adapter.download_single(
+                "https://v.douyin.com/abc123",
+                tmp_path,
+            )
+
+tests/adapters/douyin/test_short_link.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+content_downloader/adapters/douyin/adapter.py:198: in download_single
+    return await self._save_aweme(aweme_data, url, output_dir, client)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+content_downloader/adapters/douyin/adapter.py:249: in _save_aweme
+    await _download_file(client, video_url, video_dest)
+content_downloader/adapters/douyin/adapter.py:398: in _download_file
+    headers={**client.headers, **headers},
+               ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <AsyncMock spec='DouyinAPIClient' id='4431030192'>, name = 'headers'
+
+    def __getattr__(self, name):
+        if name in {'_mock_methods', '_mock_unsafe'}:
+            raise AttributeError(name)
+        elif self._mock_methods is not None:
+            if name not in self._mock_methods or name in _all_magics:
+>               raise AttributeError("Mock object has no attribute %r" % name)
+E               AttributeError: Mock object has no attribute 'headers'
+
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/unittest/mock.py:690: AttributeError
+------------------------------ Captured log call -------------------------------
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:409 Failed to download https://v19-webapp.douyin.com/video?watermark=0&X-Bogus=x -> /private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_short_url_resolved_before0/douyin/12345678/7380308675841297704/media/video.mp4: Mock object has no attribute 'headers'
+_______ TestShortLinkResolution.test_non_short_url_does_not_call_resolve _______
+
+self = <tests.adapters.douyin.test_short_link.TestShortLinkResolution object at 0x107f64050>
+tmp_path = PosixPath('/private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_non_short_url_does_not_ca0')
+
+    @pytest.mark.asyncio
+    async def test_non_short_url_does_not_call_resolve(self, tmp_path: Path) -> None:
+        aweme_data = {
+            "aweme_id": "123456",
+            "desc": "direct",
+            "create_time": 1700000000,
+            "author": {"uid": "99", "nickname": "X"},
+            "statistics": {},
+            "video": {
+                "play_addr": {"url_list": ["https://cdn.example.com/vid.mp4"]},
+                "cover": {"url_list": []},
+            },
+        }
+    
+        adapter = DouyinAdapter()
+        mock_client = AsyncMock(spec=DouyinAPIClient)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        mock_client.resolve_short_url = AsyncMock()
+        mock_client.get_video_detail = AsyncMock(return_value=aweme_data)
+        mock_client.sign_url = MagicMock(
+            return_value=("https://cdn.example.com/vid.mp4&X-Bogus=x", "UA")
+        )
+        mock_client.build_signed_path = MagicMock(
+            return_value=("https://www.douyin.com/aweme/v1/play/?X-Bogus=x", "UA")
+        )
+    
+        mock_http = AsyncMock()
+        mock_resp = MagicMock(spec=httpx.Response)
+        mock_resp.content = b"data"
+        mock_resp.raise_for_status = MagicMock()
+        mock_http.get = AsyncMock(return_value=mock_resp)
+        mock_client._client = mock_http
+    
+        with patch.object(adapter, "_make_client", return_value=mock_client):
+>           await adapter.download_single(
+                "https://www.douyin.com/video/123456",
+                tmp_path,
+            )
+
+tests/adapters/douyin/test_short_link.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+content_downloader/adapters/douyin/adapter.py:198: in download_single
+    return await self._save_aweme(aweme_data, url, output_dir, client)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+content_downloader/adapters/douyin/adapter.py:249: in _save_aweme
+    await _download_file(client, video_url, video_dest)
+content_downloader/adapters/douyin/adapter.py:398: in _download_file
+    headers={**client.headers, **headers},
+               ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <AsyncMock spec='DouyinAPIClient' id='4431035568'>, name = 'headers'
+
+    def __getattr__(self, name):
+        if name in {'_mock_methods', '_mock_unsafe'}:
+            raise AttributeError(name)
+        elif self._mock_methods is not None:
+            if name not in self._mock_methods or name in _all_magics:
+>               raise AttributeError("Mock object has no attribute %r" % name)
+E               AttributeError: Mock object has no attribute 'headers'
+
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/unittest/mock.py:690: AttributeError
+------------------------------ Captured log call -------------------------------
+WARNING  content_downloader.adapters.douyin.adapter:adapter.py:409 Failed to download https://cdn.example.com/vid.mp4 -> /private/var/folders/25/qydjt3p55s1dkw37c8sm9w0h0000gn/T/pytest-of-wendy/pytest-0/test_non_short_url_does_not_ca0/douyin/99/123456/media/video.mp4: Mock object has no attribute 'headers'
+================================ tests coverage ================================
+_______________ coverage: platform darwin, python 3.13.7-final-0 _______________
+
+Name                                                   Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------------------
+content_downloader/__init__.py                             1      0   100%
+content_downloader/__main__.py                             3      3     0%   3-6
+content_downloader/adapters/__init__.py                    2      0   100%
+content_downloader/adapters/base.py                       12      0   100%
+content_downloader/adapters/douyin/__init__.py             0      0   100%
+content_downloader/adapters/douyin/abogus.py             232      7    97%   38, 185, 189, 234, 238, 242, 327
+content_downloader/adapters/douyin/adapter.py            204     63    69%   52, 79-81, 98, 104-121, 150, 234-243, 250-288, 345, 403-407, 415-424, 442, 446, 452-460
+content_downloader/adapters/douyin/api_client.py         298    169    43%   93-94, 97, 101, 110-112, 118-125, 169, 175, 181-183, 193-235, 258-259, 266-267, 272-273, 296, 344-348, 362-475, 481-536, 541-580, 586-644
+content_downloader/adapters/douyin/cookie_manager.py      54     37    31%   30-31, 35, 47-60, 64-75, 79, 83, 87-95, 99
+content_downloader/adapters/douyin/mapper.py              19      2    89%   38-39
+content_downloader/adapters/douyin/ms_token.py            89     59    34%   52-55, 59-66, 69-77, 80-116, 119-148, 152-161
+content_downloader/adapters/douyin/xbogus.py              91      3    97%   41, 192-193
+content_downloader/adapters/fixture.py                    79      4    95%   42-43, 92-93
+content_downloader/adapters/stub.py                       13      4    69%   19, 22, 25, 37
+content_downloader/adapters/wechat_oa/__init__.py          2      0   100%
+content_downloader/adapters/wechat_oa/adapter.py          83      0   100%
+content_downloader/adapters/wechat_oa/parser.py           93      0   100%
+content_downloader/adapters/x/__init__.py                  2      0   100%
+content_downloader/adapters/x/adapter.py                  95      3    97%   154, 164, 261
+content_downloader/adapters/x/fetcher.py                  58      3    95%   111, 131, 133
+content_downloader/adapters/x/mapper.py                   41      0   100%
+content_downloader/adapters/xhs/__init__.py                2      0   100%
+content_downloader/adapters/xhs/adapter.py                88      3    97%   223, 237-238
+content_downloader/adapters/xhs/api_client.py             39      1    97%   111
+content_downloader/adapters/xhs/mapper.py                 64     12    81%   38-47, 69-70, 135
+content_downloader/adapters/xhs/sidecar.py                76     37    51%   55-59, 62, 66-67, 71-89, 96-103, 112-120, 128-129
+content_downloader/cli.py                                125     27    78%   167-172, 203-208, 216-217, 229-231, 288-306
+content_downloader/manifest.py                            46      2    96%   89, 94
+content_downloader/models.py                              46      0   100%
+content_downloader/output.py                              35      0   100%
+content_downloader/router.py                              47      8    83%   114-117, 125-126, 134-135
+content_downloader/tools/__init__.py                       0      0   100%
+content_downloader/tools/cookie_fetcher.py                97     97     0%   14-313
+------------------------------------------------------------------------------------
+TOTAL                                                   2136    544    75%
+=========================== short test summary info ============================
+FAILED tests/adapters/douyin/test_adapter.py::TestDownloadSingle::test_downloads_video_creates_directory_structure
+FAILED tests/adapters/douyin/test_adapter.py::TestDownloadSingle::test_media_files_list_populated
+FAILED tests/adapters/douyin/test_adapter.py::TestDownloadProfile::test_downloads_items_respects_limit
+FAILED tests/adapters/douyin/test_adapter.py::TestDownloadProfile::test_since_filter_skips_old_items
+FAILED tests/adapters/douyin/test_adapter.py::TestDownloadProfile::test_stagnation_guard_stops_pagination
+FAILED tests/adapters/douyin/test_api_client.py::TestGetVideoDetail::test_returns_none_on_empty_response
+FAILED tests/adapters/douyin/test_api_client.py::TestGetVideoDetail::test_returns_none_when_aweme_detail_missing
+FAILED tests/adapters/douyin/test_short_link.py::TestShortLinkResolution::test_short_url_resolved_before_download
+FAILED tests/adapters/douyin/test_short_link.py::TestShortLinkResolution::test_non_short_url_does_not_call_resolve
+9 failed, 294 passed in 2.67s

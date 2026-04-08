@@ -1,0 +1,8 @@
+python3 -m content_downloader download 'https://example.com/foo' -o /tmp/content-downloader-eval-2026-04-09/bad
+python3 -m content_downloader download 'https://www.douyin.com/video/7621048932151414054' -o /tmp/content-downloader-eval-2026-04-09/douyin
+python3 -m content_downloader download 'https://www.douyin.com/video/7621048932151414054' -o /tmp/content-downloader-eval-2026-04-09/douyin
+python3 -m content_downloader download 'https://mp.weixin.qq.com/s/Bo3K6PAj5O22fHwJZSQNTw' -o /tmp/content-downloader-eval-2026-04-09/wechat1
+python3 -m content_downloader download 'https://mp.weixin.qq.com/s/uvJzYU0lOHeNGBMaq2vudA' -o /tmp/content-downloader-eval-2026-04-09/wechat2
+python3 -m content_downloader download 'https://x.com/elonmusk/status/1849889982030823521' -o /tmp/content-downloader-eval-2026-04-09/x
+pytest -q
+python3 -m pytest -q
