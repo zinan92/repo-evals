@@ -1,0 +1,109 @@
+{
+  "slug": "zinan92--content-extractor",
+  "display_name": "content-extractor",
+  "owner": "zinan92",
+  "repo": "content-extractor",
+  "repo_url": "https://github.com/zinan92/content-extractor",
+  "repo_type": "skill",
+  "archetype": "hybrid-skill",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "视频核心路径工作得相当好：30s 中文 Douyin clip → 真实 transcript (7 段) + Claude LLM 分析 (7 topics, 5 takeaways) + structured_text.md，全部都是 下游可用的内容。失败模式 (nonexistent / bad JSON / unsupported audio) 都 返回退出码 1 + 清晰错误。 但有三个文档↔代码不对齐的硬伤： 1. README 列了 .mp3/.wav/.m4a/.aac/.ogg/.flac 作为 bare_file_support，但…",
+  "repo_path": "repos/zinan92--content-extractor",
+  "claims_summary": {
+    "total": 8,
+    "passed": 3,
+    "failed": 2,
+    "untested": 3,
+    "critical_total": 2,
+    "critical_passed": 1,
+    "critical_failed": 1,
+    "critical_untested": 0,
+    "high_total": 5
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": {
+    "counts": {
+      "total": 4,
+      "critical": 3,
+      "warning": 1,
+      "info": 0
+    },
+    "critical_items": [
+      {
+        "code": "CRITICAL_CLAIM_MISSING_FROM_PLAN",
+        "claim_id": "claim-001",
+        "message": "claim-001 is critical but is not mentioned (by id or title) in the latest eval plan"
+      },
+      {
+        "code": "CRITICAL_CLAIM_MISSING_FROM_PLAN",
+        "claim_id": "claim-003",
+        "message": "claim-003 is critical but is not mentioned (by id or title) in the latest eval plan"
+      },
+      {
+        "code": "CRITICAL_CLAIM_FAILED",
+        "claim_id": "claim-003",
+        "message": "claim-003 is critical and marked failed — must be resolved before a strong verdict"
+      }
+    ],
+    "warning_items": [
+      {
+        "code": "HYBRID_ARCHETYPE_NO_CORE_CLAIMS",
+        "claim_id": "-",
+        "message": "archetype=hybrid-skill but no claim has an area containing 'core' or 'llm'; the verdict cap will apply but the claim map does not explicitly track the core layer"
+      }
+    ],
+    "info_items": [],
+    "path": "repos/zinan92--content-extractor/gap-reports/2026-04-07-baseline-gap-report.md"
+  },
+  "latest_diff": {
+    "path": "repos/zinan92--content-extractor/diffs/2026-04-07-pre-archetype_to_working",
+    "headline": "Verdict did not change bucket (`usable` → `usable`).",
+    "comparison_confidence": {
+      "level": "medium",
+      "reasons": [
+        "baseline provenance quality is 'missing' — changes attributed to 'HEAD~2' may be historical artifacts, not genuine eval movement",
+        "head snapshot at 'working' has no run-level provenance"
+      ]
+    },
+    "summary": {
+      "claims_added": 0,
+      "claims_removed": 0,
+      "status_improvements": 0,
+      "status_regressions": 0,
+      "status_newly_failing": 0,
+      "status_unchanged": 0,
+      "bucket_change": "unchanged",
+      "runs_added": 0,
+      "runs_removed": 0,
+      "gaps_closed": 0,
+      "gaps_opened": 0
+    },
+    "verdict": {
+      "from_bucket": "usable",
+      "to_bucket": "usable",
+      "bucket_change": "unchanged"
+    },
+    "archetype_change": {
+      "from": null,
+      "to": "hybrid-skill",
+      "changed": true
+    },
+    "from_ref": "HEAD~2",
+    "from_sha": "7127d8c",
+    "to_ref": "working"
+  },
+  "areas": [],
+  "plan_path": "repos/zinan92--content-extractor/plans/2026-04-07-eval-plan.md",
+  "verdict_path": "repos/zinan92--content-extractor/verdicts/2026-04-07-final-verdict.md",
+  "attention_level": "high"
+}
