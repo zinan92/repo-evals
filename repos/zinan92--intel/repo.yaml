@@ -1,0 +1,30 @@
+owner: zinan92
+repo: intel
+display_name: intel
+repo_url: https://github.com/zinan92/intel
+repo_type: service
+# Archetype drives scaffolding and verdict-calculator ceiling rules.
+# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
+archetype: api-service
+complexity: complex
+uses_areas: false
+status: evaluated
+current_bucket: reusable
+notes: |
+  Fresh live eval on 2026-04-09 shows the repo is a real working service, not a
+  demo shell. A clean local clone installed successfully, the scheduler started,
+  core sources populated data without optional credentials, and the API returned
+  real structured responses. After `frontend` build, the backend also served the
+  SPA correctly on `/` and `/health`.
+
+  The repo is not yet recommendable because two higher-level trust signals are
+  still weak. First, the full pytest suite was not green on this machine
+  (366 passed / 2 failed), so the engineering safety net is strong but not
+  fully healthy. Second, the health semantics are not fully consistent:
+  `/api/health` and `/api/health/sources` disagree in places about optional
+  sources, and the detailed source view appears to reuse aggregate per-type
+  volume counts for many individual sources, which makes some numbers misleading.
+
+  In plain English: this repo is already reusable for a self-hosted intelligence
+  pipeline, but it still needs test-suite cleanup and more trustworthy health
+  semantics before it should be broadly recommended.

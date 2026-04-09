@@ -1,0 +1,507 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.7, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/wendy/work/intel
+plugins: anyio-4.13.0
+collected 368 items
+
+tests/test_article_source_migration.py ...........                       [  2%]
+tests/test_clawfeed.py ........                                          [  5%]
+tests/test_collector_run_model.py .....                                  [  6%]
+tests/test_collector_run_recording.py ...                                [  7%]
+tests/test_error_categorization.py ...........................           [ 14%]
+tests/test_event_aggregation.py .....                                    [ 16%]
+tests/test_event_api.py ...                                              [ 16%]
+tests/test_event_history_api.py ...                                      [ 17%]
+tests/test_event_models.py ...                                           [ 18%]
+tests/test_github_release.py ........                                    [ 20%]
+tests/test_health_active_sources.py ....                                 [ 21%]
+tests/test_health_api.py ............................                    [ 29%]
+tests/test_keywords.py .............                                     [ 32%]
+tests/test_migration.py ...                                              [ 33%]
+tests/test_narrator.py ....                                              [ 34%]
+tests/test_personalized_feed.py ....                                     [ 35%]
+tests/test_quant_bridge.py ....                                          [ 36%]
+tests/test_reddit.py ......                                              [ 38%]
+tests/test_retry_integration.py ........                                 [ 40%]
+tests/test_rss_collector.py .....                                        [ 42%]
+tests/test_scorecard.py ..                                               [ 42%]
+tests/test_signals.py ..........                                         [ 45%]
+tests/test_source_adapters.py ...........                                [ 48%]
+tests/test_source_canonicalization.py ......                             [ 50%]
+tests/test_source_registry_model.py ........F                            [ 52%]
+tests/test_source_registry_parity.py ...........                         [ 55%]
+tests/test_source_registry_scheduler.py .........                        [ 57%]
+tests/test_source_registry_seed.py ...............F...........           [ 65%]
+tests/test_source_registry_service.py ...............                    [ 69%]
+tests/test_source_resolver.py ....................                       [ 74%]
+tests/test_ticker_extraction.py ........                                 [ 76%]
+tests/test_trading_play.py ....                                          [ 77%]
+tests/test_ui_feed_api.py .................                              [ 82%]
+tests/test_ui_regressions.py ..........                                  [ 85%]
+tests/test_ui_source_hidden_semantics.py ...........                     [ 88%]
+tests/test_ui_topics_api.py ....................                         [ 93%]
+tests/test_user_profiles.py ........                                     [ 95%]
+tests/test_webpage_monitor.py ..........                                 [ 98%]
+tests/test_xueqiu.py .....                                               [100%]
+
+=================================== FAILURES ===================================
+___________ TestSourceRegistryMigration.test_migration_creates_table ___________
+
+self = <sqlalchemy.engine.base.Connection object at 0x10b43e510>
+dialect = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x10bd76990>
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x10b43f350>
+statement = <sqlalchemy.dialects.sqlite.base.SQLiteCompiler object at 0x10b68ce50>
+parameters = [()]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+
+        effective_parameters: Optional[_AnyExecuteParams]
+
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+
+        if self._echo:
+            self._log_info(str_statement)
+
+            stats = context._get_cache_stats()
+
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1967:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x10bd76990>
+cursor = <sqlite3.Cursor object at 0x10b51f5c0>
+statement = 'ALTER TABLE events ADD COLUMN narrative_summary TEXT'
+parameters = ()
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x10b43f350>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlite3.OperationalError: no such table: events
+
+.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:952: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+self = <tests.test_source_registry_model.TestSourceRegistryMigration object at 0x10b276fd0>
+
+    def test_migration_creates_table(self):
+        from db.migrations import run_migrations
+
+        engine = create_engine("sqlite:///:memory:")
+        # Create only the articles table first (simulating existing DB)
+        from db.models import Article
+        Article.__table__.create(engine)
+
+        # Run migrations — should create source_registry
+>       run_migrations(engine)
+
+tests/test_source_registry_model.py:166:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+db/migrations.py:79: in run_migrations
+    conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {col_type}"))
+.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1419: in execute
+    return meth(
+.venv/lib/python3.13/site-packages/sqlalchemy/sql/elements.py:527: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1641: in _execute_clauseelement
+    ret = self._execute_context(
+.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1846: in _execute_context
+    return self._exec_single_context(
+.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1986: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:2363: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv/lib/python3.13/site-packages/sqlalchemy/engine/base.py:1967: in _exec_single_context
+    self.dialect.do_execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sqlalchemy.dialects.sqlite.pysqlite.SQLiteDialect_pysqlite object at 0x10bd76990>
+cursor = <sqlite3.Cursor object at 0x10b51f5c0>
+statement = 'ALTER TABLE events ADD COLUMN narrative_summary TEXT'
+parameters = ()
+context = <sqlalchemy.dialects.sqlite.base.SQLiteExecutionContext object at 0x10b43f350>
+
+    def do_execute(self, cursor, statement, parameters, context=None):
+>       cursor.execute(statement, parameters)
+E       sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: events
+E       [SQL: ALTER TABLE events ADD COLUMN narrative_summary TEXT]
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+.venv/lib/python3.13/site-packages/sqlalchemy/engine/default.py:952: OperationalError
+------------------------------ Captured log call -------------------------------
+INFO     db.migrations:migrations.py:78 Adding column events.narrative_summary (TEXT)
+______________ TestSeedAttributes.test_schedule_hours_from_config ______________
+
+self = <tests.test_source_registry_seed.TestSeedAttributes object at 0x10b2c95b0>
+session = <sqlalchemy.orm.session.Session object at 0x10b66b770>
+
+    def test_schedule_hours_from_config(self, session: Session):
+        """Schedule hours should be derived from ACTIVE_SOURCES intervals."""
+        seed_source_registry(session)
+        # RSS is 6h in ACTIVE_SOURCES
+        rss_sources = [s for s in list_all_sources(session) if s.source_type == "rss"]
+        assert len(rss_sources) > 0
+>       assert all(s.schedule_hours == 6 for s in rss_sources)
+E       assert False
+E        +  where False = all(<generator object TestSeedAttributes.test_schedule_hours_from_config.<locals>.<genexpr> at 0x10bf442b0>)
+
+tests/test_source_registry_seed.py:150: AssertionError
+------------------------------ Captured log call -------------------------------
+INFO     sources.seed:seed.py:227 Source registry: inserted 77 new instances
+=============================== warnings summary ===============================
+tests/test_article_source_migration.py: 20 warnings
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:39: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    collected_at=datetime.utcnow(),
+
+tests/test_article_source_migration.py::TestMigrateArticleSources::test_clawfeed_becomes_social_kol
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:52: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    article = session.query(Article).get(aid)
+
+tests/test_article_source_migration.py::TestMigrateArticleSources::test_github_becomes_github_trending
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:59: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    article = session.query(Article).get(aid)
+
+tests/test_article_source_migration.py::TestMigrateArticleSources::test_webpage_monitor_becomes_website_monitor
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:66: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    article = session.query(Article).get(aid)
+
+tests/test_article_source_migration.py::TestMigrateArticleSources::test_unrelated_rows_untouched
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:77: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    assert session.query(Article).get(aid_hn).source == "hackernews"
+
+tests/test_article_source_migration.py::TestMigrateArticleSources::test_unrelated_rows_untouched
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:78: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    assert session.query(Article).get(aid_rss).source == "rss"
+
+tests/test_article_source_migration.py::TestMigrateArticleSources::test_migration_is_idempotent
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:89: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    article = session.query(Article).get(aid)
+
+tests/test_article_source_migration.py::TestMigrateArticleSources::test_migration_does_not_alter_source_id
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:107: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    article = session.query(Article).get(aid)
+
+tests/test_article_source_migration.py::TestMigrateArticleSources::test_migration_does_not_alter_content
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:112: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    original = session.query(Article).get(aid)
+
+tests/test_article_source_migration.py::TestMigrateArticleSources::test_migration_does_not_alter_content
+  /Users/wendy/work/intel/tests/test_article_source_migration.py:118: LegacyAPIWarning: The Query.get() method is considered legacy as of the 1.x series of SQLAlchemy and becomes a legacy construct in 2.0. The method is now available as Session.get() (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+    refreshed = session.query(Article).get(aid)
+
+tests/test_collector_run_model.py::TestCollectorRunPersistence::test_create_and_query
+  /Users/wendy/work/intel/tests/test_collector_run_model.py:41: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_collector_run_model.py::TestCollectorRunPersistence::test_create_error_run
+  /Users/wendy/work/intel/tests/test_collector_run_model.py:71: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_aggregation.py::test_aggregate_creates_event
+tests/test_event_aggregation.py::test_aggregate_creates_event
+tests/test_event_aggregation.py::test_aggregate_updates_existing_event
+tests/test_event_aggregation.py::test_aggregate_updates_existing_event
+  /Users/wendy/work/intel/tests/test_event_aggregation.py:29: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_aggregation.py::test_aggregate_creates_event
+tests/test_event_aggregation.py::test_aggregate_updates_existing_event
+tests/test_event_aggregation.py::test_aggregate_updates_existing_event
+tests/test_event_aggregation.py::test_aggregate_closes_expired_events
+tests/test_event_aggregation.py::test_aggregate_uses_collected_at_when_published_at_null
+tests/test_event_aggregation.py::test_aggregate_ignores_articles_without_narrative_tags
+  /Users/wendy/work/intel/events/aggregator.py:36: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_aggregation.py: 8 warnings
+tests/test_event_api.py: 6 warnings
+tests/test_event_history_api.py: 18 warnings
+tests/test_event_models.py: 6 warnings
+tests/test_narrator.py: 11 warnings
+tests/test_personalized_feed.py: 8 warnings
+tests/test_scorecard.py: 16 warnings
+tests/test_user_profiles.py: 18 warnings
+  /Users/wendy/work/intel/.venv/lib/python3.13/site-packages/sqlalchemy/sql/schema.py:3624: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+
+tests/test_event_aggregation.py::test_aggregate_closes_expired_events
+  /Users/wendy/work/intel/tests/test_event_aggregation.py:85: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_aggregation.py::test_aggregate_uses_collected_at_when_published_at_null
+  /Users/wendy/work/intel/tests/test_event_aggregation.py:104: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_aggregation.py::test_aggregate_ignores_articles_without_narrative_tags
+  /Users/wendy/work/intel/tests/test_event_aggregation.py:127: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_api.py::test_get_active_events
+tests/test_event_api.py::test_get_event_detail
+tests/test_event_api.py::test_get_event_not_found
+  /Users/wendy/work/intel/tests/test_event_api.py:29: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_history_api.py::test_get_event_history
+tests/test_event_history_api.py::test_get_event_history_with_tag_filter
+tests/test_event_history_api.py::test_get_event_history_empty
+  /Users/wendy/work/intel/tests/test_event_history_api.py:25: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_history_api.py::test_get_event_history
+tests/test_event_history_api.py::test_get_event_history_with_tag_filter
+tests/test_event_history_api.py::test_get_event_history_empty
+  /Users/wendy/work/intel/api/event_routes.py:99: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    cutoff = datetime.utcnow() - timedelta(days=days)
+
+tests/test_event_models.py::test_create_event
+  /Users/wendy/work/intel/tests/test_event_models.py:23: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_models.py::test_event_article_link
+  /Users/wendy/work/intel/tests/test_event_models.py:45: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_event_models.py::test_event_article_unique_constraint
+  /Users/wendy/work/intel/tests/test_event_models.py:77: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_health_active_sources.py::test_health_includes_registry_sources
+tests/test_health_active_sources.py::test_health_excludes_retired_sources
+tests/test_health_active_sources.py::test_health_no_data_status_for_fresh_source
+tests/test_health_active_sources.py::test_health_uses_v2_source_types
+tests/test_health_api.py::TestExistingHealthEndpoint::test_existing_health_returns_200
+tests/test_source_registry_parity.py::TestRuntimeWorksWithoutActiveSourcesList::test_health_works
+tests/test_ui_source_hidden_semantics.py::TestNoClawfeedInUserContracts::test_health_endpoint_no_clawfeed
+tests/test_ui_source_hidden_semantics.py::TestNoLegacyNamesInSourceEndpoints::test_health_uses_v2_names
+  /Users/wendy/work/intel/api/routes.py:40: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_narrator.py::test_generate_narrative_skips_when_already_set
+tests/test_narrator.py::test_generate_narrative_skips_single_source
+tests/test_narrator.py::test_generate_narrative_calls_claude
+tests/test_narrator.py::test_generate_narrative_handles_cli_failure
+  /Users/wendy/work/intel/tests/test_narrator.py:23: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_personalized_feed.py::test_feed_without_user_returns_all
+tests/test_personalized_feed.py::test_feed_with_user_filters_zero_weight
+tests/test_personalized_feed.py::test_feed_with_user_boosts_high_weight
+tests/test_personalized_feed.py::test_feed_with_unknown_user_returns_normal
+  /Users/wendy/work/intel/tests/test_personalized_feed.py:28: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_personalized_feed.py: 4 warnings
+tests/test_source_registry_parity.py: 1 warning
+tests/test_ui_feed_api.py: 17 warnings
+tests/test_ui_regressions.py: 6 warnings
+tests/test_ui_source_hidden_semantics.py: 6 warnings
+  /Users/wendy/work/intel/api/ui_routes.py:360: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_personalized_feed.py: 4 warnings
+tests/test_source_registry_parity.py: 1 warning
+tests/test_ui_feed_api.py: 17 warnings
+tests/test_ui_regressions.py: 6 warnings
+tests/test_ui_source_hidden_semantics.py: 6 warnings
+  /Users/wendy/work/intel/api/ui_routes.py:229: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_personalized_feed.py: 4 warnings
+tests/test_source_registry_parity.py: 1 warning
+tests/test_ui_feed_api.py: 17 warnings
+tests/test_ui_regressions.py: 6 warnings
+tests/test_ui_source_hidden_semantics.py: 6 warnings
+  /Users/wendy/work/intel/api/ui_routes.py:285: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_scorecard.py::test_scorecard_returns_buckets
+tests/test_scorecard.py::test_scorecard_empty_when_min_events_high
+  /Users/wendy/work/intel/tests/test_scorecard.py:24: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_scorecard.py::test_scorecard_returns_buckets
+tests/test_scorecard.py::test_scorecard_empty_when_min_events_high
+  /Users/wendy/work/intel/api/event_routes.py:156: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    cutoff = datetime.utcnow() - timedelta(days=days)
+
+tests/test_signals.py: 10 warnings
+  /Users/wendy/work/intel/tests/test_signals.py:33: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_signals.py::test_signals_basic_structure
+tests/test_signals.py::test_signals_article_count
+tests/test_signals.py::test_signals_high_relevance
+tests/test_signals.py::test_signals_topic_heat
+tests/test_signals.py::test_signals_relevance_distribution
+tests/test_signals.py::test_signals_source_filter
+tests/test_signals.py::test_signals_narrative_momentum
+tests/test_signals.py::test_signals_top_articles_ordered
+  /Users/wendy/work/intel/api/routes.py:222: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_source_registry_parity.py::TestRuntimeWorksWithoutActiveSourcesList::test_search_works
+tests/test_ui_topics_api.py::test_search_response_shape
+tests/test_ui_topics_api.py::test_search_finds_matching_title
+tests/test_ui_topics_api.py::test_search_finds_matching_content
+tests/test_ui_topics_api.py::test_search_no_results_not_500
+  /Users/wendy/work/intel/api/ui_routes.py:697: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_source_registry_parity.py::TestRuntimeWorksWithoutActiveSourcesList::test_topics_works
+tests/test_ui_source_hidden_semantics.py::TestNoClawfeedInUserContracts::test_topics_no_clawfeed
+tests/test_ui_topics_api.py::test_topics_response_shape
+tests/test_ui_topics_api.py::test_topics_item_fields
+tests/test_ui_topics_api.py::test_topics_ordered_by_count_desc
+tests/test_ui_topics_api.py::test_topics_openai_model_release_present
+tests/test_ui_topics_api.py::test_topics_only_within_window
+  /Users/wendy/work/intel/api/ui_routes.py:534: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_source_registry_scheduler.py::TestHealthUsesRegistry::test_source_with_recent_articles_shows_ok
+  /Users/wendy/work/intel/tests/test_source_registry_scheduler.py:110: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_ui_feed_api.py: 17 warnings
+  /Users/wendy/work/intel/tests/test_ui_feed_api.py:29: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_ui_feed_api.py::test_item_detail_shape
+tests/test_ui_feed_api.py::test_item_detail_content_untruncated
+  /Users/wendy/work/intel/api/ui_routes.py:472: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_ui_regressions.py: 10 warnings
+  /Users/wendy/work/intel/tests/test_ui_regressions.py:35: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_ui_regressions.py::test_source_detail_has_last_seen_at
+tests/test_ui_topics_api.py::test_source_detail_shape
+tests/test_ui_topics_api.py::test_source_detail_items_all_from_source
+  /Users/wendy/work/intel/api/ui_routes.py:659: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_ui_topics_api.py: 20 warnings
+  /Users/wendy/work/intel/tests/test_ui_topics_api.py:28: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+tests/test_ui_topics_api.py::test_topic_detail_shape
+tests/test_ui_topics_api.py::test_topic_detail_items_match_slug
+tests/test_ui_topics_api.py::test_topic_detail_404
+  /Users/wendy/work/intel/api/ui_routes.py:567: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = datetime.utcnow()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_source_registry_model.py::TestSourceRegistryMigration::test_migration_creates_table
+FAILED tests/test_source_registry_seed.py::TestSeedAttributes::test_schedule_hours_from_config
+================= 2 failed, 366 passed, 355 warnings in 28.07s =================

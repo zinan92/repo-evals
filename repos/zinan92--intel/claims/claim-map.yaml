@@ -1,0 +1,117 @@
+claims:
+  - id: claim-001
+    title: 核心无密钥源可直接采集并进入健康状态
+    source: README
+    source_ref: "Core sources work out of the box with zero API keys"
+    priority: critical
+    area: ingestion
+    statement: |
+      在不配置可选密钥的情况下，RSS、Hacker News、Reddit、Google News、
+      Yahoo Finance 等核心 source 仍然会被 scheduler 拉起并写入数据库。
+    business_expectation: |
+      用户 fresh clone 后不是看到一个空壳服务，而是很快能得到真实内容流。
+    evidence_needed: |
+      /api/health 返回 overall ok 或可接受状态，且多个核心 source 的 count > 0。
+    status: passed
+
+  - id: claim-002
+    title: 核心 API 真实返回结构化数据
+    source: README
+    source_ref: "GET /api/health, /api/articles/latest, /api/ui/feed"
+    priority: critical
+    area: api-core
+    statement: |
+      服务启动后，核心读接口能返回真实 JSON，而不是 404、500 或空 schema。
+    business_expectation: |
+      前端和其他消费者可以直接用这些接口读到健康状态、文章流和 feed。
+    evidence_needed: |
+      /api/health、/api/articles/latest、/api/ui/feed 的真实响应样本。
+    status: passed
+
+  - id: claim-003
+    title: 前端 build 后由后端一起提供
+    source: README
+    source_ref: "Start server (API + frontend served together)"
+    priority: critical
+    area: frontend-serving
+    statement: |
+      跑完 `cd frontend && npm install && npm run build` 之后，后端根路径 `/`
+      和前端路由 `/health` 都能返回前端 HTML。
+    business_expectation: |
+      用户不需要再额外启动一个独立的前端 dev server 才能使用 UI。
+    evidence_needed: |
+      npm build 成功，GET / 与 GET /health 返回同一套前端 HTML 骨架。
+    status: passed
+
+  - id: claim-004
+    title: 可选源在无凭据时优雅降级
+    source: README / .env.example
+    source_ref: "Optional sources activate when you add their credentials"
+    priority: high
+    area: optional-sources
+    statement: |
+      缺少 GITHUB_TOKEN、XUEQIU_COOKIE、ANTHROPIC_API_KEY 时，服务仍可运行，
+      并通过健康接口明确表现哪些 source 被禁用或没有数据。
+    business_expectation: |
+      用户知道哪些东西是“没配所以没有”，不是系统坏了。
+    evidence_needed: |
+      /api/health 与 /api/health/sources 的真实输出里可见 disabled/no_data 语义。
+    status: passed_with_concerns
+
+  - id: claim-005
+    title: 测试套件处于健康状态
+    source: README
+    source_ref: "[Tests] badge / Development: pytest tests/"
+    priority: high
+    area: testing
+    statement: |
+      fresh clone 后跑 `pytest tests/`，测试套件应整体通过，并与 README 的
+      绿色测试信号一致。
+    business_expectation: |
+      贡献者和维护者可以信任测试是当前代码的真实安全网。
+    evidence_needed: |
+      pytest 退出码为 0；若失败，记录失败数和失败模块。
+    status: failed
+
+  - id: claim-006
+    title: 详细健康视图语义一致且可解释
+    source: README / health dashboard
+    source_ref: "The /health endpoint shows per-source status including last collection time, article counts, error rates, and volume anomalies"
+    priority: high
+    area: health-semantics
+    statement: |
+      健康总览和详细 source 视图在 source 状态语义上保持一致，不会让用户对
+      source 是 truly ok、disabled、还是 no_data 产生混淆。
+    business_expectation: |
+      运维和用户能用 health 页面做真实判断，而不是被互相矛盾的状态误导。
+    evidence_needed: |
+      /api/health 与 /api/health/sources 的对照样本。
+    status: failed_partial
+
+  - id: claim-007
+    title: launchd 背景服务脚本可用
+    source: README
+    source_ref: "Run as background service (macOS)"
+    priority: medium
+    area: service-management
+    statement: |
+      install-service / service-status / uninstall-service 这组脚本可用。
+    business_expectation: |
+      macOS 用户能把服务稳定放到后台持续运行。
+    evidence_needed: |
+      至少一次真实安装或脚本 smoke test。
+    status: untested
+
+  - id: claim-008
+    title: 事件聚合接口可用
+    source: README
+    source_ref: "GET /api/events/active"
+    priority: medium
+    area: events
+    statement: |
+      事件接口真实响应，并在有条件时返回按 signal score 排序的事件列表。
+    business_expectation: |
+      用户能从 article feed 进一步上升到 narrative / event 视角。
+    evidence_needed: |
+      /api/events/active 响应样本；为空时也需要确认 schema 正常。
+    status: passed_partial

@@ -67,7 +67,7 @@ Verdict did not change bucket (`usable` → `usable`).
 def test_collect_repo_record_on_real_repo():
     repo = gd.collect_repo_record(ROOT / "repos" / "zinan92--content-downloader")
     assert repo["slug"] == "zinan92--content-downloader"
-    assert repo["current_bucket"] == "usable"
+    assert repo["current_bucket"] == "unusable"
     assert repo["archetype"] == "adapter"
     assert repo["claims_summary"]["total"] >= 1
     assert repo["runs_summary"]["count"] >= 1

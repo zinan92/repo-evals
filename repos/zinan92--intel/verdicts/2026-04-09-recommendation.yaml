@@ -1,0 +1,21 @@
+repo: zinan92/intel
+archetype: api-service
+recommended_bucket: reusable
+final_bucket: reusable
+confidence: high
+ceiling_reasons: []
+blocking_issues: []
+inputs_summary:
+  core_layer_tested: true
+  evidence_completeness: full
+  claims_total: 8
+  claims_passed: 5
+  claims_failed: 2
+  claims_untested: 1
+  critical_total: 3
+  critical_covered: 3
+  critical_failed: 0
+override:
+  applied: false
+  bucket: null
+  reason: null

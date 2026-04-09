@@ -1,0 +1,33 @@
+repo: zinan92/intel
+archetype: api-service
+core_layer_tested: true
+evidence_completeness: full
+claims:
+  - id: claim-001
+    priority: critical
+    status: passed
+  - id: claim-002
+    priority: critical
+    status: passed
+  - id: claim-003
+    priority: critical
+    status: passed
+  - id: claim-004
+    priority: high
+    status: passed_with_concerns
+  - id: claim-005
+    priority: high
+    status: failed
+  - id: claim-006
+    priority: high
+    status: failed_partial
+  - id: claim-007
+    priority: medium
+    status: untested
+  - id: claim-008
+    priority: medium
+    status: passed_with_concerns
+override:
+  apply: false
+  bucket: null
+  reason: null

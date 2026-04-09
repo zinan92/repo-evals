@@ -1,0 +1,12 @@
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python -m pytest tests/
+cp .env.example .env
+PARK_INTEL_DEV=0 .venv/bin/python main.py
+.venv/bin/python -m uvicorn main:app --host 127.0.0.1 --port 8013
+curl -sS http://127.0.0.1:8013/api/health
+curl -sS 'http://127.0.0.1:8013/api/articles/latest?limit=3'
+curl -sS 'http://127.0.0.1:8013/api/ui/feed?window=24h&limit=3'
+curl -sS 'http://127.0.0.1:8013/api/ui/topics'
+cd frontend && npm install
+cd frontend && npm run build

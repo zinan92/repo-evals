@@ -1,0 +1,94 @@
+run_name: live-service-core
+date: 2026-04-09
+area: core
+scenario: "Fresh clone setup + pytest + live service start + core API + frontend build/serve"
+provenance:
+  # "auto" = captured by new-run.sh from env, "manual" = filled by hand,
+  # "legacy" = imported before provenance was required, "partial" = missing fields.
+  provenance_source: "auto"
+  captured: true
+  partial: false
+  runner: "codex"
+  agent: "Codex"
+  model: "gpt-5"
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: "eb6a63a"
+  target_repo_path: "/Users/wendy/work/intel"
+  target_repo_ref: "main"
+  target_repo_commit: "3c6eaa9"
+  evaluated_at: "2026-04-08T19:44:47Z"
+  transcript_path: ""
+  command_log_path: "logs/commands.log"
+  session_replay_notes: "Fresh evaluation of zinan92/intel after local clone and Python dependency install."
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: true
+  manifest_path: "artifacts/manifest.yaml"
+fixtures:
+  - "repo: /Users/wendy/work/intel @ 3c6eaa9"
+  - "env: copied .env.example without optional keys"
+  - "port: fallback 8013 because local 8001 was already occupied"
+commands:
+  - "python3 -m venv .venv"
+  - ".venv/bin/pip install -r requirements.txt"
+  - ".venv/bin/python -m pytest tests/"
+  - "cp .env.example .env"
+  - ".venv/bin/python main.py  # failed on port 8001 already in use"
+  - ".venv/bin/python -m uvicorn main:app --host 127.0.0.1 --port 8013"
+  - "curl -sS http://127.0.0.1:8013/api/health"
+  - "curl -sS http://127.0.0.1:8013/api/health/sources"
+  - "curl -sS 'http://127.0.0.1:8013/api/articles/latest?limit=3'"
+  - "curl -sS 'http://127.0.0.1:8013/api/ui/feed?window=24h&limit=3'"
+  - "curl -sS 'http://127.0.0.1:8013/api/ui/topics'"
+  - "curl -sS http://127.0.0.1:8013/api/events/active"
+  - "cd frontend && npm install"
+  - "cd frontend && npm run build"
+  - "curl -sS http://127.0.0.1:8013/"
+  - "curl -sS http://127.0.0.1:8013/health"
+result: mixed
+artifacts:
+  - "artifacts/manifest.yaml"
+  - "artifacts/api-health.json"
+  - "artifacts/api-health-sources.json"
+  - "artifacts/api-articles-latest.json"
+  - "artifacts/api-ui-feed.json"
+  - "artifacts/api-ui-topics.json"
+  - "artifacts/api-events-active.json"
+  - "artifacts/frontend-root.html"
+  - "artifacts/frontend-health-route.html"
+results_by_claim:
+  claim-001-ingestion-core-sources: pass
+  claim-002-api-core: pass
+  claim-003-frontend-serving: pass
+  claim-004-optional-sources: pass-with-concerns
+  claim-005-testing: fail
+  claim-006-health-semantics: fail-partial
+  claim-007-service-management: untested
+  claim-008-events: pass-partial
+notes: |
+  This run evaluated local repo commit 3c6eaa9 on branch main. The local checkout
+  matches origin/main, so there is no local-only runtime drift to account for.
+
+  Fresh-clone setup worked: Python dependencies installed successfully in a new
+  virtualenv, and the frontend dependencies/build also completed successfully.
+
+  The backend application itself started cleanly, but the README default port 8001
+  was already occupied on this machine. Running the exact same app on fallback port
+  8013 succeeded, which suggests the startup path is healthy and the first failure
+  was environmental rather than an application crash.
+
+  Once live, the repo behaved like a real service, not a mock shell:
+  /api/health returned overall status=ok, scheduler=running, and multiple core
+  sources with real counts. /api/articles/latest and /api/ui/feed returned live
+  structured data. After building the frontend, both / and /health served the SPA.
+
+  Two important concerns remained:
+  1. pytest exited non-zero (366 passed, 2 failed), so the repo's engineering
+     surface is strong but not fully green.
+  2. The health semantics are not fully consistent. The summary health endpoint
+     and the detailed /api/health/sources endpoint disagree in places about whether
+     some optional sources are ok, disabled, or merely have no data. The detailed
+     view also appears to reuse source-type-level aggregate counts for each source
+     instance, which makes those per-source numbers hard to interpret literally.
