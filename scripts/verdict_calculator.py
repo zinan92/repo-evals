@@ -253,6 +253,25 @@ def compute_verdict(inp: dict) -> dict:
             "end-to-end evaluation of the user-facing layer"
         )
 
+    # Ceiling: trigger precision / recall (if reported) must clear threshold.
+    # A skill that Claude never fires on (or fires on the wrong queries) has
+    # zero user value regardless of how well the code under it works.
+    trigger_threshold = 0.7
+    trig_p = inp.get("trigger_precision")
+    trig_r = inp.get("trigger_recall")
+    if isinstance(trig_p, (int, float)) and trig_p < trigger_threshold:
+        ceiling_reasons.append(
+            f"trigger_precision={trig_p:.2f} < {trigger_threshold} "
+            f"(skill fires on wrong queries) → capped at 'usable'"
+        )
+        bucket = cap(bucket, "usable")
+    if isinstance(trig_r, (int, float)) and trig_r < trigger_threshold:
+        ceiling_reasons.append(
+            f"trigger_recall={trig_r:.2f} < {trigger_threshold} "
+            f"(skill fails to fire when it should) → capped at 'usable'"
+        )
+        bucket = cap(bucket, "usable")
+
     # Ceiling 3: weak evidence caps below recommendable
     if EVIDENCE_RANK[evidence_str] < EVIDENCE_RANK["portable"]:
         ceiling_reasons.append(

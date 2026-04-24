@@ -1,0 +1,28 @@
+# Trigger phrase bank for the eval-repo skill.
+# Used by: scripts/trigger_test.py ~/.claude/skills/eval-repo --phrases fixtures/trigger-phrases/eval-repo.yaml
+# Keeping these in the repo so re-evals are deterministic across sessions
+# and don't need to pay LLM tokens for phrase generation.
+
+should_trigger:
+  - "eval 一下这个 repo"
+  - "eval 这个项目"
+  - "eval 这个 skill"
+  - "evaluate this repo"
+  - "帮我评测一下这个开源项目是不是真的好用"
+  - "https://github.com/someone/awesome-tool - should I adopt this?"
+  - "试用一下这个项目"
+  - "这个东西好不好用"
+  - "对比一下这两个 framework 哪个更可靠"
+  - "Does this library actually work as advertised?"
+
+should_not_trigger:
+  - "帮我 clone 这个 repo 到本地"
+  - "Clone this repository to my local machine"
+  - "这个项目用什么语言写的"
+  - "How do I install dependencies for this repo?"
+  - "给我讲讲这个 README 里的 API 文档"
+  - "Can you help me submit a pull request to fix this issue?"
+  - "run the test suite for this project"
+  - "给这个项目加一个新 feature"
+  - "what does this function do?"
+  - "帮我写一个 commit message"
