@@ -497,18 +497,25 @@ def render_capability_cards(vd: VerdictData) -> str:
 
         desc_html = f'<p class="cap-description">{desc_span}</p>' if desc_span else ""
 
+        # Editorial card — status-labeled badge maps to the raw status word.
+        status_badge_text = {
+            "passed": "passed",
+            "passed_with_concerns": "passed",
+            "partial": "partial",
+            "failed": "failed",
+            "failed_partial": "failed",
+            "untested": "untested",
+        }.get(status, status)
+
         return (
             f'<article class="capability-card status-{status}">'
-            f'<div class="cap-icon-wrap"><span class="cap-icon">{icon}</span></div>'
-            f'<div class="cap-body">'
-            f'  <header class="cap-header">'
-            f'    <span class="cap-status-badge cap-status-{status}">{status_emoji} {i18n(status_label_key)}</span>'
+            f'  <div class="cap-header">'
+            f'    <span class="cap-badge">{_esc(status_badge_text)}</span>'
             f'    <span class="cap-id">{cid}</span>'
-            f'  </header>'
+            f'  </div>'
             f'  <h3 class="cap-title">{title_span}</h3>'
             f'  {desc_html}'
             f'  {skip_html}'
-            f'</div>'
             f'</article>'
         )
 
@@ -606,6 +613,233 @@ def render_test_log(vd: VerdictData) -> str:
     return "\n".join(blocks)
 
 
+def count_claim_statuses(vd: VerdictData) -> dict[str, int]:
+    """Bucket every claim into one of four visible categories for the
+    stats bar. 'passed_with_concerns' and 'partial' both show as
+    'partial' on the bar."""
+    counts = {"passed": 0, "partial": 0, "failed": 0, "untested": 0}
+    for c in vd.claims:
+        s = str(c.get("status", "unknown"))
+        if s == "passed":
+            counts["passed"] += 1
+        elif s in {"passed_with_concerns", "partial"}:
+            counts["partial"] += 1
+        elif s in {"failed", "failed_partial"}:
+            counts["failed"] += 1
+        else:
+            counts["untested"] += 1
+    return counts
+
+
+def render_stats_bar(counts: dict[str, int]) -> str:
+    parts = []
+    for key, cls in (("passed", "s-pass"), ("partial", "s-warn"),
+                     ("failed", "s-bad"), ("untested", "s-skip")):
+        n = counts.get(key, 0)
+        if n > 0:
+            parts.append(f'<span class="{cls}" style="flex: {n}"></span>')
+    return "".join(parts) or '<span class="s-skip" style="flex: 1"></span>'
+
+
+def render_stats_legend(counts: dict[str, int]) -> str:
+    items = [
+        ("passed", "passed", "通过", "var(--ok)"),
+        ("partial", "partial", "部分", "var(--warn)"),
+        ("failed", "failed", "失败", "var(--bad)"),
+        ("untested", "untested", "未测", "var(--skip)"),
+    ]
+    html_parts = []
+    for key, label_en, label_zh, color in items:
+        n = counts.get(key, 0)
+        if n == 0:
+            continue
+        html_parts.append(
+            f'<span class="item">'
+            f'<span class="dot" style="background:{color}"></span>'
+            f'<span class="num">{n}</span> '
+            f'<span class="i18n" data-en="{label_en}" data-zh="{label_zh}"></span>'
+            f'</span>'
+        )
+    return "".join(html_parts)
+
+
+def render_derivation_flow(vd: VerdictData) -> str:
+    """Editorial flow diagram (hand-built HTML, no Mermaid)."""
+    inputs = vd.verdict_input.get("inputs_summary") or {}
+    ceilings = vd.verdict_input.get("ceiling_reasons") or []
+    core_tested = inputs.get("core_layer_tested")
+    evidence = inputs.get("evidence_completeness") or "—"
+    core_tested_label = "True" if core_tested else "False"
+
+    nodes = (
+        f'<span class="flow-node start">archetype: {_esc(vd.archetype)}</span>'
+        f'<span class="flow-arrow">→</span>'
+        f'<span class="flow-node decision">core_layer_tested? '
+        f'<b style="color:inherit">{core_tested_label}</b></span>'
+        f'<span class="flow-arrow">→</span>'
+        f'<span class="flow-node">evidence: {_esc(evidence)}</span>'
+        f'<span class="flow-arrow">→</span>'
+        f'<span class="flow-node">recommended: {_esc(vd.recommended_bucket)}</span>'
+        f'<span class="flow-arrow">→</span>'
+        f'<span class="flow-node final">final: {_esc(vd.bucket)}</span>'
+    )
+    notes_html = ""
+    if ceilings:
+        notes = "".join(
+            f'<div class="note">ceiling {i+1} · {_esc(str(r))}</div>'
+            for i, r in enumerate(ceilings)
+        )
+        notes_html = f'<div class="flow-notes">{notes}</div>'
+
+    return (
+        f'<div class="flow">'
+        f'<div class="flow-row">{nodes}</div>'
+        f'{notes_html}'
+        f'</div>'
+    )
+
+
+def render_metric_tiles(vd: VerdictData) -> str:
+    """Three big editorial tiles. Pull from the first run's metrics."""
+    run = vd.runs[0] if vd.runs else None
+    metrics = (run.summary.get("metrics") if run else {}) or {}
+    baseline = (run.summary.get("metrics_baseline") if run else {}) or {}
+
+    pr = metrics.get("pass_rate")
+    el = metrics.get("elapsed_time_sec")
+    tok = (metrics.get("token_usage") or {})
+    pr_pct = int((pr or 0) * 100) if isinstance(pr, (int, float)) else 0
+    el_val = float(el) if isinstance(el, (int, float)) else 0.0
+    tok_out = int(tok.get("output") or 0)
+    tok_in = int(tok.get("input") or 0)
+
+    # Baseline comparison — stringified for display only.
+    baseline_pr = baseline.get("pass_rate")
+    baseline_pr_s = (
+        f"baseline · {int(baseline_pr*100)}%"
+        if isinstance(baseline_pr, (int, float))
+        else "baseline · none"
+    )
+    baseline_pr_zh = (
+        f"baseline · {int(baseline_pr*100)}%"
+        if isinstance(baseline_pr, (int, float))
+        else "baseline · 无"
+    )
+
+    # Rough bar widths — capped at 100%.
+    el_bar = min(100, int(el_val / 10 * 100)) if el_val else 0
+    tok_bar = min(100, int(tok_out / 500 * 100)) if tok_out else 0
+
+    return (
+        f'<div class="metric-tile">'
+        f'  <div class="mt-label"><span class="i18n" data-en="pass rate" data-zh="通过率"></span></div>'
+        f'  <div class="mt-value">{pr_pct}<span class="mt-unit">%</span></div>'
+        f'  <div class="mt-bar"><div class="mt-bar-fill" style="width:{pr_pct}%"></div></div>'
+        f'  <div class="mt-compare"><span class="i18n" '
+        f'data-en="{_esc(baseline_pr_s)}" data-zh="{_esc(baseline_pr_zh)}"></span></div>'
+        f'</div>'
+        f'<div class="metric-tile">'
+        f'  <div class="mt-label"><span class="i18n" data-en="elapsed" data-zh="耗时"></span></div>'
+        f'  <div class="mt-value">{el_val:.2f}<span class="mt-unit">s</span></div>'
+        f'  <div class="mt-bar"><div class="mt-bar-fill" style="width:{el_bar}%"></div></div>'
+        f'  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div>'
+        f'</div>'
+        f'<div class="metric-tile">'
+        f'  <div class="mt-label"><span class="i18n" data-en="token output" data-zh="token 输出"></span></div>'
+        f'  <div class="mt-value">{tok_out}</div>'
+        f'  <div class="mt-bar"><div class="mt-bar-fill" style="width:{tok_bar}%"></div></div>'
+        f'  <div class="mt-compare"><span class="i18n" '
+        f'data-en="in · {tok_in:,} / out · {tok_out}" data-zh="输入 · {tok_in:,} / 输出 · {tok_out}"></span></div>'
+        f'</div>'
+    )
+
+
+_STATUS_SYMBOL = {
+    "passed": ("●", "passed", "var(--ok)"),
+    "passed_with_concerns": ("◐", "partial", "var(--warn)"),
+    "partial": ("◐", "partial", "var(--warn)"),
+    "failed": ("✕", "failed", "var(--bad)"),
+    "failed_partial": ("✕", "failed", "var(--bad)"),
+    "untested": ("○", "untested", "var(--skip)"),
+}
+
+
+def render_claim_ledger(vd: VerdictData) -> str:
+    rows = []
+    for c in vd.claims:
+        status = str(c.get("status", "unknown"))
+        sym, label, color = _STATUS_SYMBOL.get(status, ("·", status, "var(--text-3)"))
+        prio = str(c.get("priority", "medium"))
+        cid = _esc(c.get("id", ""))
+        title = _esc(dual_lang_plain(c.get("title") or c.get("user_title") or c.get("id", "")))
+        area = _esc(c.get("area", ""))
+        skip = _esc(dual_lang_plain(c.get("skip_reason") or ""))
+        rows.append(
+            f'<tr class="prio-{prio}">'
+            f'<td class="c-id">{cid}</td>'
+            f'<td class="c-title">{title}</td>'
+            f'<td><span class="prio-pill {prio}">{prio}</span></td>'
+            f'<td>{area}</td>'
+            f'<td class="c-status" style="color:{color}">{sym} {label}</td>'
+            f'<td class="c-skip">{skip}</td>'
+            f'</tr>'
+        )
+    return "\n".join(rows)
+
+
+def render_run_cards_editorial(vd: VerdictData) -> str:
+    blocks = []
+    for run in vd.runs:
+        summary = run.summary
+        metrics = summary.get("metrics") or {}
+        rbc = summary.get("results_by_claim") or {}
+        pr = metrics.get("pass_rate")
+        pr_pct = int(pr * 100) if isinstance(pr, (int, float)) else 0
+        el = metrics.get("elapsed_time_sec")
+        el_s = f"{el:.1f}s" if isinstance(el, (int, float)) else "—"
+        tok = metrics.get("token_usage") or {}
+        tok_s = f"in {tok.get('input','?')} / out {tok.get('output','?')}"
+
+        # Classify each rbc result for the colored left-border.
+        rbc_items = []
+        for k, v in rbc.items():
+            vs = str(v)
+            rbc_cls = {
+                "passed": "pass",
+                "passed_with_concerns": "partial",
+                "partial": "partial",
+                "failed": "fail",
+                "failed_partial": "fail",
+                "untested": "skip",
+            }.get(vs, "skip")
+            rbc_items.append(f'<li class="{rbc_cls}">{_esc(k)} · {_esc(vs)}</li>')
+        rbc_html = f'<ul class="run-rbc">{"".join(rbc_items)}</ul>' if rbc_items else ""
+
+        blocks.append(
+            f'<div class="run-card">'
+            f'  <h3>{_esc(run.name)}</h3>'
+            f'  <div class="run-date"><span class="i18n" data-en="executed on" '
+            f'data-zh="执行于"></span> {_esc(run.date)}</div>'
+            f'  <div class="run-metrics">'
+            f'    <span class="run-metric"><b><span class="i18n" data-en="pass" '
+            f'data-zh="通过率"></span></b> <span class="v">{pr_pct}%</span></span>'
+            f'    <span class="run-metric"><b><span class="i18n" data-en="time" '
+            f'data-zh="耗时"></span></b> <span class="v">{el_s}</span></span>'
+            f'    <span class="run-metric"><b>tokens</b> <span class="v">{tok_s}</span></span>'
+            f'  </div>'
+            f'  {rbc_html}'
+            f'</div>'
+        )
+    return "\n".join(blocks) or f'<p class="dim">{i18n("none")}</p>'
+
+
+def render_test_log_editorial(vd: VerdictData) -> str:
+    """Compact test log — one run entry per line, suitable for a log fold."""
+    if not vd.runs:
+        return f'<p class="dim">{i18n("none")}</p>'
+    return render_run_cards_editorial(vd)
+
+
 def mermaid_ceiling_diagram(vd: VerdictData) -> str:
     inputs = vd.verdict_input.get("inputs_summary") or {}
     ceilings = vd.verdict_input.get("ceiling_reasons") or []
@@ -629,53 +863,47 @@ def mermaid_ceiling_diagram(vd: VerdictData) -> str:
 
 
 def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
+    """Editorial dossier template — dark warm palette, zero external
+    dependencies (no Chart.js, Mermaid, or Google Fonts), bucket-driven
+    accent color via ``<html data-bucket=...>``."""
     bucket = vd.bucket
-    emoji = BUCKET_EMOJI.get(bucket, "·")
-    bucket_color = BUCKET_COLOR.get(bucket, "#64748b")
-
     inputs = vd.verdict_input.get("inputs_summary") or {}
     confidence = _esc(vd.verdict_input.get("confidence") or "unknown")
     ceilings = vd.verdict_input.get("ceiling_reasons") or []
     blocking = vd.verdict_input.get("blocking_issues") or []
 
-    none_li = f'<li class="dim">{i18n("none")}</li>'
-    ceilings_html = "".join(f"<li>{_esc(r)}</li>" for r in ceilings) or none_li
-    blocking_html = "".join(f"<li>{_esc(b)}</li>" for b in blocking) or none_li
+    ceilings_html = "".join(f"<li>{_esc(r)}</li>" for r in ceilings) \
+        or f'<li class="dim">{i18n("none")}</li>'
+    blocking_html = "".join(f"<li>{_esc(b)}</li>" for b in blocking) \
+        or f'<li class="dim">{i18n("none")}</li>'
 
-    claim_rows = "".join(render_claim_row(c) for c in vd.claims)
-    run_cards = "".join(render_run_card(r) for r in vd.runs)
-
-    # Aggregate metrics for chart (first run only — simplest honest view)
-    first_run_metrics = (vd.runs[0].summary.get("metrics") if vd.runs else {}) or {}
-    baseline_metrics = (
-        vd.runs[0].summary.get("metrics_baseline") if vd.runs else {}
-    ) or {}
-    chart_data = {
-        "labels": ["pass_rate", "elapsed_time_sec", "token_output"],
-        "with": [
-            float(first_run_metrics.get("pass_rate") or 0),
-            float(first_run_metrics.get("elapsed_time_sec") or 0),
-            float((first_run_metrics.get("token_usage") or {}).get("output") or 0),
-        ],
-        "baseline": [
-            float(baseline_metrics.get("pass_rate") or 0),
-            float(baseline_metrics.get("elapsed_time_sec") or 0),
-            float((baseline_metrics.get("token_usage") or {}).get("output") or 0),
-        ],
-    }
-
-    verdict_md_escaped = _esc(vd.verdict_md)
-    mermaid_body = mermaid_ceiling_diagram(vd)
-
-    # Product-facing pieces (built from structured data, so they respect
-    # whatever language the evaluator authored claim-map and repo.yaml in).
-    # product_one_liner returns a bilingual span already — do NOT escape.
+    # Product-facing pieces
     product_one_liner_html = product_one_liner(vd)
     capability_cards_html = render_capability_cards(vd)
     best_for_html = render_best_for(vd)
     watch_out_html = render_watch_out(vd)
-    quality_summary_html = render_quality_summary(vd)
-    test_log_html = render_test_log(vd)
+
+    # Editorial pieces
+    status_counts = count_claim_statuses(vd)
+    total_claims = sum(status_counts.values())
+    covered = total_claims - status_counts.get("untested", 0)
+    stats_bar_html = render_stats_bar(status_counts)
+    stats_legend_html = render_stats_legend(status_counts)
+    flow_html = render_derivation_flow(vd)
+    metric_tiles_html = render_metric_tiles(vd)
+    claim_ledger_html = render_claim_ledger(vd)
+    run_cards_html = render_run_cards_editorial(vd)
+    test_log_html = render_test_log_editorial(vd)
+
+    verdict_md_escaped = _esc(vd.verdict_md)
+
+    # Version chip — from repo.yaml if the evaluator recorded one.
+    version_tested = vd.repo.get("version_tested") or ""
+    version_chip = (
+        f'<span class="sep">·</span><span>{_esc(version_tested)}</span>'
+        if version_tested else ""
+    )
+    repo_url = vd.repo.get("repo_url") or f"https://github.com/{vd.owner_repo}"
 
     # Pre-paint lang attribute: avoids the "flash of wrong language" when
     # the CLI caller pre-picks a language. "auto" still works but will
@@ -683,294 +911,700 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     server_lang = initial_lang if initial_lang in ("en", "zh") else "en"
 
     return f"""<!DOCTYPE html>
-<html lang="{server_lang}">
+<html lang="{server_lang}" data-bucket="{bucket}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{emoji} {_esc(vd.owner_repo)} — verdict</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<title>{_esc(vd.display_name)} — verdict · repo-evals</title>
 <style>
+/* ============================================================
+   REPO-EVALS VERDICT PAGE — Editorial Dossier style
+   Pure HTML + CSS, zero external dependencies, zero JS frameworks.
+   One small inline <script> at the bottom handles language toggle.
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
 :root {{
-  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
-  --bg: #faf7f5; --surface: #ffffff; --surface2: #f5f0ec;
-  --border: rgba(0,0,0,.08); --border-bright: rgba(0,0,0,.15);
-  --text: #292017; --text-dim: #8a7e72; --accent: {bucket_color};
-  --accent-dim: {bucket_color}15;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", "Courier New", monospace;
+
+  --bg:            #0a0908;
+  --surface-0:     #141210;
+  --surface-1:     #1c1a17;
+  --surface-2:     #26231f;
+  --border:        rgba(255, 248, 235, 0.07);
+  --border-strong: rgba(255, 248, 235, 0.16);
+
+  --text:   #f5efe6;
+  --text-2: #a6998a;
+  --text-3: #6b6157;
+
+  --bucket:      #f59e0b;
+  --bucket-bg:   rgba(245, 158, 11, 0.10);
+  --bucket-soft: rgba(245, 158, 11, 0.16);
+
+  --ok:      #4ade80;
+  --ok-bg:   rgba(74, 222, 128, 0.10);
+  --warn:    #fbbf24;
+  --warn-bg: rgba(251, 191, 36, 0.10);
+  --bad:     #f87171;
+  --bad-bg:  rgba(248, 113, 113, 0.10);
+  --skip:    #a6998a;
+  --skip-bg: rgba(166, 153, 138, 0.08);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
 }}
-@media (prefers-color-scheme: dark) {{
-  :root {{
-    --bg: #1a1412; --surface: #231d1a; --surface2: #2e2622;
-    --border: rgba(255,255,255,.07); --border-bright: rgba(255,255,255,.14);
-    --text: #ede5dd; --text-dim: #a69889;
-  }}
-}}
+
+html[data-bucket="usable"]        {{ --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }}
+html[data-bucket="reusable"]      {{ --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }}
+html[data-bucket="recommendable"] {{ --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }}
+html[data-bucket="unusable"]      {{ --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }}
+
 * {{ box-sizing: border-box; }}
-body {{ font-family: var(--font-body); background: var(--bg); color: var(--text); margin: 0; padding: 32px 24px; line-height: 1.55; }}
-main {{ max-width: 1080px; margin: 0 auto; }}
-.hero {{ padding: 56px 44px 44px; border-radius: 24px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 40px; position: relative; overflow: hidden; }}
-.hero::before {{ content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, var(--accent-dim), transparent 60%); pointer-events: none; }}
-.hero > * {{ position: relative; }}
-.hero .crumb {{ font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; }}
-.hero h1 {{ font-size: 56px; margin: 14px 0 6px; font-weight: 700; letter-spacing: -.02em; line-height: 1.05; }}
-.hero .owner-repo {{ font-family: var(--font-mono); font-size: 14px; color: var(--text-dim); margin-bottom: 24px; }}
-.bucket-banner {{ display: inline-flex; align-items: baseline; gap: 14px; padding: 18px 28px; border-radius: 14px; background: var(--accent-dim); border: 2px solid var(--accent); font-weight: 600; }}
-.bucket-banner .emoji {{ font-size: 48px; line-height: 1; }}
-.bucket-banner .name {{ font-size: 28px; color: var(--accent); font-weight: 700; }}
-.bucket-banner .conf {{ font-size: 14px; color: var(--text-dim); font-family: var(--font-mono); }}
-.meta {{ display: flex; gap: 24px; margin-top: 22px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); }}
-.meta b {{ color: var(--text); font-weight: 500; }}
-section {{ margin-bottom: 40px; }}
-h2 {{ font-size: 22px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }}
-.grid-two {{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }}
-@media (max-width: 720px) {{ .grid-two {{ grid-template-columns: 1fr; }} }}
-.card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }}
-.card h3 {{ font-size: 15px; margin: 0 0 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); font-weight: 600; }}
-.card ul {{ margin: 0; padding-left: 20px; }}
-table {{ width: 100%; border-collapse: collapse; font-size: 14px; }}
-th, td {{ text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }}
-th {{ font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); font-weight: 600; background: var(--surface2); }}
-.cid {{ font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); }}
-.badge {{ display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }}
-.badge.prio-critical {{ background: #dc262620; color: #dc2626; }}
-.badge.prio-high     {{ background: #d9770620; color: #d97706; }}
-.badge.prio-medium   {{ background: #0891b220; color: #0891b2; }}
-.badge.prio-low      {{ background: #64748b20; color: #64748b; }}
-.skip {{ font-size: 12px; color: var(--text-dim); font-style: italic; }}
-.run-card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }}
-.run-card h3 {{ font-family: var(--font-mono); font-size: 15px; margin: 0; }}
-.run-card p.dim {{ margin: 4px 0 12px; color: var(--text-dim); font-size: 13px; }}
-.metrics-row {{ display: flex; gap: 16px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 13px; }}
-.metric {{ background: var(--surface2); padding: 6px 12px; border-radius: 8px; }}
-.metric b {{ color: var(--text-dim); font-weight: 500; margin-right: 6px; }}
-.baseline {{ margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 13px; color: var(--text-dim); }}
-.rbc {{ list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; }}
-.rbc li {{ background: var(--surface2); padding: 4px 10px; border-radius: 6px; }}
-.rbc code {{ font-family: var(--font-mono); font-size: 12px; }}
-.mermaid {{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }}
-pre.md {{ background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; }}
-footer {{ margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }}
-.dim {{ color: var(--text-dim); }}
+html, body {{ margin: 0; padding: 0; }}
+body {{
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}}
 
-/* ---- product-facing sections ---- */
-.what-does-it-do {{ font-size: 21px; line-height: 1.5; margin: 10px 0 30px; color: var(--text); max-width: 68ch; font-weight: 400; }}
+body::before {{
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 1200px 800px at 70% -10%, var(--bucket-bg), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 0% 100%, rgba(255,248,235,0.025), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}}
 
-/* Capability cards — product-page feel, not report feel */
-.capabilities-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }}
-.capability-card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; display: flex; gap: 18px; transition: transform .15s, box-shadow .15s; }}
-.capability-card:hover {{ transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,.06); }}
-.capability-card.status-untested {{ background: var(--surface2); opacity: .85; }}
-.capability-card .cap-icon-wrap {{ flex: 0 0 auto; width: 48px; height: 48px; border-radius: 12px; background: var(--accent-dim); display: flex; align-items: center; justify-content: center; }}
-.capability-card.status-untested .cap-icon-wrap {{ background: rgba(168,162,158,.15); }}
-.capability-card.status-failed .cap-icon-wrap, .capability-card.status-failed_partial .cap-icon-wrap {{ background: rgba(185,28,28,.1); }}
-.capability-card .cap-icon {{ font-size: 28px; line-height: 1; }}
-.capability-card .cap-body {{ flex: 1 1 auto; min-width: 0; }}
-.capability-card .cap-header {{ display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }}
-.capability-card .cap-status-badge {{ font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 3px 10px; border-radius: 999px; background: var(--surface2); color: var(--text-dim); }}
-.capability-card .cap-status-passed, .capability-card .cap-status-passed_with_concerns, .capability-card .cap-status-partial {{ background: rgba(21,128,61,.12); color: #15803d; }}
-.capability-card .cap-status-failed, .capability-card .cap-status-failed_partial {{ background: rgba(185,28,28,.12); color: #b91c1c; }}
-.capability-card .cap-status-untested {{ background: rgba(168,162,158,.18); color: #57534e; }}
-.capability-card .cap-id {{ margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }}
-.capability-card .cap-title {{ margin: 0 0 8px; font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.3; }}
-.capability-card .cap-description {{ margin: 0; font-size: 14px; color: var(--text-dim); line-height: 1.55; }}
-.capability-card .cap-skip {{ margin: 10px 0 0; font-size: 13px; color: var(--text-dim); font-style: italic; padding-left: 10px; border-left: 2px solid var(--border-bright); }}
+main {{ position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 32px 120px; }}
 
-/* Best-for / Watch-out — pull-quote style blocks */
-.best-for, .watch-out {{ padding: 22px 26px; border-radius: 14px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }}
-.best-for {{ background: rgba(21,128,61,.08); border-left: 4px solid #15803d; }}
-.watch-out {{ background: rgba(180,83,9,.08); border-left: 4px solid #b45309; }}
-.best-for-label, .watch-out-label {{ font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }}
-.best-for-label {{ color: #15803d; }}
-.watch-out-label {{ color: #b45309; }}
-.best-for-body, .watch-out-body {{ font-size: 15px; line-height: 1.55; color: var(--text); }}
-.quality-grid {{ display: flex; flex-direction: column; gap: 12px; }}
-.quality-row {{ display: flex; gap: 20px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; align-items: baseline; }}
-.quality-label {{ flex: 0 0 auto; width: 140px; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }}
-.quality-value {{ flex: 1 1 auto; font-size: 14px; color: var(--text); line-height: 1.5; }}
-details.technical, details.test-log, details.raw-archive {{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 0; margin-bottom: 16px; overflow: hidden; }}
-details.technical > summary, details.test-log > summary, details.raw-archive > summary {{ padding: 18px 22px; cursor: pointer; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; user-select: none; list-style: none; font-weight: 600; }}
-details.technical > summary::-webkit-details-marker, details.test-log > summary::-webkit-details-marker, details.raw-archive > summary::-webkit-details-marker {{ display: none; }}
-details.technical > summary::before, details.test-log > summary::before, details.raw-archive > summary::before {{ content: "▸ "; transition: transform .15s; display: inline-block; }}
-details.technical[open] > summary::before, details.test-log[open] > summary::before, details.raw-archive[open] > summary::before {{ transform: rotate(90deg); }}
-details.technical > .body, details.test-log > .body, details.raw-archive > .body {{ padding: 4px 22px 22px; }}
-.log-run {{ border-top: 1px dashed var(--border); padding: 14px 0; }}
-.log-run:first-child {{ border-top: none; padding-top: 0; }}
-.log-run h4 {{ margin: 0 0 8px; font-size: 13px; font-weight: 500; color: var(--text-dim); font-family: var(--font-mono); }}
-.log-run h4 code {{ color: var(--text); background: var(--surface2); padding: 1px 6px; border-radius: 4px; }}
-.log-rbc {{ list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; }}
-.log-rbc li {{ background: var(--surface2); padding: 3px 9px; border-radius: 5px; }}
-.log-rbc code {{ font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }}
+.topbar {{
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 0 48px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}}
+.wordmark {{ color: var(--text-2); font-weight: 600; }}
+.wordmark .dot {{ color: var(--bucket); }}
 
-/* ---- bilingual UI chrome (en / zh) ---- */
-.i18n::before {{ content: attr(data-en); }}
-html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
-.lang-toggle {{ position: fixed; top: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border-bright); border-radius: 999px; padding: 4px; display: inline-flex; gap: 2px; font-family: var(--font-mono); font-size: 12px; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,.06); }}
-.lang-toggle button {{ background: transparent; border: none; color: var(--text-dim); padding: 6px 14px; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: inherit; transition: background .15s, color .15s; }}
+.lang-toggle {{ display: inline-flex; gap: 2px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px; padding: 3px; }}
+.lang-toggle button {{
+  background: transparent; border: 0; cursor: pointer;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  color: var(--text-3); padding: 5px 12px; border-radius: 999px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: color 0.15s, background 0.15s;
+}}
 .lang-toggle button:hover {{ color: var(--text); }}
 html[lang="en"] .lang-toggle button[data-lang="en"],
 html[lang="zh"] .lang-toggle button[data-lang="zh"] {{
-  background: var(--accent); color: white;
+  background: var(--text); color: var(--bg);
+}}
+
+.hero {{ padding: 24px 0 72px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }}
+
+.eyebrow {{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.16em; margin-bottom: 32px;
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}}
+.eyebrow .sep {{ color: var(--border-strong); }}
+
+h1.repo-title {{
+  font-size: clamp(40px, 6vw, 68px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  margin: 0 0 14px;
+  color: var(--text);
+}}
+.repo-slug {{
+  font-family: var(--font-mono); font-size: 14px;
+  color: var(--text-2); margin-bottom: 36px;
+}}
+.repo-slug::before {{ content: "↳ "; color: var(--text-3); }}
+
+.tagline {{
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.45; font-weight: 400;
+  color: var(--text); max-width: 62ch;
+  margin: 0 0 72px;
+}}
+
+.verdict-block {{ display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }}
+@media (max-width: 720px) {{ .verdict-block {{ grid-template-columns: 1fr; gap: 40px; }} }}
+
+.verdict-word {{
+  font-size: clamp(80px, 14vw, 168px);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.85;
+  color: var(--bucket);
+  text-transform: lowercase;
+  margin: 0;
+  position: relative;
+  padding-right: 0.1em;
+}}
+.verdict-word::after {{
+  content: "";
+  display: inline-block;
+  width: 0.18em; height: 0.18em;
+  background: var(--bucket);
+  border-radius: 50%;
+  margin-left: 0.08em;
+  margin-bottom: 0.08em;
+  vertical-align: baseline;
+}}
+
+.verdict-meta {{ padding-bottom: 14px; }}
+.verdict-meta .label {{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}}
+.verdict-meta .confidence {{
+  font-family: var(--font-mono); font-size: 15px;
+  color: var(--text); margin-bottom: 28px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}}
+.verdict-meta .confidence .value {{ color: var(--bucket); font-weight: 700; }}
+
+.stats-bar {{
+  display: flex; height: 10px; border-radius: 999px;
+  overflow: hidden; background: var(--surface-1);
+  border: 1px solid var(--border);
+  min-width: 280px; max-width: 420px;
+}}
+.stats-bar span {{ display: block; height: 100%; }}
+.stats-bar .s-pass {{ background: var(--ok); }}
+.stats-bar .s-warn {{ background: var(--warn); }}
+.stats-bar .s-bad  {{ background: var(--bad); }}
+.stats-bar .s-skip {{ background: var(--skip); }}
+
+.stats-legend {{
+  display: flex; gap: 20px; margin-top: 14px;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2); flex-wrap: wrap;
+}}
+.stats-legend .item {{ display: inline-flex; align-items: center; gap: 6px; }}
+.stats-legend .dot {{ width: 8px; height: 8px; border-radius: 50%; display: inline-block; }}
+.stats-legend .num {{ color: var(--text); font-weight: 700; }}
+
+.pull-quotes {{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 96px; }}
+@media (max-width: 720px) {{ .pull-quotes {{ grid-template-columns: 1fr; }} }}
+
+.pull {{
+  padding: 28px 32px;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  border-top: 3px solid;
+  position: relative;
+}}
+.pull.best   {{ border-top-color: var(--ok); }}
+.pull.watch  {{ border-top-color: var(--warn); }}
+.pull .kicker {{
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 14px; font-weight: 700;
+}}
+.pull.best .kicker  {{ color: var(--ok); }}
+.pull.watch .kicker {{ color: var(--warn); }}
+.pull .body {{ font-size: 16px; line-height: 1.55; color: var(--text); }}
+
+.section-head {{
+  display: flex; align-items: baseline; gap: 16px;
+  margin-bottom: 36px; padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}}
+.section-head h2 {{
+  font-size: 32px; font-weight: 700;
+  letter-spacing: -0.022em; margin: 0;
+}}
+.section-head .count {{
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); letter-spacing: 0.08em;
+  text-transform: uppercase;
+}}
+section {{ margin-bottom: 96px; }}
+
+.capabilities-grid {{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+}}
+
+.capability-card {{
+  position: relative;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 24px 24px 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}}
+.capability-card:hover {{ transform: translateY(-2px); border-color: var(--border-strong); }}
+
+.capability-card::before {{
+  content: ""; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--skip);
+}}
+.capability-card.status-passed::before,
+.capability-card.status-passed_with_concerns::before {{ background: var(--ok); }}
+.capability-card.status-partial::before {{ background: var(--warn); }}
+.capability-card.status-failed::before,
+.capability-card.status-failed_partial::before {{ background: var(--bad); }}
+.capability-card.status-untested::before {{ background: var(--skip); }}
+
+.cap-header {{
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}}
+.cap-badge {{
+  padding: 3px 9px; border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 10px;
+  background: var(--skip-bg); color: var(--skip);
+}}
+.capability-card.status-passed .cap-badge,
+.capability-card.status-passed_with_concerns .cap-badge {{ background: var(--ok-bg); color: var(--ok); }}
+.capability-card.status-partial .cap-badge {{ background: var(--warn-bg); color: var(--warn); }}
+.capability-card.status-failed .cap-badge,
+.capability-card.status-failed_partial .cap-badge {{ background: var(--bad-bg); color: var(--bad); }}
+.capability-card.status-untested .cap-badge {{ background: var(--skip-bg); color: var(--skip); }}
+
+.cap-id {{ margin-left: auto; color: var(--text-3); }}
+
+.cap-title {{
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.015em; line-height: 1.25;
+  color: var(--text); margin: 4px 0 0;
+}}
+.cap-description {{
+  font-size: 14px; line-height: 1.55;
+  color: var(--text-2); margin: 0;
+}}
+.cap-skip {{
+  margin-top: 4px;
+  font-size: 12.5px; color: var(--text-3);
+  font-family: var(--font-mono); line-height: 1.55;
+  padding: 10px 12px;
+  background: var(--surface-1);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--border-strong);
+  white-space: pre-wrap;
+}}
+
+details.section-fold {{
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}}
+details.section-fold[open] {{ border-color: var(--border-strong); }}
+details.section-fold > summary {{
+  padding: 22px 28px;
+  cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.14em;
+  font-weight: 600; user-select: none;
+  list-style: none;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}}
+details.section-fold > summary::-webkit-details-marker {{ display: none; }}
+details.section-fold > summary::after {{
+  content: "+"; font-family: var(--font-mono);
+  font-size: 18px; color: var(--text-3);
+  transition: transform 0.2s;
+  display: inline-block; line-height: 1;
+}}
+details.section-fold[open] > summary::after {{ transform: rotate(45deg); color: var(--text); }}
+details.section-fold > summary:hover {{ color: var(--text); background: var(--surface-1); }}
+details.section-fold > .body {{ padding: 8px 28px 32px; border-top: 1px solid var(--border); }}
+
+.subsection {{ margin: 28px 0; }}
+.subsection h3 {{
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-3); font-weight: 700;
+  margin: 0 0 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}}
+.grid-two {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }}
+@media (max-width: 720px) {{ .grid-two {{ grid-template-columns: 1fr; }} }}
+
+.mini-card {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+}}
+.mini-card h4 {{
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 0 0 12px; font-weight: 700;
+}}
+.mini-card ul {{ margin: 0; padding: 0; list-style: none; }}
+.mini-card li {{
+  padding: 8px 0; font-size: 14px; color: var(--text-2);
+  border-bottom: 1px dashed var(--border);
+  line-height: 1.5;
+}}
+.mini-card li:last-child {{ border-bottom: 0; padding-bottom: 0; }}
+.mini-card li:first-child {{ padding-top: 0; }}
+
+.flow {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+  overflow-x: auto;
+}}
+.flow-row {{
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 13px;
+}}
+.flow-node {{
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--border-strong);
+  white-space: nowrap;
+}}
+.flow-node.start {{ color: var(--text-2); }}
+.flow-node.decision {{ background: var(--warn-bg); color: var(--warn); border-color: var(--warn); }}
+.flow-node.final {{ background: var(--bucket-bg); color: var(--bucket); border-color: var(--bucket); font-weight: 700; }}
+.flow-arrow {{ color: var(--text-3); font-family: var(--font-mono); }}
+.flow-notes {{ margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--border); }}
+.flow-notes .note {{
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); padding: 4px 0; line-height: 1.5;
+}}
+.flow-notes .note::before {{
+  content: "▸"; color: var(--warn);
+  margin-right: 8px;
+}}
+
+.metric-tiles {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }}
+@media (max-width: 640px) {{ .metric-tiles {{ grid-template-columns: 1fr; }} }}
+.metric-tile {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 20px;
+}}
+.metric-tile .mt-label {{
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 14px;
+}}
+.metric-tile .mt-value {{
+  font-size: 38px; font-weight: 800;
+  letter-spacing: -0.025em; line-height: 1;
+  color: var(--text); font-variant-numeric: tabular-nums;
+}}
+.metric-tile .mt-unit {{ font-size: 16px; color: var(--text-3); font-weight: 500; margin-left: 4px; }}
+.metric-tile .mt-bar {{
+  margin-top: 14px; height: 4px;
+  background: var(--surface-2); border-radius: 2px; overflow: hidden;
+}}
+.metric-tile .mt-bar-fill {{ height: 100%; background: var(--bucket); border-radius: 2px; }}
+.metric-tile .mt-compare {{
+  margin-top: 10px; font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em;
+}}
+
+.claims-table {{ width: 100%; border-collapse: collapse; font-size: 13.5px; }}
+.claims-table th, .claims-table td {{
+  text-align: left; padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}}
+.claims-table th {{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 700;
+  background: var(--surface-1);
+}}
+.claims-table td.c-id {{ font-family: var(--font-mono); color: var(--text-2); white-space: nowrap; }}
+.claims-table td.c-title {{ color: var(--text); }}
+.claims-table td.c-status {{ font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }}
+.claims-table td.c-skip {{ font-size: 12px; color: var(--text-3); white-space: pre-wrap; line-height: 1.5; max-width: 320px; }}
+.claims-table tr.prio-critical td.c-id::before {{ content: "◆"; color: var(--bad); margin-right: 6px; }}
+.claims-table tr.prio-high td.c-id::before     {{ content: "◆"; color: var(--warn); margin-right: 6px; }}
+.claims-table tr.prio-medium td.c-id::before   {{ content: "◆"; color: var(--text-2); margin-right: 6px; }}
+.claims-table tr.prio-low td.c-id::before      {{ content: "◆"; color: var(--text-3); margin-right: 6px; }}
+
+.prio-pill {{
+  display: inline-block; font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 8px; border-radius: 3px; text-transform: uppercase;
+  letter-spacing: 0.08em; font-weight: 700;
+}}
+.prio-pill.critical {{ background: var(--bad-bg); color: var(--bad); }}
+.prio-pill.high     {{ background: var(--warn-bg); color: var(--warn); }}
+.prio-pill.medium   {{ background: var(--surface-2); color: var(--text-2); }}
+.prio-pill.low      {{ background: var(--surface-2); color: var(--text-3); }}
+
+.run-card {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  margin-bottom: 12px;
+}}
+.run-card h3 {{ font-family: var(--font-mono); font-size: 14px; margin: 0; color: var(--text); }}
+.run-card .run-date {{ font-family: var(--font-mono); font-size: 12px; color: var(--text-3); margin: 4px 0 16px; }}
+.run-metrics {{ display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }}
+.run-metric {{
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 6px 12px;
+  border-radius: var(--radius-sm); color: var(--text-2);
+}}
+.run-metric b {{ color: var(--text-3); font-weight: 500; margin-right: 6px; }}
+.run-metric .v {{ color: var(--text); font-weight: 600; }}
+.run-rbc {{ list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }}
+.run-rbc li {{
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-2); padding: 4px 8px;
+  border-radius: 3px; color: var(--text-2);
+  border: 1px solid var(--border);
+}}
+.run-rbc li.pass    {{ border-left: 2px solid var(--ok); }}
+.run-rbc li.partial {{ border-left: 2px solid var(--warn); }}
+.run-rbc li.fail    {{ border-left: 2px solid var(--bad); }}
+.run-rbc li.skip    {{ border-left: 2px solid var(--skip); }}
+
+pre.md {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-2);
+}}
+pre.md code {{ color: var(--text); }}
+
+footer {{
+  margin-top: 80px; padding-top: 32px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}}
+footer a {{ color: var(--text-2); text-decoration: none; border-bottom: 1px solid var(--border); }}
+footer a:hover {{ color: var(--text); border-color: var(--text-3); }}
+
+.dim {{ color: var(--text-3); }}
+
+/* i18n — dual-language content swap */
+.i18n::before {{ content: attr(data-en); }}
+html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
+
+@media (prefers-color-scheme: light) {{
+  :root {{
+    --bg:            #fbf8f3;
+    --surface-0:     #ffffff;
+    --surface-1:     #f6f1e9;
+    --surface-2:     #ede6d9;
+    --border:        rgba(20, 18, 14, 0.07);
+    --border-strong: rgba(20, 18, 14, 0.16);
+    --text:   #1a1714;
+    --text-2: #5c5246;
+    --text-3: #8a7e6f;
+    --skip:    #8a7e6f;
+    --skip-bg: rgba(138, 126, 111, 0.10);
+  }}
+}}
+
+@media (max-width: 720px) {{
+  main {{ padding: 0 20px 80px; }}
+  .hero {{ padding: 8px 0 48px; margin-bottom: 48px; }}
+  section {{ margin-bottom: 64px; }}
+  h1.repo-title {{ font-size: 40px; }}
+  .tagline {{ margin-bottom: 48px; }}
+  .section-head h2 {{ font-size: 24px; }}
+  .capabilities-grid {{ grid-template-columns: 1fr; }}
 }}
 </style>
 </head>
+
 <body>
 <main>
 
-  <div class="lang-toggle" aria-label="language toggle">
-    <button data-lang="en" onclick="setLang('en')">EN</button>
-    <button data-lang="zh" onclick="setLang('zh')">中文</button>
-  </div>
-
-  <div class="hero">
-    <div class="crumb">{i18n("crumb")} · {_esc(vd.date)}</div>
-    <h1>{_esc(vd.display_name)}</h1>
-    <div class="owner-repo">{_esc(vd.owner_repo)}</div>
-    <p class="what-does-it-do">{product_one_liner_html}</p>
-    <div class="bucket-banner">
-      <span class="emoji">{emoji}</span>
-      <span class="name">{_esc(bucket)}</span>
-      <span class="conf">{i18n("confidence")}: {confidence}</span>
+  <div class="topbar">
+    <div class="wordmark">repo<span class="dot">·</span>evals</div>
+    <div class="lang-toggle" aria-label="language toggle">
+      <button data-lang="en" onclick="setLang('en')">EN</button>
+      <button data-lang="zh" onclick="setLang('zh')">中</button>
     </div>
   </div>
 
-  {best_for_html}
-  {watch_out_html}
+  <header class="hero">
+    <div class="eyebrow">
+      <span class="i18n" data-en="Verdict report" data-zh="评测结论"></span>
+      <span class="sep">·</span>
+      <span>{_esc(vd.date)}</span>
+      {version_chip}
+    </div>
+
+    <h1 class="repo-title">{_esc(vd.display_name)}</h1>
+    <div class="repo-slug">{_esc(vd.owner_repo)}</div>
+
+    <p class="tagline">{product_one_liner_html}</p>
+
+    <div class="verdict-block">
+      <div>
+        <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
+        <div class="verdict-word">{_esc(bucket)}</div>
+      </div>
+
+      <div class="verdict-meta">
+        <div class="label"><span class="i18n" data-en="Confidence" data-zh="置信度"></span></div>
+        <div class="confidence"><span class="value">{confidence}</span></div>
+
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · {total_claims} <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar">{stats_bar_html}</div>
+        <div class="stats-legend">{stats_legend_html}</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="pull-quotes">
+    {best_for_html or ''}
+    {watch_out_html or ''}
+  </div>
 
   <section>
-    <h2>{i18n("we_verified")}</h2>
+    <div class="section-head">
+      <h2><span class="i18n" data-en="What we verified" data-zh="我们验证了什么"></span></h2>
+      <span class="count">{covered} / {total_claims}</span>
+    </div>
     <div class="capabilities-grid">
       {capability_cards_html}
     </div>
   </section>
 
-
-  <details class="technical">
-    <summary>{i18n("technical_details")}</summary>
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Technical details" data-zh="技术细节"></span></summary>
     <div class="body">
 
-      <section>
-        <h2>{i18n("ceilings_section")}</h2>
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Ceiling &amp; blocking reasons" data-zh="Ceiling 与 Blocking 理由"></span></h3>
         <div class="grid-two">
-          <div class="card">
-            <h3>{i18n("ceiling_reasons")}</h3>
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Why capped" data-zh="为什么封顶"></span></h4>
             <ul>{ceilings_html}</ul>
           </div>
-          <div class="card">
-            <h3>{i18n("blocking_issues")}</h3>
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h4>
             <ul>{blocking_html}</ul>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section>
-        <h2>{i18n("derivation")}</h2>
-        <div class="mermaid">
-{mermaid_body}
-        </div>
-      </section>
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Derivation" data-zh="推导路径"></span></h3>
+        {flow_html}
+      </div>
 
-      <section>
-        <h2>{i18n("claims_section")}</h2>
-        <table>
-          <thead><tr><th>{i18n("col_id")}</th><th>{i18n("col_title")}</th><th>{i18n("col_priority")}</th><th>{i18n("col_area")}</th><th>{i18n("col_status")}</th><th>{i18n("col_skip")}</th></tr></thead>
-          <tbody>{claim_rows}</tbody>
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Claim ledger" data-zh="Claim 清单"></span></h3>
+        <table class="claims-table">
+          <thead>
+            <tr>
+              <th style="width:110px"><span class="i18n" data-en="ID" data-zh="ID"></span></th>
+              <th><span class="i18n" data-en="Title" data-zh="标题"></span></th>
+              <th style="width:100px"><span class="i18n" data-en="Priority" data-zh="优先级"></span></th>
+              <th style="width:170px"><span class="i18n" data-en="Area" data-zh="领域"></span></th>
+              <th style="width:130px"><span class="i18n" data-en="Status" data-zh="状态"></span></th>
+              <th><span class="i18n" data-en="Note" data-zh="备注"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {claim_ledger_html}
+          </tbody>
         </table>
-      </section>
+      </div>
 
-      <section>
-        <h2>{i18n("runs_section")}</h2>
-        <canvas id="metrics-chart" width="400" height="200"></canvas>
-        {run_cards}
-      </section>
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Runs &amp; metrics" data-zh="Runs 与指标"></span></h3>
+        <div class="metric-tiles">
+          {metric_tiles_html}
+        </div>
+        {run_cards_html}
+      </div>
 
     </div>
   </details>
 
-  <details class="test-log">
-    <summary>{i18n("test_log")}</summary>
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Test log — all probes we ran" data-zh="测试日志 — 我们跑过的所有探针"></span></summary>
     <div class="body">
       {test_log_html}
     </div>
   </details>
 
-  <details class="raw-archive">
-    <summary>{i18n("source_raw")}</summary>
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Raw verdict archive (authored by evaluator)" data-zh="原始 verdict 存档（评测者原文）"></span></summary>
     <div class="body">
-      <pre class="md">{verdict_md_escaped}</pre>
+<pre class="md">{verdict_md_escaped}</pre>
     </div>
   </details>
 
   <footer>
-    <span class="i18n" data-en="Rendered by repo-evals render_verdict_html.py · source" data-zh="由 repo-evals render_verdict_html.py 生成 · 源"></span>: {_esc(vd.repo.get('repo_url') or '—')}
+    <div><span class="i18n" data-en="Rendered by repo-evals · render_verdict_html.py" data-zh="由 repo-evals · render_verdict_html.py 生成"></span></div>
+    <div><a href="{_esc(repo_url)}" target="_blank" rel="noopener">{_esc(vd.owner_repo)}</a></div>
   </footer>
 
 </main>
 
 <script>
-const LANG_KEY = 'repoEvalsVerdictLang';
-const INITIAL_LANG = {json.dumps(initial_lang)};
-
-function detectLang() {{
-  // Priority: explicit URL ?lang=xx > localStorage > CLI/initial > navigator.language > 'en'
-  try {{
-    const p = new URLSearchParams(location.search).get('lang');
-    if (p === 'en' || p === 'zh') return p;
-  }} catch (_) {{}}
-  const stored = localStorage.getItem(LANG_KEY);
-  if (stored === 'en' || stored === 'zh') return stored;
-  if (INITIAL_LANG === 'en' || INITIAL_LANG === 'zh') return INITIAL_LANG;
-  if ((navigator.language || '').toLowerCase().startsWith('zh')) return 'zh';
-  return 'en';
-}}
-
-function setLang(lang) {{
-  document.documentElement.lang = lang;
-  try {{ localStorage.setItem(LANG_KEY, lang); }} catch (_) {{}}
-  if (window._metricsChart) {{
-    const labels = lang === 'zh'
-      ? {{ with: '有该 repo', baseline: 'baseline（无该 repo）' }}
-      : {{ with: 'with repo',  baseline: 'baseline (no repo)' }};
-    window._metricsChart.data.datasets[0].label = labels.with;
-    window._metricsChart.data.datasets[1].label = labels.baseline;
-    window._metricsChart.update();
+  const LANG_KEY = 'repoEvalsVerdictLang';
+  const INITIAL_LANG = {json.dumps(initial_lang)};
+  function detectLang() {{
+    try {{
+      const p = new URLSearchParams(location.search).get('lang');
+      if (p === 'en' || p === 'zh') return p;
+    }} catch (_) {{}}
+    const stored = localStorage.getItem(LANG_KEY);
+    if (stored === 'en' || stored === 'zh') return stored;
+    if (INITIAL_LANG === 'en' || INITIAL_LANG === 'zh') return INITIAL_LANG;
+    if ((navigator.language || '').toLowerCase().startsWith('zh')) return 'zh';
+    return 'en';
   }}
-}}
-
-setLang(detectLang());
-
-mermaid.initialize({{
-  startOnLoad: true,
-  theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
-  securityLevel: 'loose'
-}});
-
-const chartData = {json.dumps(chart_data)};
-const ctx = document.getElementById('metrics-chart');
-if (ctx) {{
-  const startLang = document.documentElement.lang;
-  const startLabels = startLang === 'zh'
-    ? {{ with: '有该 repo', baseline: 'baseline（无该 repo）' }}
-    : {{ with: 'with repo',  baseline: 'baseline (no repo)' }};
-  window._metricsChart = new Chart(ctx, {{
-    type: 'bar',
-    data: {{
-      labels: chartData.labels,
-      datasets: [
-        {{ label: startLabels.with, data: chartData.with, backgroundColor: '{bucket_color}cc' }},
-        {{ label: startLabels.baseline, data: chartData.baseline, backgroundColor: '#94a3b8aa' }}
-      ]
-    }},
-    options: {{
-      responsive: true,
-      plugins: {{ legend: {{ position: 'top' }} }},
-      scales: {{ y: {{ beginAtZero: true }} }}
-    }}
-  }});
-}}
+  function setLang(lang) {{
+    document.documentElement.lang = lang;
+    try {{ localStorage.setItem(LANG_KEY, lang); }} catch (_) {{}}
+  }}
+  setLang(detectLang());
 </script>
 
 </body>
