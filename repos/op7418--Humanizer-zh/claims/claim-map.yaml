@@ -1,0 +1,188 @@
+# Claim map for op7418/Humanizer-zh
+# Archetype: prompt-skill (pure SKILL.md + README, no code, no referenced sub-files)
+# Evaluated 2026-04-24 against commit cloned that day.
+#
+# Two-layer claims:
+#   Technical (title, statement, evidence_needed) — reviewers
+#   User-facing (user_icon, user_title, user_description) — product page
+
+claims:
+  - id: claim-001
+    title: SKILL.md frontmatter 合法且完整
+    user_icon: "📋"
+    user_title:
+      en: "Claude Code can actually load it"
+      zh: "Claude Code 能正确加载它"
+    user_description:
+      en: "The skill's frontmatter parses cleanly — name, description, allowed-tools, metadata.trigger all present. No silent failure when Claude Code loads the skill."
+      zh: "前置元数据解析正常，name / description / allowed-tools / metadata.trigger 都齐全。Claude Code 加载时不会因为格式错误静默失败。"
+    source: SKILL.md
+    source_ref: "frontmatter, lines 1-16"
+    priority: critical
+    area: skill-structure
+    statement: |
+      SKILL.md 有效的 YAML frontmatter，包含 name / description / allowed-tools /
+      metadata.trigger 四项必填字段。
+    business_expectation: |
+      Claude Code 能正常加载这个 skill，通过 /humanizer-zh 触发。
+    evidence_needed: |
+      YAML parse 成功 + 必填字段非空。
+    status: passed
+    evidence:
+      - "SKILL.md lines 1-16: name=humanizer-zh, description 多行有内容, allowed-tools 列出 4 项, metadata.trigger/source 都非空"
+
+  - id: claim-002
+    title: 无悬空内部引用
+    user_icon: "🔗"
+    user_title:
+      en: "No broken internal links"
+      zh: "没有指向不存在文件的引用"
+    user_description:
+      en: "SKILL.md is fully self-contained — it doesn't reference templates/, references/, or commands/ subfiles. Nothing can break because nothing external is needed."
+      zh: "SKILL.md 是自包含的——没有引用 templates/、references/ 或 commands/ 子文件。没有外部依赖就没有断链风险。"
+    source: SKILL.md
+    source_ref: "whole file (484 lines)"
+    priority: critical
+    area: skill-integrity
+    statement: |
+      SKILL.md 中没有 ./references/ / ./templates/ / ./commands/ 等相对路径引用；
+      所有内容都在 SKILL.md 内部。
+    business_expectation: |
+      不会出现"引用了但文件不存在"的死链。
+    evidence_needed: |
+      grep './' SKILL.md 的完整输出，确认无文件引用。
+    status: passed
+    evidence:
+      - "grep -E '\\./(references|templates|commands|scripts)' SKILL.md → 0 matches"
+      - "repo 只有 SKILL.md + README.md + LICENSE 3 个文件"
+
+  - id: claim-003
+    title: README 承诺的 24 种 AI 模式 SKILL.md 全部覆盖
+    user_icon: "📚"
+    user_title:
+      en: "Every pattern advertised is really in the skill"
+      zh: "README 说能改的模式，SKILL.md 里都有"
+    user_description:
+      en: "README promises detection of 24 AI-writing tells across 4 categories (content / language / style / communication). Each one has a numbered section in SKILL.md with before/after examples."
+      zh: "README 声称能识别 4 类共 24 种 AI 痕迹（内容 / 语言语法 / 风格 / 交流）。SKILL.md 里每一种都有编号章节和改写前 / 改写后对照。"
+    source: README + SKILL.md
+    source_ref: "README 第 124-157 行 (24 种模式清单) vs SKILL.md 第 80-402 行"
+    priority: critical
+    area: coverage
+    statement: |
+      README 列出的 24 种模式 (6+6+6+6)，在 SKILL.md 里都有对应的编号小节
+      (### 1 ~ ### 24) 和改写示例。
+    business_expectation: |
+      用户按 README 预期调用，不会遇到"广告了但没实现"的缺项。
+    evidence_needed: |
+      24 项逐一核对表。
+    status: passed
+    evidence:
+      - "SKILL.md ### 1 过度强调意义 → ### 24 通用积极结论，编号连续，每项有 '改写前'/'改写后' 段"
+      - "4 个大类 header 匹配 README 的 4 个类目"
+
+  - id: claim-004
+    title: 真实会话：能识别并改掉 AI 痕迹
+    user_icon: "🧹"
+    user_title:
+      en: "Actually cleans AI-sloppy Chinese text"
+      zh: "真的能把 AI 味很重的中文改自然"
+    user_description:
+      en: "On a deliberately AI-sloppy Chinese paragraph about OpenAI (containing 13 marked AI tells: negation parallels, empty three-part lists, AI vocab, vague attribution, emoji headers, sycophantic phrases), the humanized output had zero remaining slop tokens from the banned list."
+      zh: "喂给它一段故意写得 AI 味很重的 OpenAI 段落（13 处标记好的 AI 痕迹：否定式排比、空洞三段式、AI 词汇、模糊归因、emoji 标题、谄媚语）——改完的正文里黑名单词汇一个不剩。"
+    source: SKILL.md
+    source_ref: "处理流程 (第 419-431 行) + 质量评分 (第 440-456 行)"
+    priority: critical
+    area: end-to-end-llm
+    statement: |
+      在真实 Claude Code 会话里跑一个包含 13 处 AI 痕迹的中文段落，输出能
+      识别所有标记的痕迹并产出符合 SKILL.md 质量契约的改写版本。
+    business_expectation: |
+      用户粘贴真实 AI 稿件，拿到的是真正改过的自然文本，不是占位符。
+    evidence_needed: |
+      input + output artifacts + anti-slop grep verification。
+    status: passed
+    evidence:
+      - "artifacts/01-input.md — 13 处标记痕迹的原文"
+      - "artifacts/02-output.md — 改写版 + 逐项改动表 + 5 维评分"
+      - "grep 核查：改写正文内零个黑名单词汇命中（见 logs/anti-slop-grep.log）"
+
+  - id: claim-005
+    title: 自评分系统能用
+    user_icon: "📊"
+    user_title:
+      en: "The 50-point rubric is usable"
+      zh: "50 分质量评分能打出结果"
+    user_description:
+      en: "The 5-dimension × 10-point rubric (directness / rhythm / trust / authenticity / concision) is concrete enough that another editor can reproduce the score. On our test output it yielded 44/50 = 'good, still room to improve'."
+      zh: "5 维（直接性 / 节奏 / 信任度 / 真实性 / 精炼度）× 10 分的评分足够具体，换一个编辑大致能给出同一档分数。本次改写得 44/50，落在 SKILL 定义的「良好，仍有改进空间」区间。"
+    source: SKILL.md
+    source_ref: "质量评分章节 (第 440-456 行)"
+    priority: high
+    area: end-to-end-llm
+    statement: |
+      SKILL.md 的 5 维打分表可以被实际应用到输出上，得分区间 (45-50 优 /
+      35-44 良 / <35 需重写) 能区分质量。
+    business_expectation: |
+      改写完用户能量化判断"够不够好"，而不只是感觉。
+    evidence_needed: |
+      对 live run output 的逐项打分结果。
+    status: passed
+    evidence:
+      - "artifacts/02-output.md 末尾打出 44/50，每维给出理由"
+
+  - id: claim-006
+    title: 安装说明路径至少有一条可用
+    user_icon: "📦"
+    user_title:
+      en: "At least one install path works"
+      zh: "至少有一条安装路径能用"
+    user_description:
+      en: "README lists three install methods. The `npx skills add <url>` path relies on an external npm CLI that's unverified for this eval and may not exist — but the git-clone-to-~/.claude/skills/humanizer-zh path is a trivial cp-equivalent that will always work. Users have a reliable fallback."
+      zh: "README 给了三种安装方式。`npx skills add <url>` 依赖外部 npm CLI，本次评测没验证它存不存在；但 `git clone 到 ~/.claude/skills/humanizer-zh` 这条路等价于复制目录，必然可用。用户有可靠 fallback。"
+    source: README
+    source_ref: "README 第 19-48 行 (三种安装方式)"
+    priority: high
+    area: install
+    statement: |
+      README 至少一条安装路径（方法二：git clone 到 ~/.claude/skills/humanizer-zh）
+      是确定可用的，因为它只是把 SKILL.md + README.md 放到正确目录。
+    business_expectation: |
+      如果 npx 方法不可用，用户有明确的 fallback。
+    evidence_needed: |
+      验证 repo 是自包含的、放到 ~/.claude/skills/humanizer-zh/ 后满足 Claude
+      Code skill 格式。
+    status: passed
+    evidence:
+      - "repo 只包含 SKILL.md + README.md + LICENSE，结构与 Claude Code skill 规范一致"
+      - "frontmatter 合法（见 claim-001）"
+    partial_reason: |
+      仅验证了 git clone 路径；npx 路径未验证，README 建议作为首选但
+      依赖外部工具 `skills` CLI，未核实其是否为标准工具。
+
+  - id: claim-007
+    title: 不是简单的英译中——有中文适配
+    user_icon: "🇨🇳"
+    user_title:
+      en: "Adapts the English rules for Chinese"
+      zh: "不是机械英译——有中文本地化"
+    user_description:
+      en: |
+        The skill isn't a machine translation of blader/humanizer. It flags Chinese-specific issues: curly-quote section notes that Chinese uses 「」 natively; AI vocab list is Chinese-specific (此外 / 彰显 / 织锦 etc); examples use Chinese contexts (杭州咖啡馆, 加泰罗尼亚统计局).
+      zh: |
+        不是机器翻译。对中文做了适配：弯引号小节特别注明中文习惯用「」；AI 词汇黑名单是中文本土的（此外 / 彰显 / 织锦 等）；示例也都是中文语境（杭州咖啡馆、加泰罗尼亚统计局）。
+    source: SKILL.md + README
+    source_ref: "SKILL.md 弯引号小节 (第 312-322 行) + AI 词汇警示列表 (README 第 204-214 行)"
+    priority: medium
+    area: localization
+    statement: |
+      SKILL.md 的模式列表和示例经过中文化调整，不是英文指南的直译。
+    business_expectation: |
+      中文用户拿到的规则能真的套在中文文本上。
+    evidence_needed: |
+      找出 >= 3 处中文特有的本地化痕迹。
+    status: passed
+    evidence:
+      - "SKILL.md 第 322 行：中文引号说明「」或\"\""
+      - "README 第 204-214 行：AI 词汇列表全是中文词（此外 / 至关重要 / 深入探讨 / 格局 / 织锦 / 证明 / 充满活力 等）"
+      - "示例使用中文场景（杭州咖啡馆、加泰罗尼亚统计局、埃塞俄比亚城镇等中文原生表达）"

@@ -1,0 +1,50 @@
+run_name: live-humanize-1
+date: 2026-04-24
+area: end-to-end-llm
+scenario: "Feed a Chinese AI-slop paragraph (OpenAI puff piece, 13 marked tells) to the skill, apply SKILL.md instructions, measure: did it identify them, did the rewrite contain any blacklisted tokens, does the 50-point rubric score differentiate."
+provenance:
+  # "auto" = captured by new-run.sh from env, "manual" = filled by hand,
+  # "legacy" = imported before provenance was required, "partial" = missing fields.
+  provenance_source: "auto"
+  captured: true
+  partial: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: "claude-opus-4-7"
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: "72f7aa1"
+  target_repo_path: "/tmp/Humanizer-zh"
+  target_repo_ref: "main"
+  target_repo_commit: "91f3d39"
+  evaluated_at: "2026-04-24T09:13:51Z"
+  transcript_path: ""
+  command_log_path: ""
+  session_replay_notes: ""
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
+  manifest_path: "artifacts/manifest.yaml"
+fixtures:
+  - ""
+commands:
+  - ""
+result: passed
+results_by_claim:
+  claim-004:
+    status: passed
+    notes: "Skill identified all 13 marked tells and produced a humanized output; anti-slop grep on the body-only region = 0 hits against a 17-token blacklist."
+  claim-005:
+    status: passed
+    notes: "5-dim rubric applied cleanly, scored 44/50 ('good, still room to improve' by SKILL.md's own bands)."
+metrics:
+  input_length_chars: 278
+  output_length_chars: 182
+  reduction_ratio: 0.35
+  ai_slop_tokens_in_output: 0
+  quality_score: 44
+  quality_score_max: 50
+artifacts:
+  - "artifacts/"
+notes: ""
