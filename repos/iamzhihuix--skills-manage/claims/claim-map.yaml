@@ -1,20 +1,28 @@
 # Claim map for iamzhihuix/skills-manage
 # Archetype: adapter (wraps 27+ AI coding tool "skill directories" behind one ~/.agents/skills/ source of truth)
 # Extracted from README.md v0.9.1 (commit at 2026-04-23, cloned 2026-04-24)
+#
+# Each claim has two layers of content:
+#   Technical (title, statement, evidence_needed) — for reviewers
+#   User-facing (user_title/user_description/user_icon) — for the product page
 
 claims:
   - id: claim-001
     title: 每个已声明平台都在 code 层注册为 adapter
+    user_icon: "🔌"
+    user_title:
+      en: "Supports 28 AI coding tools"
+      zh: "支持 28 个 AI 编程工具"
+    user_description:
+      en: "Claude Code, Cursor, Codex, Gemini CLI, Trae, Factory Droid, Windsurf, and 21 more — the full list in the README is actually wired in the code."
+      zh: "Claude Code、Cursor、Codex、Gemini CLI、Trae、Factory Droid、Windsurf 等 28 个平台。README 里列的，代码里基本都有对应实现。"
     source: README
     source_ref: "Supported Platforms table (28 rows)"
     priority: critical
     area: platform-coverage
     statement: |
-      README 列出的 28 个平台（Claude Code, Codex CLI, Cursor, Gemini CLI, Trae,
-      Factory Droid, Junie, Qwen, Trae CN, Windsurf, Qoder, Augment, OpenCode,
-      KiloCode, OB1, Amp, Kiro, CodeBuddy, Hermes, Copilot, Aider, OpenClaw,
-      QClaw, EasyClaw, EasyClaw V2, AutoClaw, WorkBuddy, Central）每一个在代码
-      的 builtin_agents() seed 里都有对应 entry，并且路径与 README 一致。
+      README 列出的 28 个平台每一个在代码的 builtin_agents() seed 里都有对应 entry，
+      并且路径与 README 一致。
     business_expectation: |
       用户按 README 选一个平台做 install，不会因为"README 列了但代码没实现"失败。
     evidence_needed: |
@@ -23,14 +31,20 @@ claims:
 
   - id: claim-002
     title: 所有 install 产出同一个 shape（symlink → central）
+    user_icon: "🔗"
+    user_title:
+      en: "One skill, synced everywhere"
+      zh: "一处修改，多处同步"
+    user_description:
+      en: "Skills live in ~/.agents/skills/ exactly once. Each platform gets a symbolic link back to that copy — edit the skill once, every installed platform sees the update immediately."
+      zh: "技能只存在 ~/.agents/skills/ 一份。装到每个平台用符号链接指回来——改一处，所有装过的平台立刻生效。"
     source: README
     source_ref: "Central skill library plus per-platform install and uninstall flows"
     priority: critical
     area: shape-conformance
     statement: |
       每个平台的 install 都是 "在 ~/<platform>/skills/ 下创建指向
-      ~/.agents/skills/<skill>/ 的 symlink"，不是 copy，也不是平台特定的
-      魔法目录结构。Windows 分支用 symlink_dir。
+      ~/.agents/skills/<skill>/ 的 symlink"，不是 copy。Windows 分支用 symlink_dir。
     business_expectation: |
       skill 改一次，所有安装了的平台同步生效（symlink 本质）。
     evidence_needed: |
@@ -39,13 +53,19 @@ claims:
 
   - id: claim-003
     title: 未装的/未列出的平台清晰失败
+    user_icon: "⚠️"
+    user_title:
+      en: "Honest about which tools are installed"
+      zh: "如实显示哪些工具已安装"
+    user_description:
+      en: "The app marks a platform \"installed\" only if its real directory (or parent) exists on your machine. No phantom tools in the list."
+      zh: "只有当一个平台的目录（或父目录）真的存在，才会标记为「已检测」。不会对不存在的工具假装能用。"
     source: README
     source_ref: "Supported Platforms + Custom platforms via Settings"
     priority: critical
     area: failure-transparency
     statement: |
-      用户加自定义平台前，如果某个平台的 global_skills_dir 及其父目录都
-      不存在，应当标 is_detected=false 而不是伪装成已检测。
+      is_agent_detected() 活检文件系统，不信 cache。
     business_expectation: |
       用户看到的 "已检测" 状态反映真实磁盘状态，不会把 install 发到不存在的目录。
     evidence_needed: |
@@ -54,13 +74,19 @@ claims:
 
   - id: claim-004
     title: GitHub 导入有真实 auth + retry fallback
+    user_icon: "🌏"
+    user_title:
+      en: "GitHub import works behind the Great Firewall"
+      zh: "GitHub 导入在国内也能用"
+    user_description:
+      en: "Falls back to three China-friendly mirrors (ghfast.top / ghproxy.net / mirror.ghproxy.com) when the main API is slow or blocked."
+      zh: "主 API 失败时自动 fallback 到 3 个国内镜像（ghfast.top / ghproxy.net / mirror.ghproxy.com）。"
     source: README
     source_ref: "Marketplace browsing and GitHub repository import with authenticated requests and retry fallback"
     priority: high
     area: auth
     statement: |
-      GitHub PAT 从本地 SQLite 的 settings 表读取；主 API 失败时会回退到
-      多个镜像（ghfast.top / ghproxy.net / mirror.ghproxy.com）。
+      4 个 api_base 镜像 fallback，从本地 SQLite 读 PAT。
     business_expectation: |
       在国内网络环境下 GitHub 导入也能跑，PAT 失效时报错而不是吞错误。
     evidence_needed: |
@@ -69,61 +95,84 @@ claims:
 
   - id: claim-005
     title: 重复 install 同一个 skill 是幂等的
+    user_icon: "♻️"
+    user_title:
+      en: "Safe to re-run batch installs"
+      zh: "批量安装可以反复跑"
+    user_description:
+      en: "Installing the same skill to the same platform twice does not create duplicates — neither in the database nor on disk."
+      zh: "同一个技能对同一个平台重复安装，不会产生重复——不管是数据库里还是磁盘上。"
     source: README
     source_ref: "Collections for organizing skills and batch-installing them to platforms"
     priority: high
     area: deduplication
     statement: |
-      upsert_skill_installation 用 ON CONFLICT DO UPDATE，重复对同
-      (skill_id, agent_id) 做 install 不会在 DB 里产生两行，也不会在磁盘
-      上留两个 symlink。
+      upsert_skill_installation 用 ON CONFLICT DO UPDATE，不会重复插入或建多个 symlink。
     business_expectation: |
       Collections 批量 install 可以反复跑不出乱子。
     evidence_needed: |
-      db.rs upsert_skill_installation 查询 + 对应 ON CONFLICT 子句。
+      db.rs upsert_skill_installation + ON CONFLICT 子句。
     status: passed
 
   - id: claim-006
     title: 数据本地化 + 无遥测
+    user_icon: "🔒"
+    user_title:
+      en: "Your data stays on your machine"
+      zh: "数据完全留在本地"
+    user_description:
+      en: "No analytics, no crash reporting, no telemetry of any kind. Everything lives in ~/.skillsmanage/db.sqlite. Note: API keys are stored in cleartext there."
+      zh: "没有任何埋点、崩溃上报、或遥测。所有东西都在 ~/.skillsmanage/db.sqlite 里。注意：API key 在那里是明文存储的。"
     source: README
     source_ref: "Privacy & Security — Local-first storage, No telemetry"
     priority: critical
     area: upstream-drift
     statement: |
-      ~/.skillsmanage/db.sqlite 是唯一持久化入口；package.json 和 Rust
-      依赖中没有任何 analytics / telemetry / crash-reporting 库。
+      package.json 和 Rust 依赖里零 analytics/sentry/posthog。唯一数据落点是
+      ~/.skillsmanage/db.sqlite，字面在 lib.rs 里 create_dir 出来。
     business_expectation: |
       用户敢把 GitHub PAT 和 AI API key 存进去（虽然未加密，但不会被外发）。
     evidence_needed: |
-      lib.rs setup() 路径 + 全仓 grep analytics/sentry/posthog 结果。
+      lib.rs setup() + 全仓 grep analytics/sentry/posthog 结果。
     status: passed
 
   - id: claim-007
     title: Prebuilt macOS DMG 下载即可用
+    user_icon: "📦"
+    user_title:
+      en: "Ready-to-install macOS download"
+      zh: "macOS 下载即用（需要一次命令绕过 Gatekeeper）"
+    user_description:
+      en: "Official DMG from GitHub Releases — universal binary (Apple Silicon + Intel). Because the build is adhoc-signed, you'll run xattr -dr com.apple.quarantine once on first launch."
+      zh: "GitHub Releases 提供官方 DMG，universal binary（Apple Silicon 和 Intel 都能用）。因为是 adhoc 签名，首次启动需要手动跑一次 xattr 命令绕过 Gatekeeper。"
     source: README
     source_ref: "Download — Apple Silicon macOS (.dmg and .app.zip)"
     priority: critical
     area: platform-coverage
     statement: |
-      GitHub Release v0.9.1 的 DMG 可下载，SHA256 与 asset digest 一致，
-      mount 后是一个有效的 Mach-O bundle，README 给出的 xattr workaround
-      是真正需要的（adhoc 签名，不是 notarized）。
+      v0.9.1 DMG 下载，SHA256 与 asset digest 一致；mount 后是有效 Mach-O bundle；
+      README 给出的 xattr workaround 是必需的（adhoc 签名，不是 notarized）。
     business_expectation: |
       非开发者用户不用 pnpm + Rust toolchain 就能开始使用。
     evidence_needed: |
-      DMG 下载 log + shasum 对比 + codesign -dv 输出 + hdiutil attach 输出。
+      DMG 下载 log + shasum 对比 + codesign -dv + hdiutil attach。
     status: passed
 
   - id: claim-008
     title: 支持 Central↔平台双向 centralize
+    user_icon: "↔️"
+    user_title:
+      en: "Adopt existing skills from any platform"
+      zh: "已有的平台技能可以一键收编"
+    user_description:
+      en: "If a skill only exists under ~/.cursor/skills/, you can still install it to other platforms — the app will copy it into central first, then link out."
+      zh: "如果一个技能只在 ~/.cursor/skills/ 下有，也可以直接跨平台安装——app 会先把它收进 central，然后链接出去。"
     source: source (not README)
     source_ref: "linker.rs ensure_centralized()"
     priority: medium
     area: shape-conformance
     statement: |
-      如果用户给一个只在某平台（如 ~/.cursor/skills/）存在的 skill 发起
-      跨平台 install，代码会先把它 copy 进 central（~/.agents/skills/）
-      再建 symlink。
+      linker.rs ensure_centralized() 会在缺失时把 skill 拷贝进 central，再 symlink 分发。
     business_expectation: |
       用户不需要先手动把 skill 挪进 central 也能用 install 流程。
     evidence_needed: |
@@ -132,13 +181,20 @@ claims:
 
   - id: claim-009
     title: 实际启动 + 扫描 + install 的端到端 runtime 验证
+    user_icon: "🧪"
+    user_title:
+      en: "End-to-end workflow actually works"
+      zh: "真的打开 app 跑一遍主流程"
+    user_description:
+      en: "We did NOT verify this. The tester's live ~/.claude/skills/ is actively in use, so running an unsigned app against it would be risky. Test in a clean account before trusting."
+      zh: "本次评测没做这件事。测试者的 ~/.claude/skills/ 正在被活跃使用，跑一个未签名应用扫它风险太高。使用前请在干净账户或 VM 里先试一次。"
     source: README
     source_ref: "Highlights (all 8 bullets)"
     priority: critical
     area: platform-coverage
     statement: |
-      用户打开 app → 检测到已装的平台 → 在 Central 看到已有 skill →
-      install 到某个平台 → 平台目录出现 symlink → uninstall 清掉 symlink。
+      打开 app → 检测已装平台 → Central 看到已有 skill → install 到某个平台 →
+      平台目录出现 symlink → uninstall 清掉 symlink。
     business_expectation: |
       这才是 usable 的下限。
     evidence_needed: |

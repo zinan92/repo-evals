@@ -28,12 +28,12 @@
 * { box-sizing: border-box; }
 body { font-family: var(--font-body); background: var(--bg); color: var(--text); margin: 0; padding: 32px 24px; line-height: 1.55; }
 main { max-width: 1080px; margin: 0 auto; }
-.hero { padding: 40px 32px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 32px; position: relative; overflow: hidden; }
+.hero { padding: 56px 44px 44px; border-radius: 24px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 40px; position: relative; overflow: hidden; }
 .hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, var(--accent-dim), transparent 60%); pointer-events: none; }
 .hero > * { position: relative; }
 .hero .crumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; }
-.hero h1 { font-size: 42px; margin: 12px 0 8px; font-weight: 700; }
-.hero .owner-repo { font-family: var(--font-mono); font-size: 16px; color: var(--text-dim); margin-bottom: 28px; }
+.hero h1 { font-size: 56px; margin: 14px 0 6px; font-weight: 700; letter-spacing: -.02em; line-height: 1.05; }
+.hero .owner-repo { font-family: var(--font-mono); font-size: 14px; color: var(--text-dim); margin-bottom: 24px; }
 .bucket-banner { display: inline-flex; align-items: baseline; gap: 14px; padding: 18px 28px; border-radius: 14px; background: var(--accent-dim); border: 2px solid var(--accent); font-weight: 600; }
 .bucket-banner .emoji { font-size: 48px; line-height: 1; }
 .bucket-banner .name { font-size: 28px; color: var(--accent); font-weight: 700; }
@@ -73,19 +73,36 @@ footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border
 .dim { color: var(--text-dim); }
 
 /* ---- product-facing sections ---- */
-.what-does-it-do { font-size: 18px; line-height: 1.5; margin: 8px 0 28px; color: var(--text); max-width: 72ch; }
-.capabilities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
-.capability-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; border-left: 4px solid var(--text-dim); }
-.capability-card.status-passed, .capability-card.status-passed_with_concerns, .capability-card.status-partial { border-left-color: #15803d; }
-.capability-card.status-failed, .capability-card.status-failed_partial { border-left-color: #b91c1c; }
-.capability-card.status-untested { border-left-color: #a8a29e; background: var(--surface2); }
-.capability-card header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; }
-.capability-card .cap-emoji { font-size: 18px; }
-.capability-card .cap-status { text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); font-weight: 600; }
-.capability-card .cap-id { margin-left: auto; font-family: var(--font-mono); color: var(--text-dim); }
-.capability-card h3 { margin: 0 0 10px; font-size: 16px; font-weight: 600; color: var(--text); }
-.capability-card .cap-expectation { margin: 0; font-size: 14px; color: var(--text-dim); line-height: 1.55; }
-.capability-card .cap-skip { margin: 8px 0 0; font-size: 13px; color: var(--text-dim); font-style: italic; }
+.what-does-it-do { font-size: 21px; line-height: 1.5; margin: 10px 0 30px; color: var(--text); max-width: 68ch; font-weight: 400; }
+
+/* Capability cards — product-page feel, not report feel */
+.capabilities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+.capability-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; display: flex; gap: 18px; transition: transform .15s, box-shadow .15s; }
+.capability-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+.capability-card.status-untested { background: var(--surface2); opacity: .85; }
+.capability-card .cap-icon-wrap { flex: 0 0 auto; width: 48px; height: 48px; border-radius: 12px; background: var(--accent-dim); display: flex; align-items: center; justify-content: center; }
+.capability-card.status-untested .cap-icon-wrap { background: rgba(168,162,158,.15); }
+.capability-card.status-failed .cap-icon-wrap, .capability-card.status-failed_partial .cap-icon-wrap { background: rgba(185,28,28,.1); }
+.capability-card .cap-icon { font-size: 28px; line-height: 1; }
+.capability-card .cap-body { flex: 1 1 auto; min-width: 0; }
+.capability-card .cap-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.capability-card .cap-status-badge { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 3px 10px; border-radius: 999px; background: var(--surface2); color: var(--text-dim); }
+.capability-card .cap-status-passed, .capability-card .cap-status-passed_with_concerns, .capability-card .cap-status-partial { background: rgba(21,128,61,.12); color: #15803d; }
+.capability-card .cap-status-failed, .capability-card .cap-status-failed_partial { background: rgba(185,28,28,.12); color: #b91c1c; }
+.capability-card .cap-status-untested { background: rgba(168,162,158,.18); color: #57534e; }
+.capability-card .cap-id { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+.capability-card .cap-title { margin: 0 0 8px; font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.capability-card .cap-description { margin: 0; font-size: 14px; color: var(--text-dim); line-height: 1.55; }
+.capability-card .cap-skip { margin: 10px 0 0; font-size: 13px; color: var(--text-dim); font-style: italic; padding-left: 10px; border-left: 2px solid var(--border-bright); }
+
+/* Best-for / Watch-out — pull-quote style blocks */
+.best-for, .watch-out { padding: 22px 26px; border-radius: 14px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }
+.best-for { background: rgba(21,128,61,.08); border-left: 4px solid #15803d; }
+.watch-out { background: rgba(180,83,9,.08); border-left: 4px solid #b45309; }
+.best-for-label, .watch-out-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+.best-for-label { color: #15803d; }
+.watch-out-label { color: #b45309; }
+.best-for-body, .watch-out-body { font-size: 15px; line-height: 1.55; color: var(--text); }
 .quality-grid { display: flex; flex-direction: column; gap: 12px; }
 .quality-row { display: flex; gap: 20px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; align-items: baseline; }
 .quality-label { flex: 0 0 auto; width: 140px; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }
@@ -128,42 +145,37 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {
     <div class="crumb"><span class="i18n" data-en="repo-evals · verdict" data-zh="repo-evals · 评测结论"></span> · 2026-04-24</div>
     <h1>skills-manage</h1>
     <div class="owner-repo">iamzhihuix/skills-manage</div>
-    <p class="what-does-it-do"><b><span class="i18n" data-en="What this repo does" data-zh="这个 repo 是做什么的"></span>:</b> Tauri desktop app managing AI coding agent skills across 28 platforms via</p>
+    <p class="what-does-it-do"><span class="i18n" data-en="Manage skills across 28 AI coding tools (Claude Code, Cursor, Codex, Gemini CLI, Trae, etc.) from one desktop app. Edit a skill once, sync to every tool." data-zh="一个桌面应用，帮你管理 Claude Code、Cursor、Codex、Gemini CLI、Trae 等 28 个 AI 编程工具的技能库。技能改一处，所有工具同步更新。"></span></p>
     <div class="bucket-banner">
       <span class="emoji">⚪</span>
       <span class="name">usable</span>
       <span class="conf"><span class="i18n" data-en="confidence" data-zh="置信度"></span>: low</span>
     </div>
-    <div class="meta">
-      <span><b><span class="i18n" data-en="archetype" data-zh="archetype"></span></b> adapter</span>
-      <span><b><span class="i18n" data-en="claims" data-zh="claim 数"></span></b> 9</span>
-      <span><b><span class="i18n" data-en="critical covered" data-zh="critical 覆盖"></span></b> 5/6</span>
-      <span><b><span class="i18n" data-en="runs" data-zh="runs"></span></b> 1</span>
-    </div>
   </div>
 
+  <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Users who juggle multiple AI coding tools and haven&#x27;t already adopted another skill manager." data-zh="同时在用多个 AI 编程工具，且还没有另一套技能管理方案的用户。"></span></div></section>
+  <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="Pre-1.0 (v0.9.1). macOS build is unsigned (one-time xattr workaround needed). API keys stored in cleartext in ~/.skillsmanage/db.sqlite. Runtime workflow never observed end-to-end in this eval." data-zh="还不到 1.0（v0.9.1）。macOS 版本未签名（首次启动需要手动运行 xattr 命令一次）。API key 在 ~/.skillsmanage/db.sqlite 里明文存储。本次评测没有真的打开 app 跑完整流程。"></span></div></section>
+
   <section>
-    <h2><span class="i18n" data-en="Capabilities" data-zh="能做什么"></span></h2>
+    <h2><span class="i18n" data-en="What we verified" data-zh="我们验证了什么"></span></h2>
     <div class="capabilities-grid">
-      <article class="capability-card status-partial"><header><span class="cap-emoji">🟡</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-001</span></header><h3>每个已声明平台都在 code 层注册为 adapter</h3><p class="cap-expectation">用户按 README 选一个平台做 install，不会因为&quot;README 列了但代码没实现&quot;失败。</p></article>
-<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-002</span></header><h3>所有 install 产出同一个 shape（symlink → central）</h3><p class="cap-expectation">skill 改一次，所有安装了的平台同步生效（symlink 本质）。</p></article>
-<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-003</span></header><h3>未装的/未列出的平台清晰失败</h3><p class="cap-expectation">用户看到的 &quot;已检测&quot; 状态反映真实磁盘状态，不会把 install 发到不存在的目录。</p></article>
-<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-004</span></header><h3>GitHub 导入有真实 auth + retry fallback</h3><p class="cap-expectation">在国内网络环境下 GitHub 导入也能跑，PAT 失效时报错而不是吞错误。</p></article>
-<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-005</span></header><h3>重复 install 同一个 skill 是幂等的</h3><p class="cap-expectation">Collections 批量 install 可以反复跑不出乱子。</p></article>
-<article class="capability-card status-failed"><header><span class="cap-emoji">❌</span><span class="cap-status"><span class="i18n" data-en="failed verification" data-zh="验证失败"></span></span><span class="cap-id">claim-006</span></header><h3>数据本地化 + 无遥测</h3><p class="cap-expectation">用户敢把 GitHub PAT 和 AI API key 存进去（虽然未加密，但不会被外发）。</p></article>
-<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-007</span></header><h3>Prebuilt macOS DMG 下载即可用</h3><p class="cap-expectation">非开发者用户不用 pnpm + Rust toolchain 就能开始使用。</p></article>
-<article class="capability-card status-untested"><header><span class="cap-emoji">⏭️</span><span class="cap-status"><span class="i18n" data-en="not tested" data-zh="未测试"></span></span><span class="cap-id">claim-009</span></header><h3>实际启动 + 扫描 + install 的端到端 runtime 验证</h3><p class="cap-expectation">这才是 usable 的下限。</p><p class="cap-skip"><b><span class="i18n" data-en="skip reason" data-zh="跳过原因"></span>:</b> Wendy 当前机器上 ~/.claude/skills/ (260+) 和 ~/.agents/skills/ 正在被
+      <article class="capability-card status-partial"><div class="cap-icon-wrap"><span class="cap-icon">🔌</span></div><div class="cap-body">  <header class="cap-header">    <span class="cap-status-badge cap-status-partial">🟡 <span class="i18n" data-en="verified" data-zh="已验证"></span></span>    <span class="cap-id">claim-001</span>  </header>  <h3 class="cap-title"><span class="i18n" data-en="Supports 28 AI coding tools" data-zh="支持 28 个 AI 编程工具"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Claude Code, Cursor, Codex, Gemini CLI, Trae, Factory Droid, Windsurf, and 21 more — the full list in the README is actually wired in the code." data-zh="Claude Code、Cursor、Codex、Gemini CLI、Trae、Factory Droid、Windsurf 等 28 个平台。README 里列的，代码里基本都有对应实现。"></span></p>  </div></article>
+<article class="capability-card status-passed"><div class="cap-icon-wrap"><span class="cap-icon">🔗</span></div><div class="cap-body">  <header class="cap-header">    <span class="cap-status-badge cap-status-passed">✅ <span class="i18n" data-en="verified" data-zh="已验证"></span></span>    <span class="cap-id">claim-002</span>  </header>  <h3 class="cap-title"><span class="i18n" data-en="One skill, synced everywhere" data-zh="一处修改，多处同步"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Skills live in ~/.agents/skills/ exactly once. Each platform gets a symbolic link back to that copy — edit the skill once, every installed platform sees the update immediately." data-zh="技能只存在 ~/.agents/skills/ 一份。装到每个平台用符号链接指回来——改一处，所有装过的平台立刻生效。"></span></p>  </div></article>
+<article class="capability-card status-passed"><div class="cap-icon-wrap"><span class="cap-icon">⚠️</span></div><div class="cap-body">  <header class="cap-header">    <span class="cap-status-badge cap-status-passed">✅ <span class="i18n" data-en="verified" data-zh="已验证"></span></span>    <span class="cap-id">claim-003</span>  </header>  <h3 class="cap-title"><span class="i18n" data-en="Honest about which tools are installed" data-zh="如实显示哪些工具已安装"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The app marks a platform &quot;installed&quot; only if its real directory (or parent) exists on your machine. No phantom tools in the list." data-zh="只有当一个平台的目录（或父目录）真的存在，才会标记为「已检测」。不会对不存在的工具假装能用。"></span></p>  </div></article>
+<article class="capability-card status-passed"><div class="cap-icon-wrap"><span class="cap-icon">🌏</span></div><div class="cap-body">  <header class="cap-header">    <span class="cap-status-badge cap-status-passed">✅ <span class="i18n" data-en="verified" data-zh="已验证"></span></span>    <span class="cap-id">claim-004</span>  </header>  <h3 class="cap-title"><span class="i18n" data-en="GitHub import works behind the Great Firewall" data-zh="GitHub 导入在国内也能用"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Falls back to three China-friendly mirrors (ghfast.top / ghproxy.net / mirror.ghproxy.com) when the main API is slow or blocked." data-zh="主 API 失败时自动 fallback 到 3 个国内镜像（ghfast.top / ghproxy.net / mirror.ghproxy.com）。"></span></p>  </div></article>
+<article class="capability-card status-passed"><div class="cap-icon-wrap"><span class="cap-icon">♻️</span></div><div class="cap-body">  <header class="cap-header">    <span class="cap-status-badge cap-status-passed">✅ <span class="i18n" data-en="verified" data-zh="已验证"></span></span>    <span class="cap-id">claim-005</span>  </header>  <h3 class="cap-title"><span class="i18n" data-en="Safe to re-run batch installs" data-zh="批量安装可以反复跑"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Installing the same skill to the same platform twice does not create duplicates — neither in the database nor on disk." data-zh="同一个技能对同一个平台重复安装，不会产生重复——不管是数据库里还是磁盘上。"></span></p>  </div></article>
+<article class="capability-card status-failed"><div class="cap-icon-wrap"><span class="cap-icon">🔒</span></div><div class="cap-body">  <header class="cap-header">    <span class="cap-status-badge cap-status-failed">❌ <span class="i18n" data-en="failed verification" data-zh="验证失败"></span></span>    <span class="cap-id">claim-006</span>  </header>  <h3 class="cap-title"><span class="i18n" data-en="Your data stays on your machine" data-zh="数据完全留在本地"></span></h3>  <p class="cap-description"><span class="i18n" data-en="No analytics, no crash reporting, no telemetry of any kind. Everything lives in ~/.skillsmanage/db.sqlite. Note: API keys are stored in cleartext there." data-zh="没有任何埋点、崩溃上报、或遥测。所有东西都在 ~/.skillsmanage/db.sqlite 里。注意：API key 在那里是明文存储的。"></span></p>  </div></article>
+<article class="capability-card status-passed"><div class="cap-icon-wrap"><span class="cap-icon">📦</span></div><div class="cap-body">  <header class="cap-header">    <span class="cap-status-badge cap-status-passed">✅ <span class="i18n" data-en="verified" data-zh="已验证"></span></span>    <span class="cap-id">claim-007</span>  </header>  <h3 class="cap-title"><span class="i18n" data-en="Ready-to-install macOS download" data-zh="macOS 下载即用（需要一次命令绕过 Gatekeeper）"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Official DMG from GitHub Releases — universal binary (Apple Silicon + Intel). Because the build is adhoc-signed, you&#x27;ll run xattr -dr com.apple.quarantine once on first launch." data-zh="GitHub Releases 提供官方 DMG，universal binary（Apple Silicon 和 Intel 都能用）。因为是 adhoc 签名，首次启动需要手动跑一次 xattr 命令绕过 Gatekeeper。"></span></p>  </div></article>
+<article class="capability-card status-untested"><div class="cap-icon-wrap"><span class="cap-icon">🧪</span></div><div class="cap-body">  <header class="cap-header">    <span class="cap-status-badge cap-status-untested">⏭️ <span class="i18n" data-en="not tested" data-zh="未测试"></span></span>    <span class="cap-id">claim-009</span>  </header>  <h3 class="cap-title"><span class="i18n" data-en="End-to-end workflow actually works" data-zh="真的打开 app 跑一遍主流程"></span></h3>  <p class="cap-description"><span class="i18n" data-en="We did NOT verify this. The tester&#x27;s live ~/.claude/skills/ is actively in use, so running an unsigned app against it would be risky. Test in a clean account before trusting." data-zh="本次评测没做这件事。测试者的 ~/.claude/skills/ 正在被活跃使用，跑一个未签名应用扫它风险太高。使用前请在干净账户或 VM 里先试一次。"></span></p>  <p class="cap-skip"><span class="i18n" data-en="Wendy 当前机器上 ~/.claude/skills/ (260+) 和 ~/.agents/skills/ 正在被
 本次 session 使用，启动未签名 adhoc-signed app 去扫描+改写这些目录
-风险过高。建议在干净账户 / VM 里再验。</p></article>
+风险过高。建议在干净账户 / VM 里再验。
+" data-zh="Wendy 当前机器上 ~/.claude/skills/ (260+) 和 ~/.agents/skills/ 正在被
+本次 session 使用，启动未签名 adhoc-signed app 去扫描+改写这些目录
+风险过高。建议在干净账户 / VM 里再验。
+"></span></p></div></article>
     </div>
   </section>
 
-  <section>
-    <h2><span class="i18n" data-en="Quality at a glance" data-zh="质量速览"></span></h2>
-    <div class="quality-grid">
-      <div class="quality-row"><span class="quality-label"><span class="i18n" data-en="Coverage" data-zh="覆盖度"></span></span><span class="quality-value">5/6 critical</span></div><div class="quality-row"><span class="quality-label"><span class="i18n" data-en="Reliability" data-zh="可靠性"></span></span><span class="quality-value">core user-facing layer untested → capped at &#x27;usable&#x27;</span></div><div class="quality-row"><span class="quality-label"><span class="i18n" data-en="Residual risk" data-zh="剩余风险"></span></span><span class="quality-value">only 5/6 critical claims covered</span></div>
-    </div>
-  </section>
 
   <details class="technical">
     <summary><span class="i18n" data-en="Technical details (expand to see)" data-zh="技术细节（展开查看）"></span></summary>

@@ -152,6 +152,10 @@ I18N: dict[str, dict[str, str]] = {
     "trigger_log":       {"en": "Trigger tests",              "zh": "触发测试"},
     "source_raw":        {"en": "Raw verdict archive (authored by evaluator)",
                           "zh": "原始 verdict 存档（评测者原文）"},
+    "best_for":          {"en": "Best for",                   "zh": "最适合谁用"},
+    "watch_out":         {"en": "Watch out",                  "zh": "注意事项"},
+    "we_verified":       {"en": "What we verified",           "zh": "我们验证了什么"},
+    "verdict_pill":      {"en": "verdict",                    "zh": "评测结果"},
     "footer":            {"en": "Rendered by repo-evals render_verdict_html.py · source",
                           "zh": "由 repo-evals render_verdict_html.py 生成 · 源"},
     "with_repo":         {"en": "with repo",                  "zh": "有该 repo"},
@@ -175,6 +179,33 @@ def i18n(key: str) -> str:
     en = html.escape(pair["en"], quote=True)
     zh = html.escape(pair["zh"], quote=True)
     return f'<span class="i18n" data-en="{en}" data-zh="{zh}"></span>'
+
+
+def dual_lang(val: Any, fallback: str = "") -> str:
+    """Render an authored value (possibly a {en, zh} dict) as a bilingual
+    span. If the value is a plain string, both data-en and data-zh hold
+    that same string — honest representation of 'authored in one language'.
+    """
+    if isinstance(val, dict):
+        en_text = str(val.get("en") or val.get("zh") or fallback)
+        zh_text = str(val.get("zh") or val.get("en") or fallback)
+    else:
+        s = str(val or fallback)
+        en_text = zh_text = s
+    en = html.escape(en_text, quote=True)
+    zh = html.escape(zh_text, quote=True)
+    if not en_text and not zh_text:
+        return ""
+    return f'<span class="i18n" data-en="{en}" data-zh="{zh}"></span>'
+
+
+def dual_lang_plain(val: Any) -> str:
+    """Extract the English variant from a possibly-bilingual value, for
+    use inside <title>, Mermaid text, etc. where span elements won't
+    render. Returns a plain string."""
+    if isinstance(val, dict):
+        return str(val.get("en") or val.get("zh") or "")
+    return str(val or "")
 
 
 # ---- data loading --------------------------------------------------------
@@ -398,23 +429,31 @@ def render_run_card(run: RunData) -> str:
 
 
 def product_one_liner(vd: VerdictData) -> str:
-    """One-sentence 'what this repo does', in whatever language the
-    evaluator authored it. Prefers explicit fields, falls back to the
-    first sentence of repo.yaml notes."""
+    """One-sentence 'what this repo does' as a bilingual span. Picks
+    from repo.yaml.product_view.one_liner first (the best source),
+    falls back to the first line of notes."""
+    pv = vd.repo.get("product_view") or {}
+    if pv.get("one_liner"):
+        return dual_lang(pv["one_liner"])
     for key in ("one_liner", "product_summary", "description"):
         val = vd.repo.get(key)
         if val:
-            return str(val).strip()
+            return dual_lang(val)
     notes = vd.repo.get("notes") or ""
     if isinstance(notes, str) and notes.strip():
-        first_line = notes.strip().splitlines()[0]
-        return first_line[:280]
-    # Last resort: derive from archetype
-    return f"An {vd.archetype} repo."
+        first_line = notes.strip().splitlines()[0][:280]
+        return dual_lang(first_line)
+    return dual_lang(f"An {vd.archetype} repo.")
 
 
 def render_capability_cards(vd: VerdictData) -> str:
-    """One card per critical/high claim — the product-facing 'it can do X'."""
+    """One visual card per critical/high claim — product-facing.
+
+    Uses claim.user_title / user_description / user_icon if present
+    (these are typically bilingual {en, zh} dicts). Falls back to the
+    technical claim.title / business_expectation when user fields are
+    missing, which keeps old claim-maps rendering, just less beautifully.
+    """
     VISIBLE_PRIORITIES = {"critical", "high"}
     visible = [c for c in vd.claims if str(c.get("priority", "")) in VISIBLE_PRIORITIES]
     if not visible:
@@ -422,13 +461,21 @@ def render_capability_cards(vd: VerdictData) -> str:
 
     def _card(c: dict[str, Any]) -> str:
         status = str(c.get("status", "unknown"))
-        emoji = STATUS_EMOJI.get(status, "·")
-        title = _esc(c.get("title", c.get("id", "")))
+        status_emoji = STATUS_EMOJI.get(status, "·")
         cid = _esc(c.get("id", ""))
-        expectation = str(c.get("business_expectation") or "").strip()
-        skip_reason = str(c.get("skip_reason") or "").strip()
 
-        # status label for card header
+        icon = str(c.get("user_icon") or "").strip() or status_emoji
+
+        user_title_val = c.get("user_title") or c.get("title") or c.get("id", "")
+        user_desc_val = (
+            c.get("user_description")
+            or c.get("business_expectation")
+            or ""
+        )
+
+        title_span = dual_lang(user_title_val)
+        desc_span = dual_lang(user_desc_val)
+
         status_label_key = {
             "passed": "verified",
             "passed_with_concerns": "verified",
@@ -438,30 +485,62 @@ def render_capability_cards(vd: VerdictData) -> str:
             "untested": "untested_label",
         }.get(status, "untested_label")
 
-        body_parts: list[str] = []
-        if expectation:
-            body_parts.append(
-                f'<p class="cap-expectation">{_esc(expectation)}</p>'
-            )
-        if skip_reason:
-            body_parts.append(
-                f'<p class="cap-skip"><b>{i18n("skip_note")}:</b> {_esc(skip_reason)}</p>'
-            )
-        body = "".join(body_parts) or ""
+        # Skip reason — surface only when untested (it's the reason we didn't
+        # verify). For passed claims this field is usually absent anyway.
+        skip_html = ""
+        if status == "untested":
+            skip_val = c.get("skip_reason")
+            if skip_val:
+                skip_html = (
+                    f'<p class="cap-skip">{dual_lang(skip_val)}</p>'
+                )
+
+        desc_html = f'<p class="cap-description">{desc_span}</p>' if desc_span else ""
 
         return (
             f'<article class="capability-card status-{status}">'
-            f'<header>'
-            f'<span class="cap-emoji">{emoji}</span>'
-            f'<span class="cap-status">{i18n(status_label_key)}</span>'
-            f'<span class="cap-id">{cid}</span>'
-            f'</header>'
-            f'<h3>{title}</h3>'
-            f'{body}'
+            f'<div class="cap-icon-wrap"><span class="cap-icon">{icon}</span></div>'
+            f'<div class="cap-body">'
+            f'  <header class="cap-header">'
+            f'    <span class="cap-status-badge cap-status-{status}">{status_emoji} {i18n(status_label_key)}</span>'
+            f'    <span class="cap-id">{cid}</span>'
+            f'  </header>'
+            f'  <h3 class="cap-title">{title_span}</h3>'
+            f'  {desc_html}'
+            f'  {skip_html}'
+            f'</div>'
             f'</article>'
         )
 
     return "\n".join(_card(c) for c in visible)
+
+
+def render_best_for(vd: VerdictData) -> str:
+    """Who should adopt this repo — a pull-quote style block."""
+    pv = vd.repo.get("product_view") or {}
+    val = pv.get("best_for")
+    if not val:
+        return ""
+    return (
+        f'<section class="best-for">'
+        f'<div class="best-for-label">{i18n("best_for")}</div>'
+        f'<div class="best-for-body">{dual_lang(val)}</div>'
+        f'</section>'
+    )
+
+
+def render_watch_out(vd: VerdictData) -> str:
+    """Known risks / caveats — pull-quote style, accent warning color."""
+    pv = vd.repo.get("product_view") or {}
+    val = pv.get("watch_out")
+    if not val:
+        return ""
+    return (
+        f'<section class="watch-out">'
+        f'<div class="watch-out-label">{i18n("watch_out")}</div>'
+        f'<div class="watch-out-body">{dual_lang(val)}</div>'
+        f'</section>'
+    )
 
 
 def render_quality_summary(vd: VerdictData) -> str:
@@ -590,8 +669,11 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
 
     # Product-facing pieces (built from structured data, so they respect
     # whatever language the evaluator authored claim-map and repo.yaml in).
-    product_one_liner_html = _esc(product_one_liner(vd))
+    # product_one_liner returns a bilingual span already — do NOT escape.
+    product_one_liner_html = product_one_liner(vd)
     capability_cards_html = render_capability_cards(vd)
+    best_for_html = render_best_for(vd)
+    watch_out_html = render_watch_out(vd)
     quality_summary_html = render_quality_summary(vd)
     test_log_html = render_test_log(vd)
 
@@ -630,12 +712,12 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
 * {{ box-sizing: border-box; }}
 body {{ font-family: var(--font-body); background: var(--bg); color: var(--text); margin: 0; padding: 32px 24px; line-height: 1.55; }}
 main {{ max-width: 1080px; margin: 0 auto; }}
-.hero {{ padding: 40px 32px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 32px; position: relative; overflow: hidden; }}
+.hero {{ padding: 56px 44px 44px; border-radius: 24px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 40px; position: relative; overflow: hidden; }}
 .hero::before {{ content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, var(--accent-dim), transparent 60%); pointer-events: none; }}
 .hero > * {{ position: relative; }}
 .hero .crumb {{ font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; }}
-.hero h1 {{ font-size: 42px; margin: 12px 0 8px; font-weight: 700; }}
-.hero .owner-repo {{ font-family: var(--font-mono); font-size: 16px; color: var(--text-dim); margin-bottom: 28px; }}
+.hero h1 {{ font-size: 56px; margin: 14px 0 6px; font-weight: 700; letter-spacing: -.02em; line-height: 1.05; }}
+.hero .owner-repo {{ font-family: var(--font-mono); font-size: 14px; color: var(--text-dim); margin-bottom: 24px; }}
 .bucket-banner {{ display: inline-flex; align-items: baseline; gap: 14px; padding: 18px 28px; border-radius: 14px; background: var(--accent-dim); border: 2px solid var(--accent); font-weight: 600; }}
 .bucket-banner .emoji {{ font-size: 48px; line-height: 1; }}
 .bucket-banner .name {{ font-size: 28px; color: var(--accent); font-weight: 700; }}
@@ -675,19 +757,36 @@ footer {{ margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--borde
 .dim {{ color: var(--text-dim); }}
 
 /* ---- product-facing sections ---- */
-.what-does-it-do {{ font-size: 18px; line-height: 1.5; margin: 8px 0 28px; color: var(--text); max-width: 72ch; }}
-.capabilities-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }}
-.capability-card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; border-left: 4px solid var(--text-dim); }}
-.capability-card.status-passed, .capability-card.status-passed_with_concerns, .capability-card.status-partial {{ border-left-color: #15803d; }}
-.capability-card.status-failed, .capability-card.status-failed_partial {{ border-left-color: #b91c1c; }}
-.capability-card.status-untested {{ border-left-color: #a8a29e; background: var(--surface2); }}
-.capability-card header {{ display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; }}
-.capability-card .cap-emoji {{ font-size: 18px; }}
-.capability-card .cap-status {{ text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); font-weight: 600; }}
-.capability-card .cap-id {{ margin-left: auto; font-family: var(--font-mono); color: var(--text-dim); }}
-.capability-card h3 {{ margin: 0 0 10px; font-size: 16px; font-weight: 600; color: var(--text); }}
-.capability-card .cap-expectation {{ margin: 0; font-size: 14px; color: var(--text-dim); line-height: 1.55; }}
-.capability-card .cap-skip {{ margin: 8px 0 0; font-size: 13px; color: var(--text-dim); font-style: italic; }}
+.what-does-it-do {{ font-size: 21px; line-height: 1.5; margin: 10px 0 30px; color: var(--text); max-width: 68ch; font-weight: 400; }}
+
+/* Capability cards — product-page feel, not report feel */
+.capabilities-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }}
+.capability-card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; display: flex; gap: 18px; transition: transform .15s, box-shadow .15s; }}
+.capability-card:hover {{ transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,.06); }}
+.capability-card.status-untested {{ background: var(--surface2); opacity: .85; }}
+.capability-card .cap-icon-wrap {{ flex: 0 0 auto; width: 48px; height: 48px; border-radius: 12px; background: var(--accent-dim); display: flex; align-items: center; justify-content: center; }}
+.capability-card.status-untested .cap-icon-wrap {{ background: rgba(168,162,158,.15); }}
+.capability-card.status-failed .cap-icon-wrap, .capability-card.status-failed_partial .cap-icon-wrap {{ background: rgba(185,28,28,.1); }}
+.capability-card .cap-icon {{ font-size: 28px; line-height: 1; }}
+.capability-card .cap-body {{ flex: 1 1 auto; min-width: 0; }}
+.capability-card .cap-header {{ display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }}
+.capability-card .cap-status-badge {{ font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 3px 10px; border-radius: 999px; background: var(--surface2); color: var(--text-dim); }}
+.capability-card .cap-status-passed, .capability-card .cap-status-passed_with_concerns, .capability-card .cap-status-partial {{ background: rgba(21,128,61,.12); color: #15803d; }}
+.capability-card .cap-status-failed, .capability-card .cap-status-failed_partial {{ background: rgba(185,28,28,.12); color: #b91c1c; }}
+.capability-card .cap-status-untested {{ background: rgba(168,162,158,.18); color: #57534e; }}
+.capability-card .cap-id {{ margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }}
+.capability-card .cap-title {{ margin: 0 0 8px; font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.3; }}
+.capability-card .cap-description {{ margin: 0; font-size: 14px; color: var(--text-dim); line-height: 1.55; }}
+.capability-card .cap-skip {{ margin: 10px 0 0; font-size: 13px; color: var(--text-dim); font-style: italic; padding-left: 10px; border-left: 2px solid var(--border-bright); }}
+
+/* Best-for / Watch-out — pull-quote style blocks */
+.best-for, .watch-out {{ padding: 22px 26px; border-radius: 14px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }}
+.best-for {{ background: rgba(21,128,61,.08); border-left: 4px solid #15803d; }}
+.watch-out {{ background: rgba(180,83,9,.08); border-left: 4px solid #b45309; }}
+.best-for-label, .watch-out-label {{ font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }}
+.best-for-label {{ color: #15803d; }}
+.watch-out-label {{ color: #b45309; }}
+.best-for-body, .watch-out-body {{ font-size: 15px; line-height: 1.55; color: var(--text); }}
 .quality-grid {{ display: flex; flex-direction: column; gap: 12px; }}
 .quality-row {{ display: flex; gap: 20px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; align-items: baseline; }}
 .quality-label {{ flex: 0 0 auto; width: 140px; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }}
@@ -730,33 +829,24 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {{
     <div class="crumb">{i18n("crumb")} · {_esc(vd.date)}</div>
     <h1>{_esc(vd.display_name)}</h1>
     <div class="owner-repo">{_esc(vd.owner_repo)}</div>
-    <p class="what-does-it-do"><b>{i18n("what_it_does")}:</b> {product_one_liner_html}</p>
+    <p class="what-does-it-do">{product_one_liner_html}</p>
     <div class="bucket-banner">
       <span class="emoji">{emoji}</span>
       <span class="name">{_esc(bucket)}</span>
       <span class="conf">{i18n("confidence")}: {confidence}</span>
     </div>
-    <div class="meta">
-      <span><b>{i18n("archetype")}</b> {_esc(vd.archetype)}</span>
-      <span><b>{i18n("claims")}</b> {len(vd.claims)}</span>
-      <span><b>{i18n("critical_covered")}</b> {inputs.get('critical_covered','?')}/{inputs.get('critical_total','?')}</span>
-      <span><b>{i18n("runs")}</b> {len(vd.runs)}</span>
-    </div>
   </div>
 
+  {best_for_html}
+  {watch_out_html}
+
   <section>
-    <h2>{i18n("capabilities")}</h2>
+    <h2>{i18n("we_verified")}</h2>
     <div class="capabilities-grid">
       {capability_cards_html}
     </div>
   </section>
 
-  <section>
-    <h2>{i18n("quality")}</h2>
-    <div class="quality-grid">
-      {quality_summary_html}
-    </div>
-  </section>
 
   <details class="technical">
     <summary>{i18n("technical_details")}</summary>
