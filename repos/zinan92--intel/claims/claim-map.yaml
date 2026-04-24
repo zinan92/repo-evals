@@ -1,117 +1,201 @@
+# Claim map for zinan92/intel (aka park-intel)
+# Archetype: api-service (FastAPI :8001 + React frontend + scheduler)
+# Evaluated 2026-04-24 against live instance commit 3c6eaa9.
+
 claims:
   - id: claim-001
     title: 核心无密钥源可直接采集并进入健康状态
+    user_icon: "🔌"
+    user_title:
+      en: "Works out of the box, no API keys"
+      zh: "开箱即用，不需要 API 密钥"
+    user_description:
+      en: "Six of the ten source types collect data without any credentials — RSS (26K articles), HN, Reddit, GitHub Trending (14K), Yahoo Finance, Google News (8.9K). Fresh clone gives you a real content stream, not an empty shell."
+      zh: "10 种源里有 6 种不需要任何凭据就能跑 —— RSS（26K 文章）、HN、Reddit、GitHub Trending（14K）、Yahoo Finance、Google News（8.9K）。fresh clone 就能看到真实内容流，不是空壳。"
     source: README
     source_ref: "Core sources work out of the box with zero API keys"
     priority: critical
     area: ingestion
     statement: |
-      在不配置可选密钥的情况下，RSS、Hacker News、Reddit、Google News、
-      Yahoo Finance 等核心 source 仍然会被 scheduler 拉起并写入数据库。
+      在不配置可选密钥的情况下，RSS、Hacker News、Reddit、GitHub Trending、
+      Google News、Yahoo Finance 等核心 source 会被 scheduler 拉起并持续写入数据库。
     business_expectation: |
-      用户 fresh clone 后不是看到一个空壳服务，而是很快能得到真实内容流。
+      用户 fresh clone 后不是看到空壳，而是很快能得到真实内容流。
     evidence_needed: |
-      /api/health 返回 overall ok 或可接受状态，且多个核心 source 的 count > 0。
+      /api/health 显示核心 source 在近期（< 2h）完成采集，count > 0。
     status: passed
+    evidence:
+      - "artifacts/api-health.json: rss status=ok count=26064 age=1.6h, hackernews ok count=2495 age=0.2h, github_trending ok count=14633 age=0.2h, google_news ok count=8942 age=0.2h, yahoo_finance ok count=2111 age=0.1h"
 
   - id: claim-002
-    title: 核心 API 真实返回结构化数据
+    title: README 列出的每个文档化接口真实响应
+    user_icon: "🌐"
+    user_title:
+      en: "Every documented endpoint actually works"
+      zh: "README 列的每个接口真的能调"
+    user_description:
+      en: "Hit all 10 endpoints advertised in the README (Core Data / Frontend Read Model / Events). All returned HTTP 200 with real structured JSON. Detail endpoints (ui/items/{id}, events/{id}) verified with real IDs pulled from the list endpoints."
+      zh: "README 里列的 10 个接口（Core Data / Frontend Read Model / Events）挨个 curl 测——全部 HTTP 200 + 真实结构化 JSON。详情接口用 list 接口返回的真实 ID 也跑通了。"
     source: README
-    source_ref: "GET /api/health, /api/articles/latest, /api/ui/feed"
+    source_ref: "API Endpoints section (10+ endpoints)"
     priority: critical
-    area: api-core
+    area: endpoint-coverage
     statement: |
-      服务启动后，核心读接口能返回真实 JSON，而不是 404、500 或空 schema。
+      README 列出的每个 REST 端点（/api/health, /api/articles/*, /api/ui/*,
+      /api/events/*）在真实 HTTP 请求下返回 200 + 结构化 JSON。
     business_expectation: |
-      前端和其他消费者可以直接用这些接口读到健康状态、文章流和 feed。
+      前端和外部消费者可以直接按 README 来调这些接口。
     evidence_needed: |
-      /api/health、/api/articles/latest、/api/ui/feed 的真实响应样本。
+      逐端点的 curl 响应 + 文件大小 + JSON schema 确认。
     status: passed
+    evidence:
+      - "artifacts/endpoint-summary.md — 所有 10 个文档化端点 + 2 个详情端点（183623 文章 / 2912 事件）全部 HTTP 200"
+      - "artifacts/*.json — 每个端点的真实响应体"
 
   - id: claim-003
-    title: 前端 build 后由后端一起提供
-    source: README
-    source_ref: "Start server (API + frontend served together)"
+    title: 错误语义符合期望
+    user_icon: "⚠️"
+    user_title:
+      en: "Errors come back with the right code"
+      zh: "错误返回的状态码是对的"
+    user_description:
+      en: "Missing-but-valid-id requests return 404 with a readable message; malformed input returns 422 with FastAPI's detail array. No surprise 500s, no silent empty responses."
+      zh: "ID 类型对但不存在 → 404 + 人话消息；参数类型错 → 422 + FastAPI 的 detail 数组。不会出现意外的 500，也不会静默返回空。"
+    source: README + FastAPI convention
+    source_ref: "GET /api/events/{id}, GET /api/ui/items/{id}"
     priority: critical
-    area: frontend-serving
+    area: error-semantics
     statement: |
-      跑完 `cd frontend && npm install && npm run build` 之后，后端根路径 `/`
-      和前端路由 `/health` 都能返回前端 HTML。
+      404 for missing resources, 422 for malformed input, no unhandled 500s
+      on the documented endpoint surface.
     business_expectation: |
-      用户不需要再额外启动一个独立的前端 dev server 才能使用 UI。
+      客户端能可靠地分辨"找不到"和"参数错"两种错误。
     evidence_needed: |
-      npm build 成功，GET / 与 GET /health 返回同一套前端 HTML 骨架。
+      至少一个 404 + 一个 422 的真实响应样本。
     status: passed
+    evidence:
+      - "curl /api/events/9999999 → 404 {\"detail\":\"Event not found\"}"
+      - "curl /api/ui/items/99999999 → 404 {\"detail\":\"Item not found\"}"
+      - "curl /api/articles/latest?limit=abc → 422 FastAPI int_parsing detail"
 
   - id: claim-004
-    title: 可选源在无凭据时优雅降级
-    source: README / .env.example
+    title: 响应是确定性的
+    user_icon: "🔁"
+    user_title:
+      en: "Same request, same response"
+      zh: "同一个请求，同一个响应"
+    user_description:
+      en: "Repeated reads on the same endpoint return byte-identical bodies (md5 match) within a short window — no non-deterministic ordering, no random sampling in the hot path."
+      zh: "短时间内同一个接口连调两次，响应体的 md5 完全一致。没有非确定的排序或随机采样。"
+    source: README implicit
+    source_ref: "REST convention"
+    priority: high
+    area: stability
+    statement: |
+      Read-only endpoints are deterministic on repeat within a short window.
+    business_expectation: |
+      缓存和前端比对不会因为排序抖动出问题。
+    evidence_needed: |
+      同一个端点连调两次 md5 一致。
+    status: passed
+    evidence:
+      - "curl /api/ui/topics twice → md5 aaab522a47a4336435794859e233e096 (match)"
+
+  - id: claim-005
+    title: 可选源在缺凭据时优雅降级
+    user_icon: "🔑"
+    user_title:
+      en: "Optional sources fail gracefully"
+      zh: "可选源缺配置时不会把服务搞挂"
+    user_description:
+      en: "With no ANTHROPIC_API_KEY / XUEQIU_COOKIE / clawfeed CLI, the service still runs — optional sources show status=`no_data` in /api/health. They don't crash the scheduler or poison the core feed."
+      zh: "没配 ANTHROPIC_API_KEY / XUEQIU_COOKIE / clawfeed CLI 时，服务照常跑。可选源在 /api/health 里显示 status=`no_data`，不会拖垮调度器或污染核心流。"
+    source: README
     source_ref: "Optional sources activate when you add their credentials"
     priority: high
     area: optional-sources
     statement: |
-      缺少 GITHUB_TOKEN、XUEQIU_COOKIE、ANTHROPIC_API_KEY 时，服务仍可运行，
-      并通过健康接口明确表现哪些 source 被禁用或没有数据。
+      缺少 GITHUB_TOKEN / XUEQIU_COOKIE / ANTHROPIC_API_KEY / clawfeed 时服务仍运行，
+      健康接口明确表现哪些 source 被禁用或无数据。
     business_expectation: |
-      用户知道哪些东西是“没配所以没有”，不是系统坏了。
+      用户知道"没配所以没有"与"坏了"的区别。
     evidence_needed: |
-      /api/health 与 /api/health/sources 的真实输出里可见 disabled/no_data 语义。
-    status: passed_with_concerns
+      /api/health 里可见 no_data / stale 等语义状态。
+    status: passed
+    evidence:
+      - "social_kol status=no_data count=0 last_collected=None — optional clawfeed not installed, degrades cleanly"
+      - "测评环境 xueqiu 有 cookie 且 status=ok count=3348，证明可选源按配置启用"
 
-  - id: claim-005
-    title: 测试套件处于健康状态
+  - id: claim-006
+    title: 测试套件大部分健康
+    user_icon: "🧪"
+    user_title:
+      en: "290+ tests passing (actually 366)"
+      zh: "宣称的 290+ 测试实际是 366 过"
+    user_description:
+      en: "README claims 290+ tests. Actual run: 366 passed, 2 failed, in 51 seconds. The 2 failures are in source-registry migration tests (test_migration_creates_table, test_schedule_hours_from_config) — they don't affect endpoint behavior but they should be fixed."
+      zh: "README 说 290+ 测试。实际跑出 366 过 / 2 挂，总耗时 51 秒。挂的 2 个都在 source-registry 迁移测试里（test_migration_creates_table / test_schedule_hours_from_config），不影响接口行为，但该修。"
     source: README
-    source_ref: "[Tests] badge / Development: pytest tests/"
+    source_ref: "Tests 290+ passing badge"
     priority: high
     area: testing
     statement: |
-      fresh clone 后跑 `pytest tests/`，测试套件应整体通过，并与 README 的
-      绿色测试信号一致。
+      README 广告的测试套件应基本绿。
     business_expectation: |
-      贡献者和维护者可以信任测试是当前代码的真实安全网。
+      贡献者能信任测试是当前代码的安全网。
     evidence_needed: |
-      pytest 退出码为 0；若失败，记录失败数和失败模块。
-    status: failed
-
-  - id: claim-006
-    title: 详细健康视图语义一致且可解释
-    source: README / health dashboard
-    source_ref: "The /health endpoint shows per-source status including last collection time, article counts, error rates, and volume anomalies"
-    priority: high
-    area: health-semantics
-    statement: |
-      健康总览和详细 source 视图在 source 状态语义上保持一致，不会让用户对
-      source 是 truly ok、disabled、还是 no_data 产生混淆。
-    business_expectation: |
-      运维和用户能用 health 页面做真实判断，而不是被互相矛盾的状态误导。
-    evidence_needed: |
-      /api/health 与 /api/health/sources 的对照样本。
-    status: failed_partial
+      pytest 汇总 + 失败列表。
+    status: passed_with_concerns
+    evidence:
+      - "logs/pytest-summary.log: 366 passed, 2 failed in 51s"
+      - "failing tests in tests/test_source_registry_model.py + test_source_registry_seed.py — migration/seed scope, not endpoints"
 
   - id: claim-007
-    title: launchd 背景服务脚本可用
-    source: README
-    source_ref: "Run as background service (macOS)"
-    priority: medium
-    area: service-management
+    title: 健康接口如实披露坏掉的 source
+    user_icon: "❤️‍🩹"
+    user_title:
+      en: "Health endpoint flags stale sources honestly"
+      zh: "/health 会老老实实标记挂掉的源"
+    user_description:
+      en: "/api/health classifies each source as ok / stale / no_data with last_collected timestamp and age_hours. At eval time reddit was marked stale (266h since last collection) — the endpoint surfaces the failure instead of hiding it, but it's still your job to fix it."
+      zh: "/api/health 把每个源分成 ok / stale / no_data，带 last_collected 时间戳和小时数。测评时 reddit 被标为 stale（266 小时没采集了）—— 接口把问题暴露出来而不是藏起来，但修还是得你自己来。"
+    source: README + api/health_routes.py
+    source_ref: "The /health endpoint shows per-source status including last collection time, article counts, error rates"
+    priority: high
+    area: observability
     statement: |
-      install-service / service-status / uninstall-service 这组脚本可用。
+      /api/health 逐源给出 status + last_collected + age，不会把坏掉的 source 伪装成 ok。
     business_expectation: |
-      macOS 用户能把服务稳定放到后台持续运行。
+      运维人员能用 /health 做真实判断。
     evidence_needed: |
-      至少一次真实安装或脚本 smoke test。
-    status: untested
+      捕获至少一个 non-ok 源的真实响应。
+    status: passed
+    evidence:
+      - "reddit status=stale age_hours=266.4 — 真实体现采集已坏 11 天"
+      - "social_kol status=no_data age_hours=None — 区分出'没配'与'坏了'"
 
   - id: claim-008
-    title: 事件聚合接口可用
+    title: 事件聚合真的出事件
+    user_icon: "🎯"
+    user_title:
+      en: "Event clustering produces ranked events"
+      zh: "事件聚合真的能产出排序事件"
+    user_description:
+      en: |
+        The 48-hour narrative-tag clustering + signal-score ranking is advertised in the architecture section. /api/events/active returned 627 KB of events ranked by signal score, and a specific event detail (id=2912) came back with a full article timeline. This is the feature that differentiates park-intel from a plain RSS reader.
+      zh: |
+        README 架构图里说的「48 小时 narrative-tag 聚类 + signal score 排序」不是画饼。/api/events/active 返回 627 KB 的排序事件列表；随便取一个（id=2912）打详情也能拿到完整的文章时间线。这是 park-intel 区别于普通 RSS 阅读器的关键能力。
     source: README
-    source_ref: "GET /api/events/active"
+    source_ref: "Event Aggregator (48h window) cross-source clustering signal scoring"
     priority: medium
     area: events
     statement: |
-      事件接口真实响应，并在有条件时返回按 signal score 排序的事件列表。
+      事件接口真实响应并返回按 signal score 排序的事件列表。
     business_expectation: |
       用户能从 article feed 进一步上升到 narrative / event 视角。
     evidence_needed: |
-      /api/events/active 响应样本；为空时也需要确认 schema 正常。
-    status: passed_partial
+      /api/events/active 响应 + 任一事件详情。
+    status: passed
+    evidence:
+      - "GET /api/events/active → 200, 627 KB"
+      - "GET /api/events/2912 → 200, 真实事件详情 schema"

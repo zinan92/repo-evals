@@ -1,0 +1,5 @@
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_source_registry_model.py::TestSourceRegistryMigration::test_migration_creates_table
+FAILED tests/test_source_registry_seed.py::TestSeedAttributes::test_schedule_hours_from_config
+2 failed, 366 passed, 357 warnings in 48.34s

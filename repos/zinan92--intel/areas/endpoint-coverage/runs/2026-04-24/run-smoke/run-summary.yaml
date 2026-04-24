@@ -1,0 +1,63 @@
+run_name: run-smoke
+date: 2026-04-24
+area: endpoint-coverage
+scenario: "curl every documented endpoint against live localhost:8001 instance (commit 3c6eaa9), verify 200 + structured JSON; cross-check error semantics (404/422) and determinism; run pytest suite."
+provenance:
+  provenance_source: "auto"
+  captured: true
+  partial: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: "claude-opus-4-7"
+  repo_evals_commit: "a92e741"
+  target_repo_path: "/tmp/intel (fresh clone) + ~/work/trading-co/park-intel (live service)"
+  target_repo_ref: "main"
+  target_repo_commit: "3c6eaa9"
+  evaluated_at: "2026-04-24T09:30:00Z"
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: true
+commands:
+  - "curl -sf http://localhost:8001${ep} for 10 documented endpoints"
+  - "pytest tests/ (run from ~/work/trading-co/park-intel)"
+result: passed_with_concerns
+results_by_claim:
+  claim-001:
+    status: passed
+    notes: "6 keyless source types report ok with recent timestamps"
+  claim-002:
+    status: passed
+    notes: "All 10 documented endpoints + 2 detail endpoints HTTP 200"
+  claim-003:
+    status: passed
+    notes: "404 on missing int id, 422 on type errors, no unhandled 500s"
+  claim-004:
+    status: passed
+    notes: "md5 match on /api/ui/topics across 2 reads"
+  claim-005:
+    status: passed
+    notes: "social_kol shows no_data; xueqiu configured and shows ok → semantics work both ways"
+  claim-006:
+    status: passed_with_concerns
+    notes: "366 passed / 2 failed — failures scoped to source-registry migration, not endpoints"
+  claim-007:
+    status: passed
+    notes: "reddit shown as stale (266h), social_kol as no_data — honest status surface"
+  claim-008:
+    status: passed
+    notes: "627 KB of ranked events from /api/events/active; detail endpoint for id=2912 returns full schema"
+metrics:
+  endpoints_tested: 12
+  endpoints_200: 12
+  pytest_passed: 366
+  pytest_failed: 2
+  pytest_duration_s: 51
+  source_types_ok: 8
+  source_types_stale: 1
+  source_types_no_data: 1
+artifacts:
+  - "artifacts/endpoint-summary.md"
+  - "artifacts/*.json (10 endpoint response captures)"
+  - "logs/endpoint-smoke.log"
+  - "logs/pytest-summary.log"

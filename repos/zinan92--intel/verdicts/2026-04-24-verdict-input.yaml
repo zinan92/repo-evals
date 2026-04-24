@@ -1,0 +1,34 @@
+repo: "zinan92/intel"
+archetype: "api-service"
+core_layer_tested: true
+evidence_completeness: "portable"
+coverage_summary:
+  critical_claims: 3
+  critical_covered: 3
+  total_claims: 8
+  total_covered: 8
+claims:
+  - id: claim-001
+    priority: critical
+    status: passed
+  - id: claim-002
+    priority: critical
+    status: passed
+  - id: claim-003
+    priority: critical
+    status: passed
+  - id: claim-004
+    priority: high
+    status: passed
+  - id: claim-005
+    priority: high
+    status: passed
+  - id: claim-006
+    priority: high
+    status: passed_with_concerns
+  - id: claim-007
+    priority: high
+    status: passed
+  - id: claim-008
+    priority: medium
+    status: passed

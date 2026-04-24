@@ -1,0 +1,10 @@
+200      1826B  /api/health
+200      2530B  /api/articles/latest?limit=3
+200     52803B  /api/articles/digest
+200     21745B  /api/articles/signals?hours=24
+200      1819B  /api/articles/sources
+200     19082B  /api/ui/feed?window=24h
+200    122771B  /api/ui/topics
+200       923B  /api/ui/sources
+200    627503B  /api/events/active
+200     13316B  /api/events/history?days=30

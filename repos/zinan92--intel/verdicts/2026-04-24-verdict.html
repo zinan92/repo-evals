@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh" data-bucket="reusable">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>park-intel — verdict · repo-evals</title>
+<style>
+/* ============================================================
+   REPO-EVALS VERDICT PAGE — Editorial Dossier style
+   Pure HTML + CSS, zero external dependencies, zero JS frameworks.
+   One small inline <script> at the bottom handles language toggle.
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", "Courier New", monospace;
+
+  --bg:            #0a0908;
+  --surface-0:     #141210;
+  --surface-1:     #1c1a17;
+  --surface-2:     #26231f;
+  --border:        rgba(255, 248, 235, 0.07);
+  --border-strong: rgba(255, 248, 235, 0.16);
+
+  --text:   #f5efe6;
+  --text-2: #a6998a;
+  --text-3: #6b6157;
+
+  --bucket:      #f59e0b;
+  --bucket-bg:   rgba(245, 158, 11, 0.10);
+  --bucket-soft: rgba(245, 158, 11, 0.16);
+
+  --ok:      #4ade80;
+  --ok-bg:   rgba(74, 222, 128, 0.10);
+  --warn:    #fbbf24;
+  --warn-bg: rgba(251, 191, 36, 0.10);
+  --bad:     #f87171;
+  --bad-bg:  rgba(248, 113, 113, 0.10);
+  --skip:    #a6998a;
+  --skip-bg: rgba(166, 153, 138, 0.08);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+}
+
+html[data-bucket="usable"]        { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-bucket="reusable"]      { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-bucket="recommendable"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 1200px 800px at 70% -10%, var(--bucket-bg), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 0% 100%, rgba(255,248,235,0.025), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+main { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 32px 120px; }
+
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 0 48px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.wordmark { color: var(--text-2); font-weight: 600; }
+.wordmark .dot { color: var(--bucket); }
+
+.lang-toggle { display: inline-flex; gap: 2px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px; padding: 3px; }
+.lang-toggle button {
+  background: transparent; border: 0; cursor: pointer;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  color: var(--text-3); padding: 5px 12px; border-radius: 999px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: color 0.15s, background 0.15s;
+}
+.lang-toggle button:hover { color: var(--text); }
+html[lang="en"] .lang-toggle button[data-lang="en"],
+html[lang="zh"] .lang-toggle button[data-lang="zh"] {
+  background: var(--text); color: var(--bg);
+}
+
+.hero { padding: 24px 0 72px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }
+
+.eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.16em; margin-bottom: 32px;
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}
+.eyebrow .sep { color: var(--border-strong); }
+
+h1.repo-title {
+  font-size: clamp(40px, 6vw, 68px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  margin: 0 0 14px;
+  color: var(--text);
+}
+.repo-slug {
+  font-family: var(--font-mono); font-size: 14px;
+  color: var(--text-2); margin-bottom: 36px;
+}
+.repo-slug::before { content: "↳ "; color: var(--text-3); }
+
+.tagline {
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.45; font-weight: 400;
+  color: var(--text); max-width: 62ch;
+  margin: 0 0 72px;
+}
+
+.verdict-block { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }
+@media (max-width: 720px) { .verdict-block { grid-template-columns: 1fr; gap: 40px; } }
+
+.verdict-word {
+  font-size: clamp(80px, 14vw, 168px);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.85;
+  color: var(--bucket);
+  text-transform: lowercase;
+  margin: 0;
+  position: relative;
+  padding-right: 0.1em;
+}
+.verdict-word::after {
+  content: "";
+  display: inline-block;
+  width: 0.18em; height: 0.18em;
+  background: var(--bucket);
+  border-radius: 50%;
+  margin-left: 0.08em;
+  margin-bottom: 0.08em;
+  vertical-align: baseline;
+}
+
+.verdict-meta { padding-bottom: 14px; }
+.verdict-meta .label {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}
+.verdict-meta .confidence {
+  font-family: var(--font-mono); font-size: 15px;
+  color: var(--text); margin-bottom: 28px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.verdict-meta .confidence .value { color: var(--bucket); font-weight: 700; }
+
+.stats-bar {
+  display: flex; height: 10px; border-radius: 999px;
+  overflow: hidden; background: var(--surface-1);
+  border: 1px solid var(--border);
+  min-width: 280px; max-width: 420px;
+}
+.stats-bar span { display: block; height: 100%; }
+.stats-bar .s-pass { background: var(--ok); }
+.stats-bar .s-warn { background: var(--warn); }
+.stats-bar .s-bad  { background: var(--bad); }
+.stats-bar .s-skip { background: var(--skip); }
+
+.stats-legend {
+  display: flex; gap: 20px; margin-top: 14px;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2); flex-wrap: wrap;
+}
+.stats-legend .item { display: inline-flex; align-items: center; gap: 6px; }
+.stats-legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.stats-legend .num { color: var(--text); font-weight: 700; }
+
+.pull-quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 96px; }
+@media (max-width: 720px) { .pull-quotes { grid-template-columns: 1fr; } }
+
+.pull {
+  padding: 28px 32px;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  border-top: 3px solid;
+  position: relative;
+}
+.pull.best   { border-top-color: var(--ok); }
+.pull.watch  { border-top-color: var(--warn); }
+.pull .kicker {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 14px; font-weight: 700;
+}
+.pull.best .kicker  { color: var(--ok); }
+.pull.watch .kicker { color: var(--warn); }
+.pull .body { font-size: 16px; line-height: 1.55; color: var(--text); }
+
+.section-head {
+  display: flex; align-items: baseline; gap: 16px;
+  margin-bottom: 36px; padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-head h2 {
+  font-size: 32px; font-weight: 700;
+  letter-spacing: -0.022em; margin: 0;
+}
+.section-head .count {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+section { margin-bottom: 96px; }
+
+.capabilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+}
+
+.capability-card {
+  position: relative;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 24px 24px 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+.capability-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+
+.capability-card::before {
+  content: ""; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--skip);
+}
+.capability-card.status-passed::before,
+.capability-card.status-passed_with_concerns::before { background: var(--ok); }
+.capability-card.status-partial::before { background: var(--warn); }
+.capability-card.status-failed::before,
+.capability-card.status-failed_partial::before { background: var(--bad); }
+.capability-card.status-untested::before { background: var(--skip); }
+
+.cap-header {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.cap-badge {
+  padding: 3px 9px; border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 10px;
+  background: var(--skip-bg); color: var(--skip);
+}
+.capability-card.status-passed .cap-badge,
+.capability-card.status-passed_with_concerns .cap-badge { background: var(--ok-bg); color: var(--ok); }
+.capability-card.status-partial .cap-badge { background: var(--warn-bg); color: var(--warn); }
+.capability-card.status-failed .cap-badge,
+.capability-card.status-failed_partial .cap-badge { background: var(--bad-bg); color: var(--bad); }
+.capability-card.status-untested .cap-badge { background: var(--skip-bg); color: var(--skip); }
+
+.cap-id { margin-left: auto; color: var(--text-3); }
+
+.cap-title {
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.015em; line-height: 1.25;
+  color: var(--text); margin: 4px 0 0;
+}
+.cap-description {
+  font-size: 14px; line-height: 1.55;
+  color: var(--text-2); margin: 0;
+}
+.cap-skip {
+  margin-top: 4px;
+  font-size: 12.5px; color: var(--text-3);
+  font-family: var(--font-mono); line-height: 1.55;
+  padding: 10px 12px;
+  background: var(--surface-1);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--border-strong);
+  white-space: pre-wrap;
+}
+
+details.section-fold {
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+details.section-fold[open] { border-color: var(--border-strong); }
+details.section-fold > summary {
+  padding: 22px 28px;
+  cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.14em;
+  font-weight: 600; user-select: none;
+  list-style: none;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+details.section-fold > summary::-webkit-details-marker { display: none; }
+details.section-fold > summary::after {
+  content: "+"; font-family: var(--font-mono);
+  font-size: 18px; color: var(--text-3);
+  transition: transform 0.2s;
+  display: inline-block; line-height: 1;
+}
+details.section-fold[open] > summary::after { transform: rotate(45deg); color: var(--text); }
+details.section-fold > summary:hover { color: var(--text); background: var(--surface-1); }
+details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var(--border); }
+
+.subsection { margin: 28px 0; }
+.subsection h3 {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-3); font-weight: 700;
+  margin: 0 0 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .grid-two { grid-template-columns: 1fr; } }
+
+.mini-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+}
+.mini-card h4 {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 0 0 12px; font-weight: 700;
+}
+.mini-card ul { margin: 0; padding: 0; list-style: none; }
+.mini-card li {
+  padding: 8px 0; font-size: 14px; color: var(--text-2);
+  border-bottom: 1px dashed var(--border);
+  line-height: 1.5;
+}
+.mini-card li:last-child { border-bottom: 0; padding-bottom: 0; }
+.mini-card li:first-child { padding-top: 0; }
+
+.flow {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+  overflow-x: auto;
+}
+.flow-row {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 13px;
+}
+.flow-node {
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+.flow-node.start { color: var(--text-2); }
+.flow-node.decision { background: var(--warn-bg); color: var(--warn); border-color: var(--warn); }
+.flow-node.final { background: var(--bucket-bg); color: var(--bucket); border-color: var(--bucket); font-weight: 700; }
+.flow-arrow { color: var(--text-3); font-family: var(--font-mono); }
+.flow-notes { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--border); }
+.flow-notes .note {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); padding: 4px 0; line-height: 1.5;
+}
+.flow-notes .note::before {
+  content: "▸"; color: var(--warn);
+  margin-right: 8px;
+}
+
+.metric-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+@media (max-width: 640px) { .metric-tiles { grid-template-columns: 1fr; } }
+.metric-tile {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 20px;
+}
+.metric-tile .mt-label {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 14px;
+}
+.metric-tile .mt-value {
+  font-size: 38px; font-weight: 800;
+  letter-spacing: -0.025em; line-height: 1;
+  color: var(--text); font-variant-numeric: tabular-nums;
+}
+.metric-tile .mt-unit { font-size: 16px; color: var(--text-3); font-weight: 500; margin-left: 4px; }
+.metric-tile .mt-bar {
+  margin-top: 14px; height: 4px;
+  background: var(--surface-2); border-radius: 2px; overflow: hidden;
+}
+.metric-tile .mt-bar-fill { height: 100%; background: var(--bucket); border-radius: 2px; }
+.metric-tile .mt-compare {
+  margin-top: 10px; font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.claims-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.claims-table th, .claims-table td {
+  text-align: left; padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.claims-table th {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 700;
+  background: var(--surface-1);
+}
+.claims-table td.c-id { font-family: var(--font-mono); color: var(--text-2); white-space: nowrap; }
+.claims-table td.c-title { color: var(--text); }
+.claims-table td.c-status { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
+.claims-table td.c-skip { font-size: 12px; color: var(--text-3); white-space: pre-wrap; line-height: 1.5; max-width: 320px; }
+.claims-table tr.prio-critical td.c-id::before { content: "◆"; color: var(--bad); margin-right: 6px; }
+.claims-table tr.prio-high td.c-id::before     { content: "◆"; color: var(--warn); margin-right: 6px; }
+.claims-table tr.prio-medium td.c-id::before   { content: "◆"; color: var(--text-2); margin-right: 6px; }
+.claims-table tr.prio-low td.c-id::before      { content: "◆"; color: var(--text-3); margin-right: 6px; }
+
+.prio-pill {
+  display: inline-block; font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 8px; border-radius: 3px; text-transform: uppercase;
+  letter-spacing: 0.08em; font-weight: 700;
+}
+.prio-pill.critical { background: var(--bad-bg); color: var(--bad); }
+.prio-pill.high     { background: var(--warn-bg); color: var(--warn); }
+.prio-pill.medium   { background: var(--surface-2); color: var(--text-2); }
+.prio-pill.low      { background: var(--surface-2); color: var(--text-3); }
+
+.run-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  margin-bottom: 12px;
+}
+.run-card h3 { font-family: var(--font-mono); font-size: 14px; margin: 0; color: var(--text); }
+.run-card .run-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); margin: 4px 0 16px; }
+.run-metrics { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.run-metric {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 6px 12px;
+  border-radius: var(--radius-sm); color: var(--text-2);
+}
+.run-metric b { color: var(--text-3); font-weight: 500; margin-right: 6px; }
+.run-metric .v { color: var(--text); font-weight: 600; }
+.run-rbc { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.run-rbc li {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-2); padding: 4px 8px;
+  border-radius: 3px; color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.run-rbc li.pass    { border-left: 2px solid var(--ok); }
+.run-rbc li.partial { border-left: 2px solid var(--warn); }
+.run-rbc li.fail    { border-left: 2px solid var(--bad); }
+.run-rbc li.skip    { border-left: 2px solid var(--skip); }
+
+pre.md {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+pre.md code { color: var(--text); }
+
+footer {
+  margin-top: 80px; padding-top: 32px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+footer a { color: var(--text-2); text-decoration: none; border-bottom: 1px solid var(--border); }
+footer a:hover { color: var(--text); border-color: var(--text-3); }
+
+.dim { color: var(--text-3); }
+
+/* i18n — dual-language content swap */
+.i18n::before { content: attr(data-en); }
+html[lang="zh"] .i18n::before { content: attr(data-zh); }
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:            #fbf8f3;
+    --surface-0:     #ffffff;
+    --surface-1:     #f6f1e9;
+    --surface-2:     #ede6d9;
+    --border:        rgba(20, 18, 14, 0.07);
+    --border-strong: rgba(20, 18, 14, 0.16);
+    --text:   #1a1714;
+    --text-2: #5c5246;
+    --text-3: #8a7e6f;
+    --skip:    #8a7e6f;
+    --skip-bg: rgba(138, 126, 111, 0.10);
+  }
+}
+
+@media (max-width: 720px) {
+  main { padding: 0 20px 80px; }
+  .hero { padding: 8px 0 48px; margin-bottom: 48px; }
+  section { margin-bottom: 64px; }
+  h1.repo-title { font-size: 40px; }
+  .tagline { margin-bottom: 48px; }
+  .section-head h2 { font-size: 24px; }
+  .capabilities-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<main>
+
+  <div class="topbar">
+    <div class="wordmark">repo<span class="dot">·</span>evals</div>
+    <div class="lang-toggle" aria-label="language toggle">
+      <button data-lang="en" onclick="setLang('en')">EN</button>
+      <button data-lang="zh" onclick="setLang('zh')">中</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">
+      <span class="i18n" data-en="Verdict report" data-zh="评测结论"></span>
+      <span class="sep">·</span>
+      <span>2026-04-24</span>
+      
+    </div>
+
+    <h1 class="repo-title">park-intel</h1>
+    <div class="repo-slug">zinan92/intel</div>
+
+    <p class="tagline"><span class="i18n" data-en="A self-hosted FastAPI pipeline that crawls 10+ news/social sources (RSS, HN, Reddit, GitHub, Xueqiu, etc.), tags articles, clusters them into narrative events with signal scores, and serves it all as a REST API + React feed on :8001." data-zh="一个自建的 FastAPI 情报采集管道 — 从 10+ 新闻和社交源（RSS、HN、Reddit、GitHub、雪球等）抓文章、打标签、聚类成事件并打分，最后通过 :8001 的 REST API + React feed 呈现。"></span></p>
+
+    <div class="verdict-block">
+      <div>
+        <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
+        <div class="verdict-word">reusable</div>
+      </div>
+
+      <div class="verdict-meta">
+        <div class="label"><span class="i18n" data-en="Confidence" data-zh="置信度"></span></div>
+        <div class="confidence"><span class="value">medium</span></div>
+
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 8 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 7"></span><span class="s-warn" style="flex: 1"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">7</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="pull-quotes">
+    <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Solo traders / researchers who want their own real-time news-flow dashboard, already comfortable running Python services locally, don&#x27;t want to pay for a commercial feed and are OK running on one machine." data-zh="想自建实时新闻流看板的个人交易者 / 研究者。前提：会在本机跑 Python 服务、不想付费买商用新闻源、接受单机部署。"></span></div></section>
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="You need to run and maintain it yourself — scheduler, DB, frontend build. Core sources work without keys but the richest layer (LLM relevance scoring, narrative tags) needs an ANTHROPIC_API_KEY. Health dashboard is honest about failures but doesn&#x27;t fix them for you: at eval time one collector (reddit) had been silently stale for 11 days. Plan to actually read /health.
+" data-zh="需要你自己跑自己维护 — 调度器、数据库、前端 build 全在本机。核心源免密钥能跑，但「LLM 相关性打分 + narrative tag」这层最值钱的能力要自己配 ANTHROPIC_API_KEY。Health 页面会老老实实显示坏掉的源，但不会替你修：测评时 reddit 采集器已经悄悄坏了 11 天。所以得养成看 /health 的习惯。
+"></span></div></section>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <h2><span class="i18n" data-en="What we verified" data-zh="我们验证了什么"></span></h2>
+      <span class="count">8 / 8</span>
+    </div>
+    <div class="capabilities-grid">
+      <article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-001</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Works out of the box, no API keys" data-zh="开箱即用，不需要 API 密钥"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Six of the ten source types collect data without any credentials — RSS (26K articles), HN, Reddit, GitHub Trending (14K), Yahoo Finance, Google News (8.9K). Fresh clone gives you a real content stream, not an empty shell." data-zh="10 种源里有 6 种不需要任何凭据就能跑 —— RSS（26K 文章）、HN、Reddit、GitHub Trending（14K）、Yahoo Finance、Google News（8.9K）。fresh clone 就能看到真实内容流，不是空壳。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-002</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Every documented endpoint actually works" data-zh="README 列的每个接口真的能调"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Hit all 10 endpoints advertised in the README (Core Data / Frontend Read Model / Events). All returned HTTP 200 with real structured JSON. Detail endpoints (ui/items/{id}, events/{id}) verified with real IDs pulled from the list endpoints." data-zh="README 里列的 10 个接口（Core Data / Frontend Read Model / Events）挨个 curl 测——全部 HTTP 200 + 真实结构化 JSON。详情接口用 list 接口返回的真实 ID 也跑通了。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-003</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Errors come back with the right code" data-zh="错误返回的状态码是对的"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Missing-but-valid-id requests return 404 with a readable message; malformed input returns 422 with FastAPI&#x27;s detail array. No surprise 500s, no silent empty responses." data-zh="ID 类型对但不存在 → 404 + 人话消息；参数类型错 → 422 + FastAPI 的 detail 数组。不会出现意外的 500，也不会静默返回空。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-004</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Same request, same response" data-zh="同一个请求，同一个响应"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Repeated reads on the same endpoint return byte-identical bodies (md5 match) within a short window — no non-deterministic ordering, no random sampling in the hot path." data-zh="短时间内同一个接口连调两次，响应体的 md5 完全一致。没有非确定的排序或随机采样。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-005</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Optional sources fail gracefully" data-zh="可选源缺配置时不会把服务搞挂"></span></h3>  <p class="cap-description"><span class="i18n" data-en="With no ANTHROPIC_API_KEY / XUEQIU_COOKIE / clawfeed CLI, the service still runs — optional sources show status=`no_data` in /api/health. They don&#x27;t crash the scheduler or poison the core feed." data-zh="没配 ANTHROPIC_API_KEY / XUEQIU_COOKIE / clawfeed CLI 时，服务照常跑。可选源在 /api/health 里显示 status=`no_data`，不会拖垮调度器或污染核心流。"></span></p>  </article>
+<article class="capability-card status-passed_with_concerns">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-006</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="290+ tests passing (actually 366)" data-zh="宣称的 290+ 测试实际是 366 过"></span></h3>  <p class="cap-description"><span class="i18n" data-en="README claims 290+ tests. Actual run: 366 passed, 2 failed, in 51 seconds. The 2 failures are in source-registry migration tests (test_migration_creates_table, test_schedule_hours_from_config) — they don&#x27;t affect endpoint behavior but they should be fixed." data-zh="README 说 290+ 测试。实际跑出 366 过 / 2 挂，总耗时 51 秒。挂的 2 个都在 source-registry 迁移测试里（test_migration_creates_table / test_schedule_hours_from_config），不影响接口行为，但该修。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-007</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Health endpoint flags stale sources honestly" data-zh="/health 会老老实实标记挂掉的源"></span></h3>  <p class="cap-description"><span class="i18n" data-en="/api/health classifies each source as ok / stale / no_data with last_collected timestamp and age_hours. At eval time reddit was marked stale (266h since last collection) — the endpoint surfaces the failure instead of hiding it, but it&#x27;s still your job to fix it." data-zh="/api/health 把每个源分成 ok / stale / no_data，带 last_collected 时间戳和小时数。测评时 reddit 被标为 stale（266 小时没采集了）—— 接口把问题暴露出来而不是藏起来，但修还是得你自己来。"></span></p>  </article>
+    </div>
+  </section>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Technical details" data-zh="技术细节"></span></summary>
+    <div class="body">
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Ceiling &amp; blocking reasons" data-zh="Ceiling 与 Blocking 理由"></span></h3>
+        <div class="grid-two">
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Why capped" data-zh="为什么封顶"></span></h4>
+            <ul><li>evidence_completeness=&#x27;portable&#x27; → capped at &#x27;reusable&#x27;</li></ul>
+          </div>
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h4>
+            <ul><li class="dim"><span class="i18n" data-en="none" data-zh="无"></span></li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Derivation" data-zh="推导路径"></span></h3>
+        <div class="flow"><div class="flow-row"><span class="flow-node start">archetype: api-service</span><span class="flow-arrow">→</span><span class="flow-node decision">core_layer_tested? <b style="color:inherit">True</b></span><span class="flow-arrow">→</span><span class="flow-node">evidence: portable</span><span class="flow-arrow">→</span><span class="flow-node">recommended: reusable</span><span class="flow-arrow">→</span><span class="flow-node final">final: reusable</span></div><div class="flow-notes"><div class="note">ceiling 1 · evidence_completeness=&#x27;portable&#x27; → capped at &#x27;reusable&#x27;</div></div></div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Claim ledger" data-zh="Claim 清单"></span></h3>
+        <table class="claims-table">
+          <thead>
+            <tr>
+              <th style="width:110px"><span class="i18n" data-en="ID" data-zh="ID"></span></th>
+              <th><span class="i18n" data-en="Title" data-zh="标题"></span></th>
+              <th style="width:100px"><span class="i18n" data-en="Priority" data-zh="优先级"></span></th>
+              <th style="width:170px"><span class="i18n" data-en="Area" data-zh="领域"></span></th>
+              <th style="width:130px"><span class="i18n" data-en="Status" data-zh="状态"></span></th>
+              <th><span class="i18n" data-en="Note" data-zh="备注"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="prio-critical"><td class="c-id">claim-001</td><td class="c-title">核心无密钥源可直接采集并进入健康状态</td><td><span class="prio-pill critical">critical</span></td><td>ingestion</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-002</td><td class="c-title">README 列出的每个文档化接口真实响应</td><td><span class="prio-pill critical">critical</span></td><td>endpoint-coverage</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-003</td><td class="c-title">错误语义符合期望</td><td><span class="prio-pill critical">critical</span></td><td>error-semantics</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-004</td><td class="c-title">响应是确定性的</td><td><span class="prio-pill high">high</span></td><td>stability</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-005</td><td class="c-title">可选源在缺凭据时优雅降级</td><td><span class="prio-pill high">high</span></td><td>optional-sources</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-006</td><td class="c-title">测试套件大部分健康</td><td><span class="prio-pill high">high</span></td><td>testing</td><td class="c-status" style="color:var(--warn)">◐ partial</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-007</td><td class="c-title">健康接口如实披露坏掉的 source</td><td><span class="prio-pill high">high</span></td><td>observability</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-medium"><td class="c-id">claim-008</td><td class="c-title">事件聚合真的出事件</td><td><span class="prio-pill medium">medium</span></td><td>events</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Runs &amp; metrics" data-zh="Runs 与指标"></span></h3>
+        <div class="metric-tiles">
+          <div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="pass rate" data-zh="通过率"></span></div>  <div class="mt-value">0<span class="mt-unit">%</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="elapsed" data-zh="耗时"></span></div>  <div class="mt-value">0.00<span class="mt-unit">s</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="token output" data-zh="token 输出"></span></div>  <div class="mt-value">0</div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="in · 0 / out · 0" data-zh="输入 · 0 / 输出 · 0"></span></div></div>
+        </div>
+        <div class="run-card">  <h3>run-live-service-core</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-04-09</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="skip">claim-001-ingestion-core-sources · pass</li><li class="skip">claim-002-api-core · pass</li><li class="skip">claim-003-frontend-serving · pass</li><li class="skip">claim-004-optional-sources · pass-with-concerns</li><li class="skip">claim-005-testing · fail</li><li class="skip">claim-006-health-semantics · fail-partial</li><li class="skip">claim-007-service-management · untested</li><li class="skip">claim-008-events · pass-partial</li></ul></div>
+      </div>
+
+    </div>
+  </details>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Test log — all probes we ran" data-zh="测试日志 — 我们跑过的所有探针"></span></summary>
+    <div class="body">
+      <div class="run-card">  <h3>run-live-service-core</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-04-09</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="skip">claim-001-ingestion-core-sources · pass</li><li class="skip">claim-002-api-core · pass</li><li class="skip">claim-003-frontend-serving · pass</li><li class="skip">claim-004-optional-sources · pass-with-concerns</li><li class="skip">claim-005-testing · fail</li><li class="skip">claim-006-health-semantics · fail-partial</li><li class="skip">claim-007-service-management · untested</li><li class="skip">claim-008-events · pass-partial</li></ul></div>
+    </div>
+  </details>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Raw verdict archive (authored by evaluator)" data-zh="原始 verdict 存档（评测者原文）"></span></summary>
+    <div class="body">
+<pre class="md"># Final Verdict — zinan92/intel (park-intel)
+
+## Repo
+
+- **Name**: zinan92/intel
+- **Version tested**: commit 3c6eaa9 (cloned + live 2026-04-24)
+- **Date**: 2026-04-24
+- **Archetype**: api-service
+- **Final bucket**: 🟡 reusable
+- **Confidence**: medium
+
+## Plain English
+
+- **Outcome if adopted**: 自建一个 FastAPI + React 的情报采集管道，10 个文档化 REST 接口挨个调全部 200 + 真实 JSON；6 个免密钥源立即开始采集（RSS 已积累 26K 文章，GitHub Trending 14K，Google News 8.9K）；/health 老老实实标记哪些源挂了、哪些没配。
+- **Regret scenario**: 这是要你自己跑自己维护的服务。测评时就发现 reddit 采集已经悄悄挂了 11 天，/health 显示 `stale` 但不会替你修。想用 LLM 打相关性分必须自己配 ANTHROPIC_API_KEY。跑 pytest 还有 2 个 migration 测试挂着没处理。
+
+## Why This Bucket
+
+- **Ceiling reason**: `evidence_completeness=&#x27;portable&#x27;` → 最高到 `reusable`（没在第二个环境独立复跑，也没有 CI 证明每次 push 都是绿的）
+- **Not higher** (`recommendable`): 只在一台机器、一个时刻跑过；2 个测试 failing；reddit 采集坏了 11 天没人修
+- **Not lower** (`usable`): 10 个文档化端点全部返回 200；错误语义（404/422）正确；响应确定；测试套件 99.5% 过；health 接口诚实披露问题
+
+## Evidence
+
+| claim | priority | status | 说明 |
+|-------|----------|--------|------|
+| claim-001 核心无密钥源能采集 | critical | passed | 6 个 keyless 源全部 status=ok，总计 ~55K 文章 |
+| claim-002 所有文档化端点都响应 | critical | passed | 10 文档端点 + 2 详情端点 全部 HTTP 200 |
+| claim-003 错误语义正确 | critical | passed | 404 missing-int-id / 422 type-error，无隐藏 500 |
+| claim-004 响应确定 | high | passed | /api/ui/topics 连调两次 md5 一致 |
+| claim-005 可选源优雅降级 | high | passed | social_kol no_data 不崩，xueqiu 配好即 ok |
+| claim-006 测试套件健康 | high | passed_with_concerns | 366 pass / 2 fail，失败在 migration 而非接口 |
+| claim-007 /health 如实披露 | high | passed | reddit stale 266h、social_kol no_data — 不伪装 |
+| claim-008 事件聚合真能出结果 | medium | passed | 627 KB 排序事件列表 + 详情 schema 完整 |
+
+## What Would Take This to 🟢 Recommendable
+
+1. **修 2 个 failing migration 测试** —
+   `test_source_registry_model.py::test_migration_creates_table` 和
+   `test_source_registry_seed.py::test_schedule_hours_from_config`
+2. **修 reddit 采集器**（11 天没采，或者设置自动 alert）或者对 stale 源做自愈逻辑
+3. **加 CI**（GitHub Actions 跑 pytest）证明每次 push 绿
+4. **在第二台机器独立复跑**一遍（Linux / Docker），验证 fresh install 路径确实是 README 描述的那样
+5. **给 /api/users 写接口加一次 POST/PUT/GET 的端到端测试**（本次 eval 只覆盖了 read-only surface）
+
+## Artifacts
+
+- `claims/claim-map.yaml` — 8 claims, 3 critical, all passed (1 high 为 passed_with_concerns)
+- `areas/endpoint-coverage/runs/2026-04-24/run-smoke/` — 10 endpoint JSON captures + pytest log + summary
+- `verdicts/2026-04-24-verdict.html` — product page
+- `verdicts/2026-04-24-verdict-input.yaml` — calculator input
+</pre>
+    </div>
+  </details>
+
+  <footer>
+    <div><span class="i18n" data-en="Rendered by repo-evals · render_verdict_html.py" data-zh="由 repo-evals · render_verdict_html.py 生成"></span></div>
+    <div><a href="https://github.com/zinan92/intel" target="_blank" rel="noopener">zinan92/intel</a></div>
+  </footer>
+
+</main>
+
+<script>
+  const LANG_KEY = 'repoEvalsVerdictLang';
+  const INITIAL_LANG = "zh";
+  function detectLang() {
+    try {
+      const p = new URLSearchParams(location.search).get('lang');
+      if (p === 'en' || p === 'zh') return p;
+    } catch (_) {}
+    const stored = localStorage.getItem(LANG_KEY);
+    if (stored === 'en' || stored === 'zh') return stored;
+    if (INITIAL_LANG === 'en' || INITIAL_LANG === 'zh') return INITIAL_LANG;
+    if ((navigator.language || '').toLowerCase().startsWith('zh')) return 'zh';
+    return 'en';
+  }
+  function setLang(lang) {
+    document.documentElement.lang = lang;
+    try { localStorage.setItem(LANG_KEY, lang); } catch (_) {}
+  }
+  setLang(detectLang());
+</script>
+
+</body>
+</html>

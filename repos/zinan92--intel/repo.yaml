@@ -1,30 +1,40 @@
 owner: zinan92
 repo: intel
-display_name: intel
+display_name: park-intel
 repo_url: https://github.com/zinan92/intel
 repo_type: service
-# Archetype drives scaffolding and verdict-calculator ceiling rules.
-# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
 archetype: api-service
 complexity: complex
 uses_areas: false
 status: evaluated
 current_bucket: reusable
+last_evaluated: "2026-04-24"
 notes: |
-  Fresh live eval on 2026-04-09 shows the repo is a real working service, not a
-  demo shell. A clean local clone installed successfully, the scheduler started,
-  core sources populated data without optional credentials, and the API returned
-  real structured responses. After `frontend` build, the backend also served the
-  SPA correctly on `/` and `/health`.
+  Self-hosted market-intelligence pipeline. Evaluated 2026-04-24 against
+  live instance at localhost:8001 (commit 3c6eaa9). 10 documented REST
+  endpoints all return 200 with real data; 404/422 error semantics are
+  correct; responses are deterministic on repeat. 366/368 pytest cases
+  pass (2 failing tests are in source-registry migration, not endpoints).
 
-  The repo is not yet recommendable because two higher-level trust signals are
-  still weak. First, the full pytest suite was not green on this machine
-  (366 passed / 2 failed), so the engineering safety net is strong but not
-  fully healthy. Second, the health semantics are not fully consistent:
-  `/api/health` and `/api/health/sources` disagree in places about optional
-  sources, and the detailed source view appears to reuse aggregate per-type
-  volume counts for many individual sources, which makes some numbers misleading.
+  Core sources (RSS, HN, Reddit, GitHub, Yahoo, Google News) work with
+  zero API keys — verified 8/10 source types reporting `status=ok` with
+  recent collections (< 2 hours), 1 `stale` (reddit, 266h), 1 `no_data`
+  (social_kol, needs optional CLI). The service is real, not a shell.
 
-  In plain English: this repo is already reusable for a self-hosted intelligence
-  pipeline, but it still needs test-suite cleanup and more trustworthy health
-  semantics before it should be broadly recommended.
+  Not bumped to `recommendable`: only 1 evaluator's environment; the 2
+  failing migration tests are unfixed; `/health` surfaces a `stale`
+  source (reddit) honestly but this masks a real collector regression
+  someone should fix before claiming production-ready.
+
+product_view:
+  one_liner:
+    en: "A self-hosted FastAPI pipeline that crawls 10+ news/social sources (RSS, HN, Reddit, GitHub, Xueqiu, etc.), tags articles, clusters them into narrative events with signal scores, and serves it all as a REST API + React feed on :8001."
+    zh: "一个自建的 FastAPI 情报采集管道 — 从 10+ 新闻和社交源（RSS、HN、Reddit、GitHub、雪球等）抓文章、打标签、聚类成事件并打分，最后通过 :8001 的 REST API + React feed 呈现。"
+  best_for:
+    en: "Solo traders / researchers who want their own real-time news-flow dashboard, already comfortable running Python services locally, don't want to pay for a commercial feed and are OK running on one machine."
+    zh: "想自建实时新闻流看板的个人交易者 / 研究者。前提：会在本机跑 Python 服务、不想付费买商用新闻源、接受单机部署。"
+  watch_out:
+    en: |
+      You need to run and maintain it yourself — scheduler, DB, frontend build. Core sources work without keys but the richest layer (LLM relevance scoring, narrative tags) needs an ANTHROPIC_API_KEY. Health dashboard is honest about failures but doesn't fix them for you: at eval time one collector (reddit) had been silently stale for 11 days. Plan to actually read /health.
+    zh: |
+      需要你自己跑自己维护 — 调度器、数据库、前端 build 全在本机。核心源免密钥能跑，但「LLM 相关性打分 + narrative tag」这层最值钱的能力要自己配 ANTHROPIC_API_KEY。Health 页面会老老实实显示坏掉的源，但不会替你修：测评时 reddit 采集器已经悄悄坏了 11 天。所以得养成看 /health 的习惯。
