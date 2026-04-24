@@ -1,0 +1,19 @@
+owner: iamzhihuix
+repo: skills-manage
+display_name: skills-manage
+repo_url: https://github.com/iamzhihuix/skills-manage
+repo_type: skill
+# Archetype drives scaffolding and verdict-calculator ceiling rules.
+# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
+archetype: adapter
+complexity: simple
+uses_areas: false
+status: evaluated
+current_bucket: usable
+last_evaluated: "2026-04-24"
+notes: |
+  Tauri desktop app managing AI coding agent skills across 28 platforms via
+  ~/.agents/skills/ central dir + symlinks. v0.9.1, 11 days old, 910 stars.
+  Eval was source-inspection + DMG integrity only; runtime GUI skipped
+  because tester's live ~/.agents/skills/ and ~/.claude/skills/ are in use.
+  Adapter archetype hybrid-cap applied: core user-facing layer untested → capped at 'usable'.

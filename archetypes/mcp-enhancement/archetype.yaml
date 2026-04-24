@@ -1,0 +1,41 @@
+name: mcp-enhancement
+description: |
+  A skill whose user value is adding workflow knowledge on top of an
+  existing MCP (Model Context Protocol) server. The MCP provides raw
+  tool access; the skill captures sequencing, domain rules, and best
+  practices so Claude uses those tools correctly without prompting.
+
+  The skill itself ships primarily as prompt / SKILL.md content. Real
+  user value only materializes when the paired MCP server is running
+  and the skill routes tool calls through it.
+
+  Examples: `sentry-code-review` (uses Sentry MCP to analyze PR bugs),
+  `lark-workflow-standup-report` (sequences multiple Lark MCP calls).
+
+default_verdict_ceiling: "usable when mcp_integration_tested=false"
+# MCP-enhancement skills cannot be judged from SKILL.md alone. If the
+# skill has not been observed successfully orchestrating the paired MCP
+# on a realistic task, its verdict caps at 'usable' — the "code exists,
+# workflow unproven" pattern.
+
+evaluation_dimensions:
+  - mcp_dependency_declared:   "Does the skill state which MCP server(s) it requires?"
+  - tool_name_correctness:     "Are fully-qualified MCP tool names used (Server:tool_name)?"
+  - sequencing_guidance:       "Does the skill specify the correct tool-call order and dependency between calls?"
+  - domain_rule_embedding:     "Does the skill encode non-obvious business rules the bare MCP would not surface?"
+  - failure_handling:          "What happens when the MCP call fails, returns empty, or returns stale data?"
+  - repeatability_with_mcp:    "Does the skill produce consistent results across repeated runs with the live MCP?"
+
+recommended_evidence:
+  - "paired MCP server actually connected and reachable during evaluation"
+  - "transcript of at least one realistic workflow hitting the MCP via this skill"
+  - "diff showing the workflow vs Claude-without-skill on the same task (fewer clarifications / fewer failed calls / fewer tokens)"
+  - "one deliberate failure scenario: MCP returns error / empty / stale — observe skill behavior"
+  - "reference-resolution log showing every MCP tool name in SKILL.md exists in the server"
+
+default_claim_prompts:
+  - "Required MCP servers are listed explicitly in the skill"
+  - "Every MCP tool name referenced in the skill exists in the paired server (no typos, no removed tools)"
+  - "Running the skill on a realistic task completes without human corrections or failed tool calls"
+  - "The skill reduces back-and-forth clarification vs the same task without the skill"
+  - "MCP failures surface as actionable errors, not silent fallbacks"

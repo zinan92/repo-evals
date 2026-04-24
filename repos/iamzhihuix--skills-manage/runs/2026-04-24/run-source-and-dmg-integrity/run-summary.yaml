@@ -1,0 +1,74 @@
+run_name: source-and-dmg-integrity
+date: 2026-04-24
+area: core
+scenario: ''
+provenance:
+  provenance_source: auto
+  captured: true
+  partial: false
+  runner: cc
+  agent: Claude Code
+  model: claude-opus-4-7
+  terminal_session_id: ''
+  agent_session_id: ''
+  repo_evals_commit: ebde34d
+  target_repo_path: /tmp/eval-skills-manage/skills-manage
+  target_repo_ref: main
+  target_repo_commit: d416e0a
+  evaluated_at: '2026-04-24T01:51:26Z'
+  transcript_path: ''
+  command_log_path: ''
+  session_replay_notes: ''
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: true
+  manifest_path: artifacts/manifest.yaml
+fixtures:
+- 'live-repo-clone: iamzhihuix/skills-manage@d416e0a'
+- 'github-release-asset: skills-manage_0.9.1_macos_universal.dmg'
+commands:
+- git clone --depth 1 https://github.com/iamzhihuix/skills-manage.git
+- curl -sL -o DMG https://github.com/iamzhihuix/skills-manage/releases/download/v0.9.1/skills-manage_0.9.1_macos_universal.dmg
+- 'shasum -a 256 DMG  # matched asset digest da1a1578...2913e5'
+- hdiutil attach -nobrowse -readonly DMG
+- 'file /Volumes/skills-manage/skills-manage.app/Contents/MacOS/skills-manage  # Mach-O
+  universal (arm64+x86_64)'
+- 'codesign -dv /Volumes/skills-manage/skills-manage.app  # adhoc, linker-signed'
+- grep 'std::os::unix::fs::symlink' src-tauri/src/commands/linker.rs
+- 'grep -n ''api_base:'' src-tauri/src/commands/github_import.rs  # 4 mirrors'
+- 'grep ''ON CONFLICT'' src-tauri/src/db.rs  # idempotent upsert'
+- 'grep -E ''sentry|posthog|analytics|telemetry'' package.json src-tauri/Cargo.toml  #
+  zero matches'
+result: passed
+results_by_claim:
+  claim-001: partial
+  claim-002: passed
+  claim-003: passed
+  claim-004: passed
+  claim-005: passed
+  claim-006: failed
+  claim-007: passed
+  claim-008: passed
+  claim-009: untested
+artifacts:
+- artifacts/skills-manage_0.9.1_macos_universal.dmg
+- logs/dmg-integrity.log
+- logs/source-inspection.log
+notes: 'Source-inspection + artifact-integrity run only. Runtime GUI workflow
+
+  (claim-009) deliberately skipped because tester''s ~/.agents/skills/ and
+
+  ~/.claude/skills/ are actively in use by the current session. Per adapter
+
+  archetype rules, skipping the *user-facing end-to-end* claim caps the
+
+  verdict at "usable" regardless of how many other claims pass.
+
+  '
+metrics:
+  pass_rate: 0.5
+  elapsed_time_sec: 3.376
+  token_usage:
+    input: 2903
+    output: 40

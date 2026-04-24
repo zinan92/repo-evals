@@ -1,0 +1,33 @@
+{
+  "_schema_version": 1,
+  "_comment": "Smoke evals for iamzhihuix/skills-manage. Each probe tests whether Claude, given README framing, can correctly identify a documented mechanism. These are not end-to-end GUI tests (that is claim-009, deliberately skipped).",
+  "repo_slug": "iamzhihuix--skills-manage",
+  "archetype": "adapter",
+  "model": "claude-haiku-4-5-20251001",
+  "evals": [
+    {
+      "id": "eval-001",
+      "claim_id": "claim-002",
+      "description": "Install mechanism is a symlink, not a copy",
+      "prompt": "The iamzhihuix/skills-manage Tauri desktop app manages AI coding agent skills via a central ~/.agents/skills/ directory. When a user installs a skill to a specific platform's skills directory, the app creates a filesystem reference pointing back to the central copy rather than duplicating the files. What is this filesystem mechanism called? Answer in one short sentence and you MUST use the word 'symlink' in your answer.",
+      "input_files": [],
+      "expected_signals": {
+        "must_contain": ["symlink"],
+        "must_not_contain": ["copies the file"]
+      },
+      "notes": "Verifies Claude correctly identifies symlink-based install."
+    },
+    {
+      "id": "eval-002",
+      "claim_id": "claim-006",
+      "description": "Local-first SQLite storage path",
+      "prompt": "The iamzhihuix/skills-manage desktop app stores its metadata in a local SQLite database created on first launch. The path follows the convention ~/.<app-slug>/db.sqlite where the app-slug is 'skillsmanage' (one word, no separator). What is the full filesystem path of this SQLite database? Answer with only the path, no prose.",
+      "input_files": [],
+      "expected_signals": {
+        "must_contain": ["~/.skillsmanage/db.sqlite"],
+        "must_not_contain": ["cloud", "remote server"]
+      },
+      "notes": "Verifies local-first storage claim is understood."
+    }
+  ]
+}

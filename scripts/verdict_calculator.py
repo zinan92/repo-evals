@@ -58,12 +58,26 @@ except ImportError:  # pragma: no cover
 
 BUCKETS = ["unusable", "usable", "reusable", "recommendable"]
 BUCKET_RANK = {b: i for i, b in enumerate(BUCKETS)}
+BUCKET_EMOJI = {
+    "unusable": "🔴",
+    "usable": "⚪",
+    "reusable": "🟡",
+    "recommendable": "🟢",
+}
+
+
+def with_emoji(bucket: str | None) -> str:
+    """Render a bucket name with its emoji prefix for display output.
+    Internal bucket strings remain unchanged — this is display-only."""
+    if bucket is None:
+        return "—"
+    return f"{BUCKET_EMOJI.get(bucket, '·')} {bucket}"
 
 # Archetypes where the user-facing value requires a live LLM / end-to-end
 # layer that is hard to validate via static checks alone. These repos get
 # a hybrid-cap rule: if the core layer is not tested, overall verdict
 # cannot exceed "usable" regardless of support-layer strength.
-HYBRID_ARCHETYPES = {"hybrid-skill", "prompt-skill", "orchestrator"}
+HYBRID_ARCHETYPES = {"hybrid-skill", "prompt-skill", "orchestrator", "mcp-enhancement"}
 
 EVIDENCE_RANK = {
     "none": 0,
@@ -342,8 +356,8 @@ def render_markdown(rec: dict) -> str:
     lines = [
         f"## Verdict Recommendation — {rec.get('repo','')}",
         "",
-        f"- **Recommended bucket:** `{rec['recommended_bucket']}`",
-        f"- **Final bucket:** `{rec['final_bucket']}`"
+        f"- **Recommended bucket:** {with_emoji(rec['recommended_bucket'])}",
+        f"- **Final bucket:** {with_emoji(rec['final_bucket'])}"
         + (" (override applied)" if rec["override"]["applied"] else ""),
         f"- **Confidence:** {rec['confidence']}",
         f"- **Archetype:** {rec['archetype']}",

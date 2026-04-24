@@ -1,0 +1,103 @@
+=== claim-001: README platforms vs builtin_agents() ===
+--- README table (platform names) ---
+Claude Code
+Codex CLI
+Cursor
+Gemini CLI
+Trae
+Factory Droid
+Junie
+Qwen
+Trae CN
+Windsurf
+Qoder
+Augment
+OpenCode
+KiloCode
+OB1
+Amp
+Kiro
+CodeBuddy
+Hermes
+Copilot
+Aider
+OpenClaw (开爪)
+QClaw (千爪)
+EasyClaw (简爪)
+EasyClaw V2
+AutoClaw
+WorkBuddy (打工搭子)
+Central Skills
+
+--- Code builtin_agents() ids ---
+claude-code
+codex
+cursor
+gemini-cli
+trae
+factory-droid
+junie
+qwen
+trae-cn
+windsurf
+qoder
+augment
+opencode
+kilocode
+ob1
+amp
+kiro
+codebuddy
+hermes
+copilot
+aider
+openclaw
+qclaw
+easyclaw
+autoclaw
+workbuddy
+central
+
+=== claim-002: symlink syscall proof ===
+75:    std::os::unix::fs::symlink(target, link).map_err(|e| format!("Failed to create symlink: {}", e))
+80:    std::os::windows::fs::symlink_dir(target, link)
+
+=== claim-003: is_agent_detected ===
+pub fn is_agent_detected(global_skills_dir: &str) -> bool {
+    let dir = Path::new(global_skills_dir);
+    if dir.exists() {
+        return true;
+    }
+    dir.parent().is_some_and(|p| p.exists())
+}
+
+
+=== claim-004: github_import api_base mirrors ===
+215:    api_base: &'static str,
+222:        api_base: "https://api.github.com",
+227:        api_base: "https://ghfast.top/https://api.github.com",
+232:        api_base: "https://ghproxy.net/https://api.github.com",
+237:        api_base: "https://mirror.ghproxy.com/https://api.github.com",
+
+=== claim-005: upsert_skill_installation ON CONFLICT ===
+        "INSERT INTO skill_installations
+         (skill_id, agent_id, installed_path, link_type, symlink_target, created_at)
+         VALUES (?, ?, ?, ?, ?, ?)
+         ON CONFLICT(skill_id, agent_id) DO UPDATE SET
+--
+            "INSERT INTO skill_installations (skill_id, agent_id, installed_path, link_type)
+             VALUES ('legacy-skill', 'claude-code', '/tmp/claude/legacy-skill', 'symlink')",
+        )
+        .execute(&pool)
+
+=== claim-006: no telemetry libs ===
+-- package.json runtime deps matching telemetry/analytics/sentry/posthog --
+(no match in package.json)
+-- Cargo.toml --
+(no match in Cargo.toml)
+-- lib.rs db path --
+src-tauri/src/path_utils.rs:42:    resolve_home_dir().join(".skillsmanage")
+src-tauri/src/lib.rs:23:            fs::create_dir_all(&db_dir).expect("Failed to create ~/.skillsmanage directory");
+
+=== claim-008: ensure_centralized ===
+154:async fn ensure_centralized(

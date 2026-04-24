@@ -211,13 +211,31 @@ def detect_gaps(
             })
 
         # R3: critical claim still untested
+        # A legitimate skip requires a populated skip_reason. Without it,
+        # the claim looks identical to "we forgot" — which is the bug.
         if prio == "critical" and status == "untested":
-            gaps.append({
-                "severity": "critical",
-                "code": "CRITICAL_CLAIM_UNTESTED",
-                "claim_id": cid,
-                "message": f"{cid} is critical and still untested",
-            })
+            skip_reason = str(c.get("skip_reason", "")).strip()
+            if skip_reason:
+                gaps.append({
+                    "severity": "warning",
+                    "code": "CRITICAL_CLAIM_SKIPPED",
+                    "claim_id": cid,
+                    "message": (
+                        f"{cid} is critical but intentionally skipped "
+                        f"(reason recorded). Verdict ceiling still applies."
+                    ),
+                })
+            else:
+                gaps.append({
+                    "severity": "critical",
+                    "code": "CRITICAL_CLAIM_UNTESTED",
+                    "claim_id": cid,
+                    "message": (
+                        f"{cid} is critical and still untested. "
+                        f"If this is a deliberate skip, add a skip_reason "
+                        f"field to the claim."
+                    ),
+                })
 
         # R4: critical claim failed → surface (still a critical gap)
         if prio == "critical" and status == "failed":

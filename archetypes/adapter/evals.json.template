@@ -1,0 +1,23 @@
+{
+  "_schema_version": 1,
+  "_comment": "Evaluation harness for a repo. Each eval drives one claim's status. Copy to repos/<slug>/evals/evals.json and fill in prompts. The run_evals.py runner writes results back into the matching run-summary.yaml's results_by_claim map.",
+  "repo_slug": "<owner>--<repo>",
+  "archetype": "adapter",
+  "model": "claude-haiku-4-5-20251001",
+  "evals": [
+    {
+      "id": "eval-001",
+      "claim_id": "claim-001",
+      "description": "Happy path for platform X",
+      "prompt": "<realistic user prompt that should exercise claim-001>",
+      "input_files": [],
+      "expected_signals": {
+        "must_contain": [],
+        "must_not_contain": [],
+        "output_file_exists": null,
+        "exit_code": 0
+      },
+      "notes": "What 'passing' looks like for a human reviewer."
+    }
+  ]
+}

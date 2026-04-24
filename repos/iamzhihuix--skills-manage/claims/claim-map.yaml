@@ -1,0 +1,150 @@
+# Claim map for iamzhihuix/skills-manage
+# Archetype: adapter (wraps 27+ AI coding tool "skill directories" behind one ~/.agents/skills/ source of truth)
+# Extracted from README.md v0.9.1 (commit at 2026-04-23, cloned 2026-04-24)
+
+claims:
+  - id: claim-001
+    title: 每个已声明平台都在 code 层注册为 adapter
+    source: README
+    source_ref: "Supported Platforms table (28 rows)"
+    priority: critical
+    area: platform-coverage
+    statement: |
+      README 列出的 28 个平台（Claude Code, Codex CLI, Cursor, Gemini CLI, Trae,
+      Factory Droid, Junie, Qwen, Trae CN, Windsurf, Qoder, Augment, OpenCode,
+      KiloCode, OB1, Amp, Kiro, CodeBuddy, Hermes, Copilot, Aider, OpenClaw,
+      QClaw, EasyClaw, EasyClaw V2, AutoClaw, WorkBuddy, Central）每一个在代码
+      的 builtin_agents() seed 里都有对应 entry，并且路径与 README 一致。
+    business_expectation: |
+      用户按 README 选一个平台做 install，不会因为"README 列了但代码没实现"失败。
+    evidence_needed: |
+      src-tauri/src/db.rs builtin_agents() 完整列表 + README 表格差异报告。
+    status: partial
+
+  - id: claim-002
+    title: 所有 install 产出同一个 shape（symlink → central）
+    source: README
+    source_ref: "Central skill library plus per-platform install and uninstall flows"
+    priority: critical
+    area: shape-conformance
+    statement: |
+      每个平台的 install 都是 "在 ~/<platform>/skills/ 下创建指向
+      ~/.agents/skills/<skill>/ 的 symlink"，不是 copy，也不是平台特定的
+      魔法目录结构。Windows 分支用 symlink_dir。
+    business_expectation: |
+      skill 改一次，所有安装了的平台同步生效（symlink 本质）。
+    evidence_needed: |
+      linker.rs create_symlink() 源码 + 跨平台 cfg 分支。
+    status: passed
+
+  - id: claim-003
+    title: 未装的/未列出的平台清晰失败
+    source: README
+    source_ref: "Supported Platforms + Custom platforms via Settings"
+    priority: critical
+    area: failure-transparency
+    statement: |
+      用户加自定义平台前，如果某个平台的 global_skills_dir 及其父目录都
+      不存在，应当标 is_detected=false 而不是伪装成已检测。
+    business_expectation: |
+      用户看到的 "已检测" 状态反映真实磁盘状态，不会把 install 发到不存在的目录。
+    evidence_needed: |
+      agents.rs is_agent_detected() 逻辑。
+    status: passed
+
+  - id: claim-004
+    title: GitHub 导入有真实 auth + retry fallback
+    source: README
+    source_ref: "Marketplace browsing and GitHub repository import with authenticated requests and retry fallback"
+    priority: high
+    area: auth
+    statement: |
+      GitHub PAT 从本地 SQLite 的 settings 表读取；主 API 失败时会回退到
+      多个镜像（ghfast.top / ghproxy.net / mirror.ghproxy.com）。
+    business_expectation: |
+      在国内网络环境下 GitHub 导入也能跑，PAT 失效时报错而不是吞错误。
+    evidence_needed: |
+      github_import.rs api_base 列表 + PAT 读取路径。
+    status: passed
+
+  - id: claim-005
+    title: 重复 install 同一个 skill 是幂等的
+    source: README
+    source_ref: "Collections for organizing skills and batch-installing them to platforms"
+    priority: high
+    area: deduplication
+    statement: |
+      upsert_skill_installation 用 ON CONFLICT DO UPDATE，重复对同
+      (skill_id, agent_id) 做 install 不会在 DB 里产生两行，也不会在磁盘
+      上留两个 symlink。
+    business_expectation: |
+      Collections 批量 install 可以反复跑不出乱子。
+    evidence_needed: |
+      db.rs upsert_skill_installation 查询 + 对应 ON CONFLICT 子句。
+    status: passed
+
+  - id: claim-006
+    title: 数据本地化 + 无遥测
+    source: README
+    source_ref: "Privacy & Security — Local-first storage, No telemetry"
+    priority: critical
+    area: upstream-drift
+    statement: |
+      ~/.skillsmanage/db.sqlite 是唯一持久化入口；package.json 和 Rust
+      依赖中没有任何 analytics / telemetry / crash-reporting 库。
+    business_expectation: |
+      用户敢把 GitHub PAT 和 AI API key 存进去（虽然未加密，但不会被外发）。
+    evidence_needed: |
+      lib.rs setup() 路径 + 全仓 grep analytics/sentry/posthog 结果。
+    status: passed
+
+  - id: claim-007
+    title: Prebuilt macOS DMG 下载即可用
+    source: README
+    source_ref: "Download — Apple Silicon macOS (.dmg and .app.zip)"
+    priority: critical
+    area: platform-coverage
+    statement: |
+      GitHub Release v0.9.1 的 DMG 可下载，SHA256 与 asset digest 一致，
+      mount 后是一个有效的 Mach-O bundle，README 给出的 xattr workaround
+      是真正需要的（adhoc 签名，不是 notarized）。
+    business_expectation: |
+      非开发者用户不用 pnpm + Rust toolchain 就能开始使用。
+    evidence_needed: |
+      DMG 下载 log + shasum 对比 + codesign -dv 输出 + hdiutil attach 输出。
+    status: passed
+
+  - id: claim-008
+    title: 支持 Central↔平台双向 centralize
+    source: source (not README)
+    source_ref: "linker.rs ensure_centralized()"
+    priority: medium
+    area: shape-conformance
+    statement: |
+      如果用户给一个只在某平台（如 ~/.cursor/skills/）存在的 skill 发起
+      跨平台 install，代码会先把它 copy 进 central（~/.agents/skills/）
+      再建 symlink。
+    business_expectation: |
+      用户不需要先手动把 skill 挪进 central 也能用 install 流程。
+    evidence_needed: |
+      linker.rs ensure_centralized() 源码 + DB is_central flag 翻转逻辑。
+    status: passed
+
+  - id: claim-009
+    title: 实际启动 + 扫描 + install 的端到端 runtime 验证
+    source: README
+    source_ref: "Highlights (all 8 bullets)"
+    priority: critical
+    area: platform-coverage
+    statement: |
+      用户打开 app → 检测到已装的平台 → 在 Central 看到已有 skill →
+      install 到某个平台 → 平台目录出现 symlink → uninstall 清掉 symlink。
+    business_expectation: |
+      这才是 usable 的下限。
+    evidence_needed: |
+      运行时截图 + 实际文件系统 before/after。
+    status: untested
+    skip_reason: |
+      Wendy 当前机器上 ~/.claude/skills/ (260+) 和 ~/.agents/skills/ 正在被
+      本次 session 使用，启动未签名 adhoc-signed app 去扫描+改写这些目录
+      风险过高。建议在干净账户 / VM 里再验。

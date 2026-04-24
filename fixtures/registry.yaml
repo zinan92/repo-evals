@@ -50,6 +50,7 @@ enums:
     - adapter
     - orchestrator
     - api-service
+    - mcp-enhancement
 
 fixtures:
   - id: douyin-video-url-public

@@ -4,6 +4,12 @@
 
 Make repository evaluation a first-class workflow, especially for skill, capability, and orchestration repos where quality is not captured by simple command success.
 
+## Core principle: evals drive claim status
+
+A claim's status should come from a machine-checkable eval, not from a human typing `passed` into a YAML file. Every critical claim gets one entry in `evals/evals.json` with a prompt and expected signals. `scripts/run_evals.py` executes them via CLIProxyAPI (or any OpenAI/Anthropic-compatible endpoint), checks the output, and writes back `results_by_claim` + `metrics` to the active run.
+
+Manual review remains the backstop for claims that cannot be probed automatically (UI workflows, external-account flows, hardware-dependent behavior). Those get `skip_reason`, and the archetype ceiling applies.
+
 ## Two-Layer Output
 
 ### 1. Business Validation

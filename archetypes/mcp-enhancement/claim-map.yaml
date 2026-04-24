@@ -1,0 +1,94 @@
+# Starter claim map for a hybrid-skill archetype.
+# Key insight: split claims into SUPPORT-layer and CORE-layer so the
+# hybrid-cap rule can see what was actually tested.
+
+claims:
+  # --- Support layer (deterministic code) --------------------------------
+
+  - id: claim-001
+    title: 干净环境安装成功
+    source: README
+    source_ref: "Install section"
+    priority: critical
+    area: support-install
+    statement: |
+      在全新 HOME / 容器里执行 README 的安装命令，所有文件被复制到预期
+      位置，没有 silent failure。
+    business_expectation: |
+      新用户照 README 一条命令就能装上。
+    evidence_needed: |
+      安装脚本输出 + 文件落位检查 + 退出码。
+    status: untested
+
+  - id: claim-002
+    title: 随包模板能在浏览器/渲染器里打开
+    source: README
+    source_ref: "templates section"
+    priority: critical
+    area: support-templates
+    statement: |
+      所有 templates/*.html 在 headless 渲染器里成功加载，0 page errors。
+    business_expectation: |
+      LLM 抄模板时抄的是能跑的结构。
+    evidence_needed: |
+      headless 渲染截图 + page errors 计数。
+    status: untested
+
+  - id: claim-003
+    title: SKILL.md 引用全部解析得到
+    source: SKILL.md
+    source_ref: ""
+    priority: high
+    area: support-skill-integrity
+    statement: |
+      SKILL.md 中引用的每一个相对路径都指向真实存在的文件。
+    business_expectation: |
+      LLM 读 skill 时不会因为找不到文件而瞎写。
+    evidence_needed: |
+      grep + 文件存在列表。
+    status: untested
+
+  - id: claim-004
+    title: 失败模式清晰报错
+    source: README/SKILL
+    source_ref: ""
+    priority: high
+    area: support-failure-transparency
+    statement: |
+      所有支持脚本在常见错误输入上返回非零退出码 + 可操作的 stderr。
+    business_expectation: |
+      Pipeline / 用户能立即知道下一步做什么。
+    evidence_needed: |
+      每种失败场景的 stderr + 退出码。
+    status: untested
+
+  # --- Core layer (LLM-driven — this is what gates the verdict) ----------
+
+  - id: claim-101
+    title: 真实 LLM 会话产出达到质量契约
+    source: SKILL.md
+    source_ref: "quality contract / anti-slop section"
+    priority: critical
+    area: core-llm
+    statement: |
+      在真实 agent 会话里执行一个 README 承诺的命令，产出符合 SKILL.md
+      的质量契约（格式、信息密度、风格）。
+    business_expectation: |
+      用户拿到的是"真正能用的结果"，不是 fallback 或占位符。
+    evidence_needed: |
+      transcript + 产物 + 对照 quality contract 的逐项打分。
+    status: untested
+
+  - id: claim-102
+    title: Anti-slop 规则被遵守
+    source: SKILL.md
+    source_ref: "anti-patterns section"
+    priority: high
+    area: core-llm
+    statement: |
+      SKILL.md 中显式禁止的模式在真实产出中没有出现。
+    business_expectation: |
+      风格契约不是许愿清单。
+    evidence_needed: |
+      产出对照 anti-slop 列表的 pass/fail。
+    status: untested

@@ -1,6 +1,17 @@
 # Verdict Buckets
 
-## `unusable`
+At a glance:
+
+| Emoji | Bucket | One-line meaning |
+|---|---|---|
+| 🔴 | `unusable` | Core claims fail or only pass by accident — do not use |
+| ⚪ | `usable` | Works once, low confidence — experimental only |
+| 🟡 | `reusable` | Stable across multiple real scenarios — internal reuse OK |
+| 🟢 | `recommendable` | Boundaries clear, stable — share with others |
+
+Bucket names are the programmatic identifier (used in YAML, scripts, and dashboards). Emojis are display-only and are added automatically by `scripts/verdict_calculator.py` and `scripts/generate_dashboard.py`.
+
+## 🔴 `unusable`
 
 Use this when the repo does not reliably deliver its core promised outcome.
 
@@ -11,7 +22,7 @@ Typical signs:
 - Results are wildly inconsistent
 - Failure modes are misleading
 
-## `usable`
+## ⚪ `usable`
 
 Use this when the repo can complete its core path, but confidence is still limited.
 
@@ -22,7 +33,7 @@ Typical signs:
 - Repeatability is only partially proven
 - The support layer may be strong, but the core user-facing layer is still only lightly tested
 
-## `reusable`
+## 🟡 `reusable`
 
 Use this when the repo works across multiple realistic scenarios with acceptable consistency.
 
@@ -33,7 +44,7 @@ Typical signs:
 - Failure boundaries are becoming clear
 - The actual user-facing layer has been validated, not just supporting scripts or packaging
 
-## `recommendable`
+## 🟢 `recommendable`
 
 Use this only when the repo is strong enough that you would recommend it to another person without heavy caveats.
 

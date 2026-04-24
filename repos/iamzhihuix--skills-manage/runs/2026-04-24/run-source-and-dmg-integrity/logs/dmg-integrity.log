@@ -1,0 +1,22 @@
+=== sha256 of released DMG ===
+da1a1578509c5bc12b54ade7982925d9255a11b05aff041204a02e85db2913e5  /tmp/repo-evals/repos/iamzhihuix--skills-manage/runs/2026-04-24/run-source-and-dmg-integrity/artifacts/skills-manage_0.9.1_macos_universal.dmg
+
+=== GitHub asset digest ===
+sha256:da1a1578509c5bc12b54ade7982925d9255a11b05aff041204a02e85db2913e5
+
+=== file(1) on the Mach-O ===
+/dev/disk4s1        	Apple_HFS                      	/Volumes/skills-manage
+/Volumes/skills-manage/skills-manage.app/Contents/MacOS/skills-manage: Mach-O universal binary with 2 architectures: [x86_64:Mach-O 64-bit executable x86_64] [arm64]
+/Volumes/skills-manage/skills-manage.app/Contents/MacOS/skills-manage (for architecture x86_64):	Mach-O 64-bit executable x86_64
+/Volumes/skills-manage/skills-manage.app/Contents/MacOS/skills-manage (for architecture arm64):	Mach-O 64-bit executable arm64
+
+=== codesign -dv ===
+Executable=/Volumes/skills-manage/skills-manage.app/Contents/MacOS/skills-manage
+Identifier=skills_manage-6569a28ec99d071a
+Format=app bundle with Mach-O universal (x86_64 arm64)
+CodeDirectory v=20400 size=176632 flags=0x20002(adhoc,linker-signed) hashes=5516+0 location=embedded
+Signature=adhoc
+Info.plist=not bound
+TeamIdentifier=not set
+Sealed Resources=none
+"disk4" ejected.

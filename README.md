@@ -34,10 +34,10 @@ fail support layer passes but core layer untested → overall verdict capped at 
 
 | 桶 | 含义 | 适用场景 |
 |----|------|---------|
-| `unusable` | 核心承诺都跑不通，或只是偶然成功 | 不要用 |
-| `usable` | 主任务能跑通至少一次，但信心有限 | 实验性使用 |
-| `reusable` | 多个真实场景下稳定可用 | 内部重复使用 |
-| `recommendable` | 边界清晰、稳定、敢推荐给别人 | 对外推荐 |
+| 🔴 `unusable` | 核心承诺都跑不通，或只是偶然成功 | 不要用 |
+| ⚪ `usable` | 主任务能跑通至少一次，但信心有限 | 实验性使用 |
+| 🟡 `reusable` | 多个真实场景下稳定可用 | 内部重复使用 |
+| 🟢 `recommendable` | 边界清晰、稳定、敢推荐给别人 | 对外推荐 |
 
 > **决策规则**：强 verdict 必须配强 plan。尤其是 hybrid repo，如果真正的核心用户价值层没测到，整体 verdict 最高只能是 `usable`。
 
