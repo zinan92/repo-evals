@@ -413,6 +413,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("-o", "--output", type=pathlib.Path, default=None)
     parser.add_argument("--json", action="store_true", help="emit JSON")
     parser.add_argument("--md", action="store_true", help="emit Markdown report")
+    parser.add_argument(
+        "--no-html",
+        action="store_true",
+        help="skip auto-rendering + opening the HTML verdict",
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -434,7 +439,43 @@ def main(argv: list[str] | None = None) -> int:
         print(f"wrote {args.output}")
     else:
         sys.stdout.write(out_text)
+
+    # Auto-open the HTML verdict when the input path is inside a
+    # repos/<slug>/verdicts/ directory. This is the natural next step
+    # after computing the verdict — the user reads the HTML, not the
+    # raw numbers.
+    if not args.no_html:
+        _maybe_render_and_open_html(args.input)
     return 0
+
+
+def _maybe_render_and_open_html(input_path: pathlib.Path) -> None:
+    """If input_path sits inside repos/<slug>/verdicts/, render and open
+    the HTML verdict. Fails quietly — this is a convenience, not a
+    correctness-critical step."""
+    try:
+        resolved = input_path.resolve()
+        parts = resolved.parts
+        if "repos" not in parts or "verdicts" not in parts:
+            return
+        idx = parts.index("repos")
+        if idx + 1 >= len(parts):
+            return
+        slug = parts[idx + 1]
+        here = pathlib.Path(__file__).resolve().parent
+        render_script = here / "render_verdict_html.py"
+        if not render_script.exists():
+            return
+
+        import subprocess
+
+        subprocess.run(
+            ["python3", str(render_script), slug, "--open"],
+            check=False,
+        )
+    except Exception:
+        # Never let a render/open failure break the verdict calculator.
+        return
 
 
 if __name__ == "__main__":
