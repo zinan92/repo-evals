@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>· iamzhihuix/skills-manage — verdict</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+:root {
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+  --bg: #faf7f5; --surface: #ffffff; --surface2: #f5f0ec;
+  --border: rgba(0,0,0,.08); --border-bright: rgba(0,0,0,.15);
+  --text: #292017; --text-dim: #8a7e72; --accent: #64748b;
+  --accent-dim: #64748b15;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1412; --surface: #231d1a; --surface2: #2e2622;
+    --border: rgba(255,255,255,.07); --border-bright: rgba(255,255,255,.14);
+    --text: #ede5dd; --text-dim: #a69889;
+  }
+}
+* { box-sizing: border-box; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); margin: 0; padding: 32px 24px; line-height: 1.55; }
+main { max-width: 1080px; margin: 0 auto; }
+.hero { padding: 40px 32px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 32px; position: relative; overflow: hidden; }
+.hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 20%, var(--accent-dim), transparent 60%); pointer-events: none; }
+.hero > * { position: relative; }
+.hero .crumb { font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; }
+.hero h1 { font-size: 42px; margin: 12px 0 8px; font-weight: 700; }
+.hero .owner-repo { font-family: var(--font-mono); font-size: 16px; color: var(--text-dim); margin-bottom: 28px; }
+.bucket-banner { display: inline-flex; align-items: baseline; gap: 14px; padding: 18px 28px; border-radius: 14px; background: var(--accent-dim); border: 2px solid var(--accent); font-weight: 600; }
+.bucket-banner .emoji { font-size: 48px; line-height: 1; }
+.bucket-banner .name { font-size: 28px; color: var(--accent); font-weight: 700; }
+.bucket-banner .conf { font-size: 14px; color: var(--text-dim); font-family: var(--font-mono); }
+.meta { display: flex; gap: 24px; margin-top: 22px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); }
+.meta b { color: var(--text); font-weight: 500; }
+section { margin-bottom: 40px; }
+h2 { font-size: 22px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 720px) { .grid-two { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.card h3 { font-size: 15px; margin: 0 0 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); font-weight: 600; }
+.card ul { margin: 0; padding-left: 20px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); font-weight: 600; background: var(--surface2); }
+.cid { font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+.badge.prio-critical { background: #dc262620; color: #dc2626; }
+.badge.prio-high     { background: #d9770620; color: #d97706; }
+.badge.prio-medium   { background: #0891b220; color: #0891b2; }
+.badge.prio-low      { background: #64748b20; color: #64748b; }
+.skip { font-size: 12px; color: var(--text-dim); font-style: italic; }
+.run-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.run-card h3 { font-family: var(--font-mono); font-size: 15px; margin: 0; }
+.run-card p.dim { margin: 4px 0 12px; color: var(--text-dim); font-size: 13px; }
+.metrics-row { display: flex; gap: 16px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 13px; }
+.metric { background: var(--surface2); padding: 6px 12px; border-radius: 8px; }
+.metric b { color: var(--text-dim); font-weight: 500; margin-right: 6px; }
+.baseline { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 13px; color: var(--text-dim); }
+.rbc { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; }
+.rbc li { background: var(--surface2); padding: 4px 10px; border-radius: 6px; }
+.rbc code { font-family: var(--font-mono); font-size: 12px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+pre.md { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; }
+footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }
+.dim { color: var(--text-dim); }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="hero">
+    <div class="crumb">repo-evals · verdict · 2026-04-24</div>
+    <h1>skills-manage</h1>
+    <div class="owner-repo">iamzhihuix/skills-manage</div>
+    <div class="bucket-banner">
+      <span class="emoji">·</span>
+      <span class="name">unknown</span>
+      <span class="conf">confidence: unknown</span>
+    </div>
+    <div class="meta">
+      <span><b>archetype</b> adapter</span>
+      <span><b>claims</b> 9</span>
+      <span><b>critical covered</b> ?/?</span>
+      <span><b>runs</b> 1</span>
+    </div>
+  </div>
+
+  <section>
+    <h2>Ceilings &amp; blocking issues</h2>
+    <div class="grid-two">
+      <div class="card">
+        <h3>Ceiling reasons</h3>
+        <ul><li class="dim">none</li></ul>
+      </div>
+      <div class="card">
+        <h3>Blocking issues</h3>
+        <ul><li class="dim">none</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Derivation</h2>
+    <div class="mermaid">
+graph LR
+  A[archetype: adapter] --> B{core_layer_tested?}
+  B -->|None| C[evidence: unknown]
+  C --> D([recommended: unknown])
+  D --> E([final: unknown])
+    </div>
+  </section>
+
+  <section>
+    <h2>Claims</h2>
+    <table>
+      <thead><tr><th>ID</th><th>Title</th><th>Priority</th><th>Area</th><th>Status</th><th>Skip reason</th></tr></thead>
+      <tbody><tr class="prio-critical"><td class="cid">claim-001</td><td>每个已声明平台都在 code 层注册为 adapter</td><td><span class="badge prio-critical">critical</span></td><td>platform-coverage</td><td class="status">🟡 partial</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-002</td><td>所有 install 产出同一个 shape（symlink → central）</td><td><span class="badge prio-critical">critical</span></td><td>shape-conformance</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-003</td><td>未装的/未列出的平台清晰失败</td><td><span class="badge prio-critical">critical</span></td><td>failure-transparency</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-high"><td class="cid">claim-004</td><td>GitHub 导入有真实 auth + retry fallback</td><td><span class="badge prio-high">high</span></td><td>auth</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-high"><td class="cid">claim-005</td><td>重复 install 同一个 skill 是幂等的</td><td><span class="badge prio-high">high</span></td><td>deduplication</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-006</td><td>数据本地化 + 无遥测</td><td><span class="badge prio-critical">critical</span></td><td>upstream-drift</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-007</td><td>Prebuilt macOS DMG 下载即可用</td><td><span class="badge prio-critical">critical</span></td><td>platform-coverage</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-medium"><td class="cid">claim-008</td><td>支持 Central↔平台双向 centralize</td><td><span class="badge prio-medium">medium</span></td><td>shape-conformance</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-009</td><td>实际启动 + 扫描 + install 的端到端 runtime 验证</td><td><span class="badge prio-critical">critical</span></td><td>platform-coverage</td><td class="status">⏭️ untested</td><td class="skip">Wendy 当前机器上 ~/.claude/skills/ (260+) 和 ~/.agents/skills/ 正在被
+本次 session 使用，启动未签名 adhoc-signed app 去扫描+改写这些目录
+风险过高。建议在干净账户 / VM 里再验。
+</td></tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Runs &amp; metrics</h2>
+    <canvas id="metrics-chart" width="400" height="200"></canvas>
+    <article class="run-card"><h3>run-source-and-dmg-integrity</h3><p class="dim">run on 2026-04-24</p><div class="metrics-row"><span class="metric"><b>pass</b> 50%</span><span class="metric"><b>time</b> 3.4s</span><span class="metric"><b>tokens</b> in 2903 / out 40</span></div><ul class="rbc"><li>🟡 <code>claim-001</code> partial</li><li>✅ <code>claim-002</code> passed</li><li>✅ <code>claim-003</code> passed</li><li>✅ <code>claim-004</code> passed</li><li>✅ <code>claim-005</code> passed</li><li>❌ <code>claim-006</code> failed</li><li>✅ <code>claim-007</code> passed</li><li>✅ <code>claim-008</code> passed</li><li>⏭️ <code>claim-009</code> untested</li></ul></article>
+  </section>
+
+  <section>
+    <h2>Full verdict (markdown)</h2>
+    <pre class="md"># Final Verdict — iamzhihuix/skills-manage
+
+## Repo
+
+- **Name**: iamzhihuix/skills-manage
+- **Version tested**: v0.9.1 (2026-04-23)
+- **Date**: 2026-04-24
+- **Archetype**: adapter
+- **Final bucket**: `usable`
+- **Confidence**: low (per verdict_calculator.py)
+
+## Verdict Calculator Output
+
+```
+Recommended bucket: usable
+Final bucket:       usable
+Confidence:         low
+
+Ceiling reasons:
+  - core user-facing layer untested → capped at &#x27;usable&#x27;
+  - evidence_completeness=&#x27;portable&#x27; → capped at &#x27;reusable&#x27;
+
+Blocking issues:
+  - only 5/6 critical claims covered
+```
+
+Inputs: 8 of 9 claims passed (claim-001 passed_with_concerns, claim-009 untested). 5 of 6 critical claims covered; claim-009 is the uncovered one.
+
+## Why This Bucket
+
+### Core Outcome — code path exists, end-to-end not proven
+
+Every claim about install / uninstall / symlink / detection / GitHub import / local-first storage has a concrete, reviewable code path. The prebuilt DMG is byte-identical to the release asset digest. But no real user workflow was executed through the GUI — the adapter archetype says that failing to exercise the *actual user-facing layer* caps the verdict at `usable`, and the rule applied.
+
+### Scenario Breadth — narrow on purpose
+
+Only one scenario was tested: &quot;open the source + download + inspect bundle&quot;. No per-platform install smoke, no collection batch-install, no discover scan against a real project tree. The breadth floor is 1, not 28.
+
+### Repeatability — not tested
+
+No repeat runs. Idempotency was verified at the *schema level* (`ON CONFLICT(skill_id, agent_id) DO UPDATE`) but not by running the same install twice and inspecting on-disk state.
+
+### Failure Transparency — good signals in code
+
+- `is_agent_detected()` honestly returns false when both dir and parent are missing.
+- `ensure_centralized()` errors out with explicit messages when the source skill is missing.
+- GitHub import falls back through 4 mirrors, so a single network failure won&#x27;t produce a misleading empty import.
+- Zero telemetry libraries, so a failure can&#x27;t be silently phoned home.
+
+## What I Would Say In Plain English
+
+skills-manage is a well-built young project (910 stars in 11 days is not an accident — the code shows it). The README&#x27;s claims about &quot;central library + symlink to per-platform&quot; are not marketing: they are literally implemented with `std::os::unix::fs::symlink` and a relative-path computation that makes the links portable. Privacy claims are honest — the database is where they say it is, and there is no analytics dependency anywhere.
+
+But this evaluation did not prove the app works for a real user. It proved the code for each claim exists. For a pre-1.0 Tauri desktop app that requires `xattr -dr com.apple.quarantine` to launch and will scan/modify directories many other tools are already managing, &quot;code exists&quot; is not enough to recommend.
+
+**Use it if** you have a clean macOS account or a VM, and your skills live in one place today.
+**Wait if** your `~/.claude/skills/`, `~/.agents/skills/`, or `~/.cursor/skills/` are already managed by another tool (dbskill, lobster lock file, plugin registries) — test in isolation first.
+
+## Remaining Risks
+
+1. **claim-009 (runtime E2E) untested**. Everything downstream of &quot;user clicks install&quot; is inferred, not observed.
+2. **EasyClaw V2 listed in README but not seeded in code** (`builtin_agents()` has 27 ids vs README&#x27;s 28 platforms). If a user specifically needs that platform, the adapter is missing.
+3. **API keys stored unencrypted** in `~/.skillsmanage/db.sqlite` (README self-discloses; still a real constraint).
+4. **adhoc signing + no notarization**. The `xattr` workaround is a permanent requirement until the maintainer signs the build.
+5. **3 legacy failing frontend tests** (CLAUDE.md self-discloses). Not in the core path but worth noting.
+6. **Schema drift**: README and code disagree about Hermes category and React version. Low-risk but pattern-of-minor-drift is a smell to watch at 1.0.
+
+## What Would Move It To `reusable`
+
+- A live run on a clean macOS user account: launch app, detect platforms, install one skill to two platforms, verify symlinks on disk, uninstall, verify cleanup — all with screenshots/log evidence.
+- A repeat run proving idempotency at the filesystem level.
+- An unsupported-input run (e.g., custom agent with a read-only dir) proving the failure is loud.
+
+## What Would Move It To `recommendable`
+
+- Everything above, plus:
+- A 1.0 release with notarized macOS build and a Linux build (currently source-only).
+- The 3 legacy failing frontend tests fixed.
+- README-code consistency pass (EasyClaw V2, React version, Hermes category).
+
+## Related Artifacts
+
+- Claim map: `claims/claim-map.yaml`
+- Plan: `plans/2026-04-24-eval-plan.md`
+- Run: `runs/2026-04-24/run-source-and-dmg-integrity/`
+  - DMG: `artifacts/skills-manage_0.9.1_macos_universal.dmg`
+  - DMG integrity log: `logs/dmg-integrity.log`
+  - Source inspection log: `logs/source-inspection.log`
+  - Business notes: `business-notes.md`
+- Verdict calculator input: `verdicts/2026-04-24-verdict-input.yaml`
+</pre>
+  </section>
+
+  <footer>
+    Rendered by repo-evals render_verdict_html.py · source: https://github.com/iamzhihuix/skills-manage
+  </footer>
+
+</main>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true,
+  theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
+  securityLevel: 'loose'
+});
+
+const chartData = {"labels": ["pass_rate", "elapsed_time_sec", "token_output"], "with": [0.5, 3.376, 40.0], "baseline": [0.0, 0.0, 0.0]};
+const ctx = document.getElementById('metrics-chart');
+if (ctx) {
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chartData.labels,
+      datasets: [
+        { label: 'with repo', data: chartData.with, backgroundColor: '#64748bcc' },
+        { label: 'baseline (no repo)', data: chartData.baseline, backgroundColor: '#94a3b8aa' }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+</script>
+
+</body>
+</html>

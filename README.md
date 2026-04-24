@@ -160,6 +160,18 @@ scripts/new-run.sh owner--repo run-slug area-slug /path/to/target-repo
 `repos/<slug>/diffs/<date>-<from>_to_<to>/` 下（`diff.yaml` + `diff.json` + `summary.md`）。
 5 个已评测 repo 已经有了一份 pre-archetype→working 的样例 diff 供参考。
 
+## v0.3 Platform Tools — Eval harness & HTML verdict
+
+See [ROADMAP.md](ROADMAP.md) for the full v0.3 plan. Currently landed:
+
+| 工具 | 作用 |
+|------|------|
+| `scripts/new-eval-harness.sh <slug>` | Seed `evals/evals.json` for a scaffolded repo from the matching archetype template |
+| `scripts/run_evals.py <slug>` | Execute each eval via CLIProxyAPI (or any OpenAI-compatible endpoint), write `results_by_claim` + `metrics` back to `run-summary.yaml` |
+| `scripts/run_evals.py <slug> --baseline` | Second pass without repo context — produces with-repo / without-repo comparison |
+| `scripts/render_verdict_html.py <slug>` | Render a single-file HTML verdict (Mermaid + Chart.js via CDN, dark/light theme, no build step) |
+| `archetypes/mcp-enhancement/` | New archetype for skills that wrap an MCP server with workflow guidance |
+
 ## Phase 4 Platform Tools — Operator Dashboard
 
 让 repo-evals 从“有很多文件”升级成“可以运营的评测平台”。
