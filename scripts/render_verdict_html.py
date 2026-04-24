@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import importlib.util
 import json
 import os
 import subprocess
@@ -46,6 +47,25 @@ import webbrowser
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
+
+def _load_verdict_calculator():
+    """Import verdict_calculator.py as a sibling script so we can run
+    the same compute_verdict() the CLI uses. Avoids drift where the HTML
+    shows different numbers than the calculator prints."""
+    here = Path(__file__).resolve().parent
+    spec = importlib.util.spec_from_file_location(
+        "_rv_calc", here / "verdict_calculator.py"
+    )
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot locate verdict_calculator.py next to render_verdict_html.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+_VC = _load_verdict_calculator()
+compute_verdict = _VC.compute_verdict
 
 try:
     import yaml
@@ -112,6 +132,26 @@ I18N: dict[str, dict[str, str]] = {
     "col_skip":          {"en": "Skip reason",                "zh": "跳过原因"},
     "runs_section":      {"en": "Runs & metrics",             "zh": "Runs 与指标"},
     "verdict_section":   {"en": "Full verdict (markdown)",    "zh": "完整 verdict（markdown）"},
+    # product-facing sections (new)
+    "what_it_does":      {"en": "What this repo does",        "zh": "这个 repo 是做什么的"},
+    "capabilities":      {"en": "Capabilities",               "zh": "能做什么"},
+    "verified":          {"en": "verified",                   "zh": "已验证"},
+    "failed_verification":{"en":"failed verification",        "zh": "验证失败"},
+    "untested_label":    {"en": "not tested",                 "zh": "未测试"},
+    "skip_note":         {"en": "skip reason",                "zh": "跳过原因"},
+    "evidence":          {"en": "evidence",                   "zh": "证据"},
+    "quality":           {"en": "Quality at a glance",        "zh": "质量速览"},
+    "q_coverage":        {"en": "Coverage",                   "zh": "覆盖度"},
+    "q_reliability":     {"en": "Reliability",                "zh": "可靠性"},
+    "q_risk":            {"en": "Residual risk",              "zh": "剩余风险"},
+    "technical_details": {"en": "Technical details (expand to see)",
+                          "zh": "技术细节（展开查看）"},
+    "test_log":          {"en": "Test log — all probes we ran",
+                          "zh": "测试日志 — 我们跑过的所有探针"},
+    "eval_log":          {"en": "Eval probes",                "zh": "Eval 探针"},
+    "trigger_log":       {"en": "Trigger tests",              "zh": "触发测试"},
+    "source_raw":        {"en": "Raw verdict archive (authored by evaluator)",
+                          "zh": "原始 verdict 存档（评测者原文）"},
     "footer":            {"en": "Rendered by repo-evals render_verdict_html.py · source",
                           "zh": "由 repo-evals render_verdict_html.py 生成 · 源"},
     "with_repo":         {"en": "with repo",                  "zh": "有该 repo"},
@@ -246,11 +286,39 @@ def load_verdict(slug: str, date: str | None) -> VerdictData:
                     )
                 )
 
+    # --- Merge eval results into claim statuses -------------------------
+    # If any run has results_by_claim filled in (either by hand or by
+    # run_evals.py), those override the claim-map's initial status. This
+    # is why "I said it was passed but the run said failed" → we trust
+    # the run.
+    claim_status_override: dict[str, str] = {}
+    for r in runs:
+        rbc = r.summary.get("results_by_claim") or {}
+        for cid, status in rbc.items():
+            if cid and status:
+                claim_status_override[str(cid)] = str(status)
+    for c in claims:
+        cid = str(c.get("id", ""))
+        if cid in claim_status_override:
+            c["status"] = claim_status_override[cid]
+
+    # --- Compute the verdict live (don't read a stale final bucket) -----
+    # verdict_input is the *input* to verdict_calculator, not its output.
+    # We call compute_verdict() at render time so the HTML always matches
+    # the latest claim statuses (including any just-merged eval results).
+    verdict_output: dict[str, Any] = {}
+    if verdict_input:
+        try:
+            verdict_output = compute_verdict(verdict_input)
+        except Exception as exc:  # fail soft — still render the page
+            print(f"(warn) verdict_calculator failed: {exc}", file=sys.stderr)
+            verdict_output = {}
+
     return VerdictData(
         repo=repo,
         claims=claims,
         verdict_md=verdict_md,
-        verdict_input=verdict_input,
+        verdict_input=verdict_output or verdict_input,
         runs=runs,
         date=derived_date,
     )
@@ -329,6 +397,136 @@ def render_run_card(run: RunData) -> str:
     )
 
 
+def product_one_liner(vd: VerdictData) -> str:
+    """One-sentence 'what this repo does', in whatever language the
+    evaluator authored it. Prefers explicit fields, falls back to the
+    first sentence of repo.yaml notes."""
+    for key in ("one_liner", "product_summary", "description"):
+        val = vd.repo.get(key)
+        if val:
+            return str(val).strip()
+    notes = vd.repo.get("notes") or ""
+    if isinstance(notes, str) and notes.strip():
+        first_line = notes.strip().splitlines()[0]
+        return first_line[:280]
+    # Last resort: derive from archetype
+    return f"An {vd.archetype} repo."
+
+
+def render_capability_cards(vd: VerdictData) -> str:
+    """One card per critical/high claim — the product-facing 'it can do X'."""
+    VISIBLE_PRIORITIES = {"critical", "high"}
+    visible = [c for c in vd.claims if str(c.get("priority", "")) in VISIBLE_PRIORITIES]
+    if not visible:
+        visible = vd.claims  # tiny scaffolds — show them all
+
+    def _card(c: dict[str, Any]) -> str:
+        status = str(c.get("status", "unknown"))
+        emoji = STATUS_EMOJI.get(status, "·")
+        title = _esc(c.get("title", c.get("id", "")))
+        cid = _esc(c.get("id", ""))
+        expectation = str(c.get("business_expectation") or "").strip()
+        skip_reason = str(c.get("skip_reason") or "").strip()
+
+        # status label for card header
+        status_label_key = {
+            "passed": "verified",
+            "passed_with_concerns": "verified",
+            "partial": "verified",
+            "failed": "failed_verification",
+            "failed_partial": "failed_verification",
+            "untested": "untested_label",
+        }.get(status, "untested_label")
+
+        body_parts: list[str] = []
+        if expectation:
+            body_parts.append(
+                f'<p class="cap-expectation">{_esc(expectation)}</p>'
+            )
+        if skip_reason:
+            body_parts.append(
+                f'<p class="cap-skip"><b>{i18n("skip_note")}:</b> {_esc(skip_reason)}</p>'
+            )
+        body = "".join(body_parts) or ""
+
+        return (
+            f'<article class="capability-card status-{status}">'
+            f'<header>'
+            f'<span class="cap-emoji">{emoji}</span>'
+            f'<span class="cap-status">{i18n(status_label_key)}</span>'
+            f'<span class="cap-id">{cid}</span>'
+            f'</header>'
+            f'<h3>{title}</h3>'
+            f'{body}'
+            f'</article>'
+        )
+
+    return "\n".join(_card(c) for c in visible)
+
+
+def render_quality_summary(vd: VerdictData) -> str:
+    """Three one-line answers a non-technical reader cares about."""
+    inputs = vd.verdict_input.get("inputs_summary") or {}
+    crit_covered = inputs.get("critical_covered")
+    crit_total = inputs.get("critical_total")
+    coverage = f"{crit_covered}/{crit_total} critical" if (
+        crit_covered is not None and crit_total is not None
+    ) else "—"
+
+    ceilings = vd.verdict_input.get("ceiling_reasons") or []
+    reliability = ceilings[0] if ceilings else (
+        "no major ceilings triggered" if vd.bucket in ("reusable", "recommendable")
+        else "not evaluated"
+    )
+    reliability = str(reliability)[:120]
+
+    blocking = vd.verdict_input.get("blocking_issues") or []
+    residual_risk = blocking[0] if blocking else "—"
+    residual_risk = str(residual_risk)[:120]
+
+    def _row(label_key: str, value: str) -> str:
+        return (
+            f'<div class="quality-row">'
+            f'<span class="quality-label">{i18n(label_key)}</span>'
+            f'<span class="quality-value">{_esc(value)}</span>'
+            f'</div>'
+        )
+
+    return (
+        _row("q_coverage", coverage)
+        + _row("q_reliability", reliability)
+        + _row("q_risk", residual_risk)
+    )
+
+
+def render_test_log(vd: VerdictData) -> str:
+    """Full log of every probe we ran — collapsible in the UI."""
+    if not vd.runs:
+        return f"<p class=\"dim\">{i18n('none')}</p>"
+
+    blocks: list[str] = []
+    for run in vd.runs:
+        summary = run.summary
+        metrics = summary.get("metrics") or {}
+        rbc = summary.get("results_by_claim") or {}
+        pr = metrics.get("pass_rate")
+        pr_s = f"{pr:.0%}" if isinstance(pr, (int, float)) else "—"
+
+        rbc_items = "".join(
+            f'<li>{STATUS_EMOJI.get(str(v),"·")} <code>{_esc(k)}</code> {_esc(v)}</li>'
+            for k, v in rbc.items()
+        )
+        rbc_block = f'<ul class="log-rbc">{rbc_items}</ul>' if rbc_items else ""
+
+        blocks.append(
+            f'<article class="log-run">'
+            f'<h4><code>{_esc(run.name)}</code> · {_esc(run.date)} · pass_rate={pr_s}</h4>'
+            f'{rbc_block}'
+            f'</article>'
+        )
+    return "\n".join(blocks)
+
+
 def mermaid_ceiling_diagram(vd: VerdictData) -> str:
     inputs = vd.verdict_input.get("inputs_summary") or {}
     ceilings = vd.verdict_input.get("ceiling_reasons") or []
@@ -389,6 +587,13 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
 
     verdict_md_escaped = _esc(vd.verdict_md)
     mermaid_body = mermaid_ceiling_diagram(vd)
+
+    # Product-facing pieces (built from structured data, so they respect
+    # whatever language the evaluator authored claim-map and repo.yaml in).
+    product_one_liner_html = _esc(product_one_liner(vd))
+    capability_cards_html = render_capability_cards(vd)
+    quality_summary_html = render_quality_summary(vd)
+    test_log_html = render_test_log(vd)
 
     # Pre-paint lang attribute: avoids the "flash of wrong language" when
     # the CLI caller pre-picks a language. "auto" still works but will
@@ -469,6 +674,38 @@ pre.md {{ background: var(--surface2); border: 1px solid var(--border); border-r
 footer {{ margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }}
 .dim {{ color: var(--text-dim); }}
 
+/* ---- product-facing sections ---- */
+.what-does-it-do {{ font-size: 18px; line-height: 1.5; margin: 8px 0 28px; color: var(--text); max-width: 72ch; }}
+.capabilities-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }}
+.capability-card {{ background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; border-left: 4px solid var(--text-dim); }}
+.capability-card.status-passed, .capability-card.status-passed_with_concerns, .capability-card.status-partial {{ border-left-color: #15803d; }}
+.capability-card.status-failed, .capability-card.status-failed_partial {{ border-left-color: #b91c1c; }}
+.capability-card.status-untested {{ border-left-color: #a8a29e; background: var(--surface2); }}
+.capability-card header {{ display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; }}
+.capability-card .cap-emoji {{ font-size: 18px; }}
+.capability-card .cap-status {{ text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); font-weight: 600; }}
+.capability-card .cap-id {{ margin-left: auto; font-family: var(--font-mono); color: var(--text-dim); }}
+.capability-card h3 {{ margin: 0 0 10px; font-size: 16px; font-weight: 600; color: var(--text); }}
+.capability-card .cap-expectation {{ margin: 0; font-size: 14px; color: var(--text-dim); line-height: 1.55; }}
+.capability-card .cap-skip {{ margin: 8px 0 0; font-size: 13px; color: var(--text-dim); font-style: italic; }}
+.quality-grid {{ display: flex; flex-direction: column; gap: 12px; }}
+.quality-row {{ display: flex; gap: 20px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; align-items: baseline; }}
+.quality-label {{ flex: 0 0 auto; width: 140px; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }}
+.quality-value {{ flex: 1 1 auto; font-size: 14px; color: var(--text); line-height: 1.5; }}
+details.technical, details.test-log, details.raw-archive {{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 0; margin-bottom: 16px; overflow: hidden; }}
+details.technical > summary, details.test-log > summary, details.raw-archive > summary {{ padding: 18px 22px; cursor: pointer; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; user-select: none; list-style: none; font-weight: 600; }}
+details.technical > summary::-webkit-details-marker, details.test-log > summary::-webkit-details-marker, details.raw-archive > summary::-webkit-details-marker {{ display: none; }}
+details.technical > summary::before, details.test-log > summary::before, details.raw-archive > summary::before {{ content: "▸ "; transition: transform .15s; display: inline-block; }}
+details.technical[open] > summary::before, details.test-log[open] > summary::before, details.raw-archive[open] > summary::before {{ transform: rotate(90deg); }}
+details.technical > .body, details.test-log > .body, details.raw-archive > .body {{ padding: 4px 22px 22px; }}
+.log-run {{ border-top: 1px dashed var(--border); padding: 14px 0; }}
+.log-run:first-child {{ border-top: none; padding-top: 0; }}
+.log-run h4 {{ margin: 0 0 8px; font-size: 13px; font-weight: 500; color: var(--text-dim); font-family: var(--font-mono); }}
+.log-run h4 code {{ color: var(--text); background: var(--surface2); padding: 1px 6px; border-radius: 4px; }}
+.log-rbc {{ list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; }}
+.log-rbc li {{ background: var(--surface2); padding: 3px 9px; border-radius: 5px; }}
+.log-rbc code {{ font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }}
+
 /* ---- bilingual UI chrome (en / zh) ---- */
 .i18n::before {{ content: attr(data-en); }}
 html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
@@ -493,6 +730,7 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {{
     <div class="crumb">{i18n("crumb")} · {_esc(vd.date)}</div>
     <h1>{_esc(vd.display_name)}</h1>
     <div class="owner-repo">{_esc(vd.owner_repo)}</div>
+    <p class="what-does-it-do"><b>{i18n("what_it_does")}:</b> {product_one_liner_html}</p>
     <div class="bucket-banner">
       <span class="emoji">{emoji}</span>
       <span class="name">{_esc(bucket)}</span>
@@ -507,44 +745,74 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {{
   </div>
 
   <section>
-    <h2>{i18n("ceilings_section")}</h2>
-    <div class="grid-two">
-      <div class="card">
-        <h3>{i18n("ceiling_reasons")}</h3>
-        <ul>{ceilings_html}</ul>
-      </div>
-      <div class="card">
-        <h3>{i18n("blocking_issues")}</h3>
-        <ul>{blocking_html}</ul>
-      </div>
+    <h2>{i18n("capabilities")}</h2>
+    <div class="capabilities-grid">
+      {capability_cards_html}
     </div>
   </section>
 
   <section>
-    <h2>{i18n("derivation")}</h2>
-    <div class="mermaid">
+    <h2>{i18n("quality")}</h2>
+    <div class="quality-grid">
+      {quality_summary_html}
+    </div>
+  </section>
+
+  <details class="technical">
+    <summary>{i18n("technical_details")}</summary>
+    <div class="body">
+
+      <section>
+        <h2>{i18n("ceilings_section")}</h2>
+        <div class="grid-two">
+          <div class="card">
+            <h3>{i18n("ceiling_reasons")}</h3>
+            <ul>{ceilings_html}</ul>
+          </div>
+          <div class="card">
+            <h3>{i18n("blocking_issues")}</h3>
+            <ul>{blocking_html}</ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>{i18n("derivation")}</h2>
+        <div class="mermaid">
 {mermaid_body}
+        </div>
+      </section>
+
+      <section>
+        <h2>{i18n("claims_section")}</h2>
+        <table>
+          <thead><tr><th>{i18n("col_id")}</th><th>{i18n("col_title")}</th><th>{i18n("col_priority")}</th><th>{i18n("col_area")}</th><th>{i18n("col_status")}</th><th>{i18n("col_skip")}</th></tr></thead>
+          <tbody>{claim_rows}</tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>{i18n("runs_section")}</h2>
+        <canvas id="metrics-chart" width="400" height="200"></canvas>
+        {run_cards}
+      </section>
+
     </div>
-  </section>
+  </details>
 
-  <section>
-    <h2>{i18n("claims_section")}</h2>
-    <table>
-      <thead><tr><th>{i18n("col_id")}</th><th>{i18n("col_title")}</th><th>{i18n("col_priority")}</th><th>{i18n("col_area")}</th><th>{i18n("col_status")}</th><th>{i18n("col_skip")}</th></tr></thead>
-      <tbody>{claim_rows}</tbody>
-    </table>
-  </section>
+  <details class="test-log">
+    <summary>{i18n("test_log")}</summary>
+    <div class="body">
+      {test_log_html}
+    </div>
+  </details>
 
-  <section>
-    <h2>{i18n("runs_section")}</h2>
-    <canvas id="metrics-chart" width="400" height="200"></canvas>
-    {run_cards}
-  </section>
-
-  <section>
-    <h2>{i18n("verdict_section")}</h2>
-    <pre class="md">{verdict_md_escaped}</pre>
-  </section>
+  <details class="raw-archive">
+    <summary>{i18n("source_raw")}</summary>
+    <div class="body">
+      <pre class="md">{verdict_md_escaped}</pre>
+    </div>
+  </details>
 
   <footer>
     <span class="i18n" data-en="Rendered by repo-evals render_verdict_html.py · source" data-zh="由 repo-evals render_verdict_html.py 生成 · 源"></span>: {_esc(vd.repo.get('repo_url') or '—')}

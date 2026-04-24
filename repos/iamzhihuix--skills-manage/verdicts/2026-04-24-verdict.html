@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>· iamzhihuix/skills-manage — verdict</title>
+<title>⚪ iamzhihuix/skills-manage — verdict</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,8 +15,8 @@
   --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
   --bg: #faf7f5; --surface: #ffffff; --surface2: #f5f0ec;
   --border: rgba(0,0,0,.08); --border-bright: rgba(0,0,0,.15);
-  --text: #292017; --text-dim: #8a7e72; --accent: #64748b;
-  --accent-dim: #64748b15;
+  --text: #292017; --text-dim: #8a7e72; --accent: #78716c;
+  --accent-dim: #78716c15;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -72,6 +72,38 @@ pre.md { background: var(--surface2); border: 1px solid var(--border); border-ra
 footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }
 .dim { color: var(--text-dim); }
 
+/* ---- product-facing sections ---- */
+.what-does-it-do { font-size: 18px; line-height: 1.5; margin: 8px 0 28px; color: var(--text); max-width: 72ch; }
+.capabilities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.capability-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; border-left: 4px solid var(--text-dim); }
+.capability-card.status-passed, .capability-card.status-passed_with_concerns, .capability-card.status-partial { border-left-color: #15803d; }
+.capability-card.status-failed, .capability-card.status-failed_partial { border-left-color: #b91c1c; }
+.capability-card.status-untested { border-left-color: #a8a29e; background: var(--surface2); }
+.capability-card header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; }
+.capability-card .cap-emoji { font-size: 18px; }
+.capability-card .cap-status { text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); font-weight: 600; }
+.capability-card .cap-id { margin-left: auto; font-family: var(--font-mono); color: var(--text-dim); }
+.capability-card h3 { margin: 0 0 10px; font-size: 16px; font-weight: 600; color: var(--text); }
+.capability-card .cap-expectation { margin: 0; font-size: 14px; color: var(--text-dim); line-height: 1.55; }
+.capability-card .cap-skip { margin: 8px 0 0; font-size: 13px; color: var(--text-dim); font-style: italic; }
+.quality-grid { display: flex; flex-direction: column; gap: 12px; }
+.quality-row { display: flex; gap: 20px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; align-items: baseline; }
+.quality-label { flex: 0 0 auto; width: 140px; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }
+.quality-value { flex: 1 1 auto; font-size: 14px; color: var(--text); line-height: 1.5; }
+details.technical, details.test-log, details.raw-archive { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 0; margin-bottom: 16px; overflow: hidden; }
+details.technical > summary, details.test-log > summary, details.raw-archive > summary { padding: 18px 22px; cursor: pointer; font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; user-select: none; list-style: none; font-weight: 600; }
+details.technical > summary::-webkit-details-marker, details.test-log > summary::-webkit-details-marker, details.raw-archive > summary::-webkit-details-marker { display: none; }
+details.technical > summary::before, details.test-log > summary::before, details.raw-archive > summary::before { content: "▸ "; transition: transform .15s; display: inline-block; }
+details.technical[open] > summary::before, details.test-log[open] > summary::before, details.raw-archive[open] > summary::before { transform: rotate(90deg); }
+details.technical > .body, details.test-log > .body, details.raw-archive > .body { padding: 4px 22px 22px; }
+.log-run { border-top: 1px dashed var(--border); padding: 14px 0; }
+.log-run:first-child { border-top: none; padding-top: 0; }
+.log-run h4 { margin: 0 0 8px; font-size: 13px; font-weight: 500; color: var(--text-dim); font-family: var(--font-mono); }
+.log-run h4 code { color: var(--text); background: var(--surface2); padding: 1px 6px; border-radius: 4px; }
+.log-rbc { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; }
+.log-rbc li { background: var(--surface2); padding: 3px 9px; border-radius: 5px; }
+.log-rbc code { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+
 /* ---- bilingual UI chrome (en / zh) ---- */
 .i18n::before { content: attr(data-en); }
 html[lang="zh"] .i18n::before { content: attr(data-zh); }
@@ -96,64 +128,105 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {
     <div class="crumb"><span class="i18n" data-en="repo-evals · verdict" data-zh="repo-evals · 评测结论"></span> · 2026-04-24</div>
     <h1>skills-manage</h1>
     <div class="owner-repo">iamzhihuix/skills-manage</div>
+    <p class="what-does-it-do"><b><span class="i18n" data-en="What this repo does" data-zh="这个 repo 是做什么的"></span>:</b> Tauri desktop app managing AI coding agent skills across 28 platforms via</p>
     <div class="bucket-banner">
-      <span class="emoji">·</span>
-      <span class="name">unknown</span>
-      <span class="conf"><span class="i18n" data-en="confidence" data-zh="置信度"></span>: unknown</span>
+      <span class="emoji">⚪</span>
+      <span class="name">usable</span>
+      <span class="conf"><span class="i18n" data-en="confidence" data-zh="置信度"></span>: low</span>
     </div>
     <div class="meta">
       <span><b><span class="i18n" data-en="archetype" data-zh="archetype"></span></b> adapter</span>
       <span><b><span class="i18n" data-en="claims" data-zh="claim 数"></span></b> 9</span>
-      <span><b><span class="i18n" data-en="critical covered" data-zh="critical 覆盖"></span></b> ?/?</span>
+      <span><b><span class="i18n" data-en="critical covered" data-zh="critical 覆盖"></span></b> 5/6</span>
       <span><b><span class="i18n" data-en="runs" data-zh="runs"></span></b> 1</span>
     </div>
   </div>
 
   <section>
-    <h2><span class="i18n" data-en="Ceilings &amp; blocking issues" data-zh="Ceiling 与 Blocking"></span></h2>
-    <div class="grid-two">
-      <div class="card">
-        <h3><span class="i18n" data-en="Ceiling reasons" data-zh="Ceiling 理由"></span></h3>
-        <ul><li class="dim"><span class="i18n" data-en="none" data-zh="无"></span></li></ul>
-      </div>
-      <div class="card">
-        <h3><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h3>
-        <ul><li class="dim"><span class="i18n" data-en="none" data-zh="无"></span></li></ul>
-      </div>
+    <h2><span class="i18n" data-en="Capabilities" data-zh="能做什么"></span></h2>
+    <div class="capabilities-grid">
+      <article class="capability-card status-partial"><header><span class="cap-emoji">🟡</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-001</span></header><h3>每个已声明平台都在 code 层注册为 adapter</h3><p class="cap-expectation">用户按 README 选一个平台做 install，不会因为&quot;README 列了但代码没实现&quot;失败。</p></article>
+<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-002</span></header><h3>所有 install 产出同一个 shape（symlink → central）</h3><p class="cap-expectation">skill 改一次，所有安装了的平台同步生效（symlink 本质）。</p></article>
+<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-003</span></header><h3>未装的/未列出的平台清晰失败</h3><p class="cap-expectation">用户看到的 &quot;已检测&quot; 状态反映真实磁盘状态，不会把 install 发到不存在的目录。</p></article>
+<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-004</span></header><h3>GitHub 导入有真实 auth + retry fallback</h3><p class="cap-expectation">在国内网络环境下 GitHub 导入也能跑，PAT 失效时报错而不是吞错误。</p></article>
+<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-005</span></header><h3>重复 install 同一个 skill 是幂等的</h3><p class="cap-expectation">Collections 批量 install 可以反复跑不出乱子。</p></article>
+<article class="capability-card status-failed"><header><span class="cap-emoji">❌</span><span class="cap-status"><span class="i18n" data-en="failed verification" data-zh="验证失败"></span></span><span class="cap-id">claim-006</span></header><h3>数据本地化 + 无遥测</h3><p class="cap-expectation">用户敢把 GitHub PAT 和 AI API key 存进去（虽然未加密，但不会被外发）。</p></article>
+<article class="capability-card status-passed"><header><span class="cap-emoji">✅</span><span class="cap-status"><span class="i18n" data-en="verified" data-zh="已验证"></span></span><span class="cap-id">claim-007</span></header><h3>Prebuilt macOS DMG 下载即可用</h3><p class="cap-expectation">非开发者用户不用 pnpm + Rust toolchain 就能开始使用。</p></article>
+<article class="capability-card status-untested"><header><span class="cap-emoji">⏭️</span><span class="cap-status"><span class="i18n" data-en="not tested" data-zh="未测试"></span></span><span class="cap-id">claim-009</span></header><h3>实际启动 + 扫描 + install 的端到端 runtime 验证</h3><p class="cap-expectation">这才是 usable 的下限。</p><p class="cap-skip"><b><span class="i18n" data-en="skip reason" data-zh="跳过原因"></span>:</b> Wendy 当前机器上 ~/.claude/skills/ (260+) 和 ~/.agents/skills/ 正在被
+本次 session 使用，启动未签名 adhoc-signed app 去扫描+改写这些目录
+风险过高。建议在干净账户 / VM 里再验。</p></article>
     </div>
   </section>
 
   <section>
-    <h2><span class="i18n" data-en="Derivation" data-zh="推导路径"></span></h2>
-    <div class="mermaid">
+    <h2><span class="i18n" data-en="Quality at a glance" data-zh="质量速览"></span></h2>
+    <div class="quality-grid">
+      <div class="quality-row"><span class="quality-label"><span class="i18n" data-en="Coverage" data-zh="覆盖度"></span></span><span class="quality-value">5/6 critical</span></div><div class="quality-row"><span class="quality-label"><span class="i18n" data-en="Reliability" data-zh="可靠性"></span></span><span class="quality-value">core user-facing layer untested → capped at &#x27;usable&#x27;</span></div><div class="quality-row"><span class="quality-label"><span class="i18n" data-en="Residual risk" data-zh="剩余风险"></span></span><span class="quality-value">only 5/6 critical claims covered</span></div>
+    </div>
+  </section>
+
+  <details class="technical">
+    <summary><span class="i18n" data-en="Technical details (expand to see)" data-zh="技术细节（展开查看）"></span></summary>
+    <div class="body">
+
+      <section>
+        <h2><span class="i18n" data-en="Ceilings &amp; blocking issues" data-zh="Ceiling 与 Blocking"></span></h2>
+        <div class="grid-two">
+          <div class="card">
+            <h3><span class="i18n" data-en="Ceiling reasons" data-zh="Ceiling 理由"></span></h3>
+            <ul><li>core user-facing layer untested → capped at &#x27;usable&#x27;</li><li>evidence_completeness=&#x27;portable&#x27; → capped at &#x27;reusable&#x27;</li></ul>
+          </div>
+          <div class="card">
+            <h3><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h3>
+            <ul><li>only 5/6 critical claims covered</li></ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2><span class="i18n" data-en="Derivation" data-zh="推导路径"></span></h2>
+        <div class="mermaid">
 graph LR
   A[archetype: adapter] --> B{core_layer_tested?}
-  B -->|None| C[evidence: unknown]
-  C --> D([recommended: unknown])
-  D --> E([final: unknown])
-    </div>
-  </section>
+  B -->|False| C[evidence: portable]
+  C --> D([recommended: usable])
+  D --> E([final: usable])
+  D -.ceiling 1: core user-facing layer untested → capped at 'usable'.-> E
+  D -.ceiling 2: evidence_completeness='portable' → capped at 'reusable'.-> E
+        </div>
+      </section>
 
-  <section>
-    <h2><span class="i18n" data-en="Claims" data-zh="Claim 清单"></span></h2>
-    <table>
-      <thead><tr><th><span class="i18n" data-en="ID" data-zh="ID"></span></th><th><span class="i18n" data-en="Title" data-zh="标题"></span></th><th><span class="i18n" data-en="Priority" data-zh="优先级"></span></th><th><span class="i18n" data-en="Area" data-zh="领域"></span></th><th><span class="i18n" data-en="Status" data-zh="状态"></span></th><th><span class="i18n" data-en="Skip reason" data-zh="跳过原因"></span></th></tr></thead>
-      <tbody><tr class="prio-critical"><td class="cid">claim-001</td><td>每个已声明平台都在 code 层注册为 adapter</td><td><span class="badge prio-critical">critical</span></td><td>platform-coverage</td><td class="status">🟡 partial</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-002</td><td>所有 install 产出同一个 shape（symlink → central）</td><td><span class="badge prio-critical">critical</span></td><td>shape-conformance</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-003</td><td>未装的/未列出的平台清晰失败</td><td><span class="badge prio-critical">critical</span></td><td>failure-transparency</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-high"><td class="cid">claim-004</td><td>GitHub 导入有真实 auth + retry fallback</td><td><span class="badge prio-high">high</span></td><td>auth</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-high"><td class="cid">claim-005</td><td>重复 install 同一个 skill 是幂等的</td><td><span class="badge prio-high">high</span></td><td>deduplication</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-006</td><td>数据本地化 + 无遥测</td><td><span class="badge prio-critical">critical</span></td><td>upstream-drift</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-007</td><td>Prebuilt macOS DMG 下载即可用</td><td><span class="badge prio-critical">critical</span></td><td>platform-coverage</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-medium"><td class="cid">claim-008</td><td>支持 Central↔平台双向 centralize</td><td><span class="badge prio-medium">medium</span></td><td>shape-conformance</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-009</td><td>实际启动 + 扫描 + install 的端到端 runtime 验证</td><td><span class="badge prio-critical">critical</span></td><td>platform-coverage</td><td class="status">⏭️ untested</td><td class="skip">Wendy 当前机器上 ~/.claude/skills/ (260+) 和 ~/.agents/skills/ 正在被
+      <section>
+        <h2><span class="i18n" data-en="Claims" data-zh="Claim 清单"></span></h2>
+        <table>
+          <thead><tr><th><span class="i18n" data-en="ID" data-zh="ID"></span></th><th><span class="i18n" data-en="Title" data-zh="标题"></span></th><th><span class="i18n" data-en="Priority" data-zh="优先级"></span></th><th><span class="i18n" data-en="Area" data-zh="领域"></span></th><th><span class="i18n" data-en="Status" data-zh="状态"></span></th><th><span class="i18n" data-en="Skip reason" data-zh="跳过原因"></span></th></tr></thead>
+          <tbody><tr class="prio-critical"><td class="cid">claim-001</td><td>每个已声明平台都在 code 层注册为 adapter</td><td><span class="badge prio-critical">critical</span></td><td>platform-coverage</td><td class="status">🟡 partial</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-002</td><td>所有 install 产出同一个 shape（symlink → central）</td><td><span class="badge prio-critical">critical</span></td><td>shape-conformance</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-003</td><td>未装的/未列出的平台清晰失败</td><td><span class="badge prio-critical">critical</span></td><td>failure-transparency</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-high"><td class="cid">claim-004</td><td>GitHub 导入有真实 auth + retry fallback</td><td><span class="badge prio-high">high</span></td><td>auth</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-high"><td class="cid">claim-005</td><td>重复 install 同一个 skill 是幂等的</td><td><span class="badge prio-high">high</span></td><td>deduplication</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-006</td><td>数据本地化 + 无遥测</td><td><span class="badge prio-critical">critical</span></td><td>upstream-drift</td><td class="status">❌ failed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-007</td><td>Prebuilt macOS DMG 下载即可用</td><td><span class="badge prio-critical">critical</span></td><td>platform-coverage</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-medium"><td class="cid">claim-008</td><td>支持 Central↔平台双向 centralize</td><td><span class="badge prio-medium">medium</span></td><td>shape-conformance</td><td class="status">✅ passed</td><td class="skip"></td></tr><tr class="prio-critical"><td class="cid">claim-009</td><td>实际启动 + 扫描 + install 的端到端 runtime 验证</td><td><span class="badge prio-critical">critical</span></td><td>platform-coverage</td><td class="status">⏭️ untested</td><td class="skip">Wendy 当前机器上 ~/.claude/skills/ (260+) 和 ~/.agents/skills/ 正在被
 本次 session 使用，启动未签名 adhoc-signed app 去扫描+改写这些目录
 风险过高。建议在干净账户 / VM 里再验。
 </td></tr></tbody>
-    </table>
-  </section>
+        </table>
+      </section>
 
-  <section>
-    <h2><span class="i18n" data-en="Runs &amp; metrics" data-zh="Runs 与指标"></span></h2>
-    <canvas id="metrics-chart" width="400" height="200"></canvas>
-    <article class="run-card"><h3>run-source-and-dmg-integrity</h3><p class="dim"><span class="i18n" data-en="run on" data-zh="执行于"></span> 2026-04-24</p><div class="metrics-row"><span class="metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> 50%</span><span class="metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> 3.4s</span><span class="metric"><b><span class="i18n" data-en="tokens" data-zh="tokens"></span></b> in 2903 / out 40</span></div><ul class="rbc"><li>🟡 <code>claim-001</code> partial</li><li>✅ <code>claim-002</code> passed</li><li>✅ <code>claim-003</code> passed</li><li>✅ <code>claim-004</code> passed</li><li>✅ <code>claim-005</code> passed</li><li>❌ <code>claim-006</code> failed</li><li>✅ <code>claim-007</code> passed</li><li>✅ <code>claim-008</code> passed</li><li>⏭️ <code>claim-009</code> untested</li></ul></article>
-  </section>
+      <section>
+        <h2><span class="i18n" data-en="Runs &amp; metrics" data-zh="Runs 与指标"></span></h2>
+        <canvas id="metrics-chart" width="400" height="200"></canvas>
+        <article class="run-card"><h3>run-source-and-dmg-integrity</h3><p class="dim"><span class="i18n" data-en="run on" data-zh="执行于"></span> 2026-04-24</p><div class="metrics-row"><span class="metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> 50%</span><span class="metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> 3.4s</span><span class="metric"><b><span class="i18n" data-en="tokens" data-zh="tokens"></span></b> in 2903 / out 40</span></div><ul class="rbc"><li>🟡 <code>claim-001</code> partial</li><li>✅ <code>claim-002</code> passed</li><li>✅ <code>claim-003</code> passed</li><li>✅ <code>claim-004</code> passed</li><li>✅ <code>claim-005</code> passed</li><li>❌ <code>claim-006</code> failed</li><li>✅ <code>claim-007</code> passed</li><li>✅ <code>claim-008</code> passed</li><li>⏭️ <code>claim-009</code> untested</li></ul></article>
+      </section>
 
-  <section>
-    <h2><span class="i18n" data-en="Full verdict (markdown)" data-zh="完整 verdict（markdown）"></span></h2>
-    <pre class="md"># Final Verdict — iamzhihuix/skills-manage
+    </div>
+  </details>
+
+  <details class="test-log">
+    <summary><span class="i18n" data-en="Test log — all probes we ran" data-zh="测试日志 — 我们跑过的所有探针"></span></summary>
+    <div class="body">
+      <article class="log-run"><h4><code>run-source-and-dmg-integrity</code> · 2026-04-24 · pass_rate=50%</h4><ul class="log-rbc"><li>🟡 <code>claim-001</code> partial</li><li>✅ <code>claim-002</code> passed</li><li>✅ <code>claim-003</code> passed</li><li>✅ <code>claim-004</code> passed</li><li>✅ <code>claim-005</code> passed</li><li>❌ <code>claim-006</code> failed</li><li>✅ <code>claim-007</code> passed</li><li>✅ <code>claim-008</code> passed</li><li>⏭️ <code>claim-009</code> untested</li></ul></article>
+    </div>
+  </details>
+
+  <details class="raw-archive">
+    <summary><span class="i18n" data-en="Raw verdict archive (authored by evaluator)" data-zh="原始 verdict 存档（评测者原文）"></span></summary>
+    <div class="body">
+      <pre class="md"># Final Verdict — iamzhihuix/skills-manage
 
 ## Repo
 
@@ -244,7 +317,8 @@ But this evaluation did not prove the app works for a real user. It proved the c
   - Business notes: `business-notes.md`
 - Verdict calculator input: `verdicts/2026-04-24-verdict-input.yaml`
 </pre>
-  </section>
+    </div>
+  </details>
 
   <footer>
     <span class="i18n" data-en="Rendered by repo-evals render_verdict_html.py · source" data-zh="由 repo-evals render_verdict_html.py 生成 · 源"></span>: https://github.com/iamzhihuix/skills-manage
@@ -254,7 +328,7 @@ But this evaluation did not prove the app works for a real user. It proved the c
 
 <script>
 const LANG_KEY = 'repoEvalsVerdictLang';
-const INITIAL_LANG = "auto";
+const INITIAL_LANG = "zh";
 
 function detectLang() {
   // Priority: explicit URL ?lang=xx > localStorage > CLI/initial > navigator.language > 'en'
@@ -302,7 +376,7 @@ if (ctx) {
     data: {
       labels: chartData.labels,
       datasets: [
-        { label: startLabels.with, data: chartData.with, backgroundColor: '#64748bcc' },
+        { label: startLabels.with, data: chartData.with, backgroundColor: '#78716ccc' },
         { label: startLabels.baseline, data: chartData.baseline, backgroundColor: '#94a3b8aa' }
       ]
     },
