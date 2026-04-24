@@ -80,6 +80,63 @@ STATUS_EMOJI = {
 }
 
 
+# ---- i18n ---------------------------------------------------------------
+#
+# Every UI chrome string lives here. Rendered HTML uses ``<span class="i18n"
+# data-en="..." data-zh="...">`` and CSS picks the right one based on
+# ``<html lang="...">``. This keeps both languages in one file with no
+# duplicated markup.
+#
+# The authored content inside the eval (claim titles, verdict markdown,
+# archetype name, bucket names) stays untranslated — those are canonical
+# strings written by the evaluator in whatever language they chose.
+
+I18N: dict[str, dict[str, str]] = {
+    "crumb":             {"en": "repo-evals · verdict",       "zh": "repo-evals · 评测结论"},
+    "confidence":        {"en": "confidence",                 "zh": "置信度"},
+    "archetype":         {"en": "archetype",                  "zh": "archetype"},
+    "claims":            {"en": "claims",                     "zh": "claim 数"},
+    "critical_covered":  {"en": "critical covered",           "zh": "critical 覆盖"},
+    "runs":              {"en": "runs",                       "zh": "runs"},
+    "ceilings_section":  {"en": "Ceilings & blocking issues", "zh": "Ceiling 与 Blocking"},
+    "ceiling_reasons":   {"en": "Ceiling reasons",            "zh": "Ceiling 理由"},
+    "blocking_issues":   {"en": "Blocking issues",            "zh": "Blocking 问题"},
+    "none":              {"en": "none",                       "zh": "无"},
+    "derivation":        {"en": "Derivation",                 "zh": "推导路径"},
+    "claims_section":    {"en": "Claims",                     "zh": "Claim 清单"},
+    "col_id":            {"en": "ID",                         "zh": "ID"},
+    "col_title":         {"en": "Title",                      "zh": "标题"},
+    "col_priority":      {"en": "Priority",                   "zh": "优先级"},
+    "col_area":          {"en": "Area",                       "zh": "领域"},
+    "col_status":        {"en": "Status",                     "zh": "状态"},
+    "col_skip":          {"en": "Skip reason",                "zh": "跳过原因"},
+    "runs_section":      {"en": "Runs & metrics",             "zh": "Runs 与指标"},
+    "verdict_section":   {"en": "Full verdict (markdown)",    "zh": "完整 verdict（markdown）"},
+    "footer":            {"en": "Rendered by repo-evals render_verdict_html.py · source",
+                          "zh": "由 repo-evals render_verdict_html.py 生成 · 源"},
+    "with_repo":         {"en": "with repo",                  "zh": "有该 repo"},
+    "baseline":          {"en": "baseline (no repo)",         "zh": "baseline（无该 repo）"},
+    "no_metrics":        {"en": "no metrics recorded",        "zh": "无指标记录"},
+    "baseline_label":    {"en": "baseline (without repo):",   "zh": "baseline（无该 repo）："},
+    "run_on":            {"en": "run on",                     "zh": "执行于"},
+    "metric_pass":       {"en": "pass",                       "zh": "通过率"},
+    "metric_time":       {"en": "time",                       "zh": "耗时"},
+    "metric_tokens":     {"en": "tokens",                     "zh": "tokens"},
+    "lang_toggle_zh":    {"en": "中文",                        "zh": "中文"},
+    "lang_toggle_en":    {"en": "EN",                         "zh": "EN"},
+}
+
+
+def i18n(key: str) -> str:
+    """Emit a dual-language span. CSS picks which half to show."""
+    pair = I18N.get(key)
+    if not pair:
+        return key
+    en = html.escape(pair["en"], quote=True)
+    zh = html.escape(pair["zh"], quote=True)
+    return f'<span class="i18n" data-en="{en}" data-zh="{zh}"></span>'
+
+
 # ---- data loading --------------------------------------------------------
 
 
@@ -233,7 +290,7 @@ def render_run_card(run: RunData) -> str:
 
     def _fmt_metrics(m: dict[str, Any]) -> str:
         if not m:
-            return "<span class=\"dim\">no metrics recorded</span>"
+            return f"<span class=\"dim\">{i18n('no_metrics')}</span>"
         pr = m.get("pass_rate")
         el = m.get("elapsed_time_sec")
         tok = m.get("token_usage") or {}
@@ -241,9 +298,9 @@ def render_run_card(run: RunData) -> str:
         el_s = f"{el:.1f}s" if isinstance(el, (int, float)) else "?"
         tok_s = f"in {tok.get('input','?')} / out {tok.get('output','?')}"
         return (
-            f"<span class=\"metric\"><b>pass</b> {pr_s}</span>"
-            f"<span class=\"metric\"><b>time</b> {el_s}</span>"
-            f"<span class=\"metric\"><b>tokens</b> {tok_s}</span>"
+            f"<span class=\"metric\"><b>{i18n('metric_pass')}</b> {pr_s}</span>"
+            f"<span class=\"metric\"><b>{i18n('metric_time')}</b> {el_s}</span>"
+            f"<span class=\"metric\"><b>{i18n('metric_tokens')}</b> {tok_s}</span>"
         )
 
     rbc_html = ""
@@ -257,14 +314,14 @@ def render_run_card(run: RunData) -> str:
     baseline_html = ""
     if baseline_metrics:
         baseline_html = (
-            f"<div class=\"baseline\"><b>baseline (without repo):</b> "
+            f"<div class=\"baseline\"><b>{i18n('baseline_label')}</b> "
             f"{_fmt_metrics(baseline_metrics)}</div>"
         )
 
     return (
         f"<article class=\"run-card\">"
         f"<h3>{_esc(run.name)}</h3>"
-        f"<p class=\"dim\">run on {_esc(run.date)}</p>"
+        f"<p class=\"dim\">{i18n('run_on')} {_esc(run.date)}</p>"
         f"<div class=\"metrics-row\">{_fmt_metrics(metrics)}</div>"
         f"{baseline_html}"
         f"{rbc_html}"
@@ -294,7 +351,7 @@ def mermaid_ceiling_diagram(vd: VerdictData) -> str:
     return "\n".join(lines)
 
 
-def render_html(vd: VerdictData) -> str:
+def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     bucket = vd.bucket
     emoji = BUCKET_EMOJI.get(bucket, "·")
     bucket_color = BUCKET_COLOR.get(bucket, "#64748b")
@@ -304,8 +361,9 @@ def render_html(vd: VerdictData) -> str:
     ceilings = vd.verdict_input.get("ceiling_reasons") or []
     blocking = vd.verdict_input.get("blocking_issues") or []
 
-    ceilings_html = "".join(f"<li>{_esc(r)}</li>" for r in ceilings) or "<li class=\"dim\">none</li>"
-    blocking_html = "".join(f"<li>{_esc(b)}</li>" for b in blocking) or "<li class=\"dim\">none</li>"
+    none_li = f'<li class="dim">{i18n("none")}</li>'
+    ceilings_html = "".join(f"<li>{_esc(r)}</li>" for r in ceilings) or none_li
+    blocking_html = "".join(f"<li>{_esc(b)}</li>" for b in blocking) or none_li
 
     claim_rows = "".join(render_claim_row(c) for c in vd.claims)
     run_cards = "".join(render_run_card(r) for r in vd.runs)
@@ -332,8 +390,13 @@ def render_html(vd: VerdictData) -> str:
     verdict_md_escaped = _esc(vd.verdict_md)
     mermaid_body = mermaid_ceiling_diagram(vd)
 
+    # Pre-paint lang attribute: avoids the "flash of wrong language" when
+    # the CLI caller pre-picks a language. "auto" still works but will
+    # flip to the correct one as soon as the <script> runs.
+    server_lang = initial_lang if initial_lang in ("en", "zh") else "en"
+
     return f"""<!DOCTYPE html>
-<html lang="en">
+<html lang="{server_lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -405,75 +468,122 @@ th {{ font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: 
 pre.md {{ background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; }}
 footer {{ margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }}
 .dim {{ color: var(--text-dim); }}
+
+/* ---- bilingual UI chrome (en / zh) ---- */
+.i18n::before {{ content: attr(data-en); }}
+html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
+.lang-toggle {{ position: fixed; top: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border-bright); border-radius: 999px; padding: 4px; display: inline-flex; gap: 2px; font-family: var(--font-mono); font-size: 12px; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,.06); }}
+.lang-toggle button {{ background: transparent; border: none; color: var(--text-dim); padding: 6px 14px; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: inherit; transition: background .15s, color .15s; }}
+.lang-toggle button:hover {{ color: var(--text); }}
+html[lang="en"] .lang-toggle button[data-lang="en"],
+html[lang="zh"] .lang-toggle button[data-lang="zh"] {{
+  background: var(--accent); color: white;
+}}
 </style>
 </head>
 <body>
 <main>
 
+  <div class="lang-toggle" aria-label="language toggle">
+    <button data-lang="en" onclick="setLang('en')">EN</button>
+    <button data-lang="zh" onclick="setLang('zh')">中文</button>
+  </div>
+
   <div class="hero">
-    <div class="crumb">repo-evals · verdict · {_esc(vd.date)}</div>
+    <div class="crumb">{i18n("crumb")} · {_esc(vd.date)}</div>
     <h1>{_esc(vd.display_name)}</h1>
     <div class="owner-repo">{_esc(vd.owner_repo)}</div>
     <div class="bucket-banner">
       <span class="emoji">{emoji}</span>
       <span class="name">{_esc(bucket)}</span>
-      <span class="conf">confidence: {confidence}</span>
+      <span class="conf">{i18n("confidence")}: {confidence}</span>
     </div>
     <div class="meta">
-      <span><b>archetype</b> {_esc(vd.archetype)}</span>
-      <span><b>claims</b> {len(vd.claims)}</span>
-      <span><b>critical covered</b> {inputs.get('critical_covered','?')}/{inputs.get('critical_total','?')}</span>
-      <span><b>runs</b> {len(vd.runs)}</span>
+      <span><b>{i18n("archetype")}</b> {_esc(vd.archetype)}</span>
+      <span><b>{i18n("claims")}</b> {len(vd.claims)}</span>
+      <span><b>{i18n("critical_covered")}</b> {inputs.get('critical_covered','?')}/{inputs.get('critical_total','?')}</span>
+      <span><b>{i18n("runs")}</b> {len(vd.runs)}</span>
     </div>
   </div>
 
   <section>
-    <h2>Ceilings &amp; blocking issues</h2>
+    <h2>{i18n("ceilings_section")}</h2>
     <div class="grid-two">
       <div class="card">
-        <h3>Ceiling reasons</h3>
+        <h3>{i18n("ceiling_reasons")}</h3>
         <ul>{ceilings_html}</ul>
       </div>
       <div class="card">
-        <h3>Blocking issues</h3>
+        <h3>{i18n("blocking_issues")}</h3>
         <ul>{blocking_html}</ul>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>Derivation</h2>
+    <h2>{i18n("derivation")}</h2>
     <div class="mermaid">
 {mermaid_body}
     </div>
   </section>
 
   <section>
-    <h2>Claims</h2>
+    <h2>{i18n("claims_section")}</h2>
     <table>
-      <thead><tr><th>ID</th><th>Title</th><th>Priority</th><th>Area</th><th>Status</th><th>Skip reason</th></tr></thead>
+      <thead><tr><th>{i18n("col_id")}</th><th>{i18n("col_title")}</th><th>{i18n("col_priority")}</th><th>{i18n("col_area")}</th><th>{i18n("col_status")}</th><th>{i18n("col_skip")}</th></tr></thead>
       <tbody>{claim_rows}</tbody>
     </table>
   </section>
 
   <section>
-    <h2>Runs &amp; metrics</h2>
+    <h2>{i18n("runs_section")}</h2>
     <canvas id="metrics-chart" width="400" height="200"></canvas>
     {run_cards}
   </section>
 
   <section>
-    <h2>Full verdict (markdown)</h2>
+    <h2>{i18n("verdict_section")}</h2>
     <pre class="md">{verdict_md_escaped}</pre>
   </section>
 
   <footer>
-    Rendered by repo-evals render_verdict_html.py · source: {_esc(vd.repo.get('repo_url') or '—')}
+    <span class="i18n" data-en="Rendered by repo-evals render_verdict_html.py · source" data-zh="由 repo-evals render_verdict_html.py 生成 · 源"></span>: {_esc(vd.repo.get('repo_url') or '—')}
   </footer>
 
 </main>
 
 <script>
+const LANG_KEY = 'repoEvalsVerdictLang';
+const INITIAL_LANG = {json.dumps(initial_lang)};
+
+function detectLang() {{
+  // Priority: explicit URL ?lang=xx > localStorage > CLI/initial > navigator.language > 'en'
+  try {{
+    const p = new URLSearchParams(location.search).get('lang');
+    if (p === 'en' || p === 'zh') return p;
+  }} catch (_) {{}}
+  const stored = localStorage.getItem(LANG_KEY);
+  if (stored === 'en' || stored === 'zh') return stored;
+  if (INITIAL_LANG === 'en' || INITIAL_LANG === 'zh') return INITIAL_LANG;
+  if ((navigator.language || '').toLowerCase().startsWith('zh')) return 'zh';
+  return 'en';
+}}
+
+function setLang(lang) {{
+  document.documentElement.lang = lang;
+  try {{ localStorage.setItem(LANG_KEY, lang); }} catch (_) {{}}
+  if (window._metricsChart) {{
+    const labels = lang === 'zh'
+      ? {{ with: '有该 repo', baseline: 'baseline（无该 repo）' }}
+      : {{ with: 'with repo',  baseline: 'baseline (no repo)' }};
+    window._metricsChart.data.datasets[0].label = labels.with;
+    window._metricsChart.data.datasets[1].label = labels.baseline;
+    window._metricsChart.update();
+  }}
+}}
+
+setLang(detectLang());
+
 mermaid.initialize({{
   startOnLoad: true,
   theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
@@ -483,13 +593,17 @@ mermaid.initialize({{
 const chartData = {json.dumps(chart_data)};
 const ctx = document.getElementById('metrics-chart');
 if (ctx) {{
-  new Chart(ctx, {{
+  const startLang = document.documentElement.lang;
+  const startLabels = startLang === 'zh'
+    ? {{ with: '有该 repo', baseline: 'baseline（无该 repo）' }}
+    : {{ with: 'with repo',  baseline: 'baseline (no repo)' }};
+  window._metricsChart = new Chart(ctx, {{
     type: 'bar',
     data: {{
       labels: chartData.labels,
       datasets: [
-        {{ label: 'with repo', data: chartData.with, backgroundColor: '{bucket_color}cc' }},
-        {{ label: 'baseline (no repo)', data: chartData.baseline, backgroundColor: '#94a3b8aa' }}
+        {{ label: startLabels.with, data: chartData.with, backgroundColor: '{bucket_color}cc' }},
+        {{ label: startLabels.baseline, data: chartData.baseline, backgroundColor: '#94a3b8aa' }}
       ]
     }},
     options: {{
@@ -527,6 +641,17 @@ def main() -> int:
         default=None,
         help="Output path override; default = verdicts/<date>-verdict.html",
     )
+    parser.add_argument(
+        "--lang",
+        choices=["en", "zh", "auto"],
+        default="auto",
+        help=(
+            "Initial language for UI chrome. 'auto' (default) detects from "
+            "navigator.language at load time; 'en' or 'zh' forces the pre-"
+            "paint language. Users can always toggle at runtime; choice "
+            "persists in localStorage."
+        ),
+    )
     args = parser.parse_args()
 
     vd = load_verdict(args.slug, args.date)
@@ -546,7 +671,7 @@ def main() -> int:
         out_path = repo_dir / "verdicts" / f"{date}-verdict.html"
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    html_text = render_html(vd)
+    html_text = render_html(vd, initial_lang=args.lang)
     out_path.write_text(html_text)
     print(f"Wrote {out_path}")
 
