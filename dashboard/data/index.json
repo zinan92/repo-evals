@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-02T14:13:13Z",
-  "generated_from_commit": "ebde34d",
+  "generated_at": "2026-05-02T14:16:18Z",
+  "generated_from_commit": "23e9de4",
   "repos": [
     {
       "slug": "zarazhangrui--frontend-slides",
@@ -477,21 +477,21 @@
       "notes_excerpt": "Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.",
       "repo_path": "repos/zinan92--content-toolkit",
       "claims_summary": {
-        "total": 16,
-        "passed": 12,
-        "failed": 3,
-        "untested": 1,
-        "critical_total": 5,
-        "critical_passed": 5,
+        "total": 3,
+        "passed": 0,
+        "failed": 0,
+        "untested": 3,
+        "critical_total": 2,
+        "critical_passed": 0,
         "critical_failed": 0,
-        "critical_untested": 0,
-        "high_total": 8
+        "critical_untested": 2,
+        "high_total": 1
       },
       "runs_summary": {
-        "count": 2,
-        "provenance_quality": "partial",
+        "count": 1,
+        "provenance_quality": "missing",
         "counts": {
-          "full": 1,
+          "full": 0,
           "partial": 0,
           "missing": 1
         }
@@ -579,8 +579,8 @@
           "claim_map_path": "repos/zinan92--content-toolkit/areas/orchestration/claims/claim-map.yaml"
         }
       ],
-      "plan_path": "repos/zinan92--content-toolkit/plans/2026-04-13-eval-plan.md",
-      "verdict_path": "repos/zinan92--content-toolkit/verdicts/2026-04-13-final-verdict.md",
+      "plan_path": "repos/zinan92--content-toolkit/plans/2026-04-05-eval-plan.md",
+      "verdict_path": "repos/zinan92--content-toolkit/verdicts/2026-04-05-final-verdict.md",
       "attention_level": "high"
     },
     {
@@ -599,21 +599,21 @@
       "notes_excerpt": "",
       "repo_path": "repos/geekjourneyx--md2wechat-skill",
       "claims_summary": {
-        "total": 14,
-        "passed": 9,
+        "total": 0,
+        "passed": 0,
         "failed": 0,
-        "untested": 5,
-        "critical_total": 7,
-        "critical_passed": 4,
+        "untested": 0,
+        "critical_total": 0,
+        "critical_passed": 0,
         "critical_failed": 0,
-        "critical_untested": 3,
-        "high_total": 6
+        "critical_untested": 0,
+        "high_total": 0
       },
       "runs_summary": {
-        "count": 1,
-        "provenance_quality": "full",
+        "count": 0,
+        "provenance_quality": "missing",
         "counts": {
-          "full": 1,
+          "full": 0,
           "partial": 0,
           "missing": 0
         }
@@ -621,62 +621,9 @@
       "latest_gap_report": null,
       "latest_diff": null,
       "areas": [],
-      "plan_path": "repos/geekjourneyx--md2wechat-skill/plans/2026-04-13-eval-plan.md",
-      "verdict_path": "repos/geekjourneyx--md2wechat-skill/verdicts/2026-04-13-final-verdict.md",
-      "attention_level": "low"
-    },
-    {
-      "slug": "zinan92--intel",
-      "display_name": "intel",
-      "owner": "zinan92",
-      "repo": "intel",
-      "repo_url": "https://github.com/zinan92/intel",
-      "repo_type": "service",
-      "archetype": "api-service",
-      "layer": "molecule",
-      "layer_inferred": "molecule",
-      "status": "evaluated",
-      "current_bucket": "reusable",
-      "uses_areas": false,
-      "notes_excerpt": "Fresh live eval on 2026-04-09 shows the repo is a real working service, not a demo shell. A clean local clone installed successfully, the scheduler started, core sources populated data without optional credentials, and the API returned real structured responses. After `frontend`…",
-      "repo_path": "repos/zinan92--intel",
-      "claims_summary": {
-        "total": 8,
-        "passed": 4,
-        "failed": 2,
-        "untested": 2,
-        "critical_total": 3,
-        "critical_passed": 3,
-        "critical_failed": 0,
-        "critical_untested": 0,
-        "high_total": 3
-      },
-      "runs_summary": {
-        "count": 1,
-        "provenance_quality": "full",
-        "counts": {
-          "full": 1,
-          "partial": 0,
-          "missing": 0
-        }
-      },
-      "latest_gap_report": {
-        "counts": {
-          "total": 0,
-          "critical": 0,
-          "warning": 0,
-          "info": 0
-        },
-        "critical_items": [],
-        "warning_items": [],
-        "info_items": [],
-        "path": "repos/zinan92--intel/gap-reports/2026-04-09-gap-report.md"
-      },
-      "latest_diff": null,
-      "areas": [],
-      "plan_path": "repos/zinan92--intel/plans/2026-04-09-eval-plan.md",
-      "verdict_path": "repos/zinan92--intel/verdicts/2026-04-09-final-verdict.md",
-      "attention_level": "low"
+      "plan_path": null,
+      "verdict_path": null,
+      "attention_level": "medium"
     },
     {
       "slug": "oaker-io--wewrite",
@@ -694,15 +641,116 @@
       "notes_excerpt": "",
       "repo_path": "repos/oaker-io--wewrite",
       "claims_summary": {
-        "total": 13,
-        "passed": 10,
-        "failed": 1,
+        "total": 0,
+        "passed": 0,
+        "failed": 0,
+        "untested": 0,
+        "critical_total": 0,
+        "critical_passed": 0,
+        "critical_failed": 0,
+        "critical_untested": 0,
+        "high_total": 0
+      },
+      "runs_summary": {
+        "count": 0,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": null,
+      "attention_level": "medium"
+    },
+    {
+      "slug": "zinan92--intel",
+      "display_name": "park-intel",
+      "owner": "zinan92",
+      "repo": "intel",
+      "repo_url": "https://github.com/zinan92/intel",
+      "repo_type": "service",
+      "archetype": "api-service",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "reusable",
+      "uses_areas": false,
+      "notes_excerpt": "Self-hosted market-intelligence pipeline. Evaluated 2026-04-24 against live instance at localhost:8001 (commit 3c6eaa9). 10 documented REST endpoints all return 200 with real data; 404/422 error semantics are correct; responses are deterministic on repeat. 366/368 pytest cases p…",
+      "repo_path": "repos/zinan92--intel",
+      "claims_summary": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "untested": 0,
+        "critical_total": 3,
+        "critical_passed": 3,
+        "critical_failed": 0,
+        "critical_untested": 0,
+        "high_total": 4
+      },
+      "runs_summary": {
+        "count": 2,
+        "provenance_quality": "full",
+        "counts": {
+          "full": 2,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": {
+        "counts": {
+          "total": 0,
+          "critical": 0,
+          "warning": 0,
+          "info": 0
+        },
+        "critical_items": [],
+        "warning_items": [],
+        "info_items": [],
+        "path": "repos/zinan92--intel/gap-reports/2026-04-09-gap-report.md"
+      },
+      "latest_diff": null,
+      "areas": [
+        {
+          "slug": "endpoint-coverage",
+          "area_path": null,
+          "claim_map_path": null
+        }
+      ],
+      "plan_path": "repos/zinan92--intel/plans/2026-04-24-eval-plan.md",
+      "verdict_path": "repos/zinan92--intel/verdicts/2026-04-24-final-verdict.md",
+      "attention_level": "low"
+    },
+    {
+      "slug": "iamzhihuix--skills-manage",
+      "display_name": "skills-manage",
+      "owner": "iamzhihuix",
+      "repo": "skills-manage",
+      "repo_url": "https://github.com/iamzhihuix/skills-manage",
+      "repo_type": "skill",
+      "archetype": "adapter",
+      "layer": "molecule",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Tauri desktop app managing AI coding agent skills across 28 platforms via ~/.agents/skills/ central dir + symlinks. v0.9.1, 11 days old, 910 stars. Eval was source-inspection + DMG integrity only; runtime GUI skipped because tester's live ~/.agents/skills/ and ~/.claude/skills/…",
+      "repo_path": "repos/iamzhihuix--skills-manage",
+      "claims_summary": {
+        "total": 9,
+        "passed": 7,
+        "failed": 0,
         "untested": 2,
         "critical_total": 6,
         "critical_passed": 4,
         "critical_failed": 0,
         "critical_untested": 2,
-        "high_total": 4
+        "high_total": 2
       },
       "runs_summary": {
         "count": 1,
@@ -716,14 +764,62 @@
       "latest_gap_report": null,
       "latest_diff": null,
       "areas": [],
-      "plan_path": "repos/oaker-io--wewrite/plans/2026-04-13-eval-plan.md",
-      "verdict_path": "repos/oaker-io--wewrite/verdicts/2026-04-13-final-verdict.md",
+      "plan_path": "repos/iamzhihuix--skills-manage/plans/2026-04-24-eval-plan.md",
+      "verdict_path": "repos/iamzhihuix--skills-manage/verdicts/2026-04-24-final-verdict.md",
+      "attention_level": "low"
+    },
+    {
+      "slug": "op7418--Humanizer-zh",
+      "display_name": "Humanizer-zh",
+      "owner": "op7418",
+      "repo": "Humanizer-zh",
+      "repo_url": "https://github.com/op7418/Humanizer-zh",
+      "repo_type": "skill",
+      "archetype": "prompt-skill",
+      "layer": "atom",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Pure prompt-skill: SKILL.md (484 lines) + README.md, no code, no referenced sub-files. Translated from blader/humanizer + borrows checklist from hardikpandya/stop-slop. Lists 24 AI-writing tells in 4 categories and a 5-dim 50-point quality rubric. Evaluated via live session on a…",
+      "repo_path": "repos/op7418--Humanizer-zh",
+      "claims_summary": {
+        "total": 7,
+        "passed": 7,
+        "failed": 0,
+        "untested": 0,
+        "critical_total": 4,
+        "critical_passed": 4,
+        "critical_failed": 0,
+        "critical_untested": 0,
+        "high_total": 2
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "full",
+        "counts": {
+          "full": 1,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [
+        {
+          "slug": "end-to-end-llm",
+          "area_path": null,
+          "claim_map_path": null
+        }
+      ],
+      "plan_path": "repos/op7418--Humanizer-zh/plans/2026-04-24-eval-plan.md",
+      "verdict_path": "repos/op7418--Humanizer-zh/verdicts/2026-04-24-final-verdict.md",
       "attention_level": "low"
     }
   ],
   "stats": {
-    "repo_count": 8,
-    "evaluated_count": 8,
+    "repo_count": 10,
+    "evaluated_count": 10,
     "planned_count": 0,
     "critical_gap_total": 19,
     "warning_gap_total": 3,
@@ -732,7 +828,7 @@
     "bucket_counts": {
       "recommendable": 0,
       "reusable": 2,
-      "usable": 5,
+      "usable": 7,
       "unusable": 1,
       "unknown": 0
     }

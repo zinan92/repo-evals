@@ -14,21 +14,21 @@
   "notes_excerpt": "",
   "repo_path": "repos/geekjourneyx--md2wechat-skill",
   "claims_summary": {
-    "total": 14,
-    "passed": 9,
+    "total": 0,
+    "passed": 0,
     "failed": 0,
-    "untested": 5,
-    "critical_total": 7,
-    "critical_passed": 4,
+    "untested": 0,
+    "critical_total": 0,
+    "critical_passed": 0,
     "critical_failed": 0,
-    "critical_untested": 3,
-    "high_total": 6
+    "critical_untested": 0,
+    "high_total": 0
   },
   "runs_summary": {
-    "count": 1,
-    "provenance_quality": "full",
+    "count": 0,
+    "provenance_quality": "missing",
     "counts": {
-      "full": 1,
+      "full": 0,
       "partial": 0,
       "missing": 0
     }
@@ -36,7 +36,7 @@
   "latest_gap_report": null,
   "latest_diff": null,
   "areas": [],
-  "plan_path": "repos/geekjourneyx--md2wechat-skill/plans/2026-04-13-eval-plan.md",
-  "verdict_path": "repos/geekjourneyx--md2wechat-skill/verdicts/2026-04-13-final-verdict.md",
-  "attention_level": "low"
+  "plan_path": null,
+  "verdict_path": null,
+  "attention_level": "medium"
 }

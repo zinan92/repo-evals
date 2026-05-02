@@ -1,0 +1,48 @@
+{
+  "slug": "op7418--Humanizer-zh",
+  "display_name": "Humanizer-zh",
+  "owner": "op7418",
+  "repo": "Humanizer-zh",
+  "repo_url": "https://github.com/op7418/Humanizer-zh",
+  "repo_type": "skill",
+  "archetype": "prompt-skill",
+  "layer": "atom",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "Pure prompt-skill: SKILL.md (484 lines) + README.md, no code, no referenced sub-files. Translated from blader/humanizer + borrows checklist from hardikpandya/stop-slop. Lists 24 AI-writing tells in 4 categories and a 5-dim 50-point quality rubric. Evaluated via live session on a…",
+  "repo_path": "repos/op7418--Humanizer-zh",
+  "claims_summary": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "untested": 0,
+    "critical_total": 4,
+    "critical_passed": 4,
+    "critical_failed": 0,
+    "critical_untested": 0,
+    "high_total": 2
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "full",
+    "counts": {
+      "full": 1,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [
+    {
+      "slug": "end-to-end-llm",
+      "area_path": null,
+      "claim_map_path": null
+    }
+  ],
+  "plan_path": "repos/op7418--Humanizer-zh/plans/2026-04-24-eval-plan.md",
+  "verdict_path": "repos/op7418--Humanizer-zh/verdicts/2026-04-24-final-verdict.md",
+  "attention_level": "low"
+}

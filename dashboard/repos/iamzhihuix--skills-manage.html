@@ -3,21 +3,21 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>park-intel · repo-evals dashboard</title>
+  <title>skills-manage · repo-evals dashboard</title>
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
   <main class="shell">
     <section class="hero">
       <p class="small"><a href="../index.html" style="color: #fff9f2;">← Back to dashboard</a></p>
-      <h1>park-intel</h1>
-      <p>Self-hosted market-intelligence pipeline. Evaluated 2026-04-24 against live instance at localhost:8001 (commit 3c6eaa9). 10 documented REST endpoints all return 200 with real data; 404/422 error semantics are correct; responses are deterministic on repeat. 366/368 pytest cases p…</p>
+      <h1>skills-manage</h1>
+      <p>Tauri desktop app managing AI coding agent skills across 28 platforms via ~/.agents/skills/ central dir + symlinks. v0.9.1, 11 days old, 910 stars. Eval was source-inspection + DMG integrity only; runtime GUI skipped because tester&#x27;s live ~/.agents/skills/ and ~/.claude/skills/…</p>
       <div class="meta-row">
-        <span class="badge bucket-reusable">bucket: reusable</span>
+        <span class="badge bucket-usable">bucket: usable</span>
         <span class="badge prov-full">provenance: full</span>
         <span class="badge conf-unknown">diff confidence: unknown</span>
-        <span class="chip">zinan92/intel</span>
-        <span class="chip">api-service</span>
+        <span class="chip">iamzhihuix/skills-manage</span>
+        <span class="chip">adapter</span>
         <span class="badge layer-molecule">layer: molecule</span>
       </div>
     </section>
@@ -26,21 +26,20 @@
       <div class="panel">
         <h3>Current health</h3>
         <div class="kv">
-          <div><strong>Bucket</strong>reusable</div>
+          <div><strong>Bucket</strong>usable</div>
           <div><strong>Status</strong>evaluated</div>
-          <div><strong>Claim coverage</strong>8 passed / 0 failed / 0 untested</div>
-          <div><strong>Runs</strong>2 total (2 full, 0 partial, 0 missing)</div>
+          <div><strong>Claim coverage</strong>7 passed / 0 failed / 2 untested</div>
+          <div><strong>Runs</strong>1 total (1 full, 0 partial, 0 missing)</div>
           <div><strong>Gap counts</strong>0 critical / 0 warning / 0 info</div>
-          <div><strong>Areas</strong>1</div>
+          <div><strong>Areas</strong>0</div>
         </div>
         <h4 style="margin-top: 22px;">Latest diff headline</h4>
         <div class="headline">No committed re-eval diff yet.</div>
         <p class="muted small" style="margin-top: 12px;">From n/a  to n/a.</p>
-        <div class="source-links"><a href="../../repos/zinan92--intel/repo.yaml">repo.yaml</a>
-<a href="../../repos/zinan92--intel/claims/claim-map.yaml">claim-map</a>
-<a href="../../repos/zinan92--intel/plans/2026-04-24-eval-plan.md">latest plan</a>
-<a href="../../repos/zinan92--intel/verdicts/2026-04-24-final-verdict.md">latest verdict</a>
-<a href="../../repos/zinan92--intel/gap-reports/2026-04-09-gap-report.md">latest gap report</a></div>
+        <div class="source-links"><a href="../../repos/iamzhihuix--skills-manage/repo.yaml">repo.yaml</a>
+<a href="../../repos/iamzhihuix--skills-manage/claims/claim-map.yaml">claim-map</a>
+<a href="../../repos/iamzhihuix--skills-manage/plans/2026-04-24-eval-plan.md">latest plan</a>
+<a href="../../repos/iamzhihuix--skills-manage/verdicts/2026-04-24-final-verdict.md">latest verdict</a></div>
       </div>
 
       <div class="panel">
@@ -67,10 +66,10 @@
 
     <h2 class="section-title">Claim coverage snapshot</h2>
     <section class="grid stats">
-      <div class="stat-card"><h3>Total claims</h3><div class="stat-value">8</div><div class="muted small">root claim-map only</div></div>
-      <div class="stat-card"><h3>Critical claims</h3><div class="stat-value">3</div><div class="muted small">3 passed / 0 failed / 0 untested</div></div>
-      <div class="stat-card"><h3>Passed</h3><div class="stat-value">8</div></div>
-      <div class="stat-card"><h3>Untested</h3><div class="stat-value">0</div></div>
+      <div class="stat-card"><h3>Total claims</h3><div class="stat-value">9</div><div class="muted small">root claim-map only</div></div>
+      <div class="stat-card"><h3>Critical claims</h3><div class="stat-value">6</div><div class="muted small">4 passed / 0 failed / 2 untested</div></div>
+      <div class="stat-card"><h3>Passed</h3><div class="stat-value">7</div></div>
+      <div class="stat-card"><h3>Untested</h3><div class="stat-value">2</div></div>
     </section>
 
     <h2 class="section-title">Diff movement</h2>
@@ -88,11 +87,11 @@
 
     <h2 class="section-title">Area drill-down</h2>
     <section class="panel">
-      <ul class="bullet-list"><li><span class="mono">endpoint-coverage</span></li></ul>
+      <div class="empty-state">No area-level scaffolds for this repo.</div>
     </section>
 
     <footer>
-      Generated from current repo-evals files. Raw JSON: <a href="../data/repos/zinan92--intel.json">repo data</a>
+      Generated from current repo-evals files. Raw JSON: <a href="../data/repos/iamzhihuix--skills-manage.json">repo data</a>
     </footer>
   </main>
 </body>

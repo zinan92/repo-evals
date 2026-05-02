@@ -1,6 +1,6 @@
 {
   "slug": "zinan92--intel",
-  "display_name": "intel",
+  "display_name": "park-intel",
   "owner": "zinan92",
   "repo": "intel",
   "repo_url": "https://github.com/zinan92/intel",
@@ -11,24 +11,24 @@
   "status": "evaluated",
   "current_bucket": "reusable",
   "uses_areas": false,
-  "notes_excerpt": "Fresh live eval on 2026-04-09 shows the repo is a real working service, not a demo shell. A clean local clone installed successfully, the scheduler started, core sources populated data without optional credentials, and the API returned real structured responses. After `frontend`…",
+  "notes_excerpt": "Self-hosted market-intelligence pipeline. Evaluated 2026-04-24 against live instance at localhost:8001 (commit 3c6eaa9). 10 documented REST endpoints all return 200 with real data; 404/422 error semantics are correct; responses are deterministic on repeat. 366/368 pytest cases p…",
   "repo_path": "repos/zinan92--intel",
   "claims_summary": {
     "total": 8,
-    "passed": 4,
-    "failed": 2,
-    "untested": 2,
+    "passed": 8,
+    "failed": 0,
+    "untested": 0,
     "critical_total": 3,
     "critical_passed": 3,
     "critical_failed": 0,
     "critical_untested": 0,
-    "high_total": 3
+    "high_total": 4
   },
   "runs_summary": {
-    "count": 1,
+    "count": 2,
     "provenance_quality": "full",
     "counts": {
-      "full": 1,
+      "full": 2,
       "partial": 0,
       "missing": 0
     }
@@ -46,8 +46,14 @@
     "path": "repos/zinan92--intel/gap-reports/2026-04-09-gap-report.md"
   },
   "latest_diff": null,
-  "areas": [],
-  "plan_path": "repos/zinan92--intel/plans/2026-04-09-eval-plan.md",
-  "verdict_path": "repos/zinan92--intel/verdicts/2026-04-09-final-verdict.md",
+  "areas": [
+    {
+      "slug": "endpoint-coverage",
+      "area_path": null,
+      "claim_map_path": null
+    }
+  ],
+  "plan_path": "repos/zinan92--intel/plans/2026-04-24-eval-plan.md",
+  "verdict_path": "repos/zinan92--intel/verdicts/2026-04-24-final-verdict.md",
   "attention_level": "low"
 }

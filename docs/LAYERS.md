@@ -120,6 +120,7 @@ on archetype:
 | `api-service` | `molecule` | Usually a fixed pipeline: route → handler → response. Becomes compound only if the service hosts an agent. |
 | `prompt-skill` | `atom` or `molecule` | Atom if SKILL.md prompts one task; molecule if it chains documented sub-tasks. |
 | `hybrid-skill` | `molecule` | LLM + supporting deterministic code is by definition >1 unit. |
+| `mcp-enhancement` | `molecule` | Sequences MCP tool calls with documented order — chained primitives, not single. |
 | `orchestrator` | `molecule` or `compound` | Molecule if the routing is rule-based; compound if an LLM picks routes. |
 
 These are heuristics. The author sets `layer:` explicitly in

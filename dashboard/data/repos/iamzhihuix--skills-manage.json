@@ -1,0 +1,42 @@
+{
+  "slug": "iamzhihuix--skills-manage",
+  "display_name": "skills-manage",
+  "owner": "iamzhihuix",
+  "repo": "skills-manage",
+  "repo_url": "https://github.com/iamzhihuix/skills-manage",
+  "repo_type": "skill",
+  "archetype": "adapter",
+  "layer": "molecule",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "Tauri desktop app managing AI coding agent skills across 28 platforms via ~/.agents/skills/ central dir + symlinks. v0.9.1, 11 days old, 910 stars. Eval was source-inspection + DMG integrity only; runtime GUI skipped because tester's live ~/.agents/skills/ and ~/.claude/skills/…",
+  "repo_path": "repos/iamzhihuix--skills-manage",
+  "claims_summary": {
+    "total": 9,
+    "passed": 7,
+    "failed": 0,
+    "untested": 2,
+    "critical_total": 6,
+    "critical_passed": 4,
+    "critical_failed": 0,
+    "critical_untested": 2,
+    "high_total": 2
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "full",
+    "counts": {
+      "full": 1,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/iamzhihuix--skills-manage/plans/2026-04-24-eval-plan.md",
+  "verdict_path": "repos/iamzhihuix--skills-manage/verdicts/2026-04-24-final-verdict.md",
+  "attention_level": "low"
+}

@@ -4,6 +4,9 @@ display_name: Humanizer-zh
 repo_url: https://github.com/op7418/Humanizer-zh
 repo_type: skill
 archetype: prompt-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Pure prompt-skill, single SKILL.md, no sub-files — atom.
+layer: atom
 complexity: simple
 uses_areas: false
 status: evaluated

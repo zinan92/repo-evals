@@ -6,6 +6,9 @@ repo_type: skill
 # Archetype drives scaffolding and verdict-calculator ceiling rules.
 # One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
 archetype: adapter
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Multi-platform skill manager — routes across 28 platforms, molecule.
+layer: molecule
 complexity: simple
 uses_areas: false
 status: evaluated

@@ -14,21 +14,21 @@
   "notes_excerpt": "Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.",
   "repo_path": "repos/zinan92--content-toolkit",
   "claims_summary": {
-    "total": 16,
-    "passed": 12,
-    "failed": 3,
-    "untested": 1,
-    "critical_total": 5,
-    "critical_passed": 5,
+    "total": 3,
+    "passed": 0,
+    "failed": 0,
+    "untested": 3,
+    "critical_total": 2,
+    "critical_passed": 0,
     "critical_failed": 0,
-    "critical_untested": 0,
-    "high_total": 8
+    "critical_untested": 2,
+    "high_total": 1
   },
   "runs_summary": {
-    "count": 2,
-    "provenance_quality": "partial",
+    "count": 1,
+    "provenance_quality": "missing",
     "counts": {
-      "full": 1,
+      "full": 0,
       "partial": 0,
       "missing": 1
     }
@@ -116,7 +116,7 @@
       "claim_map_path": "repos/zinan92--content-toolkit/areas/orchestration/claims/claim-map.yaml"
     }
   ],
-  "plan_path": "repos/zinan92--content-toolkit/plans/2026-04-13-eval-plan.md",
-  "verdict_path": "repos/zinan92--content-toolkit/verdicts/2026-04-13-final-verdict.md",
+  "plan_path": "repos/zinan92--content-toolkit/plans/2026-04-05-eval-plan.md",
+  "verdict_path": "repos/zinan92--content-toolkit/verdicts/2026-04-05-final-verdict.md",
   "attention_level": "high"
 }

@@ -14,21 +14,21 @@
   "notes_excerpt": "",
   "repo_path": "repos/oaker-io--wewrite",
   "claims_summary": {
-    "total": 13,
-    "passed": 10,
-    "failed": 1,
-    "untested": 2,
-    "critical_total": 6,
-    "critical_passed": 4,
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "untested": 0,
+    "critical_total": 0,
+    "critical_passed": 0,
     "critical_failed": 0,
-    "critical_untested": 2,
-    "high_total": 4
+    "critical_untested": 0,
+    "high_total": 0
   },
   "runs_summary": {
-    "count": 1,
-    "provenance_quality": "full",
+    "count": 0,
+    "provenance_quality": "missing",
     "counts": {
-      "full": 1,
+      "full": 0,
       "partial": 0,
       "missing": 0
     }
@@ -36,7 +36,7 @@
   "latest_gap_report": null,
   "latest_diff": null,
   "areas": [],
-  "plan_path": "repos/oaker-io--wewrite/plans/2026-04-13-eval-plan.md",
-  "verdict_path": "repos/oaker-io--wewrite/verdicts/2026-04-13-final-verdict.md",
-  "attention_level": "low"
+  "plan_path": null,
+  "verdict_path": null,
+  "attention_level": "medium"
 }

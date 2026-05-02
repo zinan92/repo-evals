@@ -33,6 +33,8 @@ ARCHETYPE_DEFAULT_LAYER: dict[str, str] = {
     "prompt-skill": LAYER_ATOM,
     "hybrid-skill": LAYER_MOLECULE,
     "orchestrator": LAYER_COMPOUND,
+    # Sequences multiple MCP tool calls with documented order/rules — molecule.
+    "mcp-enhancement": LAYER_MOLECULE,
 }
 
 
