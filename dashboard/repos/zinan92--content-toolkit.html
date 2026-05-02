@@ -13,11 +13,12 @@
       <h1>content-toolkit</h1>
       <p>Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.</p>
       <div class="meta-row">
-        <span class="badge bucket-unknown">bucket: unknown</span>
-        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge bucket-usable">bucket: usable</span>
+        <span class="badge prov-partial">provenance: partial</span>
         <span class="badge conf-medium">diff confidence: medium</span>
         <span class="chip">zinan92/content-toolkit</span>
         <span class="chip">orchestrator</span>
+        <span class="badge layer-compound">layer: compound</span>
       </div>
     </section>
 
@@ -25,10 +26,10 @@
       <div class="panel">
         <h3>Current health</h3>
         <div class="kv">
-          <div><strong>Bucket</strong>unknown</div>
-          <div><strong>Status</strong>planned</div>
-          <div><strong>Claim coverage</strong>0 passed / 0 failed / 3 untested</div>
-          <div><strong>Runs</strong>1 total (0 full, 0 partial, 1 missing)</div>
+          <div><strong>Bucket</strong>usable</div>
+          <div><strong>Status</strong>evaluated</div>
+          <div><strong>Claim coverage</strong>12 passed / 3 failed / 1 untested</div>
+          <div><strong>Runs</strong>2 total (1 full, 0 partial, 1 missing)</div>
           <div><strong>Gap counts</strong>2 critical / 0 warning / 0 info</div>
           <div><strong>Areas</strong>4</div>
         </div>
@@ -37,8 +38,8 @@
         <p class="muted small" style="margin-top: 12px;">From HEAD~2 7127d8c to working.</p>
         <div class="source-links"><a href="../../repos/zinan92--content-toolkit/repo.yaml">repo.yaml</a>
 <a href="../../repos/zinan92--content-toolkit/claims/claim-map.yaml">claim-map</a>
-<a href="../../repos/zinan92--content-toolkit/plans/2026-04-05-eval-plan.md">latest plan</a>
-<a href="../../repos/zinan92--content-toolkit/verdicts/2026-04-05-final-verdict.md">latest verdict</a>
+<a href="../../repos/zinan92--content-toolkit/plans/2026-04-13-eval-plan.md">latest plan</a>
+<a href="../../repos/zinan92--content-toolkit/verdicts/2026-04-13-final-verdict.md">latest verdict</a>
 <a href="../../repos/zinan92--content-toolkit/gap-reports/2026-04-07-baseline-gap-report.md">latest gap report</a>
 <a href="../../repos/zinan92--content-toolkit/diffs/2026-04-07-pre-archetype_to_working">latest diff folder</a></div>
       </div>
@@ -46,7 +47,7 @@
       <div class="panel">
         <h3>Trust signals</h3>
         <ul class="flag-list">
-          <li>Run-level provenance quality: <strong>missing</strong></li>
+          <li>Run-level provenance quality: <strong>partial</strong></li>
           <li>Latest diff confidence: <strong>medium</strong></li>
           <li>Critical unresolved gaps: <strong>2</strong></li>
         </ul>
@@ -70,10 +71,10 @@
 
     <h2 class="section-title">Claim coverage snapshot</h2>
     <section class="grid stats">
-      <div class="stat-card"><h3>Total claims</h3><div class="stat-value">3</div><div class="muted small">root claim-map only</div></div>
-      <div class="stat-card"><h3>Critical claims</h3><div class="stat-value">2</div><div class="muted small">0 passed / 0 failed / 2 untested</div></div>
-      <div class="stat-card"><h3>Passed</h3><div class="stat-value">0</div></div>
-      <div class="stat-card"><h3>Untested</h3><div class="stat-value">3</div></div>
+      <div class="stat-card"><h3>Total claims</h3><div class="stat-value">16</div><div class="muted small">root claim-map only</div></div>
+      <div class="stat-card"><h3>Critical claims</h3><div class="stat-value">5</div><div class="muted small">5 passed / 0 failed / 0 untested</div></div>
+      <div class="stat-card"><h3>Passed</h3><div class="stat-value">12</div></div>
+      <div class="stat-card"><h3>Untested</h3><div class="stat-value">1</div></div>
     </section>
 
     <h2 class="section-title">Diff movement</h2>
@@ -82,6 +83,11 @@
       <div class="stat-card"><h3>Regressed</h3><div class="stat-value">0</div></div>
       <div class="stat-card"><h3>Newly failing</h3><div class="stat-value">0</div></div>
       <div class="stat-card"><h3>Gap delta</h3><div class="stat-value">0 closed / 0 opened</div></div>
+    </section>
+
+    <h2 class="section-title">Layer-aware evaluation</h2>
+    <section class="panel">
+      <p class="muted small">Layer: declared <strong>compound</strong>. Multiple molecules; call graph decided at runtime by an LLM or human. Higher layers must show evidence at every lower level too — see <a href="../../docs/LAYERS.md">docs/LAYERS.md</a>.</p><div class="layer-stack"><div class="layer-level"><h3>Atom-level evals <span class="level-tag">applies (lower-level dependency)</span></h3><p class="level-desc">Single responsibility. Same input → same output. No skill-level callouts.</p><table class="dim-table"><tbody><tr><th>input_contract</th><td>Does the atom reject malformed input with a clear, actionable error?</td></tr><tr><th>output_contract</th><td>Does the output shape match what the README/SKILL.md claims?</td></tr><tr><th>determinism</th><td>Same input → same output within stated tolerance. (LLM atoms: structurally equivalent, not byte-equal.)</td></tr><tr><th>idempotence</th><td>Re-running with the same input produces the same observable end state.</td></tr><tr><th>no_skill_callouts</th><td>Does the atom avoid invoking other documented skills? Primitives only (LLM API, stdlib, OS).</td></tr><tr><th>failure_mode_clarity</th><td>Does each documented failure mode produce a distinct, recognisable error?</td></tr></tbody></table></div><div class="layer-level"><h3>Molecule-level evals <span class="level-tag">applies (lower-level dependency)</span></h3><p class="level-desc">2–10 atoms wired by predefined orchestration. No runtime LLM routing.</p><table class="dim-table"><tbody><tr><th>workflow_correctness</th><td>Does an end-to-end happy path run from initial input to final output?</td></tr><tr><th>declared_call_graph</th><td>Are the atoms the molecule documents as using actually the ones it calls? No undocumented hidden dependencies.</td></tr><tr><th>stop_conditions</th><td>Do documented stop conditions (success, max-retries, timeout) trigger and halt cleanly?</td></tr><tr><th>handoff_points</th><td>When the molecule should hand back to a human, does it do so at the documented trigger?</td></tr><tr><th>atom_evidence</th><td>Does every declared atom dependency have a passing atom-level eval (referenced or co-located)?</td></tr><tr><th>error_propagation</th><td>Does a downstream atom failure surface at the molecule boundary with enough info to act?</td></tr><tr><th>partial_failure_handling</th><td>When one atom fails, does the molecule avoid silently producing an incomplete &#x27;success&#x27;?</td></tr></tbody></table></div><div class="layer-level"><h3>Compound-level evals <span class="level-tag">applies (this layer)</span></h3><p class="level-desc">Multiple molecules; call graph decided at runtime by an LLM or human.</p><table class="dim-table"><tbody><tr><th>goal_achievement</th><td>In N real scenarios, does the system reach a useful end state — not just &#x27;ran without error&#x27;?</td></tr><tr><th>direction_judgment</th><td>When the goal is ambiguous, does the system ask, pick a reasonable default, or wedge?</td></tr><tr><th>quality_judgment</th><td>Does the system stop when output is good enough, instead of overshooting or stopping too early?</td></tr><tr><th>meaningful_autonomy</th><td>When left to drive itself, does it actually make progress, or does it spin / loop / hallucinate?</td></tr><tr><th>handoff_timing</th><td>When the system asks for help, is that the right moment?</td></tr><tr><th>observed_call_graph</th><td>Was the call graph recorded during each scenario? Does each sub-molecule called have a passing molecule-level eval?</td></tr><tr><th>failure_recovery</th><td>When a sub-call fails, does the LLM adapt (try alternative, ask user) or wedge?</td></tr></tbody></table></div><div class="layer-level"><h3>Compound experiments <span class="level-tag">human-driven</span></h3><p class="level-desc">The call graph is decided at runtime, so compound eval is scenario-driven. Run each scenario, observe the behaviour, log a verdict. Capture which sub-molecules actually got called — they each need their own passing molecule-level eval.</p><div class="experiment"><h4>Scenario 1: Happy-path multi-step request</h4><div class="muted small"><strong>System prompt / starting message:</strong></div><blockquote>Give the system a realistic multi-step request that obviously needs more than one sub-skill to complete (e.g., &#x27;find X, summarise it, and post the result&#x27;). Do not coach it on which tool to use.</blockquote><div class="muted small"><strong>What to watch for:</strong></div><ul class="flag-list"><li>Does it pick the right sub-molecules without prompting?</li><li>Does it complete end-to-end with a useful artefact (not just &#x27;done&#x27;)?</li><li>Does it skip steps or invent steps that were not asked for?</li></ul><div class="muted small"><strong>Sub-molecules expected:</strong> TBD — observe</div><div class="muted small" style="margin-top:10px;"><strong>Verdict log:</strong> record date · run · goal reached? · right sub-molecules? · notes in <code>repos/zinan92--content-toolkit/runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md</code>.</div></div><div class="experiment"><h4>Scenario 2: Ambiguous goal — does it ask or assume?</h4><div class="muted small"><strong>System prompt / starting message:</strong></div><blockquote>Give the system an under-specified request (e.g., &#x27;clean this up&#x27; with no further detail). Wait and see what it does.</blockquote><div class="muted small"><strong>What to watch for:</strong></div><ul class="flag-list"><li>Does it ask a clarifying question, or silently pick a direction?</li><li>If it picks a direction, is the choice reasonable for a default user?</li><li>Does it avoid destructive actions until the ambiguity is resolved?</li></ul><div class="muted small"><strong>Sub-molecules expected:</strong> TBD — observe</div><div class="muted small" style="margin-top:10px;"><strong>Verdict log:</strong> record date · run · goal reached? · right sub-molecules? · notes in <code>repos/zinan92--content-toolkit/runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md</code>.</div></div><div class="experiment"><h4>Scenario 3: Induced sub-skill failure — does it recover?</h4><div class="muted small"><strong>System prompt / starting message:</strong></div><blockquote>Run a normal request, but arrange for one sub-skill to fail (e.g., revoke a credential, point at a broken URL, fill a queue). Observe the response.</blockquote><div class="muted small"><strong>What to watch for:</strong></div><ul class="flag-list"><li>Does the failure surface clearly, or get hidden behind a fake &#x27;success&#x27;?</li><li>Does the system attempt an alternative path or escalate to the human?</li><li>Does it avoid wedging in a retry loop?</li></ul><div class="muted small"><strong>Sub-molecules expected:</strong> TBD — observe</div><div class="muted small" style="margin-top:10px;"><strong>Verdict log:</strong> record date · run · goal reached? · right sub-molecules? · notes in <code>repos/zinan92--content-toolkit/runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md</code>.</div></div><div class="experiment"><h4>Scenario 4: Long-horizon autonomy</h4><div class="muted small"><strong>System prompt / starting message:</strong></div><blockquote>Give the system a goal that takes 10+ minutes of unattended work (e.g., &#x27;audit the past week and produce a summary&#x27;). Leave it alone for 15 minutes.</blockquote><div class="muted small"><strong>What to watch for:</strong></div><ul class="flag-list"><li>Did it produce a real artefact, or did it spin / lose context?</li><li>Are the intermediate steps sensible, or did it hallucinate?</li><li>Did it know when to stop, or did it over-shoot the goal?</li></ul><div class="muted small"><strong>Sub-molecules expected:</strong> TBD — observe</div><div class="muted small" style="margin-top:10px;"><strong>Verdict log:</strong> record date · run · goal reached? · right sub-molecules? · notes in <code>repos/zinan92--content-toolkit/runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md</code>.</div></div><div class="experiment"><h4>Scenario 5: Routing correctness across all downstreams</h4><div class="muted small"><strong>System prompt / starting message:</strong></div><blockquote>Send one request that should fan out to every documented downstream (one input per area). Observe the routing log.</blockquote><div class="muted small"><strong>What to watch for:</strong></div><ul class="flag-list"><li>Did each input land at the correct downstream?</li><li>Are downstream call traces visible in the orchestrator log?</li><li>Do partial failures stop unrelated downstreams from running?</li></ul><div class="muted small"><strong>Sub-molecules expected:</strong> One per documented downstream area.</div><div class="muted small" style="margin-top:10px;"><strong>Verdict log:</strong> record date · run · goal reached? · right sub-molecules? · notes in <code>repos/zinan92--content-toolkit/runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md</code>.</div></div></div></div>
     </section>
 
     <h2 class="section-title">Area drill-down</h2>

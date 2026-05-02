@@ -1,0 +1,15 @@
+owner: oaker-io
+repo: wewrite
+display_name: wewrite
+repo_url: https://github.com/oaker-io/wewrite
+repo_type: skill
+# Archetype drives scaffolding and verdict-calculator ceiling rules.
+# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
+archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+layer: atom
+complexity: simple
+uses_areas: false
+status: evaluated
+current_bucket: usable
+notes: ""

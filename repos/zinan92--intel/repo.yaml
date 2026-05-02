@@ -4,6 +4,8 @@ display_name: park-intel
 repo_url: https://github.com/zinan92/intel
 repo_type: service
 archetype: api-service
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+layer: molecule
 complexity: complex
 uses_areas: false
 status: evaluated

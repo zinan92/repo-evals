@@ -4,6 +4,8 @@ display_name: content-extractor
 repo_url: https://github.com/zinan92/content-extractor
 repo_type: skill
 archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+layer: molecule
 complexity: medium
 uses_areas: false
 status: evaluated

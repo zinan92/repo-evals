@@ -1,0 +1,42 @@
+{
+  "slug": "geekjourneyx--md2wechat-skill",
+  "display_name": "md2wechat-skill",
+  "owner": "geekjourneyx",
+  "repo": "md2wechat-skill",
+  "repo_url": "https://github.com/geekjourneyx/md2wechat-skill",
+  "repo_type": "skill",
+  "archetype": "hybrid-skill",
+  "layer": "atom",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "reusable",
+  "uses_areas": false,
+  "notes_excerpt": "",
+  "repo_path": "repos/geekjourneyx--md2wechat-skill",
+  "claims_summary": {
+    "total": 14,
+    "passed": 9,
+    "failed": 0,
+    "untested": 5,
+    "critical_total": 7,
+    "critical_passed": 4,
+    "critical_failed": 0,
+    "critical_untested": 3,
+    "high_total": 6
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "full",
+    "counts": {
+      "full": 1,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/geekjourneyx--md2wechat-skill/plans/2026-04-13-eval-plan.md",
+  "verdict_path": "repos/geekjourneyx--md2wechat-skill/verdicts/2026-04-13-final-verdict.md",
+  "attention_level": "low"
+}

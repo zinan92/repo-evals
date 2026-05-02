@@ -12,25 +12,25 @@
       <h1>repo-evals operator dashboard</h1>
       <p>One place to see what is usable, what is still shaky, and what changed recently — without hiding low-confidence baselines or missing provenance.</p>
       <div class="meta-row">
-        <span class="chip">generated at 2026-04-08T19:30:03Z</span>
-        <span class="chip">source commit 59b5b88</span>
+        <span class="chip">generated at 2026-05-02T14:13:13Z</span>
+        <span class="chip">source commit ebde34d</span>
         <a class="chip" href="data/index.json">raw dashboard data</a>
       </div>
     </section>
 
     <section class="grid stats">
-      <div class="stat-card"><h3>Evaluated repos</h3><div class="stat-value">4</div><div class="muted small">out of 5 total repos</div></div>
+      <div class="stat-card"><h3>Evaluated repos</h3><div class="stat-value">8</div><div class="muted small">out of 8 total repos</div></div>
       <div class="stat-card"><h3>Critical unresolved gaps</h3><div class="stat-value">19</div><div class="muted small">from latest committed gap reports</div></div>
-      <div class="stat-card"><h3>Full provenance repos</h3><div class="stat-value">1</div><div class="muted small">repos whose current runs are fully captured</div></div>
+      <div class="stat-card"><h3>Full provenance repos</h3><div class="stat-value">4</div><div class="muted small">repos whose current runs are fully captured</div></div>
       <div class="stat-card"><h3>Medium/low diff confidence</h3><div class="stat-value">4</div><div class="muted small">latest committed diffs needing careful reading</div></div>
     </section>
 
     <h2 class="section-title">Bucket distribution</h2>
     <section class="grid stats">
       <div class="stat-card"><h3>Recommendable</h3><div class="stat-value">0</div></div>
-      <div class="stat-card"><h3>Reusable</h3><div class="stat-value">0</div></div>
-      <div class="stat-card"><h3>Usable</h3><div class="stat-value">3</div></div>
-      <div class="stat-card"><h3>Unusable / Unknown</h3><div class="stat-value">2</div></div>
+      <div class="stat-card"><h3>Reusable</h3><div class="stat-value">2</div></div>
+      <div class="stat-card"><h3>Usable</h3><div class="stat-value">5</div></div>
+      <div class="stat-card"><h3>Unusable / Unknown</h3><div class="stat-value">1</div></div>
     </section>
 
     <h2 class="section-title">Needs attention first</h2>
@@ -95,6 +95,7 @@
         <div><span class="badge bucket-usable">bucket: usable</span></div>
       </header>
       <div class="meta-row">
+        <span class="badge layer-molecule">layer: molecule</span>
         <span class="badge prov-missing">provenance: missing</span>
         <span class="badge conf-medium">diff confidence: medium</span>
         <span class="badge bucket-usable">status: evaluated</span>
@@ -124,6 +125,7 @@
         <div><span class="badge bucket-unusable">bucket: unusable</span></div>
       </header>
       <div class="meta-row">
+        <span class="badge layer-molecule">layer: molecule</span>
         <span class="badge prov-partial">provenance: partial</span>
         <span class="badge conf-medium">diff confidence: medium</span>
         <span class="badge bucket-usable">status: evaluated</span>
@@ -153,6 +155,7 @@
         <div><span class="badge bucket-usable">bucket: usable</span></div>
       </header>
       <div class="meta-row">
+        <span class="badge layer-molecule">layer: molecule</span>
         <span class="badge prov-full">provenance: full</span>
         <span class="badge conf-high">diff confidence: high</span>
         <span class="badge bucket-usable">status: evaluated</span>
@@ -182,6 +185,7 @@
         <div><span class="badge bucket-usable">bucket: usable</span></div>
       </header>
       <div class="meta-row">
+        <span class="badge layer-molecule">layer: molecule</span>
         <span class="badge prov-missing">provenance: missing</span>
         <span class="badge conf-medium">diff confidence: medium</span>
         <span class="badge bucket-usable">status: evaluated</span>
@@ -200,32 +204,123 @@
       </div>
     </article>
 <article class="panel repo-card attention-high" data-role="repo-card"
-      data-search="zinan92--content-toolkit content-toolkit content-toolkit zinan92 orchestrator unknown planned"
-      data-bucket="unknown"
+      data-search="zinan92--content-toolkit content-toolkit content-toolkit zinan92 orchestrator usable evaluated"
+      data-bucket="usable"
       data-confidence="medium">
       <header>
         <div>
           <h3><a href="repos/zinan92--content-toolkit.html">content-toolkit</a></h3>
           <p class="muted small">zinan92/content-toolkit · orchestration · orchestrator</p>
         </div>
-        <div><span class="badge bucket-unknown">bucket: unknown</span></div>
+        <div><span class="badge bucket-usable">bucket: usable</span></div>
       </header>
       <div class="meta-row">
-        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge layer-compound">layer: compound</span>
+        <span class="badge prov-partial">provenance: partial</span>
         <span class="badge conf-medium">diff confidence: medium</span>
-        <span class="badge bucket-usable">status: planned</span>
+        <span class="badge bucket-usable">status: evaluated</span>
       </div>
       <p>Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.</p>
       <div class="headline">Verdict did not change bucket (`unknown` → `unknown`).</div>
       <div class="kv">
-        <div><strong>Claims</strong>0 passed / 0 failed / 3 untested</div>
-        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Claims</strong>12 passed / 3 failed / 1 untested</div>
+        <div><strong>Runs</strong>2 total</div>
         <div><strong>Unresolved Gaps</strong>2 critical gaps</div>
         <div><strong>Areas</strong>4</div>
       </div>
       <div class="source-links">
         <a href="repos/zinan92--content-toolkit.html">Open detail</a>
         <a href="../repos/zinan92--content-toolkit/repo.yaml">repo.yaml</a>
+      </div>
+    </article>
+<article class="panel repo-card attention-low" data-role="repo-card"
+      data-search="geekjourneyx--md2wechat-skill md2wechat-skill md2wechat-skill geekjourneyx hybrid-skill reusable evaluated"
+      data-bucket="reusable"
+      data-confidence="unknown">
+      <header>
+        <div>
+          <h3><a href="repos/geekjourneyx--md2wechat-skill.html">md2wechat-skill</a></h3>
+          <p class="muted small">geekjourneyx/md2wechat-skill · skill · hybrid-skill</p>
+        </div>
+        <div><span class="badge bucket-reusable">bucket: reusable</span></div>
+      </header>
+      <div class="meta-row">
+        <span class="badge layer-atom">layer: atom</span>
+        <span class="badge prov-full">provenance: full</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="badge bucket-usable">status: evaluated</span>
+      </div>
+      <p></p>
+      <div class="headline">No committed re-eval diff yet.</div>
+      <div class="kv">
+        <div><strong>Claims</strong>9 passed / 0 failed / 5 untested</div>
+        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Unresolved Gaps</strong>No gap report yet</div>
+        <div><strong>Areas</strong>0</div>
+      </div>
+      <div class="source-links">
+        <a href="repos/geekjourneyx--md2wechat-skill.html">Open detail</a>
+        <a href="../repos/geekjourneyx--md2wechat-skill/repo.yaml">repo.yaml</a>
+      </div>
+    </article>
+<article class="panel repo-card attention-low" data-role="repo-card"
+      data-search="zinan92--intel intel intel zinan92 api-service reusable evaluated"
+      data-bucket="reusable"
+      data-confidence="unknown">
+      <header>
+        <div>
+          <h3><a href="repos/zinan92--intel.html">intel</a></h3>
+          <p class="muted small">zinan92/intel · service · api-service</p>
+        </div>
+        <div><span class="badge bucket-reusable">bucket: reusable</span></div>
+      </header>
+      <div class="meta-row">
+        <span class="badge layer-molecule">layer: molecule</span>
+        <span class="badge prov-full">provenance: full</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="badge bucket-usable">status: evaluated</span>
+      </div>
+      <p>Fresh live eval on 2026-04-09 shows the repo is a real working service, not a demo shell. A clean local clone installed successfully, the scheduler started, core sources populated data without optional credentials, and the API returned real structured responses. After `frontend`…</p>
+      <div class="headline">No committed re-eval diff yet.</div>
+      <div class="kv">
+        <div><strong>Claims</strong>4 passed / 2 failed / 2 untested</div>
+        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Unresolved Gaps</strong>No gap report yet</div>
+        <div><strong>Areas</strong>0</div>
+      </div>
+      <div class="source-links">
+        <a href="repos/zinan92--intel.html">Open detail</a>
+        <a href="../repos/zinan92--intel/repo.yaml">repo.yaml</a>
+      </div>
+    </article>
+<article class="panel repo-card attention-low" data-role="repo-card"
+      data-search="oaker-io--wewrite wewrite wewrite oaker-io hybrid-skill usable evaluated"
+      data-bucket="usable"
+      data-confidence="unknown">
+      <header>
+        <div>
+          <h3><a href="repos/oaker-io--wewrite.html">wewrite</a></h3>
+          <p class="muted small">oaker-io/wewrite · skill · hybrid-skill</p>
+        </div>
+        <div><span class="badge bucket-usable">bucket: usable</span></div>
+      </header>
+      <div class="meta-row">
+        <span class="badge layer-atom">layer: atom</span>
+        <span class="badge prov-full">provenance: full</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="badge bucket-usable">status: evaluated</span>
+      </div>
+      <p></p>
+      <div class="headline">No committed re-eval diff yet.</div>
+      <div class="kv">
+        <div><strong>Claims</strong>10 passed / 1 failed / 2 untested</div>
+        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Unresolved Gaps</strong>No gap report yet</div>
+        <div><strong>Areas</strong>0</div>
+      </div>
+      <div class="source-links">
+        <a href="repos/oaker-io--wewrite.html">Open detail</a>
+        <a href="../repos/oaker-io--wewrite/repo.yaml">repo.yaml</a>
       </div>
     </article></section>
 

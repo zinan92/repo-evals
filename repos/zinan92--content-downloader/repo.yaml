@@ -4,6 +4,9 @@ display_name: content-downloader
 repo_url: https://github.com/zinan92/content-downloader
 repo_type: skill
 archetype: adapter
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Routes across multiple platforms with internal logic — molecule, not atom.
+layer: molecule
 complexity: medium
 uses_areas: false
 status: evaluated

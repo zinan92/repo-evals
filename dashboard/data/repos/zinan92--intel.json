@@ -1,0 +1,53 @@
+{
+  "slug": "zinan92--intel",
+  "display_name": "intel",
+  "owner": "zinan92",
+  "repo": "intel",
+  "repo_url": "https://github.com/zinan92/intel",
+  "repo_type": "service",
+  "archetype": "api-service",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "reusable",
+  "uses_areas": false,
+  "notes_excerpt": "Fresh live eval on 2026-04-09 shows the repo is a real working service, not a demo shell. A clean local clone installed successfully, the scheduler started, core sources populated data without optional credentials, and the API returned real structured responses. After `frontend`…",
+  "repo_path": "repos/zinan92--intel",
+  "claims_summary": {
+    "total": 8,
+    "passed": 4,
+    "failed": 2,
+    "untested": 2,
+    "critical_total": 3,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 0,
+    "high_total": 3
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "full",
+    "counts": {
+      "full": 1,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": {
+    "counts": {
+      "total": 0,
+      "critical": 0,
+      "warning": 0,
+      "info": 0
+    },
+    "critical_items": [],
+    "warning_items": [],
+    "info_items": [],
+    "path": "repos/zinan92--intel/gap-reports/2026-04-09-gap-report.md"
+  },
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/zinan92--intel/plans/2026-04-09-eval-plan.md",
+  "verdict_path": "repos/zinan92--intel/verdicts/2026-04-09-final-verdict.md",
+  "attention_level": "low"
+}

@@ -6,6 +6,8 @@
   "repo_url": "https://github.com/zinan92/content-downloader",
   "repo_type": "skill",
   "archetype": "adapter",
+  "layer": "molecule",
+  "layer_inferred": "atom",
   "status": "evaluated",
   "current_bucket": "unusable",
   "uses_areas": false,

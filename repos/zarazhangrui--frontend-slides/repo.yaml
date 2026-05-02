@@ -4,6 +4,8 @@ display_name: frontend-slides
 repo_url: https://github.com/zarazhangrui/frontend-slides
 repo_type: skill
 archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+layer: molecule
 complexity: medium
 uses_areas: false
 status: evaluated

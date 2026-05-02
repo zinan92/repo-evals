@@ -1,0 +1,15 @@
+owner: geekjourneyx
+repo: md2wechat-skill
+display_name: md2wechat-skill
+repo_url: https://github.com/geekjourneyx/md2wechat-skill
+repo_type: skill
+# Archetype drives scaffolding and verdict-calculator ceiling rules.
+# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
+archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+layer: atom
+complexity: simple
+uses_areas: false
+status: evaluated
+current_bucket: reusable
+notes: ""

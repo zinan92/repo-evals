@@ -6,6 +6,8 @@
   "repo_url": "https://github.com/zarazhangrui/frontend-slides",
   "repo_type": "skill",
   "archetype": "hybrid-skill",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
   "status": "evaluated",
   "current_bucket": "usable",
   "uses_areas": false,

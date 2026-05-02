@@ -22,6 +22,8 @@ try:
 except ImportError:  # pragma: no cover
     raise SystemExit("generate_dashboard.py: PyYAML required")
 
+import layers as layers_mod  # noqa: E402  — local module under scripts/
+
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 REPOS_DIR = ROOT / "repos"
@@ -250,6 +252,69 @@ a:hover { text-decoration: underline; }
 .badge.conf-high, .badge.prov-full { background: var(--success-soft); color: var(--success); border-color: rgba(40, 108, 73, 0.18); }
 .badge.conf-medium, .badge.prov-partial { background: var(--warning-soft); color: var(--warning); border-color: rgba(179, 107, 0, 0.18); }
 .badge.conf-low, .badge.conf-unknown, .badge.prov-missing { background: var(--danger-soft); color: var(--danger); border-color: rgba(161, 61, 48, 0.18); }
+
+.badge.layer-atom { background: var(--accent-soft); color: var(--accent); border-color: rgba(13, 107, 100, 0.18); }
+.badge.layer-molecule { background: #efe2ff; color: #5a3aa1; border-color: rgba(90, 58, 161, 0.18); }
+.badge.layer-compound { background: #ffe6df; color: #a13d30; border-color: rgba(161, 61, 48, 0.18); }
+.badge.layer-unknown { background: var(--panel-strong); color: var(--muted); border-color: var(--line); }
+
+.layer-stack {
+  display: grid;
+  gap: 16px;
+}
+.layer-level {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px 20px;
+  background: var(--panel-strong);
+}
+.layer-level h3 {
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.layer-level .level-tag {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.layer-level p.level-desc {
+  margin: 4px 0 12px 0;
+  color: var(--muted);
+}
+.dim-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.dim-table th, .dim-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-top: 1px solid var(--line);
+  vertical-align: top;
+}
+.dim-table th { width: 30%; font-weight: 600; color: var(--ink); }
+.dim-table td { color: var(--muted); }
+
+.experiment {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: var(--panel);
+  margin-bottom: 14px;
+}
+.experiment h4 { margin: 0 0 8px 0; }
+.experiment blockquote {
+  margin: 8px 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--panel-strong);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 13px;
+  color: var(--ink);
+}
 
 .attention-high { border-color: rgba(161, 61, 48, 0.24); }
 .attention-medium { border-color: rgba(179, 107, 0, 0.24); }
@@ -558,6 +623,8 @@ def collect_repo_record(repo_dir: pathlib.Path) -> dict[str, Any]:
         "repo_url": repo_meta.get("repo_url"),
         "repo_type": repo_meta.get("repo_type", "skill"),
         "archetype": repo_meta.get("archetype", "unknown"),
+        "layer": layers_mod.normalise_layer(repo_meta.get("layer")),
+        "layer_inferred": layers_mod.default_layer_for_archetype(repo_meta.get("archetype")),
         "status": repo_meta.get("status", "unknown"),
         "current_bucket": repo_meta.get("current_bucket", "unknown"),
         "uses_areas": bool(repo_meta.get("uses_areas")),
@@ -638,6 +705,101 @@ def provenance_badge(level: str) -> str:
     return badge(f"provenance: {level}", f"prov-{level}")
 
 
+def layer_badge(layer: str) -> str:
+    layer = layers_mod.normalise_layer(layer)
+    return badge(f"layer: {layer}", f"layer-{layer}")
+
+
+LEVEL_TITLES = {
+    "atom": "Atom-level evals",
+    "molecule": "Molecule-level evals",
+    "compound": "Compound-level evals",
+}
+
+
+def render_layer_section(repo: dict[str, Any]) -> str:
+    """Render the layer-aware eval section for a repo's detail page."""
+
+    declared = layers_mod.normalise_layer(repo.get("layer"))
+    inferred = repo.get("layer_inferred") or "unknown"
+    effective = declared if declared != "unknown" else inferred
+    levels = layers_mod.applicable_levels(effective)
+
+    if not levels:
+        intro = (
+            "<p class=\"muted small\">No layer declared in <code>repo.yaml</code> "
+            "and the archetype heuristic produced no default. Add a "
+            "<code>layer:</code> field (one of <code>atom</code> / "
+            "<code>molecule</code> / <code>compound</code>) to surface "
+            "layer-aware eval guidance.</p>"
+        )
+        return f"<section class=\"panel\">{intro}</section>"
+
+    summary = layers_mod.layer_summary(effective)
+    declared_note = (
+        f"declared <strong>{html.escape(declared)}</strong>"
+        if declared != "unknown"
+        else f"inferred <strong>{html.escape(inferred)}</strong> from archetype "
+        f"<code>{html.escape(repo.get('archetype', 'unknown'))}</code>"
+    )
+    intro = (
+        f"<p class=\"muted small\">Layer: {declared_note}. {html.escape(summary)} "
+        "Higher layers must show evidence at every lower level too — see "
+        "<a href=\"../../docs/LAYERS.md\">docs/LAYERS.md</a>.</p>"
+    )
+
+    blocks: list[str] = []
+    for level in levels:
+        dimensions = layers_mod.dimensions_for_level(level)
+        rows = "".join(
+            f"<tr><th>{html.escape(d.key)}</th><td>{html.escape(d.question)}</td></tr>"
+            for d in dimensions
+        )
+        applies = "applies (this layer)" if level == effective else "applies (lower-level dependency)"
+        blocks.append(
+            f"<div class=\"layer-level\">"
+            f"<h3>{html.escape(LEVEL_TITLES[level])} <span class=\"level-tag\">{html.escape(applies)}</span></h3>"
+            f"<p class=\"level-desc\">{html.escape(layers_mod.layer_summary(level))}</p>"
+            f"<table class=\"dim-table\"><tbody>{rows}</tbody></table>"
+            f"</div>"
+        )
+
+    if effective == "compound":
+        experiments = layers_mod.experiments_for(
+            effective, repo.get("archetype")
+        )
+        exp_blocks: list[str] = []
+        for idx, exp in enumerate(experiments, start=1):
+            watch = "".join(f"<li>{html.escape(item)}</li>" for item in exp.watch_for)
+            exp_blocks.append(
+                f"<div class=\"experiment\">"
+                f"<h4>Scenario {idx}: {html.escape(exp.title)}</h4>"
+                f"<div class=\"muted small\"><strong>System prompt / starting message:</strong></div>"
+                f"<blockquote>{html.escape(exp.system_prompt)}</blockquote>"
+                f"<div class=\"muted small\"><strong>What to watch for:</strong></div>"
+                f"<ul class=\"flag-list\">{watch}</ul>"
+                f"<div class=\"muted small\"><strong>Sub-molecules expected:</strong> "
+                f"{html.escape(exp.expected_sub_molecules)}</div>"
+                f"<div class=\"muted small\" style=\"margin-top:10px;\">"
+                f"<strong>Verdict log:</strong> record date · run · goal reached? · right sub-molecules? · notes "
+                f"in <code>repos/{html.escape(repo['slug'])}/runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md</code>."
+                f"</div>"
+                f"</div>"
+            )
+        blocks.append(
+            "<div class=\"layer-level\">"
+            "<h3>Compound experiments <span class=\"level-tag\">human-driven</span></h3>"
+            "<p class=\"level-desc\">The call graph is decided at runtime, so compound "
+            "eval is scenario-driven. Run each scenario, observe the behaviour, log a "
+            "verdict. Capture which sub-molecules actually got called — they each need "
+            "their own passing molecule-level eval.</p>"
+            + "".join(exp_blocks)
+            + "</div>"
+        )
+
+    return f"{intro}<div class=\"layer-stack\">{''.join(blocks)}</div>"
+
+
 def rel_source(detail: bool, path: str | None) -> str | None:
     if not path:
         return None
@@ -715,6 +877,7 @@ def render_repo_card(repo: dict[str, Any]) -> str:
         <div>{bucket_badge(repo.get("current_bucket", "unknown"))}</div>
       </header>
       <div class="meta-row">
+        {layer_badge(repo.get('layer', 'unknown'))}
         {provenance_badge((repo.get("runs_summary") or {}).get("provenance_quality", "missing"))}
         {confidence_badge(confidence)}
         <span class="badge bucket-usable">status: {html.escape(repo.get("status", "unknown"))}</span>
@@ -862,6 +1025,7 @@ def render_repo_html(repo: dict[str, Any]) -> str:
         {confidence_badge((diff.get("comparison_confidence") or {}).get("level", "unknown"))}
         <span class="chip">{html.escape(repo['owner'])}/{html.escape(repo['repo'])}</span>
         <span class="chip">{html.escape(repo['archetype'])}</span>
+        {layer_badge(repo.get('layer', 'unknown'))}
       </div>
     </section>
 
@@ -918,6 +1082,11 @@ def render_repo_html(repo: dict[str, Any]) -> str:
       <div class="stat-card"><h3>Regressed</h3><div class="stat-value">{(diff.get('summary') or {}).get('status_regressions', 0)}</div></div>
       <div class="stat-card"><h3>Newly failing</h3><div class="stat-value">{(diff.get('summary') or {}).get('status_newly_failing', 0)}</div></div>
       <div class="stat-card"><h3>Gap delta</h3><div class="stat-value">{(diff.get('summary') or {}).get('gaps_closed', 0)} closed / {(diff.get('summary') or {}).get('gaps_opened', 0)} opened</div></div>
+    </section>
+
+    <h2 class="section-title">Layer-aware evaluation</h2>
+    <section class="panel">
+      {render_layer_section(repo)}
     </section>
 
     <h2 class="section-title">Area drill-down</h2>

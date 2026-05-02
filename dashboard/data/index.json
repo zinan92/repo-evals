@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-04-08T19:30:03Z",
-  "generated_from_commit": "59b5b88",
+  "generated_at": "2026-05-02T14:13:13Z",
+  "generated_from_commit": "ebde34d",
   "repos": [
     {
       "slug": "zarazhangrui--frontend-slides",
@@ -10,6 +10,8 @@
       "repo_url": "https://github.com/zarazhangrui/frontend-slides",
       "repo_type": "skill",
       "archetype": "hybrid-skill",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
       "status": "evaluated",
       "current_bucket": "usable",
       "uses_areas": false,
@@ -123,6 +125,8 @@
       "repo_url": "https://github.com/zinan92/content-downloader",
       "repo_type": "skill",
       "archetype": "adapter",
+      "layer": "molecule",
+      "layer_inferred": "atom",
       "status": "evaluated",
       "current_bucket": "unusable",
       "uses_areas": false,
@@ -241,6 +245,8 @@
       "repo_url": "https://github.com/nicobailon/visual-explainer",
       "repo_type": "skill",
       "archetype": "hybrid-skill",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
       "status": "evaluated",
       "current_bucket": "usable",
       "uses_areas": false,
@@ -352,6 +358,8 @@
       "repo_url": "https://github.com/zinan92/content-extractor",
       "repo_type": "skill",
       "archetype": "hybrid-skill",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
       "status": "evaluated",
       "current_bucket": "usable",
       "uses_areas": false,
@@ -461,27 +469,29 @@
       "repo_url": "https://github.com/zinan92/content-toolkit",
       "repo_type": "orchestration",
       "archetype": "orchestrator",
-      "status": "planned",
-      "current_bucket": "unknown",
+      "layer": "compound",
+      "layer_inferred": "compound",
+      "status": "evaluated",
+      "current_bucket": "usable",
       "uses_areas": true,
       "notes_excerpt": "Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.",
       "repo_path": "repos/zinan92--content-toolkit",
       "claims_summary": {
-        "total": 3,
-        "passed": 0,
-        "failed": 0,
-        "untested": 3,
-        "critical_total": 2,
-        "critical_passed": 0,
+        "total": 16,
+        "passed": 12,
+        "failed": 3,
+        "untested": 1,
+        "critical_total": 5,
+        "critical_passed": 5,
         "critical_failed": 0,
-        "critical_untested": 2,
-        "high_total": 1
+        "critical_untested": 0,
+        "high_total": 8
       },
       "runs_summary": {
-        "count": 1,
-        "provenance_quality": "missing",
+        "count": 2,
+        "provenance_quality": "partial",
         "counts": {
-          "full": 0,
+          "full": 1,
           "partial": 0,
           "missing": 1
         }
@@ -569,25 +579,162 @@
           "claim_map_path": "repos/zinan92--content-toolkit/areas/orchestration/claims/claim-map.yaml"
         }
       ],
-      "plan_path": "repos/zinan92--content-toolkit/plans/2026-04-05-eval-plan.md",
-      "verdict_path": "repos/zinan92--content-toolkit/verdicts/2026-04-05-final-verdict.md",
+      "plan_path": "repos/zinan92--content-toolkit/plans/2026-04-13-eval-plan.md",
+      "verdict_path": "repos/zinan92--content-toolkit/verdicts/2026-04-13-final-verdict.md",
       "attention_level": "high"
+    },
+    {
+      "slug": "geekjourneyx--md2wechat-skill",
+      "display_name": "md2wechat-skill",
+      "owner": "geekjourneyx",
+      "repo": "md2wechat-skill",
+      "repo_url": "https://github.com/geekjourneyx/md2wechat-skill",
+      "repo_type": "skill",
+      "archetype": "hybrid-skill",
+      "layer": "atom",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "reusable",
+      "uses_areas": false,
+      "notes_excerpt": "",
+      "repo_path": "repos/geekjourneyx--md2wechat-skill",
+      "claims_summary": {
+        "total": 14,
+        "passed": 9,
+        "failed": 0,
+        "untested": 5,
+        "critical_total": 7,
+        "critical_passed": 4,
+        "critical_failed": 0,
+        "critical_untested": 3,
+        "high_total": 6
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "full",
+        "counts": {
+          "full": 1,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/geekjourneyx--md2wechat-skill/plans/2026-04-13-eval-plan.md",
+      "verdict_path": "repos/geekjourneyx--md2wechat-skill/verdicts/2026-04-13-final-verdict.md",
+      "attention_level": "low"
+    },
+    {
+      "slug": "zinan92--intel",
+      "display_name": "intel",
+      "owner": "zinan92",
+      "repo": "intel",
+      "repo_url": "https://github.com/zinan92/intel",
+      "repo_type": "service",
+      "archetype": "api-service",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "reusable",
+      "uses_areas": false,
+      "notes_excerpt": "Fresh live eval on 2026-04-09 shows the repo is a real working service, not a demo shell. A clean local clone installed successfully, the scheduler started, core sources populated data without optional credentials, and the API returned real structured responses. After `frontend`…",
+      "repo_path": "repos/zinan92--intel",
+      "claims_summary": {
+        "total": 8,
+        "passed": 4,
+        "failed": 2,
+        "untested": 2,
+        "critical_total": 3,
+        "critical_passed": 3,
+        "critical_failed": 0,
+        "critical_untested": 0,
+        "high_total": 3
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "full",
+        "counts": {
+          "full": 1,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": {
+        "counts": {
+          "total": 0,
+          "critical": 0,
+          "warning": 0,
+          "info": 0
+        },
+        "critical_items": [],
+        "warning_items": [],
+        "info_items": [],
+        "path": "repos/zinan92--intel/gap-reports/2026-04-09-gap-report.md"
+      },
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/zinan92--intel/plans/2026-04-09-eval-plan.md",
+      "verdict_path": "repos/zinan92--intel/verdicts/2026-04-09-final-verdict.md",
+      "attention_level": "low"
+    },
+    {
+      "slug": "oaker-io--wewrite",
+      "display_name": "wewrite",
+      "owner": "oaker-io",
+      "repo": "wewrite",
+      "repo_url": "https://github.com/oaker-io/wewrite",
+      "repo_type": "skill",
+      "archetype": "hybrid-skill",
+      "layer": "atom",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "",
+      "repo_path": "repos/oaker-io--wewrite",
+      "claims_summary": {
+        "total": 13,
+        "passed": 10,
+        "failed": 1,
+        "untested": 2,
+        "critical_total": 6,
+        "critical_passed": 4,
+        "critical_failed": 0,
+        "critical_untested": 2,
+        "high_total": 4
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "full",
+        "counts": {
+          "full": 1,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/oaker-io--wewrite/plans/2026-04-13-eval-plan.md",
+      "verdict_path": "repos/oaker-io--wewrite/verdicts/2026-04-13-final-verdict.md",
+      "attention_level": "low"
     }
   ],
   "stats": {
-    "repo_count": 5,
-    "evaluated_count": 4,
-    "planned_count": 1,
+    "repo_count": 8,
+    "evaluated_count": 8,
+    "planned_count": 0,
     "critical_gap_total": 19,
     "warning_gap_total": 3,
-    "full_provenance_repos": 1,
+    "full_provenance_repos": 4,
     "medium_or_low_confidence_diffs": 4,
     "bucket_counts": {
       "recommendable": 0,
-      "reusable": 0,
-      "usable": 3,
+      "reusable": 2,
+      "usable": 5,
       "unusable": 1,
-      "unknown": 1
+      "unknown": 0
     }
   }
 }

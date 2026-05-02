@@ -1,0 +1,42 @@
+{
+  "slug": "oaker-io--wewrite",
+  "display_name": "wewrite",
+  "owner": "oaker-io",
+  "repo": "wewrite",
+  "repo_url": "https://github.com/oaker-io/wewrite",
+  "repo_type": "skill",
+  "archetype": "hybrid-skill",
+  "layer": "atom",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "",
+  "repo_path": "repos/oaker-io--wewrite",
+  "claims_summary": {
+    "total": 13,
+    "passed": 10,
+    "failed": 1,
+    "untested": 2,
+    "critical_total": 6,
+    "critical_passed": 4,
+    "critical_failed": 0,
+    "critical_untested": 2,
+    "high_total": 4
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "full",
+    "counts": {
+      "full": 1,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/oaker-io--wewrite/plans/2026-04-13-eval-plan.md",
+  "verdict_path": "repos/oaker-io--wewrite/verdicts/2026-04-13-final-verdict.md",
+  "attention_level": "low"
+}
