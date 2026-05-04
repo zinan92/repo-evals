@@ -1,0 +1,51 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: Jamailar
+  repo: RedBox
+  release_tag: v1.11.0
+  desktop_package_version: "1.9.0"  # mismatch w/ release tag, see business-notes
+  extension_manifest_version: "1.9.7"
+  source_commit: main (HEAD at run time, not pinned)
+
+scope: |
+  Static-checkable claims only — release assets, browser-extension manifest,
+  desktop package.json. Compound claims (claim-004..007) deferred to
+  user-driven scenarios; see compound experiments in dashboard.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "all 7 release assets resolve (HTTP 302 → S3); sizes 14–24 MB"
+  - id: claim-002
+    status: passed_with_concerns
+    note: "9/10 README platforms covered; YouTube missing from host_permissions despite manifest description listing it"
+  - id: claim-003
+    status: passed
+    note: "@ai-sdk/anthropic + @ai-sdk/openai + @ai-sdk/openai-compatible + @google/genai + ai v6 all present; Electron 39.6.0"
+
+claims_deferred:
+  - claim-004  # end-to-end creation flow — needs install + provider key
+  - claim-005  # RedClaw single-session autonomy — compound scenario
+  - claim-006  # background scheduling — compound scenario
+  - claim-007  # user-friendly failure modes — compound scenario
+
+artifacts:
+  - artifacts/release-v1.11.0.json
+  - artifacts/manifest.json
+  - artifacts/desktop-package.json
+
+logs:
+  - logs/release-assets.tsv
+  - logs/host-permissions.txt
+  - logs/platform-coverage.txt
+  - logs/ai-deps.txt
+
+provenance:
+  data_sources:
+    - "gh api repos/Jamailar/RedBox/releases (response captured 2026-05-04)"
+    - "raw.githubusercontent.com/Jamailar/RedBox/main/Plugin/manifest.json"
+    - "raw.githubusercontent.com/Jamailar/RedBox/main/desktop/package.json"
+  network_dependent: true
+  reproducible: "yes — re-run scripts/run-static-checks.sh (not yet authored) or follow plan §evidence"

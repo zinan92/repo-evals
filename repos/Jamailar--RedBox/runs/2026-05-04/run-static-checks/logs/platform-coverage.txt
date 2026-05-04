@@ -1,0 +1,15 @@
+=== Cross-check: README platforms vs manifest host_permissions ===
+
+  xiaohongshu: 3 host_permission entries
+  rednote: 2 host_permission entries
+  douyin: 1 host_permission entry
+  kuaishou: 2 host_permission entries
+  tiktok: 1 host_permission entry
+  bilibili: 3 host_permission entries
+  reddit: 3 host_permission entries
+  x.com: 3 host_permission entries
+  twitter: 3 host_permission entries
+  instagram: 2 host_permission entries
+
+=== Note ===
+README also claims YouTube capture, but no youtube.com in host_permissions.

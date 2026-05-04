@@ -1,0 +1,32 @@
+owner: Jamailar
+repo: RedBox
+display_name: RedBox
+repo_url: https://github.com/Jamailar/RedBox
+repo_type: application
+# Archetype drives scaffolding and verdict-calculator ceiling rules.
+# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
+archetype: orchestrator
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# RedClaw automation console runs LLM-driven multi-step tasks; the call
+# graph is decided at runtime — compound, not molecule.
+layer: compound
+complexity: complex
+uses_areas: false  # claim map covers areas inline; areas/ scaffold left empty
+status: evaluated
+current_bucket: usable
+notes: |
+  Electron desktop AI workspace for Xiaohongshu (小红书) creators. Ships as
+  signed DMG / EXE / DEB installers (v1.11.0 at scaffold time). Bundles a
+  built-in browser, local knowledge base + retrieval, multi-workspace
+  editor, RedClaw automation console (LLM-driven), image generation, and
+  scheduled background execution. Source layout: desktop/ (Electron),
+  Plugin/ (browser extension), RedBoxweb/ (marketing site).
+
+  Compound-layer eval: the call graph for a RedClaw run is decided at
+  runtime by the LLM, so eval is scenario-driven. Each scenario asks the
+  user to install the binary, configure an endpoint/key/model, and log
+  what they observe.
+
+  Source-readable claims (browser-extension manifest, Electron entry,
+  README install steps) can be evaluated statically; the AI workspace
+  flows require a real install + provider key.

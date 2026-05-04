@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-02T14:16:18Z",
-  "generated_from_commit": "23e9de4",
+  "generated_at": "2026-05-04T03:12:40Z",
+  "generated_from_commit": "cee2351",
   "repos": [
     {
       "slug": "zarazhangrui--frontend-slides",
@@ -477,21 +477,21 @@
       "notes_excerpt": "Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.",
       "repo_path": "repos/zinan92--content-toolkit",
       "claims_summary": {
-        "total": 3,
-        "passed": 0,
-        "failed": 0,
-        "untested": 3,
-        "critical_total": 2,
-        "critical_passed": 0,
+        "total": 16,
+        "passed": 12,
+        "failed": 3,
+        "untested": 1,
+        "critical_total": 5,
+        "critical_passed": 5,
         "critical_failed": 0,
-        "critical_untested": 2,
-        "high_total": 1
+        "critical_untested": 0,
+        "high_total": 8
       },
       "runs_summary": {
-        "count": 1,
-        "provenance_quality": "missing",
+        "count": 2,
+        "provenance_quality": "partial",
         "counts": {
-          "full": 0,
+          "full": 1,
           "partial": 0,
           "missing": 1
         }
@@ -579,9 +579,51 @@
           "claim_map_path": "repos/zinan92--content-toolkit/areas/orchestration/claims/claim-map.yaml"
         }
       ],
-      "plan_path": "repos/zinan92--content-toolkit/plans/2026-04-05-eval-plan.md",
-      "verdict_path": "repos/zinan92--content-toolkit/verdicts/2026-04-05-final-verdict.md",
+      "plan_path": "repos/zinan92--content-toolkit/plans/2026-04-13-eval-plan.md",
+      "verdict_path": "repos/zinan92--content-toolkit/verdicts/2026-04-13-final-verdict.md",
       "attention_level": "high"
+    },
+    {
+      "slug": "Jamailar--RedBox",
+      "display_name": "RedBox",
+      "owner": "Jamailar",
+      "repo": "RedBox",
+      "repo_url": "https://github.com/Jamailar/RedBox",
+      "repo_type": "application",
+      "archetype": "orchestrator",
+      "layer": "compound",
+      "layer_inferred": "compound",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Electron desktop AI workspace for Xiaohongshu (小红书) creators. Ships as signed DMG / EXE / DEB installers (v1.11.0 at scaffold time). Bundles a built-in browser, local knowledge base + retrieval, multi-workspace editor, RedClaw automation console (LLM-driven), image generation, a…",
+      "repo_path": "repos/Jamailar--RedBox",
+      "claims_summary": {
+        "total": 7,
+        "passed": 3,
+        "failed": 0,
+        "untested": 4,
+        "critical_total": 5,
+        "critical_passed": 3,
+        "critical_failed": 0,
+        "critical_untested": 2,
+        "high_total": 2
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/Jamailar--RedBox/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/Jamailar--RedBox/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
     },
     {
       "slug": "geekjourneyx--md2wechat-skill",
@@ -599,21 +641,21 @@
       "notes_excerpt": "",
       "repo_path": "repos/geekjourneyx--md2wechat-skill",
       "claims_summary": {
-        "total": 0,
-        "passed": 0,
+        "total": 14,
+        "passed": 9,
         "failed": 0,
-        "untested": 0,
-        "critical_total": 0,
-        "critical_passed": 0,
+        "untested": 5,
+        "critical_total": 7,
+        "critical_passed": 4,
         "critical_failed": 0,
-        "critical_untested": 0,
-        "high_total": 0
+        "critical_untested": 3,
+        "high_total": 6
       },
       "runs_summary": {
-        "count": 0,
-        "provenance_quality": "missing",
+        "count": 1,
+        "provenance_quality": "full",
         "counts": {
-          "full": 0,
+          "full": 1,
           "partial": 0,
           "missing": 0
         }
@@ -621,51 +663,9 @@
       "latest_gap_report": null,
       "latest_diff": null,
       "areas": [],
-      "plan_path": null,
-      "verdict_path": null,
-      "attention_level": "medium"
-    },
-    {
-      "slug": "oaker-io--wewrite",
-      "display_name": "wewrite",
-      "owner": "oaker-io",
-      "repo": "wewrite",
-      "repo_url": "https://github.com/oaker-io/wewrite",
-      "repo_type": "skill",
-      "archetype": "hybrid-skill",
-      "layer": "atom",
-      "layer_inferred": "molecule",
-      "status": "evaluated",
-      "current_bucket": "usable",
-      "uses_areas": false,
-      "notes_excerpt": "",
-      "repo_path": "repos/oaker-io--wewrite",
-      "claims_summary": {
-        "total": 0,
-        "passed": 0,
-        "failed": 0,
-        "untested": 0,
-        "critical_total": 0,
-        "critical_passed": 0,
-        "critical_failed": 0,
-        "critical_untested": 0,
-        "high_total": 0
-      },
-      "runs_summary": {
-        "count": 0,
-        "provenance_quality": "missing",
-        "counts": {
-          "full": 0,
-          "partial": 0,
-          "missing": 0
-        }
-      },
-      "latest_gap_report": null,
-      "latest_diff": null,
-      "areas": [],
-      "plan_path": null,
-      "verdict_path": null,
-      "attention_level": "medium"
+      "plan_path": "repos/geekjourneyx--md2wechat-skill/plans/2026-04-13-eval-plan.md",
+      "verdict_path": "repos/geekjourneyx--md2wechat-skill/verdicts/2026-04-13-final-verdict.md",
+      "attention_level": "low"
     },
     {
       "slug": "zinan92--intel",
@@ -769,6 +769,48 @@
       "attention_level": "low"
     },
     {
+      "slug": "oaker-io--wewrite",
+      "display_name": "wewrite",
+      "owner": "oaker-io",
+      "repo": "wewrite",
+      "repo_url": "https://github.com/oaker-io/wewrite",
+      "repo_type": "skill",
+      "archetype": "hybrid-skill",
+      "layer": "atom",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "",
+      "repo_path": "repos/oaker-io--wewrite",
+      "claims_summary": {
+        "total": 13,
+        "passed": 10,
+        "failed": 1,
+        "untested": 2,
+        "critical_total": 6,
+        "critical_passed": 4,
+        "critical_failed": 0,
+        "critical_untested": 2,
+        "high_total": 4
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "full",
+        "counts": {
+          "full": 1,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/oaker-io--wewrite/plans/2026-04-13-eval-plan.md",
+      "verdict_path": "repos/oaker-io--wewrite/verdicts/2026-04-13-final-verdict.md",
+      "attention_level": "low"
+    },
+    {
       "slug": "op7418--Humanizer-zh",
       "display_name": "Humanizer-zh",
       "owner": "op7418",
@@ -818,17 +860,17 @@
     }
   ],
   "stats": {
-    "repo_count": 10,
-    "evaluated_count": 10,
+    "repo_count": 11,
+    "evaluated_count": 11,
     "planned_count": 0,
     "critical_gap_total": 19,
     "warning_gap_total": 3,
-    "full_provenance_repos": 4,
+    "full_provenance_repos": 6,
     "medium_or_low_confidence_diffs": 4,
     "bucket_counts": {
       "recommendable": 0,
       "reusable": 2,
-      "usable": 7,
+      "usable": 8,
       "unusable": 1,
       "unknown": 0
     }

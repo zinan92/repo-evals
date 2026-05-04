@@ -1,0 +1,135 @@
+# RedBox claim map (orchestrator archetype, compound layer).
+#
+# README sources used for this scaffold:
+#   - https://raw.githubusercontent.com/Jamailar/RedBox/main/readme_en.md
+#   - https://raw.githubusercontent.com/Jamailar/RedBox/main/Plugin/manifest.json
+#   - https://raw.githubusercontent.com/Jamailar/RedBox/main/desktop/package.json
+#   - GitHub releases page (v1.11.0 at scaffold time)
+#
+# Static-checkable claims (release assets, manifest, source layout) are
+# auditable from this machine without installing the binary. Workspace
+# flows (RedClaw automation, KB retrieval, AI editor) are compound-layer
+# and need live human-driven scenarios — see compound experiments in the
+# dashboard.
+
+claims:
+  - id: claim-001
+    title: 跨平台安装包真实存在且版本一致
+    source: GitHub Releases
+    source_ref: "v1.11.0 release page"
+    priority: critical
+    area: distribution
+    statement: |
+      最新 release (v1.11.0) 提供 macOS aarch64/x64 DMG、Windows x64/x86/arm64
+      安装程序、Linux amd64 .deb，每个文件都能下载且体积 > 50 MB（说明不是
+      占位），DMG/EXE 通过签名校验或不弹危险警告。
+    business_expectation: |
+      新用户照 README 点 release 链接就能装上能用的应用，不需要从源码 build。
+    evidence_needed: |
+      `gh api repos/Jamailar/RedBox/releases | jq` 输出 + 至少一个平台的真实
+      下载和打开校验。
+    status: passed
+    last_run: runs/2026-05-04/run-static-checks
+    note: "all 7 release assets resolve (HTTP 302 → S3); sizes 14–24 MB"
+
+  - id: claim-002
+    title: 浏览器插件 manifest 与 README 抓取范围声明一致
+    source: Plugin/manifest.json
+    source_ref: "host_permissions + content_scripts"
+    priority: critical
+    area: browser-capture
+    statement: |
+      README 声称插件可以抓取小红书、抖音、Bilibili、快手、TikTok、Reddit、X、
+      Instagram、YouTube。manifest.json 的 host_permissions 必须实际覆盖这些
+      站点的域名 + 子域名，并且 content_scripts 在小红书域上注入了 xhsBridge.js。
+    business_expectation: |
+      用户装上插件去这些站点就能用 capture，不会因为权限缺失而静默失败。
+    evidence_needed: |
+      manifest.json 内容 + 与 README 平台清单的对照表。
+    status: passed_with_concerns
+    last_run: runs/2026-05-04/run-static-checks
+    note: "9/10 platforms covered; YouTube missing from host_permissions despite manifest description listing it"
+
+  - id: claim-003
+    title: 桌面端走 Vercel AI SDK，支持自定义 endpoint/key/model
+    source: desktop/package.json + README Settings
+    source_ref: "@ai-sdk/anthropic, @ai-sdk/openai, @google/genai"
+    priority: critical
+    area: ai-providers
+    statement: |
+      桌面端依赖 Vercel `ai` v6 + 三家 SDK（Anthropic / OpenAI / Google）。
+      README 声称用户在 Settings 里配置 endpoint + API key + model 即可，
+      不绑死单一家。
+    business_expectation: |
+      用户用自己已有的 key 就能跑，不需要 RedBox 托管 LLM 凭据。
+    evidence_needed: |
+      package.json 依赖列表 + Settings 截图 / 配置文件路径 + 实际用一个
+      provider 跑通一次模型调用。
+    status: passed
+    last_run: runs/2026-05-04/run-static-checks
+    note: "Vercel ai v6 + Anthropic + OpenAI + openai-compatible + Google all present; Electron 39.6.0"
+
+  - id: claim-004
+    title: 端到端创作流程：捕获 → 知识库 → 编辑器 → 配图
+    source: README "项目概览" + "核心功能"
+    source_ref: "Browser → Capture → Knowledge Base → Editor"
+    priority: critical
+    area: end-to-end
+    statement: |
+      装好桌面端 + 插件并配置 provider 后，用户可以从内置浏览器抓一篇文章 →
+      它进入本地知识库 → 在 AI 编辑器里产出一篇稿件 → 媒体库生成配图，整条流水
+      不丢内容、不需要在 app 之外手动倒数据。
+    business_expectation: |
+      README 里展示的"创作工作台"承诺真实可达。
+    evidence_needed: |
+      用户驱动的场景实验（compound 层）：日期、起始内容、最终产物截图、是否需要
+      手动救火。详见 dashboard 的 compound 场景模板。
+    status: untested
+
+  - id: claim-005
+    title: RedClaw 自动化能在单 session 内独立完成任务
+    source: README "核心功能"
+    source_ref: "RedClaw automation console for single-session task execution"
+    priority: critical
+    area: redclaw-automation
+    statement: |
+      RedClaw 控制台接到一个目标后，能在单个 session 内自主调度多步操作并交付
+      产物，不要求用户中途反复 prompt。失败时给出可读理由而不是无声卡住。
+    business_expectation: |
+      "AI 工作台"中真正自动化的部分确实是自动化的。
+    evidence_needed: |
+      compound 层场景：给定一个真实任务（如"把昨天捕获的 3 篇笔记汇总成一篇
+      推荐稿"），观察 RedClaw 是否完成、调用了什么、何时找人。
+    status: untested
+
+  - id: claim-006
+    title: 后台调度任务确实持续运行
+    source: README
+    source_ref: "Scheduled and long-running background execution"
+    priority: high
+    area: scheduling
+    statement: |
+      用户配置一个定时 / 后台任务后，关闭主窗口 / 让 app 进入后台依然能按时
+      执行；意外退出后重启可恢复，未完成任务不静默丢失。
+    business_expectation: |
+      "持续后台运行"不是营销词。
+    evidence_needed: |
+      compound 层场景：起一个 5 分钟后触发的定时任务，关闭窗口，验证按时执行
+      + 重启 app 后查询任务历史。
+    status: untested
+
+  - id: claim-007
+    title: 失败模式对用户友好（API key 缺失 / 模型不可达 / 抓取站点改版）
+    source: framework
+    source_ref: "error propagation + partial failure"
+    priority: high
+    area: error-propagation
+    statement: |
+      三种典型失败：(a) endpoint/key 错误 (b) 模型调用 timeout / 拒绝 (c) 抓取
+      目标站点 DOM 改版 — 都应在 UI 上明确报错并指出修复方向，不应输出空白
+      产物冒充成功。
+    business_expectation: |
+      非技术用户能照错误提示自救，不需要看日志。
+    evidence_needed: |
+      compound 场景下故意制造每种失败 + 截图错误展示。
+    status: untested

@@ -1,0 +1,6 @@
+@ai-sdk/anthropic=^3.0.18
+@ai-sdk/openai=^3.0.14
+@ai-sdk/openai-compatible=^2.0.16
+@google/genai=^1.45.0
+ai=^6.0.45
+openai=^6.26.0

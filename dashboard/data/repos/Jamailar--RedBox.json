@@ -1,0 +1,42 @@
+{
+  "slug": "Jamailar--RedBox",
+  "display_name": "RedBox",
+  "owner": "Jamailar",
+  "repo": "RedBox",
+  "repo_url": "https://github.com/Jamailar/RedBox",
+  "repo_type": "application",
+  "archetype": "orchestrator",
+  "layer": "compound",
+  "layer_inferred": "compound",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "Electron desktop AI workspace for Xiaohongshu (小红书) creators. Ships as signed DMG / EXE / DEB installers (v1.11.0 at scaffold time). Bundles a built-in browser, local knowledge base + retrieval, multi-workspace editor, RedClaw automation console (LLM-driven), image generation, a…",
+  "repo_path": "repos/Jamailar--RedBox",
+  "claims_summary": {
+    "total": 7,
+    "passed": 3,
+    "failed": 0,
+    "untested": 4,
+    "critical_total": 5,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 2,
+    "high_total": 2
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/Jamailar--RedBox/plans/2026-05-04-eval-plan.md",
+  "verdict_path": "repos/Jamailar--RedBox/verdicts/2026-05-04-final-verdict.md",
+  "attention_level": "medium"
+}
