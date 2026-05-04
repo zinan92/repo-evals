@@ -1,0 +1,38 @@
+=== claim-001 install.sh shape ===
+REPO_URL="${TRADECAT_INSTALL_REPO:-https://github.com/tukuaiai/tradecat.git}"
+BRANCH="${TRADECAT_INSTALL_BRANCH:-develop}"
+APP_DIR="${TRADECAT_INSTALL_DIR:-$HOME/.tradecat/app}"
+BIN_DIR="${TRADECAT_BIN_DIR:-$HOME/.local/bin}"
+PYTHON_VERSION="${TRADECAT_PYTHON_VERSION:-3.12}"
+APP_DIR="$APP_DIR"
+BRANCH="$BRANCH"
+
+2
+  ↑ skip-flag references
+
+=== claim-002 datasets active+mode ===
+market_snapshot active=true mode=snapshot gid=1904613219
+anomaly_panel active=true mode=snapshot gid=1915220137
+market_stats active=true mode=snapshot gid=1161752788
+event_stream active=true mode=stream gid=1419246950
+
+=== claim-003 python version consistency ===
+install.sh PYTHON_VERSION = PYTHON_VERSION="${TRADECAT_PYTHON_VERSION:-3.12}"
+pyproject requires-python = requires-python = ">=3.12"
+[project.scripts]:
+tradecat-terminal = "tradecat_terminal.cli:main"
+tcat = "tradecat_terminal.cli:main"
+
+
+=== claim-004 request.py exists + uses registry ===
+size:     7468 bytes
+5
+  ↑ registry+CLI surface mentions
+
+=== claim-005 TUI fallback signals ===
+22
+  ↑ env vars + plain mentions in tui.py
+
+=== claim-006 auto-update env vars in install.sh ===
+8
+  ↑ auto-update env-var mentions in install.sh

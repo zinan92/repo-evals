@@ -1,0 +1,158 @@
+claims:
+- id: claim-001
+  title: skills-index.json 与文档承诺的 skill 总数对齐
+  source: README + skills-index.json
+  source_ref: skills-index.json::skills
+  priority: critical
+  area: catalog-coverage
+  statement: 'README 头部声明 "Skills (108)"。skills-index.json 必须存在、被 generate 出来，
+
+    并且 skill 总数 ≥ README 数字。如果 ≠，要明确是 README 过时还是 index 缺漏。
+
+    '
+  business_expectation: '用户在文档里看到的 skill 数 ≥ 实际目录里的 skill 数 → 不会"想用的 skill 找不到"。
+
+    '
+  evidence_needed: 'skills-index.json 顶层字段 + skill 数 + README 头部对照。
+
+    '
+  status: passed_with_concerns
+  last_run: runs/2026-05-04/run-static-checks
+  note: skills-index has 204; README headline still says 108
+- id: claim-002
+  title: capabilities / composites / playbooks 三大类都真实存在且非空
+  source: README "51 Capabilities · 52 Composites · 5 Playbooks"
+  source_ref: skills-index.json::skills[].category
+  priority: critical
+  area: taxonomy
+  statement: 'README 把 skill 分为 Capabilities / Composites / Playbooks 三类。
+
+    skills-index.json 的 .skills[].category 必须真的有这三个值，每一类都有 ≥1 个
+
+    skill。可以多于 README（README 描述滞后），不能少于 README（虚假承诺）。
+
+    '
+  business_expectation: '用户按文档描述的三层分类去检索 skill，每一层都能命中。
+
+    '
+  evidence_needed: 'skills-index.json group-by category 统计 + 与 README 三个数字对照。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 143 capabilities + 56 composites + 5 playbooks, all non-empty
+- id: claim-003
+  title: 每个 skill 都遵循统一的元数据契约
+  source: README "Skill Metadata Contract" 段
+  source_ref: skill.meta.json + SKILL.md
+  priority: high
+  area: contract
+  statement: '抽样若干 skill：每个都至少有 SKILL.md + skill.meta.json 两个文件，metadata
+
+    包含 slug / category / installation.{base_command,supports} 字段，
+
+    installation.supports 数组 ⊇ {claude, cursor, codex}（README 承诺三家都支持）。
+
+    '
+  business_expectation: '用户用同一种方式装任意 skill，不会某个 skill 缺契约导致装失败。
+
+    '
+  evidence_needed: 'skills-index.json 中 .skills[0..N] 的 metadata 字段 + 任意一个真实 skill
+    的目录列表。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: Sampled 3 skills — uniform metadata shape with installation contract
+- id: claim-004
+  title: npm 包真实可装，bin 入口存在
+  source: README "Quick Start" + package.json
+  source_ref: package.json::bin
+  priority: critical
+  area: install
+  statement: '`npx gooseworks install --claude/--cursor/--codex/--all` 是 README 头一条命令。
+
+    npm 包 `goose-skills` 必须在 npm registry 真实存在；package.json 必须声明
+
+    bin 入口（指向真实存在的脚本文件，比如 ./bin/goose-skills.js）。
+
+    '
+  business_expectation: '用户照 README 第一条命令一次到位，不会"npm 包不存在"。
+
+    '
+  evidence_needed: 'package.json::bin + bin 文件存在性 + npm registry 上的最新版本。
+
+    '
+  status: passed_with_concerns
+  last_run: runs/2026-05-04/run-static-checks
+  note: bin/goose-skills.js exists (12.5 KB); npm@1.1.0 ahead of repo@1.0.1
+- id: claim-005
+  title: skill packs（如 lead-gen-devtools）确实是多 skill 集合
+  source: skills-index.json::packs
+  source_ref: skills-index.json::packs[]
+  priority: high
+  area: composition
+  statement: 'skills-index.json 顶层有 `packs` 数组。至少一个 pack（比如 lead-gen-devtools）
+
+    内部 skills 数量 ≥ 文档描述（README 文案 "7-skill lead generation toolkit"）。
+
+    pack 自带 shared_files (.env.example, requirements.txt) — 即用户拿到 pack
+
+    直接配置一次环境变量就能用。
+
+    '
+  business_expectation: 'Pack 不是包装宣传，是真正的 multi-skill 协作单元。
+
+    '
+  evidence_needed: 'packs 数组结构 + 内部 skills 数 + shared_files 路径真实存在。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 2 real packs; lead-gen-devtools=7 matches README exactly
+- id: claim-006
+  title: 每个 skill 在 Claude Code / Cursor / Codex 三家都能调起
+  source: README "Works with Claude Code · Cursor · Codex"
+  source_ref: skill.meta.json::installation.supports
+  priority: critical
+  area: cross-platform
+  statement: '抽样 skill 的 metadata.installation.supports 数组同时包含 ["claude", "cursor",
+
+    "codex"]。如果某些 skill 仅支持一家，README 没有提及"部分 skill 限定平台"，
+
+    就是宣传不准确。
+
+    '
+  business_expectation: '用户在自己用的 agent 上能用任意 skill —— 不会装到一半发现不支持。
+
+    '
+  evidence_needed: 'skills-index.json 中 .skills[].metadata.installation.supports 统计。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: All 204 skills declare supports={claude,cursor,codex} (100% uniform)
+- id: claim-007
+  title: 端到端：在真实 agent 里装 + 调用 skill 能完成任务
+  source: README "Quick Start"
+  source_ref: gooseworks install 命令
+  priority: critical
+  area: end-to-end
+  statement: '`npx gooseworks install --claude` 在 Claude Code 装好后，asking the agent
+    to
+
+    run any skill 能实际在 session 内被引用、按 SKILL.md 完成任务、产出 README
+
+    宣传的产物（如 ad-angle-miner 抽出 ad angle 列表）。
+
+    '
+  business_expectation: 'Skill 不是 markdown 死文档，真的能驱动 agent 行为。
+
+    '
+  evidence_needed: 'molecule 级 — 需要真实 agent session。建议跑 1 个 capability + 1 个 composite
+    +
+
+    1 个 playbook 各一次，记下 session 的 token 用量、输出质量、是否触发外部 API。
+
+    '
+  status: untested

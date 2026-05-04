@@ -1,0 +1,45 @@
+owner: zarazhangrui
+repo: tab-out
+display_name: tab-out
+repo_url: https://github.com/zarazhangrui/tab-out
+repo_type: browser-extension
+archetype: adapter
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Single-purpose Chrome MV3 extension wrapping chrome.tabs API, no
+# internal multi-skill composition — atom.
+layer: atom
+complexity: simple
+uses_areas: false
+status: evaluated
+current_bucket: usable
+last_evaluated: "2026-05-04"
+version_tested: "main@HEAD (manifest 1.0.0)"
+notes: |
+  Chrome Manifest V3 extension that overrides the new-tab page with a
+  domain-grouped dashboard of currently-open tabs. Storage is
+  chrome.storage.local, sound is synthesized via Web Audio (no audio
+  files), animations are CSS + JS confetti. README headlines "100%
+  local" and "no external API calls".
+
+  One real privacy finding: every domain in the user's open-tab list is
+  sent to https://www.google.com/s2/favicons?domain=<DOMAIN>&sz=16 to
+  render favicons (3 call sites in app.js, lines 770/851/969). That
+  contradicts the "no external API calls" + "data never leaves your
+  machine" headline claims — Google sees the user's full open-tab
+  domain list every time the new-tab page renders.
+
+  Static layer otherwise clean: minimal permission scope (tabs,
+  activeTab, storage), no host_permissions, no fetch / XHR, MV3.
+
+product_view:
+  one_liner:
+    en: "A Chrome Manifest V3 extension that replaces the new-tab page with a domain-grouped dashboard of all your open tabs — close groups with a swoosh + confetti, save for later, dedup duplicates. Local storage, but every tab's domain leaks to Google's favicon service for icon rendering."
+    zh: "一个 Chrome MV3 扩展：把新标签页换成按域名分组的 tab 看板，关掉分组带音效和彩纸，可以收藏 tab，自动去重。数据存本地 chrome.storage.local，但每个 tab 的域名会经 Google 的 favicon 服务渲染图标 —— 实际上 Google 拿得到你打开的所有域名清单。"
+  best_for:
+    en: "People who keep dozens of tabs open and want a visual dashboard to triage and close them, willing to install an unpacked Chrome extension and not bothered by Google seeing their domain list."
+    zh: "同时开几十个 tab、想要一个可视化看板做分类和清理的人；接受手动加载 Chrome 扩展，并且不介意 Google 看到自己打开过哪些域名。"
+  watch_out:
+    en: |
+      README says "no external API calls" and "data never leaves your machine"; both are technically false because every tab's domain is sent to Google's s2/favicons endpoint to render favicons. Saved-tab data does stay in chrome.storage.local — that part is honest. If you mind the favicon leak, you'd need to swap the favicon source to a local fallback (the code has `onerror=display:none` so favicons silently no-op when the request fails, which means an offline / blocked-domain user already gets a graceful degraded experience).
+    zh: |
+      README 写了「没有外部 API 调用」「数据不离开你的机器」—— 两条其实都不严谨：每个 tab 的域名会发到 Google 的 s2/favicons 服务渲染图标。保存 tab 的数据确实只在 chrome.storage.local 里，这部分没说错。介意 favicon 泄露的话需要把 favicon 数据源换成本地兜底（代码里有 `onerror=display:none`，所以离线 / 屏蔽域名时会优雅降级）。

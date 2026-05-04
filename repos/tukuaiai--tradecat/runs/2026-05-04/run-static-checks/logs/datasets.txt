@@ -1,0 +1,4 @@
+market_snapshot workbook=market_data gid=1904613219 mode=snapshot active=true
+anomaly_panel workbook=market_data gid=1915220137 mode=snapshot active=true
+market_stats workbook=market_data gid=1161752788 mode=snapshot active=true
+event_stream workbook=alternative_data gid=1419246950 mode=stream active=true

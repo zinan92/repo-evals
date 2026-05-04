@@ -1,0 +1,133 @@
+claims:
+- id: claim-001
+  title: 是合法的 Chrome Manifest V3 扩展且 newtab override 真的接上
+  source: README "Manual Setup"
+  source_ref: extension/manifest.json
+  priority: critical
+  area: extension-shape
+  statement: 'manifest.json 必须 manifest_version=3，声明 chrome_url_overrides.newtab=index.html，
+
+    声明 service_worker=background.js，并且 index.html / background.js 在 extension/
+
+    目录下真实存在。
+
+    '
+  business_expectation: '用户用 README 的 "Load unpacked" 流程加载，新开 tab 就能看到 Tab Out。
+
+    '
+  evidence_needed: 'manifest.json 字段对照 + extension/ 目录文件列表。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: manifest_version=3, chrome_url_overrides.newtab=index.html, all referenced
+    files exist
+- id: claim-002
+  title: 权限范围最小化，无 host_permissions
+  source: README "100% local" + 隐私承诺
+  source_ref: extension/manifest.json::permissions
+  priority: critical
+  area: privacy
+  statement: 'manifest.permissions 仅包含 README 描述的功能所需的最小集合（tabs / activeTab /
+
+    storage），manifest.host_permissions 缺失或为空 —— 不申请任意网站的访问权。
+
+    '
+  business_expectation: '用户安装时 Chrome 不会列出"读取所有网站"这种红旗权限。
+
+    '
+  evidence_needed: 'manifest.json::permissions + manifest.json::host_permissions。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: permissions=[tabs,activeTab,storage]; no host_permissions
+- id: claim-003
+  title: 「不调外部 API、数据不离开本机」
+  source: README "No external API calls" / "100% local your data never leaves your
+    machine"
+  source_ref: extension/app.js
+  priority: critical
+  area: privacy
+  statement: 'app.js / background.js 中没有 fetch() / XMLHttpRequest 远程调用，没有把用户
+
+    数据 POST 到任何外部服务的代码。`<img src=>` / 其他 GET 请求如果指向外部服务，
+
+    也属于"外部 API 调用"，需要在 README 里明确披露。
+
+    '
+  business_expectation: '用户的 tab 列表 / 收藏数据真的留在本机。
+
+    '
+  evidence_needed: 'grep app.js 和 background.js 的 fetch / XMLHttpRequest / https?://
+    引用。
+
+    '
+  status: passed_with_concerns
+  last_run: runs/2026-05-04/run-static-checks
+  note: No fetch/XHR — but every tab domain leaks to google.com/s2/favicons (3 sites
+    in app.js); contradicts README headline
+- id: claim-004
+  title: 持久化数据走 chrome.storage.local
+  source: README "Saved tabs are stored in chrome.storage.local"
+  source_ref: extension/app.js + extension/background.js
+  priority: high
+  area: storage
+  statement: 'Saved-tabs / 用户偏好的写读路径都通过 chrome.storage.local，没有用 IndexedDB、
+
+    cookies、localStorage 把数据散到别的存储面。
+
+    '
+  business_expectation: '用户清理 chrome.storage.local 就能"清空"扩展数据，不会有遗留。
+
+    '
+  evidence_needed: 'grep chrome.storage.local 在 app.js + background.js 出现次数 + grep
+
+    localStorage / IndexedDB 是否有竞争路径。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 13 chrome.storage.local refs in app.js; no localStorage/IndexedDB
+- id: claim-005
+  title: 音效合成、不依赖音频文件
+  source: README "Web Audio API (synthesized, no files)"
+  source_ref: extension/app.js
+  priority: high
+  area: bundle-size
+  statement: 'app.js 中使用 AudioContext 合成 swoosh / confetti 声音，extension/ 下没有
+
+    .mp3 / .wav / .ogg 音频文件，确保扩展体积小且离线可用。
+
+    '
+  business_expectation: '用户在没有网络 / 受限带宽场景下打开扩展，仍然有完整音效体验。
+
+    '
+  evidence_needed: 'grep AudioContext + extension/ 目录列表（确认无音频文件）。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: AudioContext used; no audio files in bundle
+- id: claim-006
+  title: 端到端：装上后新建 tab 真的能看到分组面板
+  source: README "How it works"
+  source_ref: chrome:// 安装流程
+  priority: critical
+  area: end-to-end
+  statement: '照 README "Manual Setup" 流程在 Chrome 加载 extension/ 后，按 Ctrl/Cmd+T
+
+    新建 tab 渲染 Tab Out 面板：能看到当前打开 tab 按 domain 分组、有 homepages
+
+    group、点 tab 能切到原 tab、关闭按钮触发音效与彩纸。
+
+    '
+  business_expectation: 'Static-layer 看到的功能在真实 Chrome 中确实是 working 的。
+
+    '
+  evidence_needed: 'atom 级 — 需要本地 Chrome + 实际加载扩展。建议截图或录屏 1 次正常使用、
+
+    1 次离线场景（验证 favicon onerror 优雅降级）。
+
+    '
+  status: untested

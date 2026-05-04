@@ -1,0 +1,6 @@
+f app.js (52873b)
+f background.js (3183b)
+d icons (0b)
+f index.html (6651b)
+f manifest.json (612b)
+f style.css (24126b)

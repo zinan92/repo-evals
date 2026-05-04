@@ -1,0 +1,44 @@
+=== claim-001 manifest shape ===
+{
+  "manifest_version": 3,
+  "name": "Tab Out",
+  "version": "1.0.0",
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": null,
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
+
+=== claim-002 minimal permission scope ===
+tabs
+activeTab
+storage
+
+=== claim-003 no remote URLs / no fetch in app.js ===
+fetch( occurrences in app.js: 0
+XMLHttpRequest in app.js: 0
+https?:// references in app.js (excluding comments):
+http://www.w3.org/2000/svg
+https://example.com
+https://www.google.com/s2/favicons
+
+=== claim-004 chrome.storage usage ===
+chrome.storage.local in app.js: 13
+chrome.storage.local in background.js:
+0
+
+=== claim-005 Web Audio + confetti, no asset files ===
+AudioContext in app.js: 1
+icons subdir contents:
+icon.svg
+icon128.png
+icon16.png
+icon48.png

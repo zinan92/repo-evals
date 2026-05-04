@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tradecat · repo-evals dashboard</title>
+  <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="small"><a href="../index.html" style="color: #fff9f2;">← Back to dashboard</a></p>
+      <h1>tradecat</h1>
+      <p>Local-only Python 3.12 CLI/TUI for browsing public market-data + event-stream snapshots fetched from Google Sheets workbooks (4 datasets via dataset_registry.json: market_snapshot / anomaly_panel / market_stats / event_stream). Self-installs via curl|sh, auto-updates, ships with…</p>
+      <div class="meta-row">
+        <span class="badge bucket-usable">bucket: usable</span>
+        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="chip">tukuaiai/tradecat</span>
+        <span class="chip">pure-cli</span>
+        <span class="badge layer-molecule">layer: molecule</span>
+      </div>
+    </section>
+
+    <section class="grid detail">
+      <div class="panel">
+        <h3>Current health</h3>
+        <div class="kv">
+          <div><strong>Bucket</strong>usable</div>
+          <div><strong>Status</strong>evaluated</div>
+          <div><strong>Claim coverage</strong>6 passed / 0 failed / 1 untested</div>
+          <div><strong>Runs</strong>1 total (0 full, 0 partial, 1 missing)</div>
+          <div><strong>Gap counts</strong>0 critical / 0 warning / 0 info</div>
+          <div><strong>Areas</strong>0</div>
+        </div>
+        <h4 style="margin-top: 22px;">Latest diff headline</h4>
+        <div class="headline">No committed re-eval diff yet.</div>
+        <p class="muted small" style="margin-top: 12px;">From n/a  to n/a.</p>
+        <div class="source-links"><a href="../../repos/tukuaiai--tradecat/repo.yaml">repo.yaml</a>
+<a href="../../repos/tukuaiai--tradecat/claims/claim-map.yaml">claim-map</a>
+<a href="../../repos/tukuaiai--tradecat/plans/2026-05-04-eval-plan.md">latest plan</a>
+<a href="../../repos/tukuaiai--tradecat/verdicts/2026-05-04-final-verdict.md">latest verdict</a></div>
+      </div>
+
+      <div class="panel">
+        <h3>Trust signals</h3>
+        <ul class="flag-list">
+          <li>Run-level provenance quality: <strong>missing</strong></li>
+          <li>Latest diff confidence: <strong>unknown</strong></li>
+          <li>Critical unresolved gaps: <strong>0</strong></li>
+        </ul>
+        <h4 style="margin-top: 18px;">Why confidence is limited</h4>
+        <ul class="flag-list"><li>No diff confidence downgrade reasons recorded.</li></ul>
+      </div>
+    </section>
+
+    <h2 class="section-title">Unresolved critical gaps</h2>
+    <section class="panel">
+      <div class="empty-state">No critical gap items recorded in the latest committed gap report.</div>
+    </section>
+
+    <h2 class="section-title">Warnings</h2>
+    <section class="panel">
+      <div class="empty-state">No warning items recorded in the latest committed gap report.</div>
+    </section>
+
+    <h2 class="section-title">Claim coverage snapshot</h2>
+    <section class="grid stats">
+      <div class="stat-card"><h3>Total claims</h3><div class="stat-value">7</div><div class="muted small">root claim-map only</div></div>
+      <div class="stat-card"><h3>Critical claims</h3><div class="stat-value">3</div><div class="muted small">2 passed / 0 failed / 1 untested</div></div>
+      <div class="stat-card"><h3>Passed</h3><div class="stat-value">6</div></div>
+      <div class="stat-card"><h3>Untested</h3><div class="stat-value">1</div></div>
+    </section>
+
+    <h2 class="section-title">Diff movement</h2>
+    <section class="grid stats">
+      <div class="stat-card"><h3>Improved</h3><div class="stat-value">0</div></div>
+      <div class="stat-card"><h3>Regressed</h3><div class="stat-value">0</div></div>
+      <div class="stat-card"><h3>Newly failing</h3><div class="stat-value">0</div></div>
+      <div class="stat-card"><h3>Gap delta</h3><div class="stat-value">0 closed / 0 opened</div></div>
+    </section>
+
+    <h2 class="section-title">Layer-aware evaluation</h2>
+    <section class="panel">
+      <p class="muted small">Layer: declared <strong>molecule</strong>. 2–10 atoms wired by predefined orchestration. No runtime LLM routing. Higher layers must show evidence at every lower level too — see <a href="../../docs/LAYERS.md">docs/LAYERS.md</a>.</p><div class="layer-stack"><div class="layer-level"><h3>Atom-level evals <span class="level-tag">applies (lower-level dependency)</span></h3><p class="level-desc">Single responsibility. Same input → same output. No skill-level callouts.</p><table class="dim-table"><tbody><tr><th>input_contract</th><td>Does the atom reject malformed input with a clear, actionable error?</td></tr><tr><th>output_contract</th><td>Does the output shape match what the README/SKILL.md claims?</td></tr><tr><th>determinism</th><td>Same input → same output within stated tolerance. (LLM atoms: structurally equivalent, not byte-equal.)</td></tr><tr><th>idempotence</th><td>Re-running with the same input produces the same observable end state.</td></tr><tr><th>no_skill_callouts</th><td>Does the atom avoid invoking other documented skills? Primitives only (LLM API, stdlib, OS).</td></tr><tr><th>failure_mode_clarity</th><td>Does each documented failure mode produce a distinct, recognisable error?</td></tr></tbody></table></div><div class="layer-level"><h3>Molecule-level evals <span class="level-tag">applies (this layer)</span></h3><p class="level-desc">2–10 atoms wired by predefined orchestration. No runtime LLM routing.</p><table class="dim-table"><tbody><tr><th>workflow_correctness</th><td>Does an end-to-end happy path run from initial input to final output?</td></tr><tr><th>declared_call_graph</th><td>Are the atoms the molecule documents as using actually the ones it calls? No undocumented hidden dependencies.</td></tr><tr><th>stop_conditions</th><td>Do documented stop conditions (success, max-retries, timeout) trigger and halt cleanly?</td></tr><tr><th>handoff_points</th><td>When the molecule should hand back to a human, does it do so at the documented trigger?</td></tr><tr><th>atom_evidence</th><td>Does every declared atom dependency have a passing atom-level eval (referenced or co-located)?</td></tr><tr><th>error_propagation</th><td>Does a downstream atom failure surface at the molecule boundary with enough info to act?</td></tr><tr><th>partial_failure_handling</th><td>When one atom fails, does the molecule avoid silently producing an incomplete &#x27;success&#x27;?</td></tr></tbody></table></div></div>
+    </section>
+
+    <h2 class="section-title">Area drill-down</h2>
+    <section class="panel">
+      <div class="empty-state">No area-level scaffolds for this repo.</div>
+    </section>
+
+    <footer>
+      Generated from current repo-evals files. Raw JSON: <a href="../data/repos/tukuaiai--tradecat.json">repo data</a>
+    </footer>
+  </main>
+</body>
+</html>

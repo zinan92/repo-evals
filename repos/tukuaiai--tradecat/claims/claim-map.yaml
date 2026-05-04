@@ -1,0 +1,176 @@
+claims:
+- id: claim-001
+  title: 一键 curl|sh 安装真的能完成自检
+  source: README "快速开始"
+  source_ref: install.sh
+  priority: critical
+  area: install
+  statement: 'install.sh 必须是真实可执行的 sh 脚本（非占位），声明 PYTHON_VERSION=3.12，
+
+    执行流程明确：检测 python 3.12 / fallback 到 uv / clone develop 分支 /
+
+    pip install -e ".[dev]" / 写入 ~/.local/bin/tradecat / 初始化 .tradecat/cache。
+
+    支持 TRADECAT_INSTALL_SKIP_SYNC + TRADECAT_INSTALL_SKIP_PATH_WRITE 两个环境
+
+    变量给 CI 用。
+
+    '
+  business_expectation: '用户照 README 第一条命令敲下去，完成自检，不需要再读源代码。
+
+    '
+  evidence_needed: 'install.sh 内容 + grep 关键变量 + 自检触发的 verify.sh 流程。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 5 env-var overrides + 2 CI skip flags, real POSIX shell
+- id: claim-002
+  title: dataset_registry.json 与 README 数据集声明对齐
+  source: README "数据集" + dataset_registry.json
+  source_ref: dataset_registry.json::datasets
+  priority: critical
+  area: dataset-coverage
+  statement: 'README 声称 4 个数据集（market_snapshot / anomaly_panel / market_stats /
+
+    event_stream）。registry 中必须存在这 4 个 entry 且 active=true，
+
+    data_mode 字段对得上（前 3 个 snapshot，event_stream 是 stream），
+
+    每个 dataset 都有 workbook_key + gid（Google Sheets 真实坐标）。
+
+    '
+  business_expectation: '用户用 README 列出的任意 dataset 名调用 request.py 都能命中真实坐标。
+
+    '
+  evidence_needed: 'registry dump + 4 个 dataset 的 active/data_mode 字段。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 4 active datasets, modes match README (3 snapshot + 1 stream)
+- id: claim-003
+  title: pyproject.toml 与 install.sh 的 Python 版本要求一致
+  source: pyproject.toml + install.sh
+  source_ref: requires-python + PYTHON_VERSION
+  priority: high
+  area: install-consistency
+  statement: 'install.sh 默认 PYTHON_VERSION=3.12，pyproject.toml 必须 requires-python>=3.12。
+
+    不能出现 install 脚本拉 3.12，但 pyproject 写 >=3.10 这种「装得上跑不通」的不
+
+    一致；entry-points (`tradecat`、`tradecat-terminal`、`tcat`) 也要在 pyproject
+
+    [project.scripts] 中真实存在。
+
+    '
+  business_expectation: 'install 脚本拉的 Python 跟代码要求的 Python 是同一个，避免版本错配的玄学问题。
+
+    '
+  evidence_needed: 'pyproject.toml + install.sh 的关键字段对照。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: install.sh 3.12 ↔ pyproject >=3.12 ↔ 3 entry-points present
+- id: claim-004
+  title: 一次性请求脚本 (request.py) 能在不安装的情况下读 dataset
+  source: README "一次性请求"
+  source_ref: scripts/request.py
+  priority: high
+  area: cli-surface
+  statement: 'README 声称 `python3 <(curl -fsSL .../scripts/request.py) event_stream`
+    可以
+
+    不克隆、不写缓存直接拿数据。`request.py` 需要存在、可独立执行、且与正式 CLI
+
+    共享同一份 dataset_registry.json（README 明确说「与安装版使用同一个 dataset
+
+    契约」）。
+
+    '
+  business_expectation: '新用户在评估期可以零安装试一下数据是否值得装。
+
+    '
+  evidence_needed: 'request.py 内容 + 是否引用 dataset_registry.json + 是否有 --datasets /
+    --meta /
+
+    --headers 三种 mode。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 7468-byte real script shares dataset_registry.json with installed CLI
+- id: claim-005
+  title: TUI 在不支持 curses 的终端会优雅降级，不抛 traceback
+  source: README "稳定终端" 段
+  source_ref: src/tradecat_terminal/tui.py
+  priority: high
+  area: terminal-ux
+  statement: 'README 明确承诺「浏览器 Web 终端、未知 SSH 终端和未知 Windows 控制台会自动
+
+    降级为静态文本模式，不再抛出 Python traceback」。验证：tui.py 中存在 curses
+
+    可用性探测 + plain-text fallback 路径，且 README 的 4 个 override 环境变量
+
+    （TRADECAT_TERMINAL_FORCE_CURSES / ALLOW_WINDOWS_CURSES / ALLOW_SSH_CURSES /
+
+    tradecat tui --plain）在代码里有对应解析。
+
+    '
+  business_expectation: '用户在 SSH 或受限终端里跑 tradecat 不会看到一堆 Python 错误。
+
+    '
+  evidence_needed: 'tui.py 关键代码片段（grep curses fallback、env var）+ CLI --plain flag
+    解析。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: tui.py has 22 references to fallback env vars + plain mode
+- id: claim-006
+  title: 默认自动更新有节流，可被环境变量关闭
+  source: README "启动时默认自动更新"
+  source_ref: launcher (.local/bin/tradecat)
+  priority: high
+  area: update-policy
+  statement: 'README 承诺：每次启动前节流检查（默认 1h），失败默认继续用本地版，
+
+    TRADECAT_NO_AUTO_UPDATE=1 可关闭，TRADECAT_FORCE_UPDATE=1 可改为阻塞 +
+
+    失败退出。launcher 脚本中必须有这三处行为分支。
+
+    '
+  business_expectation: '用户能控制是否被自动拉取的新版「打断今天的工作」。
+
+    '
+  evidence_needed: 'launcher 脚本（install.sh 中写到 ~/.local/bin/tradecat 的内容）+ 三个 env
+
+    var 的真实分支。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: install.sh has 8 references to auto-update env vars
+- id: claim-007
+  title: 端到端 happy path：sync 一次后能看到真实事件流
+  source: README "常用命令"
+  source_ref: tradecat init / sync / TUI
+  priority: critical
+  area: end-to-end
+  statement: '装好后 `tradecat init && tradecat sync && tradecat`（或 `tradecat tui --plain`）
+
+    能从 Google Sheets 拉到至少 1 个 dataset 的真实数据并显示，而不是空表。
+
+    离线 / Sheets 无权限时降级为「Cache 状态显示但无数据」而不是 traceback。
+
+    '
+  business_expectation: '新用户在现实网络下真的能看到行情数据。
+
+    '
+  evidence_needed: 'molecule 级 — 需要真实安装 + 真实网络。建议 runs/<date>/run-live-sync/
+
+    记录 exit code、cache 大小、数据集 row count。
+
+    '
+  status: untested

@@ -1,0 +1,47 @@
+owner: tukuaiai
+repo: tradecat
+display_name: tradecat
+repo_url: https://github.com/tukuaiai/tradecat
+repo_type: tool
+# Archetype drives scaffolding and verdict-calculator ceiling rules.
+# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
+archetype: pure-cli
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# 4 dataset readers + cache + sync + TUI wired by predefined orchestration;
+# no LLM-driven runtime decisions — molecule, not atom.
+layer: molecule
+complexity: medium
+uses_areas: false
+status: evaluated
+current_bucket: usable
+last_evaluated: "2026-05-04"
+version_tested: "develop@HEAD (0.1.0)"
+notes: |
+  Local-only Python 3.12 CLI/TUI for browsing public market-data + event-stream
+  snapshots fetched from Google Sheets workbooks (4 datasets via dataset_registry.json:
+  market_snapshot / anomaly_panel / market_stats / event_stream). Self-installs via
+  curl|sh, auto-updates, ships with TUI fallback for browser/SSH terminals. No LLM,
+  no server credentials, no SQLite — just JSON snapshot cache.
+
+  README is unusually candid about what it does NOT do (no PostgreSQL writeback,
+  no SQLite, no cloud accounts) — this clarity is itself a quality signal.
+
+  Static layer: install script, dataset registry, package layout, command entry
+  points are all auditable from this machine.
+
+  Live layer: actual Google Sheets fetch + cache write + TUI render need a real
+  install. Crypto/market workbook owners can revoke or change tab GIDs at any
+  time — those are runtime risks no static eval covers.
+
+product_view:
+  one_liner:
+    en: "A local-only Python CLI/TUI that pulls 4 public market-data snapshots from Google Sheets, caches them as JSON, and lets you browse them in a terminal panel — no API key, no server, no database, just a single command."
+    zh: "一个完全本地的 Python CLI/TUI 工具：从 Google Sheets 拉 4 个公开行情和事件流快照，存为本地 JSON 缓存，在终端面板里浏览。不要 API key，不要服务端，不要数据库，一条命令装完。"
+  best_for:
+    en: "Crypto/market traders who want a no-config terminal dashboard for shared public data, comfortable installing via curl|sh, comfortable with Google Sheets as a data backbone."
+    zh: "想要一个零配置终端看板、信得过 Google Sheets 作为公开数据载体的加密/行情交易者。前提：能接受 curl|sh 一键安装。"
+  watch_out:
+    en: |
+      The "public data" lives in Google Sheets workbooks owned by the project — if those workbooks are renamed, deleted, or have their tab GIDs changed, every dataset breaks until dataset_registry.json is updated. Auto-update is on by default and can pull breaking changes silently; set TRADECAT_NO_AUTO_UPDATE=1 if you need stability. The disclaimer is explicit that this is "for technical research only" — do not feed its data straight into trading decisions.
+    zh: |
+      所谓「公开数据」其实存在项目方维护的 Google Sheets 里 —— 表被改名、删了或者 tab GID 变了，所有 dataset 都会跟着坏，直到 dataset_registry.json 被更新。默认开启自动更新，可能悄悄拉到 breaking change；要稳定的话设 TRADECAT_NO_AUTO_UPDATE=1。免责声明很明确写了「仅供技术研究」—— 别把它的数据直接拿去交易决策。

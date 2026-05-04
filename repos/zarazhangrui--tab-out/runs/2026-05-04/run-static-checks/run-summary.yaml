@@ -1,0 +1,51 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: zarazhangrui
+  repo: tab-out
+  branch: main
+  manifest_version: 3
+  extension_version: "1.0.0"
+
+scope: |
+  Static-checkable claims for the manifest, permissions, network
+  surface, storage, and bundle composition. End-to-end install in
+  real Chrome (claim-006) deferred to atom-level live run.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "manifest_version=3, chrome_url_overrides.newtab=index.html, service_worker=background.js, all referenced files exist"
+  - id: claim-002
+    status: passed
+    note: "permissions=[tabs, activeTab, storage]; no host_permissions — minimal scope, no red-flag permissions"
+  - id: claim-003
+    status: passed_with_concerns
+    note: "No fetch/XMLHttpRequest, but every tab's domain is sent to https://www.google.com/s2/favicons (3 call sites in app.js); contradicts README's 'no external API calls' / 'data never leaves your machine'"
+  - id: claim-004
+    status: passed
+    note: "13 references to chrome.storage.local in app.js; no localStorage/IndexedDB competing paths"
+  - id: claim-005
+    status: passed
+    note: "AudioContext is used (1 site); icons/ has only PNG icons + 1 SVG, no audio files"
+
+claims_deferred:
+  - claim-006  # live install in Chrome — needs human + browser
+
+artifacts:
+  - artifacts/manifest.json
+  - artifacts/app.js
+  - artifacts/background.js
+
+logs:
+  - logs/extension-tree.txt
+  - logs/static-evidence.txt
+  - logs/favicon-leak.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/zarazhangrui/tab-out/main/extension/{manifest.json,app.js,background.js}"
+    - "gh api repos/zarazhangrui/tab-out/contents/extension"
+  network_dependent: true
+  reproducible: yes

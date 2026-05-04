@@ -1,0 +1,4 @@
+market_snapshot -> (no endpoint field)
+anomaly_panel -> (no endpoint field)
+market_stats -> (no endpoint field)
+event_stream -> (no endpoint field)

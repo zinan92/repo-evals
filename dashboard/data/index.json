@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-04T03:35:18Z",
-  "generated_from_commit": "41d9565",
+  "generated_at": "2026-05-04T04:17:49Z",
+  "generated_from_commit": "fe256e5",
   "repos": [
     {
       "slug": "zarazhangrui--frontend-slides",
@@ -668,6 +668,132 @@
       "attention_level": "medium"
     },
     {
+      "slug": "gooseworks-ai--goose-skills",
+      "display_name": "goose-skills",
+      "owner": "gooseworks-ai",
+      "repo": "goose-skills",
+      "repo_url": "https://github.com/gooseworks-ai/goose-skills",
+      "repo_type": "skill-catalog",
+      "archetype": "prompt-skill",
+      "layer": "molecule",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "GTM / sales / marketing / SEO / CI / lead-gen skill catalog distributed as the `goose-skills` npm package (v1.0.1, MIT). Master skill installs via `npx goose-skills install --claude/--cursor/--codex/--all`. Each individual skill ships with SKILL.md + skill.meta.json, declaring i…",
+      "repo_path": "repos/gooseworks-ai--goose-skills",
+      "claims_summary": {
+        "total": 7,
+        "passed": 6,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 5,
+        "critical_passed": 4,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 2
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/gooseworks-ai--goose-skills/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/gooseworks-ai--goose-skills/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
+      "slug": "tukuaiai--tradecat",
+      "display_name": "tradecat",
+      "owner": "tukuaiai",
+      "repo": "tradecat",
+      "repo_url": "https://github.com/tukuaiai/tradecat",
+      "repo_type": "tool",
+      "archetype": "pure-cli",
+      "layer": "molecule",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Local-only Python 3.12 CLI/TUI for browsing public market-data + event-stream snapshots fetched from Google Sheets workbooks (4 datasets via dataset_registry.json: market_snapshot / anomaly_panel / market_stats / event_stream). Self-installs via curl|sh, auto-updates, ships with…",
+      "repo_path": "repos/tukuaiai--tradecat",
+      "claims_summary": {
+        "total": 7,
+        "passed": 6,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 3,
+        "critical_passed": 2,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 4
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/tukuaiai--tradecat/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/tukuaiai--tradecat/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
+      "slug": "zarazhangrui--tab-out",
+      "display_name": "tab-out",
+      "owner": "zarazhangrui",
+      "repo": "tab-out",
+      "repo_url": "https://github.com/zarazhangrui/tab-out",
+      "repo_type": "browser-extension",
+      "archetype": "adapter",
+      "layer": "atom",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Chrome Manifest V3 extension that overrides the new-tab page with a domain-grouped dashboard of currently-open tabs. Storage is chrome.storage.local, sound is synthesized via Web Audio (no audio files), animations are CSS + JS confetti. README headlines \"100% local\" and \"no exte…",
+      "repo_path": "repos/zarazhangrui--tab-out",
+      "claims_summary": {
+        "total": 6,
+        "passed": 5,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 4,
+        "critical_passed": 3,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 2
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/zarazhangrui--tab-out/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/zarazhangrui--tab-out/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
       "slug": "geekjourneyx--md2wechat-skill",
       "display_name": "md2wechat-skill",
       "owner": "geekjourneyx",
@@ -902,8 +1028,8 @@
     }
   ],
   "stats": {
-    "repo_count": 12,
-    "evaluated_count": 12,
+    "repo_count": 15,
+    "evaluated_count": 15,
     "planned_count": 0,
     "critical_gap_total": 19,
     "warning_gap_total": 3,
@@ -912,7 +1038,7 @@
     "bucket_counts": {
       "recommendable": 0,
       "reusable": 2,
-      "usable": 9,
+      "usable": 12,
       "unusable": 1,
       "unknown": 0
     }

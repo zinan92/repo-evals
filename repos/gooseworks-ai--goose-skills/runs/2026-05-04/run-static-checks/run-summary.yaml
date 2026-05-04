@@ -1,0 +1,58 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: gooseworks-ai
+  repo: goose-skills
+  branch: main
+  npm_published_version: "1.1.0"
+  source_package_version: "1.0.1"
+  skills_index_version: "1.2.0"
+  skills_index_generated: "2026-04-29"
+
+scope: |
+  Static-checkable claims for the catalog manifest, taxonomy, metadata
+  contract, npm publishing, packs, and cross-platform support. Live
+  agent-driven skill execution (claim-007) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed_with_concerns
+    note: "skills-index has 204 skills; README headline still says 108 — docs are stale, catalog is bigger"
+  - id: claim-002
+    status: passed
+    note: "143 capabilities + 56 composites + 5 playbooks all present and non-empty"
+  - id: claim-003
+    status: passed
+    note: "Sampled 3 skills: each has slug + category + installation.{base_command,supports} populated; uniform shape"
+  - id: claim-004
+    status: passed_with_concerns
+    note: "bin/goose-skills.js exists (12.5 KB); npm registry has 1.1.0 while repo main is 1.0.1 — published is ahead of repo HEAD"
+  - id: claim-005
+    status: passed
+    note: "2 packs (lead-gen-devtools=7 skills, video-production=5 skills); lead-gen-devtools matches README's '7-skill' description exactly"
+  - id: claim-006
+    status: passed
+    note: "All 204 skills declare support for {claude, cursor, codex}; 100% uniform"
+
+claims_deferred:
+  - claim-007  # live skill execution in real Claude Code / Cursor / Codex
+
+artifacts:
+  - artifacts/skills-index.json
+  - artifacts/package.json
+
+logs:
+  - logs/skills-by-category.json
+  - logs/packs.txt
+  - logs/skills-dirs-sample.txt
+  - logs/skills-dir-count.txt
+  - logs/static-evidence.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/gooseworks-ai/goose-skills/main/{skills-index.json,package.json,bin/goose-skills.js}"
+    - "registry.npmjs.org/goose-skills/latest"
+    - "gh api repos/gooseworks-ai/goose-skills/contents/skills"
+  network_dependent: true
+  reproducible: yes

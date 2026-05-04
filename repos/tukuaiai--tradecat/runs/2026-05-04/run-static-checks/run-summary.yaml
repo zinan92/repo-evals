@@ -1,0 +1,57 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: tukuaiai
+  repo: tradecat
+  branch: develop
+  python_required: ">=3.12"
+  package_version: "0.1.0"
+
+scope: |
+  Static-checkable claims for the install path, dataset registry, CLI
+  surface, TUI fallback, and auto-update policy. Live end-to-end sync
+  (claim-007) deferred to molecule-level run.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "install.sh: 5 env-var overrides + 2 skip flags (SYNC, PATH_WRITE) all present"
+  - id: claim-002
+    status: passed
+    note: "4 datasets active (3 snapshot + 1 stream), each with workbook_key + gid pointing to a Google Sheets tab"
+  - id: claim-003
+    status: passed
+    note: "install.sh PYTHON_VERSION=3.12 ↔ pyproject requires-python>=3.12 ↔ 3 entry-points (tradecat / tradecat-terminal / tcat) all defined"
+  - id: claim-004
+    status: passed
+    note: "scripts/request.py is 7468 bytes, references dataset_registry.json + --datasets/--meta/--headers flags"
+  - id: claim-005
+    status: passed
+    note: "tui.py has 22 references to the documented fallback env vars + plain mode"
+  - id: claim-006
+    status: passed
+    note: "install.sh has 8 references to auto-update env vars (NO_AUTO_UPDATE / FORCE_UPDATE / UPDATE_INTERVAL)"
+
+claims_deferred:
+  - claim-007  # live e2e sync — needs install + Google Sheets reachability
+
+artifacts:
+  - artifacts/install.sh
+  - artifacts/pyproject.toml
+  - artifacts/dataset_registry.json
+  - artifacts/request.py
+  - artifacts/tui.py
+
+logs:
+  - logs/datasets.txt
+  - logs/dataset-endpoints.txt
+  - logs/src-layout.txt
+  - logs/static-evidence.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/tukuaiai/tradecat/develop/{install.sh,pyproject.toml,src/tradecat_terminal/{dataset_registry.json,tui.py},scripts/request.py}"
+    - "gh api repos/tukuaiai/tradecat/contents/src/tradecat_terminal?ref=develop"
+  network_dependent: true
+  reproducible: "yes — fetch the same raw URLs"

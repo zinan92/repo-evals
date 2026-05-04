@@ -1,0 +1,42 @@
+{
+  "slug": "gooseworks-ai--goose-skills",
+  "display_name": "goose-skills",
+  "owner": "gooseworks-ai",
+  "repo": "goose-skills",
+  "repo_url": "https://github.com/gooseworks-ai/goose-skills",
+  "repo_type": "skill-catalog",
+  "archetype": "prompt-skill",
+  "layer": "molecule",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "GTM / sales / marketing / SEO / CI / lead-gen skill catalog distributed as the `goose-skills` npm package (v1.0.1, MIT). Master skill installs via `npx goose-skills install --claude/--cursor/--codex/--all`. Each individual skill ships with SKILL.md + skill.meta.json, declaring i…",
+  "repo_path": "repos/gooseworks-ai--goose-skills",
+  "claims_summary": {
+    "total": 7,
+    "passed": 6,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 5,
+    "critical_passed": 4,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 2
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/gooseworks-ai--goose-skills/plans/2026-05-04-eval-plan.md",
+  "verdict_path": "repos/gooseworks-ai--goose-skills/verdicts/2026-05-04-final-verdict.md",
+  "attention_level": "medium"
+}

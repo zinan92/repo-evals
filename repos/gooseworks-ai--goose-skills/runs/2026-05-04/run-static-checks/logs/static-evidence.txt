@@ -1,0 +1,61 @@
+=== claim-001 skill count vs README ===
+skills-index says: 204 skills
+README header says: 108 skills
+
+=== claim-002 by category ===
+[
+  {
+    "c": "capabilities",
+    "n": 143
+  },
+  {
+    "c": "composites",
+    "n": 56
+  },
+  {
+    "c": "playbooks",
+    "n": 5
+  }
+]
+
+=== claim-003 metadata contract sampling ===
+slug=ad-angle-miner cat=composites supports=["claude","cursor","codex"]
+slug=ad-campaign-analyzer cat=composites supports=["claude","cursor","codex"]
+slug=ad-to-landing-page-auditor cat=composites supports=["claude","cursor","codex"]
+
+=== claim-004 npm bin ===
+{
+  "goose-skills": "./bin/goose-skills.js"
+}
+bin file size=12580
+npm registry version: 1.1.0
+
+=== claim-005 packs ===
+[
+  {
+    "slug": "lead-gen-devtools",
+    "n_skills": 7,
+    "shared_files": 2
+  },
+  {
+    "slug": "video-production",
+    "n_skills": 5,
+    "shared_files": 4
+  }
+]
+
+=== claim-006 cross-platform support ===
+[
+  {
+    "platform": "claude",
+    "count": 204
+  },
+  {
+    "platform": "codex",
+    "count": 204
+  },
+  {
+    "platform": "cursor",
+    "count": 204
+  }
+]

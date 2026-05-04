@@ -1,0 +1,42 @@
+{
+  "slug": "zarazhangrui--tab-out",
+  "display_name": "tab-out",
+  "owner": "zarazhangrui",
+  "repo": "tab-out",
+  "repo_url": "https://github.com/zarazhangrui/tab-out",
+  "repo_type": "browser-extension",
+  "archetype": "adapter",
+  "layer": "atom",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "Chrome Manifest V3 extension that overrides the new-tab page with a domain-grouped dashboard of currently-open tabs. Storage is chrome.storage.local, sound is synthesized via Web Audio (no audio files), animations are CSS + JS confetti. README headlines \"100% local\" and \"no exte…",
+  "repo_path": "repos/zarazhangrui--tab-out",
+  "claims_summary": {
+    "total": 6,
+    "passed": 5,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 4,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 2
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/zarazhangrui--tab-out/plans/2026-05-04-eval-plan.md",
+  "verdict_path": "repos/zarazhangrui--tab-out/verdicts/2026-05-04-final-verdict.md",
+  "attention_level": "medium"
+}

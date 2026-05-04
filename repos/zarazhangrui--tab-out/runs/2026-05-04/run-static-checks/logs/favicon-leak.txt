@@ -1,0 +1,14 @@
+769-    try { domain = new URL(tab.url).hostname; } catch {}
+770:    const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=16` : '';
+771-    return `<div class="page-chip clickable${chipClass}" data-action="focus-tab" data-tab-url="${safeUrl}" title="${safeTitle}">
+772-      ${faviconUrl ? `<img class="chip-favicon" src="${faviconUrl}" alt="" onerror="this.style.display='none'">` : ''}
+--
+850-    try { domain = new URL(tab.url).hostname; } catch {}
+851:    const faviconUrl = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=16` : '';
+852-    return `<div class="page-chip clickable${chipClass}" data-action="focus-tab" data-tab-url="${safeUrl}" title="${safeTitle}">
+853-      ${faviconUrl ? `<img class="chip-favicon" src="${faviconUrl}" alt="" onerror="this.style.display='none'">` : ''}
+--
+968-  try { domain = new URL(item.url).hostname.replace(/^www\./, ''); } catch {}
+969:  const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=16`;
+970-  const ago = timeAgo(item.savedAt);
+971-
