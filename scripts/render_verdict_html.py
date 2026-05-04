@@ -67,6 +67,10 @@ def _load_verdict_calculator():
 _VC = _load_verdict_calculator()
 compute_verdict = _VC.compute_verdict
 
+# Sibling layers module — same scripts/ directory.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import layers as layers_mod  # noqa: E402
+
 try:
     import yaml
 except ImportError:  # pragma: no cover
@@ -862,6 +866,175 @@ def mermaid_ceiling_diagram(vd: VerdictData) -> str:
     return "\n".join(lines)
 
 
+def _layer_for(vd: VerdictData) -> tuple[str, bool]:
+    """Return (effective_layer, was_inferred). Reads `layer:` from
+    repo.yaml first, falls back to the archetype-driven default."""
+
+    declared = layers_mod.normalise_layer(vd.repo.get("layer"))
+    if declared != "unknown":
+        return declared, False
+    inferred = layers_mod.default_layer_for_archetype(vd.archetype)
+    return inferred, True
+
+
+def render_layer_pill(vd: VerdictData) -> str:
+    """A small bilingual pill that lives in the hero, next to the bucket."""
+
+    layer, _ = _layer_for(vd)
+    if layer == "unknown":
+        return ""
+    label = layers_mod.layer_label(layer)
+    return (
+        f'<span class="layer-pill layer-{layer}" title="{html.escape(layer)}">'
+        f'<span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span>'
+        f'{dual_lang(label)}'
+        f'</span>'
+    )
+
+
+_LAYER_LEVEL_HEADINGS = {
+    "atom":     {"en": "Atom-level checks",     "zh": "原子层检查"},
+    "molecule": {"en": "Molecule-level checks", "zh": "分子层检查"},
+    "compound": {"en": "Compound-level checks", "zh": "复合物层检查"},
+}
+
+
+def render_layer_section(vd: VerdictData) -> str:
+    """Editorial 'how we evaluated this repo by layer' section.
+
+    Renders:
+      - A header naming the layer in en + zh (Atom/Molecule/Compound /
+        原子/分子/复合物).
+      - One sub-block per applicable level. Higher layers stack the
+        lower-level blocks too — a compound shows atom + molecule +
+        compound dimension tables.
+      - For compound layers: a list of scenario experiments the
+        operator runs by hand (system prompt + watch-for + verdict
+        log location), bilingual.
+
+    Empty section if the repo has no layer and no archetype default.
+    """
+
+    layer, was_inferred = _layer_for(vd)
+    if layer == "unknown":
+        return ""
+
+    levels = layers_mod.applicable_levels(layer)
+    label = layers_mod.layer_label(layer)
+    summary = layers_mod.layer_summary(layer)
+
+    declared_note_en = (
+        f"Inferred from archetype <code>{html.escape(vd.archetype)}</code>"
+        if was_inferred
+        else "Declared in repo.yaml"
+    )
+    declared_note_zh = (
+        f"由 archetype <code>{html.escape(vd.archetype)}</code> 推断而来"
+        if was_inferred
+        else "已在 repo.yaml 中显式声明"
+    )
+
+    # Header / hero strip for the section.
+    header = f"""
+    <div class="layer-hero">
+      <div class="layer-hero-eyebrow">
+        <span class="i18n" data-en="Composition layer" data-zh="组合层级"></span>
+      </div>
+      <div class="layer-hero-name layer-{layer}">{dual_lang(label)}</div>
+      <div class="layer-hero-summary">{dual_lang(summary)}</div>
+      <div class="layer-hero-source"><span class="i18n"
+        data-en="{html.escape(declared_note_en, quote=True)}"
+        data-zh="{html.escape(declared_note_zh, quote=True)}"></span></div>
+    </div>
+    """
+
+    # One sub-card per applicable level.
+    level_cards: list[str] = []
+    for level in levels:
+        applies = (
+            {"en": "applies (this layer)", "zh": "适用（当前层）"}
+            if level == layer
+            else {"en": "applies (lower-level dependency)", "zh": "适用（下层依赖）"}
+        )
+        rows = "".join(
+            f'<tr>'
+            f'<th><code>{html.escape(d.key)}</code></th>'
+            f'<td>{dual_lang(d.question)}</td>'
+            f'</tr>'
+            for d in layers_mod.dimensions_for_level(level)
+        )
+        level_cards.append(
+            f'<div class="layer-card layer-card-{level}">'
+            f'<div class="layer-card-head">'
+            f'<h3>{dual_lang(_LAYER_LEVEL_HEADINGS[level])}</h3>'
+            f'<span class="layer-card-tag">{dual_lang(applies)}</span>'
+            f'</div>'
+            f'<p class="layer-card-summary">{dual_lang(layers_mod.layer_summary(level))}</p>'
+            f'<table class="layer-dim-table"><tbody>{rows}</tbody></table>'
+            f'</div>'
+        )
+
+    # Compound experiments — only for compound layer.
+    experiments_html = ""
+    if layer == "compound":
+        experiments = layers_mod.experiments_for(layer, vd.archetype)
+        if experiments:
+            cards: list[str] = []
+            for idx, exp in enumerate(experiments, start=1):
+                watch_items = "".join(
+                    f"<li>{dual_lang(item)}</li>" for item in exp.watch_for
+                )
+                scenario_label = {
+                    "en": f"Scenario {idx}",
+                    "zh": f"场景 {idx}",
+                }
+                cards.append(
+                    f'<div class="layer-experiment">'
+                    f'<div class="layer-experiment-head">'
+                    f'<span class="layer-experiment-num">{dual_lang(scenario_label)}</span>'
+                    f'<h4>{dual_lang(exp.title)}</h4>'
+                    f'</div>'
+                    f'<div class="layer-experiment-label"><span class="i18n" '
+                    f'data-en="System prompt" data-zh="System prompt（起手提示）"></span></div>'
+                    f'<blockquote class="layer-experiment-prompt">'
+                    f'{dual_lang(exp.system_prompt)}</blockquote>'
+                    f'<div class="layer-experiment-label"><span class="i18n" '
+                    f'data-en="What to watch for" data-zh="观察要点"></span></div>'
+                    f'<ul class="layer-experiment-watch">{watch_items}</ul>'
+                    f'<div class="layer-experiment-meta">'
+                    f'<span class="i18n" data-en="Sub-skills expected: " '
+                    f'data-zh="预期触发的子技能："></span>'
+                    f'{dual_lang(exp.expected_sub_molecules)}'
+                    f'</div>'
+                    f'</div>'
+                )
+            experiments_html = (
+                '<div class="layer-experiments">'
+                '<div class="layer-experiments-eyebrow">'
+                '<span class="i18n" data-en="Compound experiments — human-driven" '
+                'data-zh="复合物实验 — 人驱动"></span>'
+                '</div>'
+                '<p class="layer-experiments-intro">'
+                '<span class="i18n" '
+                'data-en="The call graph is decided at runtime, so compound eval is scenario-driven. '
+                'Run each scenario, observe the behaviour, log a verdict in '
+                'runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md." '
+                'data-zh="复合物的调用图是运行时决定的，所以评测是场景驱动。'
+                '逐个场景跑下来，观察行为，把判断记到 runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md。"></span>'
+                '</p>'
+                + "".join(cards)
+                + '</div>'
+            )
+
+    return (
+        header
+        + '<div class="layer-stack">'
+        + "".join(level_cards)
+        + '</div>'
+        + experiments_html
+    )
+
+
 def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     """Editorial dossier template — dark warm palette, zero external
     dependencies (no Chart.js, Mermaid, or Google Fonts), bucket-driven
@@ -894,6 +1067,8 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     claim_ledger_html = render_claim_ledger(vd)
     run_cards_html = render_run_cards_editorial(vd)
     test_log_html = render_test_log_editorial(vd)
+    layer_section_html = render_layer_section(vd)
+    layer_pill_html = render_layer_pill(vd)
 
     verdict_md_escaped = _esc(vd.verdict_md)
 
@@ -1275,6 +1450,143 @@ details.section-fold > .body {{ padding: 8px 28px 32px; border-top: 1px solid va
 .mini-card li:last-child {{ border-bottom: 0; padding-bottom: 0; }}
 .mini-card li:first-child {{ padding-top: 0; }}
 
+/* --- Layer (atom / molecule / compound) section -------------------- */
+
+.layer-pill {{
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--surface-1); border: 1px solid var(--border-strong);
+  font-family: var(--font-mono); font-size: 12px;
+  margin-left: 12px;
+}}
+.layer-pill-eyebrow {{
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-size: 10px;
+}}
+.layer-pill.layer-atom     {{ border-color: #4a9d8a; color: #2d7866; }}
+.layer-pill.layer-molecule {{ border-color: #7a5fb8; color: #5a3aa1; }}
+.layer-pill.layer-compound {{ border-color: #c75441; color: #a13d30; }}
+
+.layer-hero {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px 28px; margin-bottom: 22px;
+}}
+.layer-hero-eyebrow {{
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}}
+.layer-hero-name {{
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 32px; font-weight: 700; line-height: 1.1;
+  margin-bottom: 10px;
+}}
+.layer-hero-name.layer-atom     {{ color: #2d7866; }}
+.layer-hero-name.layer-molecule {{ color: #5a3aa1; }}
+.layer-hero-name.layer-compound {{ color: #a13d30; }}
+.layer-hero-summary {{ font-size: 16px; color: var(--text-2); line-height: 1.55; max-width: 70ch; }}
+.layer-hero-source {{ margin-top: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--text-3); }}
+
+.layer-stack {{ display: grid; gap: 18px; margin-bottom: 28px; }}
+
+.layer-card {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+}}
+.layer-card-head {{
+  display: flex; align-items: baseline;
+  justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}}
+.layer-card-head h3 {{
+  margin: 0;
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}}
+.layer-card-tag {{
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-3); padding: 2px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+}}
+.layer-card-summary {{ color: var(--text-2); margin: 4px 0 14px; line-height: 1.55; }}
+
+.layer-card.layer-card-atom     {{ border-left: 3px solid #4a9d8a; }}
+.layer-card.layer-card-molecule {{ border-left: 3px solid #7a5fb8; }}
+.layer-card.layer-card-compound {{ border-left: 3px solid #c75441; }}
+
+.layer-dim-table {{ width: 100%; border-collapse: collapse; }}
+.layer-dim-table th, .layer-dim-table td {{
+  text-align: left; padding: 10px 12px;
+  border-top: 1px solid var(--border); vertical-align: top;
+  font-size: 14px; line-height: 1.55;
+}}
+.layer-dim-table th {{
+  width: 28%; font-weight: 600; color: var(--text);
+}}
+.layer-dim-table td {{ color: var(--text-2); }}
+.layer-dim-table th code {{
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 2px 6px; border-radius: 4px;
+}}
+
+.layer-experiments {{
+  margin-top: 28px; padding-top: 22px;
+  border-top: 1px dashed var(--border);
+}}
+.layer-experiments-eyebrow {{
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}}
+.layer-experiments-intro {{
+  color: var(--text-2); margin: 0 0 18px; max-width: 70ch; line-height: 1.55;
+}}
+
+.layer-experiment {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px; margin-bottom: 14px;
+}}
+.layer-experiment-head {{
+  display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px;
+}}
+.layer-experiment-num {{
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3);
+  padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px;
+}}
+.layer-experiment h4 {{
+  margin: 0; font-family: var(--font-display, var(--font-serif));
+  font-size: 17px; font-weight: 700;
+}}
+.layer-experiment-label {{
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 12px 0 6px;
+}}
+.layer-experiment-prompt {{
+  margin: 0 0 4px; padding: 12px 16px;
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface-2);
+  font-family: var(--font-serif); font-size: 14px; font-style: italic;
+  color: var(--text); line-height: 1.55;
+}}
+.layer-experiment-watch {{
+  margin: 0 0 4px; padding: 0 0 0 18px;
+}}
+.layer-experiment-watch li {{ padding: 4px 0; color: var(--text-2); line-height: 1.5; }}
+.layer-experiment-meta {{
+  margin-top: 10px; font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3);
+}}
+
 .flow {{
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -1488,7 +1800,7 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
 
       <div class="verdict-meta">
         <div class="label"><span class="i18n" data-en="Confidence" data-zh="置信度"></span></div>
-        <div class="confidence"><span class="value">{confidence}</span></div>
+        <div class="confidence"><span class="value">{confidence}</span>{layer_pill_html}</div>
 
         <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · {total_claims} <span class="i18n" data-en="total" data-zh="共"></span></div>
         <div class="stats-bar">{stats_bar_html}</div>
@@ -1511,6 +1823,11 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
       {capability_cards_html}
     </div>
   </section>
+
+  {("<section><div class='section-head'><h2><span class='i18n' "
+    "data-en='How we evaluated this · by layer' "
+    "data-zh='我们如何按层级评测'></span></h2></div>" + layer_section_html + "</section>")
+    if layer_section_html else ""}
 
   <details class="section-fold">
     <summary><span class="i18n" data-en="Technical details" data-zh="技术细节"></span></summary>

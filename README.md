@@ -83,11 +83,12 @@ repos/owner--repo/
 ```
 
 1. 在 `repos/` 下建仓库文件夹
-2. 在 `repo.yaml` 里写 metadata
+2. 在 `repo.yaml` 里写 metadata —— 必须填 `archetype` 和 `layer`（atom / molecule / compound，对应 原子 / 分子 / 复合物，详见 [`docs/LAYERS.md`](docs/LAYERS.md)）
 3. 在 `claims/claim-map.yaml` 里抽 claim
 4. 在 `plans/YYYY-MM-DD-eval-plan.md` 里写业务可读 plan
 5. 在 `runs/` 下保存每次执行的证据和 provenance
 6. 在 `verdicts/` 下写最终 verdict + 桶
+7. **每次 eval 收尾运行 `scripts/render_verdict_html.py <slug>`** 产出双语编辑型 dossier（en/zh 切换 + 分层评测段），这是最终对外的可读交付物
 
 ## 快速开始
 

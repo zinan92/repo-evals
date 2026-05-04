@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" data-bucket="reusable">
+<html lang="en" data-bucket="reusable">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -363,6 +363,143 @@ details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var
 .mini-card li:last-child { border-bottom: 0; padding-bottom: 0; }
 .mini-card li:first-child { padding-top: 0; }
 
+/* --- Layer (atom / molecule / compound) section -------------------- */
+
+.layer-pill {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--surface-1); border: 1px solid var(--border-strong);
+  font-family: var(--font-mono); font-size: 12px;
+  margin-left: 12px;
+}
+.layer-pill-eyebrow {
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-size: 10px;
+}
+.layer-pill.layer-atom     { border-color: #4a9d8a; color: #2d7866; }
+.layer-pill.layer-molecule { border-color: #7a5fb8; color: #5a3aa1; }
+.layer-pill.layer-compound { border-color: #c75441; color: #a13d30; }
+
+.layer-hero {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px 28px; margin-bottom: 22px;
+}
+.layer-hero-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}
+.layer-hero-name {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 32px; font-weight: 700; line-height: 1.1;
+  margin-bottom: 10px;
+}
+.layer-hero-name.layer-atom     { color: #2d7866; }
+.layer-hero-name.layer-molecule { color: #5a3aa1; }
+.layer-hero-name.layer-compound { color: #a13d30; }
+.layer-hero-summary { font-size: 16px; color: var(--text-2); line-height: 1.55; max-width: 70ch; }
+.layer-hero-source { margin-top: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--text-3); }
+
+.layer-stack { display: grid; gap: 18px; margin-bottom: 28px; }
+
+.layer-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+}
+.layer-card-head {
+  display: flex; align-items: baseline;
+  justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.layer-card-head h3 {
+  margin: 0;
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}
+.layer-card-tag {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-3); padding: 2px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+}
+.layer-card-summary { color: var(--text-2); margin: 4px 0 14px; line-height: 1.55; }
+
+.layer-card.layer-card-atom     { border-left: 3px solid #4a9d8a; }
+.layer-card.layer-card-molecule { border-left: 3px solid #7a5fb8; }
+.layer-card.layer-card-compound { border-left: 3px solid #c75441; }
+
+.layer-dim-table { width: 100%; border-collapse: collapse; }
+.layer-dim-table th, .layer-dim-table td {
+  text-align: left; padding: 10px 12px;
+  border-top: 1px solid var(--border); vertical-align: top;
+  font-size: 14px; line-height: 1.55;
+}
+.layer-dim-table th {
+  width: 28%; font-weight: 600; color: var(--text);
+}
+.layer-dim-table td { color: var(--text-2); }
+.layer-dim-table th code {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 2px 6px; border-radius: 4px;
+}
+
+.layer-experiments {
+  margin-top: 28px; padding-top: 22px;
+  border-top: 1px dashed var(--border);
+}
+.layer-experiments-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}
+.layer-experiments-intro {
+  color: var(--text-2); margin: 0 0 18px; max-width: 70ch; line-height: 1.55;
+}
+
+.layer-experiment {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px; margin-bottom: 14px;
+}
+.layer-experiment-head {
+  display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px;
+}
+.layer-experiment-num {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3);
+  padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px;
+}
+.layer-experiment h4 {
+  margin: 0; font-family: var(--font-display, var(--font-serif));
+  font-size: 17px; font-weight: 700;
+}
+.layer-experiment-label {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 12px 0 6px;
+}
+.layer-experiment-prompt {
+  margin: 0 0 4px; padding: 12px 16px;
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface-2);
+  font-family: var(--font-serif); font-size: 14px; font-style: italic;
+  color: var(--text); line-height: 1.55;
+}
+.layer-experiment-watch {
+  margin: 0 0 4px; padding: 0 0 0 18px;
+}
+.layer-experiment-watch li { padding: 4px 0; color: var(--text-2); line-height: 1.5; }
+.layer-experiment-meta {
+  margin-top: 10px; font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3);
+}
+
 .flow {
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -576,7 +713,7 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
       <div class="verdict-meta">
         <div class="label"><span class="i18n" data-en="Confidence" data-zh="置信度"></span></div>
-        <div class="confidence"><span class="value">medium</span></div>
+        <div class="confidence"><span class="value">medium</span><span class="layer-pill layer-molecule" title="molecule"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Molecule" data-zh="分子"></span></span></div>
 
         <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 8 <span class="i18n" data-en="total" data-zh="共"></span></div>
         <div class="stats-bar"><span class="s-pass" style="flex: 7"></span><span class="s-warn" style="flex: 1"></span></div>
@@ -607,6 +744,19 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 <article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-007</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Health endpoint flags stale sources honestly" data-zh="/health 会老老实实标记挂掉的源"></span></h3>  <p class="cap-description"><span class="i18n" data-en="/api/health classifies each source as ok / stale / no_data with last_collected timestamp and age_hours. At eval time reddit was marked stale (266h since last collection) — the endpoint surfaces the failure instead of hiding it, but it&#x27;s still your job to fix it." data-zh="/api/health 把每个源分成 ok / stale / no_data，带 last_collected 时间戳和小时数。测评时 reddit 被标为 stale（266 小时没采集了）—— 接口把问题暴露出来而不是藏起来，但修还是得你自己来。"></span></p>  </article>
     </div>
   </section>
+
+  <section><div class='section-head'><h2><span class='i18n' data-en='How we evaluated this · by layer' data-zh='我们如何按层级评测'></span></h2></div>
+    <div class="layer-hero">
+      <div class="layer-hero-eyebrow">
+        <span class="i18n" data-en="Composition layer" data-zh="组合层级"></span>
+      </div>
+      <div class="layer-hero-name layer-molecule"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div>
+      <div class="layer-hero-summary"><span class="i18n" data-en="2–10 atoms wired by predefined orchestration. No runtime LLM routing." data-zh="2–10 个原子，按预定义编排串起来。运行时不让 LLM 临时决定路由。"></span></div>
+      <div class="layer-hero-source"><span class="i18n"
+        data-en="Declared in repo.yaml"
+        data-zh="已在 repo.yaml 中显式声明"></span></div>
+    </div>
+    <div class="layer-stack"><div class="layer-card layer-card-atom"><div class="layer-card-head"><h3><span class="i18n" data-en="Atom-level checks" data-zh="原子层检查"></span></h3><span class="layer-card-tag"><span class="i18n" data-en="applies (lower-level dependency)" data-zh="适用（下层依赖）"></span></span></div><p class="layer-card-summary"><span class="i18n" data-en="Single responsibility. Same input → same output. No skill-level callouts." data-zh="单一职责。同样输入产出同样输出。不调用其他 skill 级单元。"></span></p><table class="layer-dim-table"><tbody><tr><th><code>input_contract</code></th><td><span class="i18n" data-en="Does the atom reject malformed input with a clear, actionable error?" data-zh="原子在收到非法输入时，是否抛出一个清晰、可操作的错误？"></span></td></tr><tr><th><code>output_contract</code></th><td><span class="i18n" data-en="Does the output shape match what the README/SKILL.md claims?" data-zh="输出的结构是否与 README/SKILL.md 的承诺一致？"></span></td></tr><tr><th><code>determinism</code></th><td><span class="i18n" data-en="Same input → same output within stated tolerance. (LLM atoms: structurally equivalent, not byte-equal.)" data-zh="同样输入产出同样输出（容差内）。LLM 原子的容差是「结构等价」，不是字节相等。"></span></td></tr><tr><th><code>idempotence</code></th><td><span class="i18n" data-en="Re-running with the same input produces the same observable end state." data-zh="同样输入重复运行，最终可观察状态保持一致。"></span></td></tr><tr><th><code>no_skill_callouts</code></th><td><span class="i18n" data-en="Does the atom avoid invoking other documented skills? Primitives only (LLM API, stdlib, OS)." data-zh="原子是否避免调用其他 skill？只能调用 primitive（LLM API、stdlib、OS）。"></span></td></tr><tr><th><code>failure_mode_clarity</code></th><td><span class="i18n" data-en="Does each documented failure mode produce a distinct, recognisable error?" data-zh="每一种文档化的失败模式，是否都对应一个独特且可识别的错误？"></span></td></tr></tbody></table></div><div class="layer-card layer-card-molecule"><div class="layer-card-head"><h3><span class="i18n" data-en="Molecule-level checks" data-zh="分子层检查"></span></h3><span class="layer-card-tag"><span class="i18n" data-en="applies (this layer)" data-zh="适用（当前层）"></span></span></div><p class="layer-card-summary"><span class="i18n" data-en="2–10 atoms wired by predefined orchestration. No runtime LLM routing." data-zh="2–10 个原子，按预定义编排串起来。运行时不让 LLM 临时决定路由。"></span></p><table class="layer-dim-table"><tbody><tr><th><code>workflow_correctness</code></th><td><span class="i18n" data-en="Does an end-to-end happy path run from initial input to final output?" data-zh="从初始输入到最终输出，端到端 happy path 能跑通吗？"></span></td></tr><tr><th><code>declared_call_graph</code></th><td><span class="i18n" data-en="Are the atoms the molecule documents as using actually the ones it calls? No undocumented hidden dependencies." data-zh="分子文档里声明依赖的原子，是否就是它实际调用的原子？没有未文档化的隐藏依赖？"></span></td></tr><tr><th><code>stop_conditions</code></th><td><span class="i18n" data-en="Do documented stop conditions (success, max-retries, timeout) trigger and halt cleanly?" data-zh="文档化的停止条件（成功 / 重试上限 / 超时）是否真的触发并干净退出？"></span></td></tr><tr><th><code>handoff_points</code></th><td><span class="i18n" data-en="When the molecule should hand back to a human, does it do so at the documented trigger?" data-zh="分子需要把控制权交还给人时，是否按文档化的触发点执行？"></span></td></tr><tr><th><code>atom_evidence</code></th><td><span class="i18n" data-en="Does every declared atom dependency have a passing atom-level eval (referenced or co-located)?" data-zh="每一个声明依赖的原子，是否都有对应的、通过的 atom 级评测（引用或同仓）？"></span></td></tr><tr><th><code>error_propagation</code></th><td><span class="i18n" data-en="Does a downstream atom failure surface at the molecule boundary with enough info to act?" data-zh="下游原子失败时，错误是否在分子边界处响亮地冒泡出来，并带足够信息让人定位？"></span></td></tr><tr><th><code>partial_failure_handling</code></th><td><span class="i18n" data-en="When one atom fails, does the molecule avoid silently producing an incomplete &#x27;success&#x27;?" data-zh="某个原子失败时，分子是否避免静默输出一个看似「成功」其实不完整的产物？"></span></td></tr></tbody></table></div></div></section>
 
   <details class="section-fold">
     <summary><span class="i18n" data-en="Technical details" data-zh="技术细节"></span></summary>
@@ -742,7 +892,7 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
 <script>
   const LANG_KEY = 'repoEvalsVerdictLang';
-  const INITIAL_LANG = "zh";
+  const INITIAL_LANG = "auto";
   function detectLang() {
     try {
       const p = new URLSearchParams(location.search).get('lang');

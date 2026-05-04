@@ -106,14 +106,42 @@ def test_experiments_only_for_compound() -> None:
 
 
 @pytest.mark.unit
-def test_compound_experiments_have_required_fields() -> None:
+def test_compound_experiments_have_required_bilingual_fields() -> None:
     experiments = layers.experiments_for("compound", "hybrid-skill")
     assert len(experiments) >= 3, "compound layer needs ≥3 generic experiments"
     for exp in experiments:
-        assert exp.title.strip()
-        assert exp.system_prompt.strip()
-        assert len(exp.watch_for) >= 2
-        assert exp.expected_sub_molecules.strip()
+        # Each experiment must carry both en and zh content for every field.
+        assert exp.title_en.strip() and exp.title_zh.strip()
+        assert exp.system_prompt_en.strip() and exp.system_prompt_zh.strip()
+        assert len(exp.watch_for_en) >= 2
+        assert len(exp.watch_for_en) == len(exp.watch_for_zh), (
+            f"watch_for length mismatch for {exp.title_en!r}: "
+            f"en={len(exp.watch_for_en)} zh={len(exp.watch_for_zh)}"
+        )
+        assert exp.expected_sub_molecules_en.strip()
+        assert exp.expected_sub_molecules_zh.strip()
+        # The bilingual property accessors should expose both halves.
+        assert exp.title["en"] and exp.title["zh"]
+        assert exp.watch_for[0]["en"] and exp.watch_for[0]["zh"]
+
+
+@pytest.mark.unit
+def test_dimension_questions_are_bilingual() -> None:
+    for level in layers.LAYERS:
+        for d in layers.dimensions_for_level(level):
+            assert d.question_en.strip(), f"{level}.{d.key} missing en question"
+            assert d.question_zh.strip(), f"{level}.{d.key} missing zh question"
+            assert d.question["en"] == d.question_en
+            assert d.question["zh"] == d.question_zh
+
+
+@pytest.mark.unit
+def test_layer_label_is_bilingual_with_chinese_words() -> None:
+    """Spot-check that the canonical Chinese terms are in the labels."""
+
+    assert layers.layer_label("atom") == {"en": "Atom", "zh": "原子"}
+    assert layers.layer_label("molecule") == {"en": "Molecule", "zh": "分子"}
+    assert layers.layer_label("compound") == {"en": "Compound", "zh": "复合物"}
 
 
 @pytest.mark.unit

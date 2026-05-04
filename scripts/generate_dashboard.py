@@ -735,7 +735,7 @@ def render_layer_section(repo: dict[str, Any]) -> str:
         )
         return f"<section class=\"panel\">{intro}</section>"
 
-    summary = layers_mod.layer_summary(effective)
+    summary = layers_mod.layer_summary(effective)["en"]
     declared_note = (
         f"declared <strong>{html.escape(declared)}</strong>"
         if declared != "unknown"
@@ -752,14 +752,14 @@ def render_layer_section(repo: dict[str, Any]) -> str:
     for level in levels:
         dimensions = layers_mod.dimensions_for_level(level)
         rows = "".join(
-            f"<tr><th>{html.escape(d.key)}</th><td>{html.escape(d.question)}</td></tr>"
+            f"<tr><th>{html.escape(d.key)}</th><td>{html.escape(d.question_en)}</td></tr>"
             for d in dimensions
         )
         applies = "applies (this layer)" if level == effective else "applies (lower-level dependency)"
         blocks.append(
             f"<div class=\"layer-level\">"
             f"<h3>{html.escape(LEVEL_TITLES[level])} <span class=\"level-tag\">{html.escape(applies)}</span></h3>"
-            f"<p class=\"level-desc\">{html.escape(layers_mod.layer_summary(level))}</p>"
+            f"<p class=\"level-desc\">{html.escape(layers_mod.layer_summary(level)['en'])}</p>"
             f"<table class=\"dim-table\"><tbody>{rows}</tbody></table>"
             f"</div>"
         )
@@ -770,16 +770,16 @@ def render_layer_section(repo: dict[str, Any]) -> str:
         )
         exp_blocks: list[str] = []
         for idx, exp in enumerate(experiments, start=1):
-            watch = "".join(f"<li>{html.escape(item)}</li>" for item in exp.watch_for)
+            watch = "".join(f"<li>{html.escape(item)}</li>" for item in exp.watch_for_en)
             exp_blocks.append(
                 f"<div class=\"experiment\">"
-                f"<h4>Scenario {idx}: {html.escape(exp.title)}</h4>"
+                f"<h4>Scenario {idx}: {html.escape(exp.title_en)}</h4>"
                 f"<div class=\"muted small\"><strong>System prompt / starting message:</strong></div>"
-                f"<blockquote>{html.escape(exp.system_prompt)}</blockquote>"
+                f"<blockquote>{html.escape(exp.system_prompt_en)}</blockquote>"
                 f"<div class=\"muted small\"><strong>What to watch for:</strong></div>"
                 f"<ul class=\"flag-list\">{watch}</ul>"
                 f"<div class=\"muted small\"><strong>Sub-molecules expected:</strong> "
-                f"{html.escape(exp.expected_sub_molecules)}</div>"
+                f"{html.escape(exp.expected_sub_molecules_en)}</div>"
                 f"<div class=\"muted small\" style=\"margin-top:10px;\">"
                 f"<strong>Verdict log:</strong> record date · run · goal reached? · right sub-molecules? · notes "
                 f"in <code>repos/{html.escape(repo['slug'])}/runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md</code>."
