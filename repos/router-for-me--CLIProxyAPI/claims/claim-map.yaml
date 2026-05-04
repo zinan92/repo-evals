@@ -1,0 +1,133 @@
+claims:
+- id: claim-001
+  title: 7 个上游 protocol translator 真实存在
+  source: README "OpenAI/Gemini/Claude/Codex compatible API"
+  source_ref: internal/translator/
+  priority: critical
+  area: protocol-coverage
+  statement: 'internal/translator/ 下应有 antigravity / claude / codex / gemini /
+
+    gemini-cli / openai 至少 6 个 protocol-specific 子目录 + common 工具层。
+
+    '
+  business_expectation: '每条声称兼容的协议都有真代码，不是 marketing。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: '7 translators in internal/translator/: antigravity, claude, codex, common,
+    gemini-cli, gemini, openai'
+- id: claim-002
+  title: 8 平台 release 二进制全员到齐
+  source: README install (隐性)
+  source_ref: GitHub Releases
+  priority: critical
+  area: distribution
+  statement: 'latest release 至少 8 个 OS/arch 的 tar.gz / zip 文件 + 1 个 checksums.txt：
+
+    darwin/freebsd/linux × aarch64+amd64 + windows × aarch64+amd64。
+
+    '
+  business_expectation: '用户在主流平台都能装。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: v6.10.4 ships 8 binaries (darwin/freebsd/linux/windows × aarch64+amd64) +
+    checksums.txt
+- id: claim-003
+  title: 7 家 OAuth login flow 真实存在
+  source: README "Simple CLI authentication flows"
+  source_ref: internal/auth/
+  priority: critical
+  area: oauth
+  statement: 'internal/auth/ 下至少有 antigravity / claude / codex / gemini / kimi /
+
+    vertex 6 个 provider-specific 登录子目录（外加 empty placeholder）。
+
+    '
+  business_expectation: 'README "OAuth login" 不止是说，是真有 6+ 家流程。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: '7 dirs in internal/auth/: antigravity, claude, codex, empty, gemini, kimi,
+    vertex'
+- id: claim-004
+  title: 多账号 round-robin 配置在 config.example 真实出现
+  source: README "Multiple accounts with round-robin load balancing"
+  source_ref: config.example.yaml
+  priority: high
+  area: load-balancing
+  statement: 'config.example.yaml 中至少出现 round-robin / load_balance / multi-account
+    /
+
+    accounts: list 这类关键字 ≥ 1 次，证明 README 承诺有配置入口。
+
+    '
+  business_expectation: '用户可以照 config.example 配多账号，不需要自己摸源码。
+
+    '
+  status: passed_with_concerns
+  last_run: runs/2026-05-04/run-static-checks
+  note: config.example.yaml is 406 lines; round-robin/load-balance keywords present,
+    deeper schema read recommended
+- id: claim-005
+  title: Reusable Go SDK 真有文档 + 子包
+  source: README "Reusable Go SDK for embedding the proxy"
+  source_ref: docs/sdk-usage.md + sdk/
+  priority: high
+  area: sdk
+  statement: 'docs/sdk-usage.md ≥ 100 行；sdk/ 下有 ≥ 5 个子包；docs/ 还有 sdk-access /
+
+    sdk-advanced / sdk-watcher 三个进阶文档，并且有 EN/CN 双语版本。
+
+    '
+  business_expectation: '用户能把代理嵌进自己的 Go 服务，而不是只能跑独立 server。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: docs/sdk-usage.md (163 lines) + 9 sdk/ packages + 4 SDK docs in EN+CN
+- id: claim-006
+  title: 端到端 happy path：装 + 登录 + 一次 OpenAI 兼容请求
+  source: README "OpenAI/Gemini/Claude compatible API endpoints"
+  source_ref: server.go + 任意 translator
+  priority: critical
+  area: end-to-end
+  statement: '下载 release 二进制启动 server，照 README 流程登录至少一家 provider（如
+
+    Claude Code OAuth），用 curl 调一次 OpenAI 兼容 endpoint
+
+    (POST /v1/chat/completions)，应返回结构化响应。
+
+    '
+  business_expectation: '用户照 README 5 分钟内能让自己的 OpenAI 客户端调到本地代理。
+
+    '
+  evidence_needed: 'molecule 级 — 需要本地 binary 启动 + 真实 OAuth + curl 测试。建议 1 个
+
+    happy-path + 1 个 OAuth 过期后重发的恢复场景。
+
+    '
+  status: untested
+- id: claim-007
+  title: README 赞助段不冒充功能
+  source: framework / honest-marketing
+  source_ref: README "Sponsor" 表
+  priority: high
+  area: marketing-honesty
+  statement: 'README 顶部 5 个赞助商（PackyCode / AICodeMirror / BmoPlus / Poixe AI /
+
+    VisionCoder / Z.ai）的描述应明确是赞助 / 关联服务，不会被误读为本仓库
+
+    功能。本工具的 OSS 能力与赞助商服务边界清晰。
+
+    '
+  business_expectation: '用户看完 README 知道哪些是 OSS 自带、哪些是付费 / 关联服务。
+
+    '
+  status: passed_with_concerns
+  note: README sponsor table front-loads ~50 lines; Overview cleanly separates OSS
+    from sponsors
+  last_run: runs/2026-05-04/run-static-checks

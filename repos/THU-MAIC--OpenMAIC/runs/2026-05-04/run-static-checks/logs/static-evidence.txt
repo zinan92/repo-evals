@@ -1,0 +1,41 @@
+=== claim-001 tech stack ===
+{
+  "next": "16.1.2",
+  "react": "19.2.3",
+  "langgraph": "^1.1.1",
+  "tailwind": "^4"
+}
+
+=== claim-002 LLM providers ===
+  OPENAI: 3 env vars
+  ANTHROPIC: 3 env vars
+  GOOGLE: 3 env vars
+  DEEPSEEK: 3 env vars
+  GROK: 3 env vars
+
+=== claim-003 TTS providers ===
+  TTS_OPENAI: 2 env vars
+  TTS_AZURE: 2 env vars
+  TTS_GLM: 2 env vars
+  TTS_QWEN: 2 env vars
+  TTS_MINIMAX: 2 env vars
+
+=== claim-004 eval harness ===
+{
+  "eval:whiteboard": "tsx eval/whiteboard-layout/runner.ts",
+  "eval:outline-language": "tsx eval/outline-language/runner.ts"
+}
+
+=== claim-005 OpenClaw skill ===
+skills/openmaic/SKILL.md HTTP 200
+openclaw skill size:      102 lines
+---
+name: openmaic
+description: Guided SOP for setting up and using OpenMAIC from OpenClaw. Use when the user wants to clone the OpenMAIC repo, choose a startup mode, configure recommended API keys, start the service, or generate a classroom from requirements or a PDF. Run one phase at a time and ask for confirmation before each state-changing step.
+user-invocable: true
+metadata: { "openclaw": { "emoji": "🏫" } }
+---
+
+# OpenMAIC Skill
+
+Use this as a guided, confirmation-heavy SOP. Do not compress the whole setup into one reply and do not perform state-changing actions without explicit user confirmation.

@@ -1,0 +1,8 @@
+  alphaear-news/SKILL.md: 200
+  alphaear-stock/SKILL.md: 200
+  alphaear-sentiment/SKILL.md: 200
+  alphaear-predictor/SKILL.md: 200
+  alphaear-signal-tracker/SKILL.md: 200
+  alphaear-logic-visualizer/SKILL.md: 200
+  alphaear-reporter/SKILL.md: 200
+  alphaear-search/SKILL.md: 200

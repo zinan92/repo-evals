@@ -1,0 +1,50 @@
+=== claim-001 Go version + multi-protocol translators ===
+module github.com/router-for-me/CLIProxyAPI/v6
+
+go 1.26.0
+antigravity
+claude
+codex
+common
+gemini-cli
+gemini
+openai
+translator
+
+=== claim-002 release assets coverage ===
+checksums.txt
+CLIProxyAPI_6.10.4_darwin_aarch64.tar.gz
+CLIProxyAPI_6.10.4_darwin_amd64.tar.gz
+CLIProxyAPI_6.10.4_freebsd_aarch64.tar.gz
+CLIProxyAPI_6.10.4_freebsd_amd64.tar.gz
+CLIProxyAPI_6.10.4_linux_aarch64.tar.gz
+CLIProxyAPI_6.10.4_linux_amd64.tar.gz
+CLIProxyAPI_6.10.4_windows_aarch64.zip
+CLIProxyAPI_6.10.4_windows_amd64.zip
+
+=== claim-003 SDK existence ===
+sdk-usage.md size:      163 lines
+
+=== claim-004 multi-account / load-balancing in config ===
+config.example size:      406 lines
+2
+  ↑ load-balancing references
+
+=== claim-005 OAuth login flow ===
+antigravity
+claude
+codex
+empty
+gemini
+kimi
+vertex
+
+=== claim-006 docs/ + management API ===
+sdk-access.md
+sdk-access_CN.md
+sdk-advanced.md
+sdk-advanced_CN.md
+sdk-usage.md
+sdk-usage_CN.md
+sdk-watcher.md
+sdk-watcher_CN.md

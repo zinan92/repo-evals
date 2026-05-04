@@ -1,0 +1,118 @@
+claims:
+- id: claim-001
+  title: README 列出的 8 个 alphaear-* skill 都真实存在
+  source: README "Included Skills" 表
+  source_ref: skills/alphaear-*/SKILL.md
+  priority: critical
+  area: skill-coverage
+  statement: 'README 表格列了 8 个 alphaear-* skills（news / stock / sentiment / predictor
+    /
+
+    signal-tracker / logic-visualizer / reporter / search）。每个对应的
+
+    skills/<name>/SKILL.md 必须真实可访问（HTTP 200）。
+
+    '
+  business_expectation: '用户照 README 引用任一 skill，都能定位到真实文件。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: All 8 alphaear-* SKILL.md files exist (HTTP 200)
+- id: claim-002
+  title: 每个 skill 是真实 hybrid（SKILL.md + scripts + references + tests）
+  source: README "Quick Start" + sample skill
+  source_ref: skills/alphaear-news/{SKILL.md,scripts,references,tests}
+  priority: critical
+  area: skill-shape
+  statement: '抽样 alphaear-news：必须包含 SKILL.md (frontmatter + body) + scripts/ (≥1 个
+
+    .py) + references/ (≥1 个 .md) + tests/。证明这是真 hybrid skill，不是纯
+
+    markdown placeholder。
+
+    '
+  business_expectation: 'Skill 的"用 scripts/news_tools.py" 等承诺有真代码兜底。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 'alphaear-news: SKILL.md (33 lines) + 4 scripts/.py + references/sources.md
+    + tests/'
+- id: claim-003
+  title: skills/ 实际数量 ≥ README 列的 8 个（不会"找不到 skill"）
+  source: gh api skills/
+  source_ref: skills/
+  priority: high
+  area: completeness
+  statement: 'skills/ 目录下 dir 数量 ≥ 8。如果代码多于文档（代码先行），README 应只是滞后；
+
+    如果代码少于文档则虚假承诺。
+
+    '
+  business_expectation: '用户在 skills/ 下找不到 README 列出的 skill 时不会迷茫。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: skills/ has 10 dirs (8 listed + alphaear-deepear-lite + skill-creator); code
+    richer than docs
+- id: claim-004
+  title: 多 agent 框架（Antigravity / OpenCode / OpenClaw）的安装路径文档化
+  source: README "Integration Guide" 表
+  source_ref: README
+  priority: high
+  area: cross-platform
+  statement: 'README 显式给出 Antigravity / OpenCode / OpenClaw 三家的 workspace + global
+
+    安装路径（如 `~/.config/opencode/skills/<skill>/`）；不要求用户自己摸索。
+
+    '
+  business_expectation: '不同 agent 框架的用户都能照 README 一键安装。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: Integration Guide covers Antigravity/OpenCode/OpenClaw with workspace + global
+    paths
+- id: claim-005
+  title: SKILL.md 遵循标准 frontmatter（name + description）
+  source: SKILL.md sample
+  source_ref: skills/alphaear-news/SKILL.md
+  priority: high
+  area: contract
+  statement: '抽样 SKILL.md 必须有 `---` 包裹的 YAML frontmatter，至少 name + description；
+
+    description 必须以"Use when..."风格 trigger 短语结尾，让 LLM 知道何时调用。
+
+    '
+  business_expectation: 'Skill 在 LLM auto-discovery 阶段不会因为 frontmatter 缺失而被忽略。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: Sampled SKILL.md has frontmatter (name + description) + Use when... trigger
+    phrase
+- id: claim-006
+  title: 端到端：装到真实 agent 里跑一个新闻分析查询能拿到结果
+  source: README "Try asking" 例子
+  source_ref: alphaear-news + alphaear-logic-visualizer
+  priority: critical
+  area: end-to-end
+  statement: '装好 skill 后，在 OpenCode / OpenClaw / Claude Code 中问"分析贵金属跳水
+
+    对A股的影响"，agent 应：(a) 调用 alphaear-news 拉新闻 →
+
+    (b) 调用 alphaear-logic-visualizer 画传导链 → (c) 给出分析结论。
+
+    '
+  business_expectation: '"把 LLM 变成华尔街分析师"不是营销词，多 skill 协作真能产出可读 artefact。
+
+    '
+  evidence_needed: 'molecule 级 — 需要 OpenCode / OpenClaw / Claude Code session + 真实
+    LLM key +
+
+    新闻源访问。建议 1 个 happy-path + 1 个数据源失败场景（验证错误冒泡）。
+
+    '
+  status: untested

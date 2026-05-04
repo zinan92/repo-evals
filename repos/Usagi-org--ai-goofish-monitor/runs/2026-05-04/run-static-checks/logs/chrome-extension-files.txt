@@ -1,0 +1,5 @@
+README.md
+background.js
+manifest.json
+popup.html
+popup.js

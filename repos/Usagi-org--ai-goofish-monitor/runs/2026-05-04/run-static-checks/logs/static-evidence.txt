@@ -1,0 +1,179 @@
+=== claim-001 docker-compose minimal ===
+services:
+  app:
+    image: ${APP_IMAGE:-ghcr.io/usagi-org/ai-goofish:latest}
+    container_name: ai-goofish-monitor-app
+    pull_policy: always
+    init: true
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      APP_DATABASE_FILE: /app/data/app.sqlite3
+    volumes:
+      - ./.env:/app/.env
+      - ./data:/app/data
+      - ./state:/app/state
+      - ./config.json:/app/config.json
+      - ./prompts:/app/prompts
+      - ./jsonl:/app/jsonl
+      - ./logs:/app/logs
+      - ./images:/app/images
+      - ./price_history:/app/price_history
+    restart: unless-stopped
+
+=== claim-002 src/ + web-ui dirs ===
+api
+core
+domain
+infrastructure
+services
+
+.gitignore
+.vscode
+Dockerfile
+README.md
+components.json
+index.html
+nginx.conf
+package-lock.json
+package.json
+postcss.config.cjs
+
+=== claim-003 notification channels in env ===
+  ntfy: 2 env-var lines
+  BARK: 2 env-var lines
+  WEWORK\|WECHAT\|WX_: 0 env-var lines
+  TELEGRAM\|TG_: 0 env-var lines
+  GOTIFY: 3 env-var lines
+  WEBHOOK: 7 env-var lines
+
+=== claim-004 requirements.txt vs README's deps ===
+requirements.txt size:       18 lines
+playwright
+openai
+fastapi
+apscheduler
+httpx[socks]
+
+=== claim-005 Dockerfile shape ===
+# Stage 1: Build the Vue application
+FROM node:22-alpine AS frontend-builder
+WORKDIR /web-ui
+COPY web-ui/package*.json ./
+RUN npm ci
+COPY web-ui/ .
+RUN npm run build
+
+# Stage 2: Build the python environment with dependencies
+FROM python:3.11-slim-bookworm AS builder
+
+# 设置环境变量以防止交互式提示
+ENV DEBIAN_FRONTEND=noninteractive \
+    VIRTUAL_ENV=/opt/venv \
+    PATH="/opt/venv/bin:$PATH"
+
+# 创建虚拟环境并安装 Python 运行时依赖
+RUN python3 -m venv $VIRTUAL_ENV
+COPY requirements-runtime.txt .
+RUN pip install --no-cache-dir -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements-runtime.txt
+
+# Stage 3: Create the final, lean image
+FROM python:3.11-slim-bookworm
+
+WORKDIR /app
+ENV DEBIAN_FRONTEND=noninteractive \
+    VIRTUAL_ENV=/opt/venv \
+    PATH="/opt/venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1 \
+    RUNNING_IN_DOCKER=true \
+
+=== claim-006 chrome-extension dir ===
+README.md
+background.js
+manifest.json
+popup.html
+popup.js
+
+=== AI agent prompts dir ===
+base_prompt.txt
+macbook_criteria.txt
+=== claim-001 docker-compose mounts ===
+image: ${APP_IMAGE:-ghcr.io/usagi-org/ai-goofish:latest}
+ports: ['8000:8000']
+volumes (9):
+  ./.env:/app/.env
+  ./data:/app/data
+  ./state:/app/state
+  ./config.json:/app/config.json
+  ./prompts:/app/prompts
+  ./jsonl:/app/jsonl
+  ./logs:/app/logs
+  ./images:/app/images
+  ./price_history:/app/price_history
+
+=== claim-002 src layers ===
+  src/api: 200
+  src/core: 403
+  src/domain: 200
+  src/services: 200
+  src/infrastructure: 200
+
+=== claim-003 6 notification channels in env.example ===
+  ntfy: 2 env-var-line mentions
+  BARK: 2 env-var-line mentions
+  WX_BOT\|WORK_WX\|WEWORK\|qywx: 0 env-var-line mentions
+  TELEGRAM\|TG_: 0 env-var-line mentions
+  GOTIFY: 3 env-var-line mentions
+  WEBHOOK: 7 env-var-line mentions
+explicit channel section headers:
+# --- ntfy (推荐) ---
+# --- Bark (iOS 推荐) ---
+# --- 企业微信机器人 ---
+# --- Telegram 机器人 ---
+# --- Gotify ---
+# --- 通用 Webhook ---
+# --- 任务失败保护 ---
+# --- 任务运行日志清理 ---
+# --- 代理池轮换 ---
+
+=== claim-004 Dockerfile FROM stages ===
+3
+  ↑ FROM stages in Dockerfile
+FROM node:22-alpine AS frontend-builder
+FROM python:3.11-slim-bookworm AS builder
+FROM python:3.11-slim-bookworm
+
+=== claim-005 chrome-extension is real MV3 ===
+{
+  "manifest_version": 3,
+  "name": "Xianyu Login State Extractor",
+  "version": "1.1",
+  "permissions": [
+    "activeTab",
+    "cookies",
+    "scripting",
+    "storage",
+    "tabs",
+    "webRequest"
+  ],
+  "host_permissions": [
+    "*://*.goofish.com/*"
+  ]
+}
+
+=== claim-006 prompt templates content ===
+  prompts/base_prompt.txt:       47 lines
+  prompts/macbook_criteria.txt:       46 lines
+
+=== claim-007 README password warning ===
+# 服务运行端口 (默认 8000)
+# 管理员账号与密码 (默认 admin / admin123)
+WEB_PASSWORD=admin123
+# 爬虫是否以无头模式运行 (默认 true)。
+# 是否使用 Edge 浏览器内核 (默认 false, 即使用 Chrome)。
+# 管理员账号与密码 (默认 admin / admin123)
+WEB_USERNAME=admin
+WEB_PASSWORD=admin123
+

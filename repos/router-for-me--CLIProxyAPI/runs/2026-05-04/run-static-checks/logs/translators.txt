@@ -1,0 +1,8 @@
+antigravity
+claude
+codex
+common
+gemini-cli
+gemini
+openai
+translator

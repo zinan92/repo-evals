@@ -1,0 +1,10 @@
+.gitignore
+.vscode
+Dockerfile
+README.md
+components.json
+index.html
+nginx.conf
+package-lock.json
+package.json
+postcss.config.cjs

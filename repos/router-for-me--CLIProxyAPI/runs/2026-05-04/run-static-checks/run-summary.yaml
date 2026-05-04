@@ -1,0 +1,60 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: router-for-me
+  repo: CLIProxyAPI
+  branch: main
+  release_tag: v6.10.4
+  go_version: "1.26.0"
+
+scope: |
+  Static-checkable claims for protocol coverage, multi-OS distribution,
+  OAuth login surface, multi-account config, and Go SDK existence.
+  Live OpenAI-compatible API call (claim-006) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "7 translators in internal/translator/: antigravity, claude, codex, common, gemini-cli, gemini, openai, plus a translator/ root package"
+  - id: claim-002
+    status: passed
+    note: "v6.10.4 ships 8 release binaries (darwin/freebsd/linux × aarch64+amd64 + windows × aarch64+amd64) + checksums.txt"
+  - id: claim-003
+    status: passed
+    note: "7 dirs in internal/auth/: antigravity, claude, codex, empty, gemini, kimi, vertex"
+  - id: claim-004
+    status: passed_with_concerns
+    note: "config.example.yaml is 406 lines; 2 round-robin/load-balance keyword hits found — concept exists but coverage of the hits not exhaustively traced"
+  - id: claim-005
+    status: passed
+    note: "docs/sdk-usage.md = 163 lines; sdk/ has 9 sub-packages; 4 SDK docs in EN+CN (sdk-access, sdk-advanced, sdk-usage, sdk-watcher)"
+  - id: claim-007
+    status: passed_with_concerns
+    note: "5+ sponsors occupy ~50 lines before Overview; Overview itself separates OSS features from sponsor offerings clearly"
+
+claims_deferred:
+  - claim-006  # live OpenAI-compatible request through the proxy
+
+artifacts:
+  - artifacts/go.mod
+  - artifacts/sdk-usage.md
+  - artifacts/config.example.yaml
+
+logs:
+  - logs/cmd-dir.txt
+  - logs/internal-dir.txt
+  - logs/sdk-dir.txt
+  - logs/translators.txt
+  - logs/release-assets.txt
+  - logs/auth-providers.txt
+  - logs/docs-dir.txt
+  - logs/static-evidence.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/router-for-me/CLIProxyAPI/main/{go.mod,docs/sdk-usage.md,config.example.yaml}"
+    - "gh api repos/router-for-me/CLIProxyAPI/contents/{cmd,internal,internal/translator,internal/auth,sdk,docs,auths}"
+    - "gh api repos/router-for-me/CLIProxyAPI/releases (latest)"
+  network_dependent: true
+  reproducible: yes

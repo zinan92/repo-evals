@@ -1,0 +1,55 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: THU-MAIC
+  repo: OpenMAIC
+  branch: main
+  app_version: "0.2.1"
+  next_version: "16.1.2"
+  react_version: "19.2.3"
+  langgraph_version: "^1.1.1"
+
+scope: |
+  Static-checkable claims for tech stack, multi-LLM + multi-TTS env
+  surface, in-repo eval harness, and OpenClaw skill. Live classroom
+  generation (claim-006) and cost-transparency in README (claim-007)
+  deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "next 16.1.2, react 19.2.3, @langchain/langgraph ^1.1.1, tailwindcss ^4 — matches README badges"
+  - id: claim-002
+    status: passed
+    note: "5 LLM providers (OpenAI/Anthropic/Google/DeepSeek/Grok) each with KEY+BASE_URL+MODELS"
+  - id: claim-003
+    status: passed
+    note: "5 TTS providers (OpenAI/Azure/GLM/Qwen/MiniMax) each with KEY+BASE_URL"
+  - id: claim-004
+    status: passed
+    note: "2 named eval scripts (eval:whiteboard, eval:outline-language) reference real tsx runners under eval/"
+  - id: claim-005
+    status: passed
+    note: "skills/openmaic/SKILL.md exists (102 lines, user-invocable, OpenClaw frontmatter); guided SOP for setup"
+
+claims_deferred:
+  - claim-006  # live classroom generation
+  - claim-007  # README cost transparency
+
+artifacts:
+  - artifacts/package.json
+  - artifacts/env.example
+  - artifacts/openclaw-skill.md
+
+logs:
+  - logs/skills-dir.txt
+  - logs/eval-dir.txt
+  - logs/static-evidence.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/THU-MAIC/OpenMAIC/main/{package.json,.env.example,Dockerfile,skills/openmaic/SKILL.md}"
+    - "gh api repos/THU-MAIC/OpenMAIC/contents/{skills,eval}"
+  network_dependent: true
+  reproducible: yes

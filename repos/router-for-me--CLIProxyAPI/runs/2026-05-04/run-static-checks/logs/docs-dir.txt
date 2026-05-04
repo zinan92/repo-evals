@@ -1,0 +1,8 @@
+sdk-access.md
+sdk-access_CN.md
+sdk-advanced.md
+sdk-advanced_CN.md
+sdk-usage.md
+sdk-usage_CN.md
+sdk-watcher.md
+sdk-watcher_CN.md

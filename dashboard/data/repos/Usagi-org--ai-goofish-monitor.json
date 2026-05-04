@@ -1,0 +1,42 @@
+{
+  "slug": "Usagi-org--ai-goofish-monitor",
+  "display_name": "ai-goofish-monitor",
+  "owner": "Usagi-org",
+  "repo": "ai-goofish-monitor",
+  "repo_url": "https://github.com/Usagi-org/ai-goofish-monitor",
+  "repo_type": "service",
+  "archetype": "api-service",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "FastAPI + Vue + Playwright + APScheduler + OpenAI-compatible LLM service for monitoring 闲鱼 (XianYu) listings against natural-language user criteria. 11.5K stars, MIT, very popular in CN secondhand-buyer community. Single docker-compose service (app on port 8000), Chromium bundle…",
+  "repo_path": "repos/Usagi-org--ai-goofish-monitor",
+  "claims_summary": {
+    "total": 8,
+    "passed": 7,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 2,
+    "critical_passed": 1,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 6
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/Usagi-org--ai-goofish-monitor/plans/2026-05-04-eval-plan.md",
+  "verdict_path": "repos/Usagi-org--ai-goofish-monitor/verdicts/2026-05-04-final-verdict.md",
+  "attention_level": "medium"
+}

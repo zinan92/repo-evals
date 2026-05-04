@@ -1,0 +1,48 @@
+owner: RKiding
+repo: Awesome-finance-skills
+display_name: Awesome-finance-skills
+repo_url: https://github.com/RKiding/Awesome-finance-skills
+repo_type: skill-catalog
+# Reclassified: each skill ships SKILL.md + scripts/ Python helpers
+# (content_extractor, database_manager, news_tools) → hybrid-skill,
+# not pure prompt-skill.
+archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Catalog of 10 skills, each individually a molecule (SKILL.md +
+# scripts/ + references/ + tests/). Repo level = molecule (collection
+# wired by README install paths + npx skills registry).
+layer: molecule
+complexity: medium
+uses_areas: false
+status: evaluated
+current_bucket: usable
+last_evaluated: "2026-05-04"
+version_tested: "main@HEAD"
+notes: |
+  10-skill finance toolkit for Antigravity / OpenCode / OpenClaw.
+  README headlines 8 alphaear-* skills (news / stock / sentiment /
+  predictor / signal-tracker / logic-visualizer / reporter / search);
+  skills/ dir actually has 10 (adds alphaear-deepear-lite and
+  skill-creator). Distributed via `npx skills` registry or manual
+  git clone + cp.
+
+  Each skill is a real hybrid bundle: SKILL.md (~30-60 lines) +
+  scripts/*.py + references/*.md + tests/. The user-facing prompt is
+  small; the user value comes from the scripts the skill orchestrates
+  (e.g., NewsNowTools, PolymarketTools).
+
+  Apache 2.0, Python. Cross-platform skill installation paths
+  documented for 3 agent frameworks.
+
+product_view:
+  one_liner:
+    en: "A 10-skill bundle for Antigravity / OpenCode / OpenClaw that turns your AI agent into a finance analyst — fetches multi-source news (Cailian, Polymarket, etc), A/HK/US stock data, runs FinBERT sentiment, draws transmission-chain diagrams (draw.io XML), and writes structured reports. Each skill is SKILL.md + Python scripts."
+    zh: "一组 10 个金融分析 skill，适配 Antigravity / OpenCode / OpenClaw —— 把 AI agent 变成金融分析员：拉多源新闻（财联社、Polymarket 等）、A 股 / 港股 / 美股行情、FinBERT 情绪打分、画市场传导链图（draw.io XML）、写结构化报告。每个 skill 是 SKILL.md + Python 脚本的组合。"
+  best_for:
+    en: "Solo investors / quant researchers who use AI agents (Claude Code / OpenCode / OpenClaw) for market analysis and want a curated, ready-to-load finance skill bundle without writing prompts from scratch."
+    zh: "用 AI agent（Claude Code / OpenCode / OpenClaw）做市场分析的独立投资者 / 量化研究员，想要一组装上即用的金融 skill 包，不需要自己从头写 prompt。"
+  watch_out:
+    en: |
+      Skills depend on external services (financial news APIs, FinBERT model, Kronos forecasting, Polymarket) — each has its own auth + rate limits. The README lists `npx skills add` as the one-step install but that depends on a third-party `skills` CLI that isn't bundled. Each skill's individual quality varies; this eval validated that all 8 README-listed skills exist and are non-trivial, not that each one's analysis is correct.
+    zh: |
+      Skill 依赖外部服务（金融新闻 API、FinBERT 模型、Kronos 预测、Polymarket）—— 每个都有自己的鉴权和速率限制。README 推 `npx skills add` 一键装，但要先有第三方的 `skills` CLI（不是仓库自带）。每个 skill 的质量独立，这次评测只验证了 README 列的 8 个 skill 都存在且非空，没验证每个分析的准确性。

@@ -1,0 +1,153 @@
+claims:
+- id: claim-001
+  title: Docker Compose 一行命令真能起服务
+  source: README "Docker 部署"
+  source_ref: docker-compose.yaml
+  priority: critical
+  area: install
+  statement: 'docker-compose.yaml 是单 service `app`，绑定 8000:8000，挂载 .env / data /
+
+    state / prompts / logs / images / config.json 等持久化目录；image 默认指向
+
+    ghcr.io/usagi-org/ai-goofish:latest，pull_policy=always。
+
+    '
+  business_expectation: '用户照 README 第一段命令一次起服务，浏览器开 :8000 就能看 Web UI。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: Single app service on 8000:8000; 9 volume mounts
+- id: claim-002
+  title: 后端是 FastAPI + DDD 分层（不是脚本拼起来）
+  source: README "Web 可视化管理"
+  source_ref: src/{api,core,domain,services,infrastructure}
+  priority: high
+  area: structure
+  statement: 'src/ 下存在 api / core / domain / services / infrastructure 五层目录 —
+
+    正经 DDD/分层架构，而不是单文件 monolith。pyproject.toml 或 requirements
+
+    声明 fastapi 依赖。
+
+    '
+  business_expectation: '用户读源码能找到清晰的 API/逻辑/数据三层，方便二次开发。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: src/{api,core,domain,services,infrastructure}; clean DDD layering
+- id: claim-003
+  title: 6 个通知渠道与 README 列表对齐
+  source: README "即时通知"
+  source_ref: .env.example
+  priority: high
+  area: notifications
+  statement: '.env.example 至少声明 ntfy / Bark / 企业微信 / Telegram / Gotify / Webhook
+
+    6 类渠道的 env var；每类至少 1 个独立分隔段（# --- xxx ---）。
+
+    '
+  business_expectation: '用户照 .env.example 填想用的渠道一类即可，不用自己读源码猜变量名。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: All 6 README-claimed channels have section headers in env.example
+- id: claim-004
+  title: 多阶段 Dockerfile 真的多阶段
+  source: Dockerfile
+  source_ref: Dockerfile
+  priority: high
+  area: image-quality
+  statement: 'Dockerfile 至少 3 个 FROM stage：(a) frontend-builder 用 node 编 Vue web-ui，
+
+    (b) Python venv builder, (c) 最终精简 image。这样最终 image 不带 build tools。
+
+    '
+  business_expectation: '用户拉的 image 不会因为带 npm/build-essential 而异常臃肿。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: '3 FROM stages: node frontend-builder + 2 python:3.11-slim-bookworm'
+- id: claim-005
+  title: 浏览器扩展（XianYu 登录态导出）真存在
+  source: README "第一次使用" 步骤 2
+  source_ref: chrome-extension/
+  priority: high
+  area: companion-tooling
+  statement: 'chrome-extension/ 目录下存在 manifest.json / background.js / popup.html /
+
+    popup.js — 是真实可加载的 MV3 扩展，与 README 引用的 Chrome Web Store
+
+    条目对应（即使 store 被下架也能本地 unpacked 加载）。
+
+    '
+  business_expectation: '用户即使 Chrome Web Store 链接失效，也能从仓库 load unpacked 用扩展。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: MV3 extension Xianyu Login State Extractor v1.1, scoped to *.goofish.com only
+- id: claim-006
+  title: prompts/ 是真实 prompt 模板而非空壳
+  source: README "AI 驱动"
+  source_ref: prompts/
+  priority: high
+  area: ai-prompts
+  statement: 'prompts/ 目录下至少有 base_prompt.txt（基础模板）+ 1 个 domain-specific
+
+    criteria 模板（如 macbook_criteria.txt），都不是 1 行占位，是可读的多行
+
+    文本，供 LLM 加载使用。
+
+    '
+  business_expectation: 'AI 模型筛选的"语义判断"基于真实 prompt，不是兜底字符串。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: base_prompt 47 lines + macbook_criteria 46 lines; real prompt templates
+- id: claim-007
+  title: 默认密码 admin/admin123 应在 README 明确警告
+  source: framework + .env.example
+  source_ref: WEB_USERNAME / WEB_PASSWORD
+  priority: high
+  area: security
+  statement: 'README 「最少配置」表格中 WEB_USERNAME / WEB_PASSWORD 的默认值
+
+    （admin / admin123）必须明确标注 "默认；建议改"；.env.example 里也应有
+
+    change-me 注释。
+
+    '
+  business_expectation: '用户公开部署时不会因为默认密码被搜索引擎拖出。
+
+    '
+  status: passed_with_concerns
+  last_run: runs/2026-05-04/run-static-checks
+  note: Defaults admin/admin123 noted but no explicit hardening warning + default
+    8000:8000 binding
+- id: claim-008
+  title: 端到端 happy path：登录态 + 任务 + 通知能跑通
+  source: README "创建第一个任务"
+  source_ref: 整条 pipeline
+  priority: critical
+  area: end-to-end
+  statement: '装好 docker compose、粘贴一份真实闲鱼登录 cookie、创建一个 AI 判断任务、
+
+    绑定一个通知渠道（如 ntfy.sh）。实际触发任务后 Playwright 抓回结果 →
+
+    LLM 筛选 → 命中商品向 ntfy 发出通知。整条链不需要重启服务或人工接管。
+
+    '
+  business_expectation: 'Repo 不只是 web UI 演示，端到端真实工作。
+
+    '
+  evidence_needed: 'molecule 级 — 需要 docker host + 真实 XHS 登录 cookie + LLM key + ntfy
+
+    endpoint。建议 1 个 happy-path + 1 个登录态过期场景（验证错误冒泡）。
+
+    '
+  status: untested

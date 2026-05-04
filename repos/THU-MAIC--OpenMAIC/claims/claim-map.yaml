@@ -1,0 +1,129 @@
+claims:
+- id: claim-001
+  title: Next.js + React 19 + LangGraph 1.1 真栈一致
+  source: README badges
+  source_ref: package.json
+  priority: critical
+  area: tech-stack
+  statement: 'package.json 必须真有 next/react@19/langgraph 1.x/tailwind 4 这些依赖，
+
+    与 README 顶部 badge 数字一致。
+
+    '
+  business_expectation: '用户拉来源码不会遇到 README 与 lockfile 不一致的"装得上跑不通"。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: next 16.1.2 + react 19.2.3 + langgraph ^1.1.1 + tailwind ^4 — matches README
+    badges
+- id: claim-002
+  title: 5 家 LLM provider 真有 env-var 入口
+  source: README + .env.example
+  source_ref: .env.example
+  priority: critical
+  area: ai-providers
+  statement: '.env.example 中 OPENAI / ANTHROPIC / GOOGLE / DEEPSEEK / GROK 5 家都有
+
+    _API_KEY + _BASE_URL + _MODELS 三件套；用户可以挑一家配上 key 即可。
+
+    '
+  business_expectation: '用户用任意一家已有 key 起跑，不绑死单一 provider。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 5 LLM providers (OpenAI/Anthropic/Google/DeepSeek/Grok) each with KEY+BASE_URL+MODELS
+- id: claim-003
+  title: 5 家 TTS provider 真有 env-var 入口
+  source: README "Whiteboard & TTS"
+  source_ref: .env.example
+  priority: high
+  area: tts-providers
+  statement: '.env.example 至少声明 OPENAI / AZURE / GLM / QWEN / MINIMAX 5 家 TTS 的
+
+    env-var；与 README "agents draw diagrams … explain out loud" 承诺对应。
+
+    '
+  business_expectation: '课堂的 TTS 不绑死一家，可降级。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 5 TTS providers (OpenAI/Azure/GLM/Qwen/MiniMax) each with KEY+BASE_URL; MiniMax
+    has default
+- id: claim-004
+  title: 自带 eval harness（不只 talk，真有自测）
+  source: gh api eval/
+  source_ref: eval/
+  priority: high
+  area: testing-discipline
+  statement: 'eval/ 目录下至少 2 个具名子目录（如 outline-language / whiteboard-layout）+
+
+    shared/ 公共代码。package.json 有 eval:* 脚本指向它们。
+
+    '
+  business_expectation: '项目方对自己的 LLM 输出有持续校验，而不是发完就摆烂。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 2 eval scripts (eval:whiteboard, eval:outline-language) reference real tsx
+    runners
+- id: claim-005
+  title: OpenClaw skill 真存在（README 集成段不是营销词）
+  source: README "OpenClaw Integration"
+  source_ref: skills/openmaic/
+  priority: high
+  area: openclaw-integration
+  statement: 'skills/ 下存在 openmaic 子目录（OpenClaw skill），含 SKILL.md。
+
+    README 引用的 `clawhub install openmaic` 命令至少在 SKILL.md 内部有
+
+    文档化的工作流。
+
+    '
+  business_expectation: '"在 Feishu / Slack / Discord 调起 OpenMAIC" 不是 PR 段落，是真 skill。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: skills/openmaic/SKILL.md exists (102 lines, user-invocable, confirmation-heavy
+    SOP)
+- id: claim-006
+  title: 端到端 happy path：一句话 → 真课堂
+  source: README "Quick Start"
+  source_ref: open.maic.chat 或本地 dev
+  priority: critical
+  area: end-to-end
+  statement: '用户在 open.maic.chat 输入一句"教我量子物理"，系统应实际生成多 agent
+
+    课堂（slides + 至少 1 个 quiz + 1 个 interactive HTML simulation +
+
+    whiteboard + TTS 朗读），全流程不需要用户中途接管。
+
+    '
+  business_expectation: '"one-click lesson generation" 不只是 demo 录像，新主题真能跑出来。
+
+    '
+  evidence_needed: 'compound 级 — 需要真实 LLM key + 网络 + open.maic.chat 或 self-hosted
+
+    实例。建议 1 个一次性主题 + 1 个 PDF 上传场景 + 1 个 LLM 中断恢复场景。
+
+    '
+  status: untested
+- id: claim-007
+  title: AGPL-3.0 + 多 provider 部署成本曲线披露
+  source: framework / 经济性
+  source_ref: README + provider.md
+  priority: high
+  area: economics
+  statement: 'README 应明确 AGPL-3.0 + 单课成本随 model + TTS 配置浮动；不能让
+
+    用户以为"部署完免费用"。
+
+    '
+  business_expectation: '非技术用户开放使用前知道每节课大致烧多少 token + TTS 时长。
+
+    '
+  status: untested

@@ -1,0 +1,9 @@
+checksums.txt
+CLIProxyAPI_6.10.4_darwin_aarch64.tar.gz
+CLIProxyAPI_6.10.4_darwin_amd64.tar.gz
+CLIProxyAPI_6.10.4_freebsd_aarch64.tar.gz
+CLIProxyAPI_6.10.4_freebsd_amd64.tar.gz
+CLIProxyAPI_6.10.4_linux_aarch64.tar.gz
+CLIProxyAPI_6.10.4_linux_amd64.tar.gz
+CLIProxyAPI_6.10.4_windows_aarch64.zip
+CLIProxyAPI_6.10.4_windows_amd64.zip

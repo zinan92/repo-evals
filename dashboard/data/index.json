@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-04T04:30:58Z",
-  "generated_from_commit": "4acbd5d",
+  "generated_at": "2026-05-04T04:46:58Z",
+  "generated_from_commit": "f9ed1e9",
   "repos": [
     {
       "slug": "zarazhangrui--frontend-slides",
@@ -668,6 +668,132 @@
       "attention_level": "medium"
     },
     {
+      "slug": "RKiding--Awesome-finance-skills",
+      "display_name": "Awesome-finance-skills",
+      "owner": "RKiding",
+      "repo": "Awesome-finance-skills",
+      "repo_url": "https://github.com/RKiding/Awesome-finance-skills",
+      "repo_type": "skill-catalog",
+      "archetype": "hybrid-skill",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "10-skill finance toolkit for Antigravity / OpenCode / OpenClaw. README headlines 8 alphaear-* skills (news / stock / sentiment / predictor / signal-tracker / logic-visualizer / reporter / search); skills/ dir actually has 10 (adds alphaear-deepear-lite and skill-creator). Distri…",
+      "repo_path": "repos/RKiding--Awesome-finance-skills",
+      "claims_summary": {
+        "total": 6,
+        "passed": 5,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 3,
+        "critical_passed": 2,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 3
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/RKiding--Awesome-finance-skills/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/RKiding--Awesome-finance-skills/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
+      "slug": "THU-MAIC--OpenMAIC",
+      "display_name": "OpenMAIC",
+      "owner": "THU-MAIC",
+      "repo": "OpenMAIC",
+      "repo_url": "https://github.com/THU-MAIC/OpenMAIC",
+      "repo_type": "platform",
+      "archetype": "orchestrator",
+      "layer": "compound",
+      "layer_inferred": "compound",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Tsinghua-affiliated open-source AI classroom platform (paper in JCST'26). Next.js 16 + React 19 + LangGraph 1.1 + Tailwind 4. AGPL-3.0, 16,750 stars, very active (4 release cuts in last 6 weeks). Ships with one-click Vercel deploy, hosted demo at open.maic.chat. Multi-agent clas…",
+      "repo_path": "repos/THU-MAIC--OpenMAIC",
+      "claims_summary": {
+        "total": 7,
+        "passed": 5,
+        "failed": 0,
+        "untested": 2,
+        "critical_total": 3,
+        "critical_passed": 2,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 4
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/THU-MAIC--OpenMAIC/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/THU-MAIC--OpenMAIC/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
+      "slug": "Usagi-org--ai-goofish-monitor",
+      "display_name": "ai-goofish-monitor",
+      "owner": "Usagi-org",
+      "repo": "ai-goofish-monitor",
+      "repo_url": "https://github.com/Usagi-org/ai-goofish-monitor",
+      "repo_type": "service",
+      "archetype": "api-service",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "FastAPI + Vue + Playwright + APScheduler + OpenAI-compatible LLM service for monitoring 闲鱼 (XianYu) listings against natural-language user criteria. 11.5K stars, MIT, very popular in CN secondhand-buyer community. Single docker-compose service (app on port 8000), Chromium bundle…",
+      "repo_path": "repos/Usagi-org--ai-goofish-monitor",
+      "claims_summary": {
+        "total": 8,
+        "passed": 7,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 2,
+        "critical_passed": 1,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 6
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/Usagi-org--ai-goofish-monitor/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/Usagi-org--ai-goofish-monitor/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
       "slug": "autoclaw-cc--xiaohongshu-skills",
       "display_name": "xiaohongshu-skills",
       "owner": "autoclaw-cc",
@@ -833,6 +959,48 @@
       "areas": [],
       "plan_path": "repos/remotion-dev--skills/plans/2026-05-04-eval-plan.md",
       "verdict_path": "repos/remotion-dev--skills/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
+      "slug": "router-for-me--CLIProxyAPI",
+      "display_name": "CLIProxyAPI",
+      "owner": "router-for-me",
+      "repo": "CLIProxyAPI",
+      "repo_url": "https://github.com/router-for-me/CLIProxyAPI",
+      "repo_type": "api-gateway",
+      "archetype": "api-service",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Go 1.26 proxy server that wraps Gemini CLI / Antigravity / ChatGPT Codex / Claude Code as OpenAI / Gemini / Claude / Codex compatible HTTP APIs. 30,477 stars, MIT, very active. v6.10.4 ships 8 release artefacts (darwin / freebsd / linux / windows × aarch64 + amd64). No public-in…",
+      "repo_path": "repos/router-for-me--CLIProxyAPI",
+      "claims_summary": {
+        "total": 7,
+        "passed": 6,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 4,
+        "critical_passed": 3,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 3
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/router-for-me--CLIProxyAPI/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/router-for-me--CLIProxyAPI/verdicts/2026-05-04-final-verdict.md",
       "attention_level": "medium"
     },
     {
@@ -1154,8 +1322,8 @@
     }
   ],
   "stats": {
-    "repo_count": 18,
-    "evaluated_count": 18,
+    "repo_count": 22,
+    "evaluated_count": 22,
     "planned_count": 0,
     "critical_gap_total": 19,
     "warning_gap_total": 3,
@@ -1164,7 +1332,7 @@
     "bucket_counts": {
       "recommendable": 0,
       "reusable": 2,
-      "usable": 15,
+      "usable": 19,
       "unusable": 1,
       "unknown": 0
     }

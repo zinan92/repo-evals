@@ -1,0 +1,49 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: RKiding
+  repo: Awesome-finance-skills
+  branch: main
+  license: Apache-2.0
+
+scope: |
+  Static-checkable claims for skill catalog coverage, per-skill hybrid
+  shape, multi-agent install paths, and SKILL.md frontmatter contract.
+  Live multi-skill agent session (claim-006) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "All 8 README-listed alphaear-* SKILL.md files exist (HTTP 200)"
+  - id: claim-002
+    status: passed
+    note: "Sampled alphaear-news: SKILL.md (33 lines) + scripts/ (4 .py) + references/sources.md + tests/"
+  - id: claim-003
+    status: passed
+    note: "skills/ has 10 dirs (8 listed in README + alphaear-deepear-lite + skill-creator); code ≥ docs"
+  - id: claim-004
+    status: passed
+    note: "README Integration Guide table covers Antigravity / OpenCode / OpenClaw with workspace + global install paths"
+  - id: claim-005
+    status: passed
+    note: "Sampled SKILL.md has frontmatter (name + description) + 'Use when...' trigger phrase ending"
+
+claims_deferred:
+  - claim-006  # multi-skill agent session
+
+artifacts:
+  - artifacts/sample-skill-news.md
+
+logs:
+  - logs/skills-dirs.txt
+  - logs/skill-md-checks.txt
+  - logs/skill-sizes.txt
+  - logs/news-contents.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/RKiding/Awesome-finance-skills/main/skills/<skill>/SKILL.md"
+    - "gh api repos/RKiding/Awesome-finance-skills/contents/skills{,/alphaear-news}{,/scripts,/references}"
+  network_dependent: true
+  reproducible: yes

@@ -1,0 +1,4 @@
+f SKILL.md
+d references
+d scripts
+d tests

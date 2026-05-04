@@ -1,0 +1,47 @@
+owner: router-for-me
+repo: CLIProxyAPI
+display_name: CLIProxyAPI
+repo_url: https://github.com/router-for-me/CLIProxyAPI
+repo_type: api-gateway
+archetype: api-service
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Predefined per-protocol translators (antigravity / claude / codex /
+# gemini / gemini-cli / openai). Routing is config-driven, not
+# LLM-driven → molecule.
+layer: molecule
+complexity: complex
+uses_areas: false
+status: evaluated
+current_bucket: usable
+last_evaluated: "2026-05-04"
+version_tested: "v6.10.4 (main@HEAD)"
+notes: |
+  Go 1.26 proxy server that wraps Gemini CLI / Antigravity / ChatGPT
+  Codex / Claude Code as OpenAI / Gemini / Claude / Codex compatible
+  HTTP APIs. 30,477 stars, MIT, very active. v6.10.4 ships 8 release
+  artefacts (darwin / freebsd / linux / windows × aarch64 + amd64).
+  No public-internet endpoints by default — runs locally and exposes
+  the API for downstream clients.
+
+  7 internal translators (antigravity, claude, codex, common,
+  gemini-cli, gemini, openai). 7 OAuth login flows (antigravity,
+  claude, codex, gemini, kimi, vertex, plus an `empty` placeholder).
+  Reusable Go SDK at sdk/ with 9 sub-packages and 4 doc files in
+  EN+CN. config.example.yaml is 406 lines — substantial knob surface.
+
+  Wendy already has a CLIProxyAPI install per memory record (token
+  refresh notes at localhost:8317). This eval is independent
+  static-only.
+
+product_view:
+  one_liner:
+    en: "A Go proxy server that wraps your Gemini CLI / Antigravity / ChatGPT Codex / Claude Code OAuth sessions as OpenAI / Gemini / Claude / Codex compatible HTTP APIs — multi-account round-robin, function calling, multimodal, streaming, and a reusable Go SDK to embed it. 8-platform binaries, MIT, very actively developed."
+    zh: "一个 Go 代理服务器：把你已经登录的 Gemini CLI / Antigravity / ChatGPT Codex / Claude Code 会话包装成 OpenAI / Gemini / Claude / Codex 兼容的 HTTP API。多账号轮询、函数调用、多模态、流式、还有可嵌入的 Go SDK。8 平台二进制，MIT，更新非常活跃。"
+  best_for:
+    en: "Developers who already pay for Claude Code / Codex / Gemini and want their existing OAuth sessions reusable as OpenAI-compatible API endpoints — comfortable running a Go binary locally."
+    zh: "已经在用 Claude Code / Codex / Gemini，想把订阅复用成 OpenAI 兼容 API 接口给自己其它工具调的开发者；本机能跑 Go 二进制。"
+  watch_out:
+    en: |
+      The repo's README leans heavily on sponsored relay services (PackyCode, AICodeMirror, BmoPlus, Poixe AI, VisionCoder, Z.ai); the OSS proxy itself is independent of those, but a casual reader can mistake the sponsorship section for project features. The repo runs your authenticated CLI sessions through a process you don't fully understand line-by-line — fine for local-only use, but pin the version + audit before piping production traffic. Token storage lives in `auths/` at runtime; keep it local.
+    zh: |
+      README 大段是赞助内容（PackyCode / AICodeMirror / BmoPlus / Poixe AI / VisionCoder / Z.ai），开源代理本身和这些服务无关，但粗读时容易把广告当成功能。这个工具会代为转发你已登录的 CLI 会话 —— 本机自用够用，要给生产流量代理前一定锁版本 + 审计代码。运行时 token 存到 `auths/`，不要泄漏到云端。

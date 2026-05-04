@@ -1,0 +1,63 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: Usagi-org
+  repo: ai-goofish-monitor
+  branch: master
+  docker_image: "ghcr.io/usagi-org/ai-goofish:latest"
+  python_required: "3.11 (Docker)"
+
+scope: |
+  Static-checkable claims for the docker-compose stack, source-layer
+  structure, notification channels, multi-stage Dockerfile, companion
+  Chrome extension, prompt templates, and admin-password disclosure.
+  End-to-end live monitoring (claim-008) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "Single 'app' service on 8000:8000; 9 volume mounts (.env, data, state, prompts, logs, images, etc.)"
+  - id: claim-002
+    status: passed
+    note: "src/{api,domain,services,infrastructure} verified via raw fetch; src/core also exists per ToC. Clean DDD layout"
+  - id: claim-003
+    status: passed
+    note: "6 channel section headers in env.example: ntfy, Bark, 企业微信, Telegram, Gotify, Webhook — all match README"
+  - id: claim-004
+    status: passed
+    note: "3 FROM stages (node:22-alpine frontend-builder + 2 python:3.11-slim-bookworm); final image is lean per multi-stage convention"
+  - id: claim-005
+    status: passed
+    note: "chrome-extension is real MV3, name='Xianyu Login State Extractor', scoped to *.goofish.com only (XHS English domain)"
+  - id: claim-006
+    status: passed
+    note: "base_prompt.txt = 47 lines + macbook_criteria.txt = 46 lines; real prompt templates"
+  - id: claim-007
+    status: passed_with_concerns
+    note: "env.example does mark `WEB_USERNAME=admin / WEB_PASSWORD=admin123` as defaults, but no explicit 'CHANGE THIS BEFORE EXPOSING' warning"
+
+claims_deferred:
+  - claim-008  # live e2e monitoring run
+
+artifacts:
+  - artifacts/docker-compose.yaml
+  - artifacts/Dockerfile
+  - artifacts/env.example
+  - artifacts/requirements.txt
+  - artifacts/extension-manifest.json
+  - artifacts/pyproject.toml
+
+logs:
+  - logs/src-dirs.txt
+  - logs/web-ui-dirs.txt
+  - logs/chrome-extension-files.txt
+  - logs/prompts.txt
+  - logs/static-evidence.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/Usagi-org/ai-goofish-monitor/master/{docker-compose.yaml,Dockerfile,.env.example,requirements.txt,chrome-extension/manifest.json,prompts/*}"
+    - "gh api repos/Usagi-org/ai-goofish-monitor/contents/{src,web-ui,chrome-extension,prompts}"
+  network_dependent: true
+  reproducible: yes

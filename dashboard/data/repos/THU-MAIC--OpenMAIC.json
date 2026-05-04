@@ -1,0 +1,42 @@
+{
+  "slug": "THU-MAIC--OpenMAIC",
+  "display_name": "OpenMAIC",
+  "owner": "THU-MAIC",
+  "repo": "OpenMAIC",
+  "repo_url": "https://github.com/THU-MAIC/OpenMAIC",
+  "repo_type": "platform",
+  "archetype": "orchestrator",
+  "layer": "compound",
+  "layer_inferred": "compound",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "Tsinghua-affiliated open-source AI classroom platform (paper in JCST'26). Next.js 16 + React 19 + LangGraph 1.1 + Tailwind 4. AGPL-3.0, 16,750 stars, very active (4 release cuts in last 6 weeks). Ships with one-click Vercel deploy, hosted demo at open.maic.chat. Multi-agent clas…",
+  "repo_path": "repos/THU-MAIC--OpenMAIC",
+  "claims_summary": {
+    "total": 7,
+    "passed": 5,
+    "failed": 0,
+    "untested": 2,
+    "critical_total": 3,
+    "critical_passed": 2,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 4
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/THU-MAIC--OpenMAIC/plans/2026-05-04-eval-plan.md",
+  "verdict_path": "repos/THU-MAIC--OpenMAIC/verdicts/2026-05-04-final-verdict.md",
+  "attention_level": "medium"
+}

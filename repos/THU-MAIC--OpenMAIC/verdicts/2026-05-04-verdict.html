@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en" data-bucket="unknown">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenMAIC — verdict · repo-evals</title>
+<style>
+/* ============================================================
+   REPO-EVALS VERDICT PAGE — Editorial Dossier style
+   Pure HTML + CSS, zero external dependencies, zero JS frameworks.
+   One small inline <script> at the bottom handles language toggle.
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", "Courier New", monospace;
+
+  --bg:            #0a0908;
+  --surface-0:     #141210;
+  --surface-1:     #1c1a17;
+  --surface-2:     #26231f;
+  --border:        rgba(255, 248, 235, 0.07);
+  --border-strong: rgba(255, 248, 235, 0.16);
+
+  --text:   #f5efe6;
+  --text-2: #a6998a;
+  --text-3: #6b6157;
+
+  --bucket:      #f59e0b;
+  --bucket-bg:   rgba(245, 158, 11, 0.10);
+  --bucket-soft: rgba(245, 158, 11, 0.16);
+
+  --ok:      #4ade80;
+  --ok-bg:   rgba(74, 222, 128, 0.10);
+  --warn:    #fbbf24;
+  --warn-bg: rgba(251, 191, 36, 0.10);
+  --bad:     #f87171;
+  --bad-bg:  rgba(248, 113, 113, 0.10);
+  --skip:    #a6998a;
+  --skip-bg: rgba(166, 153, 138, 0.08);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+}
+
+html[data-bucket="usable"]        { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-bucket="reusable"]      { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-bucket="recommendable"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 1200px 800px at 70% -10%, var(--bucket-bg), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 0% 100%, rgba(255,248,235,0.025), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+main { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 32px 120px; }
+
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 0 48px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.wordmark { color: var(--text-2); font-weight: 600; }
+.wordmark .dot { color: var(--bucket); }
+
+.lang-toggle { display: inline-flex; gap: 2px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px; padding: 3px; }
+.lang-toggle button {
+  background: transparent; border: 0; cursor: pointer;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  color: var(--text-3); padding: 5px 12px; border-radius: 999px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: color 0.15s, background 0.15s;
+}
+.lang-toggle button:hover { color: var(--text); }
+html[lang="en"] .lang-toggle button[data-lang="en"],
+html[lang="zh"] .lang-toggle button[data-lang="zh"] {
+  background: var(--text); color: var(--bg);
+}
+
+.hero { padding: 24px 0 72px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }
+
+.eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.16em; margin-bottom: 32px;
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}
+.eyebrow .sep { color: var(--border-strong); }
+
+h1.repo-title {
+  font-size: clamp(40px, 6vw, 68px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  margin: 0 0 14px;
+  color: var(--text);
+}
+.repo-slug {
+  font-family: var(--font-mono); font-size: 14px;
+  color: var(--text-2); margin-bottom: 36px;
+}
+.repo-slug::before { content: "↳ "; color: var(--text-3); }
+
+.tagline {
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.45; font-weight: 400;
+  color: var(--text); max-width: 62ch;
+  margin: 0 0 72px;
+}
+
+.verdict-block { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }
+@media (max-width: 720px) { .verdict-block { grid-template-columns: 1fr; gap: 40px; } }
+
+.verdict-word {
+  font-size: clamp(80px, 14vw, 168px);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.85;
+  color: var(--bucket);
+  text-transform: lowercase;
+  margin: 0;
+  position: relative;
+  padding-right: 0.1em;
+}
+.verdict-word::after {
+  content: "";
+  display: inline-block;
+  width: 0.18em; height: 0.18em;
+  background: var(--bucket);
+  border-radius: 50%;
+  margin-left: 0.08em;
+  margin-bottom: 0.08em;
+  vertical-align: baseline;
+}
+
+.verdict-meta { padding-bottom: 14px; }
+.verdict-meta .label {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}
+.verdict-meta .confidence {
+  font-family: var(--font-mono); font-size: 15px;
+  color: var(--text); margin-bottom: 28px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.verdict-meta .confidence .value { color: var(--bucket); font-weight: 700; }
+
+.stats-bar {
+  display: flex; height: 10px; border-radius: 999px;
+  overflow: hidden; background: var(--surface-1);
+  border: 1px solid var(--border);
+  min-width: 280px; max-width: 420px;
+}
+.stats-bar span { display: block; height: 100%; }
+.stats-bar .s-pass { background: var(--ok); }
+.stats-bar .s-warn { background: var(--warn); }
+.stats-bar .s-bad  { background: var(--bad); }
+.stats-bar .s-skip { background: var(--skip); }
+
+.stats-legend {
+  display: flex; gap: 20px; margin-top: 14px;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2); flex-wrap: wrap;
+}
+.stats-legend .item { display: inline-flex; align-items: center; gap: 6px; }
+.stats-legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.stats-legend .num { color: var(--text); font-weight: 700; }
+
+.pull-quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 96px; }
+@media (max-width: 720px) { .pull-quotes { grid-template-columns: 1fr; } }
+
+.pull {
+  padding: 28px 32px;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  border-top: 3px solid;
+  position: relative;
+}
+.pull.best   { border-top-color: var(--ok); }
+.pull.watch  { border-top-color: var(--warn); }
+.pull .kicker {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 14px; font-weight: 700;
+}
+.pull.best .kicker  { color: var(--ok); }
+.pull.watch .kicker { color: var(--warn); }
+.pull .body { font-size: 16px; line-height: 1.55; color: var(--text); }
+
+.section-head {
+  display: flex; align-items: baseline; gap: 16px;
+  margin-bottom: 36px; padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-head h2 {
+  font-size: 32px; font-weight: 700;
+  letter-spacing: -0.022em; margin: 0;
+}
+.section-head .count {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+section { margin-bottom: 96px; }
+
+.capabilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+}
+
+.capability-card {
+  position: relative;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 24px 24px 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+.capability-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+
+.capability-card::before {
+  content: ""; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--skip);
+}
+.capability-card.status-passed::before,
+.capability-card.status-passed_with_concerns::before { background: var(--ok); }
+.capability-card.status-partial::before { background: var(--warn); }
+.capability-card.status-failed::before,
+.capability-card.status-failed_partial::before { background: var(--bad); }
+.capability-card.status-untested::before { background: var(--skip); }
+
+.cap-header {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.cap-badge {
+  padding: 3px 9px; border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 10px;
+  background: var(--skip-bg); color: var(--skip);
+}
+.capability-card.status-passed .cap-badge,
+.capability-card.status-passed_with_concerns .cap-badge { background: var(--ok-bg); color: var(--ok); }
+.capability-card.status-partial .cap-badge { background: var(--warn-bg); color: var(--warn); }
+.capability-card.status-failed .cap-badge,
+.capability-card.status-failed_partial .cap-badge { background: var(--bad-bg); color: var(--bad); }
+.capability-card.status-untested .cap-badge { background: var(--skip-bg); color: var(--skip); }
+
+.cap-id { margin-left: auto; color: var(--text-3); }
+
+.cap-title {
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.015em; line-height: 1.25;
+  color: var(--text); margin: 4px 0 0;
+}
+.cap-description {
+  font-size: 14px; line-height: 1.55;
+  color: var(--text-2); margin: 0;
+}
+.cap-skip {
+  margin-top: 4px;
+  font-size: 12.5px; color: var(--text-3);
+  font-family: var(--font-mono); line-height: 1.55;
+  padding: 10px 12px;
+  background: var(--surface-1);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--border-strong);
+  white-space: pre-wrap;
+}
+
+details.section-fold {
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+details.section-fold[open] { border-color: var(--border-strong); }
+details.section-fold > summary {
+  padding: 22px 28px;
+  cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.14em;
+  font-weight: 600; user-select: none;
+  list-style: none;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+details.section-fold > summary::-webkit-details-marker { display: none; }
+details.section-fold > summary::after {
+  content: "+"; font-family: var(--font-mono);
+  font-size: 18px; color: var(--text-3);
+  transition: transform 0.2s;
+  display: inline-block; line-height: 1;
+}
+details.section-fold[open] > summary::after { transform: rotate(45deg); color: var(--text); }
+details.section-fold > summary:hover { color: var(--text); background: var(--surface-1); }
+details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var(--border); }
+
+.subsection { margin: 28px 0; }
+.subsection h3 {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-3); font-weight: 700;
+  margin: 0 0 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .grid-two { grid-template-columns: 1fr; } }
+
+.mini-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+}
+.mini-card h4 {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 0 0 12px; font-weight: 700;
+}
+.mini-card ul { margin: 0; padding: 0; list-style: none; }
+.mini-card li {
+  padding: 8px 0; font-size: 14px; color: var(--text-2);
+  border-bottom: 1px dashed var(--border);
+  line-height: 1.5;
+}
+.mini-card li:last-child { border-bottom: 0; padding-bottom: 0; }
+.mini-card li:first-child { padding-top: 0; }
+
+/* --- Layer (atom / molecule / compound) section -------------------- */
+
+.layer-pill {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--surface-1); border: 1px solid var(--border-strong);
+  font-family: var(--font-mono); font-size: 12px;
+  margin-left: 12px;
+}
+.layer-pill-eyebrow {
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-size: 10px;
+}
+.layer-pill.layer-atom     { border-color: #4a9d8a; color: #2d7866; }
+.layer-pill.layer-molecule { border-color: #7a5fb8; color: #5a3aa1; }
+.layer-pill.layer-compound { border-color: #c75441; color: #a13d30; }
+
+.layer-hero {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px 28px; margin-bottom: 22px;
+}
+.layer-hero-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}
+.layer-hero-name {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 32px; font-weight: 700; line-height: 1.1;
+  margin-bottom: 10px;
+}
+.layer-hero-name.layer-atom     { color: #2d7866; }
+.layer-hero-name.layer-molecule { color: #5a3aa1; }
+.layer-hero-name.layer-compound { color: #a13d30; }
+.layer-hero-summary { font-size: 16px; color: var(--text-2); line-height: 1.55; max-width: 70ch; }
+.layer-hero-source { margin-top: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--text-3); }
+
+.layer-stack { display: grid; gap: 18px; margin-bottom: 28px; }
+
+.layer-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+}
+.layer-card-head {
+  display: flex; align-items: baseline;
+  justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.layer-card-head h3 {
+  margin: 0;
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}
+.layer-card-tag {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-3); padding: 2px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+}
+.layer-card-summary { color: var(--text-2); margin: 4px 0 14px; line-height: 1.55; }
+
+.layer-card.layer-card-atom     { border-left: 3px solid #4a9d8a; }
+.layer-card.layer-card-molecule { border-left: 3px solid #7a5fb8; }
+.layer-card.layer-card-compound { border-left: 3px solid #c75441; }
+
+.layer-dim-table { width: 100%; border-collapse: collapse; }
+.layer-dim-table th, .layer-dim-table td {
+  text-align: left; padding: 10px 12px;
+  border-top: 1px solid var(--border); vertical-align: top;
+  font-size: 14px; line-height: 1.55;
+}
+.layer-dim-table th {
+  width: 28%; font-weight: 600; color: var(--text);
+}
+.layer-dim-table td { color: var(--text-2); }
+.layer-dim-table th code {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 2px 6px; border-radius: 4px;
+}
+
+.layer-experiments {
+  margin-top: 28px; padding-top: 22px;
+  border-top: 1px dashed var(--border);
+}
+.layer-experiments-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}
+.layer-experiments-intro {
+  color: var(--text-2); margin: 0 0 18px; max-width: 70ch; line-height: 1.55;
+}
+
+.layer-experiment {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px; margin-bottom: 14px;
+}
+.layer-experiment-head {
+  display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px;
+}
+.layer-experiment-num {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3);
+  padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px;
+}
+.layer-experiment h4 {
+  margin: 0; font-family: var(--font-display, var(--font-serif));
+  font-size: 17px; font-weight: 700;
+}
+.layer-experiment-label {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 12px 0 6px;
+}
+.layer-experiment-prompt {
+  margin: 0 0 4px; padding: 12px 16px;
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface-2);
+  font-family: var(--font-serif); font-size: 14px; font-style: italic;
+  color: var(--text); line-height: 1.55;
+}
+.layer-experiment-watch {
+  margin: 0 0 4px; padding: 0 0 0 18px;
+}
+.layer-experiment-watch li { padding: 4px 0; color: var(--text-2); line-height: 1.5; }
+.layer-experiment-meta {
+  margin-top: 10px; font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3);
+}
+
+.flow {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+  overflow-x: auto;
+}
+.flow-row {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 13px;
+}
+.flow-node {
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+.flow-node.start { color: var(--text-2); }
+.flow-node.decision { background: var(--warn-bg); color: var(--warn); border-color: var(--warn); }
+.flow-node.final { background: var(--bucket-bg); color: var(--bucket); border-color: var(--bucket); font-weight: 700; }
+.flow-arrow { color: var(--text-3); font-family: var(--font-mono); }
+.flow-notes { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--border); }
+.flow-notes .note {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); padding: 4px 0; line-height: 1.5;
+}
+.flow-notes .note::before {
+  content: "▸"; color: var(--warn);
+  margin-right: 8px;
+}
+
+.metric-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+@media (max-width: 640px) { .metric-tiles { grid-template-columns: 1fr; } }
+.metric-tile {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 20px;
+}
+.metric-tile .mt-label {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 14px;
+}
+.metric-tile .mt-value {
+  font-size: 38px; font-weight: 800;
+  letter-spacing: -0.025em; line-height: 1;
+  color: var(--text); font-variant-numeric: tabular-nums;
+}
+.metric-tile .mt-unit { font-size: 16px; color: var(--text-3); font-weight: 500; margin-left: 4px; }
+.metric-tile .mt-bar {
+  margin-top: 14px; height: 4px;
+  background: var(--surface-2); border-radius: 2px; overflow: hidden;
+}
+.metric-tile .mt-bar-fill { height: 100%; background: var(--bucket); border-radius: 2px; }
+.metric-tile .mt-compare {
+  margin-top: 10px; font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.claims-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.claims-table th, .claims-table td {
+  text-align: left; padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.claims-table th {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 700;
+  background: var(--surface-1);
+}
+.claims-table td.c-id { font-family: var(--font-mono); color: var(--text-2); white-space: nowrap; }
+.claims-table td.c-title { color: var(--text); }
+.claims-table td.c-status { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
+.claims-table td.c-skip { font-size: 12px; color: var(--text-3); white-space: pre-wrap; line-height: 1.5; max-width: 320px; }
+.claims-table tr.prio-critical td.c-id::before { content: "◆"; color: var(--bad); margin-right: 6px; }
+.claims-table tr.prio-high td.c-id::before     { content: "◆"; color: var(--warn); margin-right: 6px; }
+.claims-table tr.prio-medium td.c-id::before   { content: "◆"; color: var(--text-2); margin-right: 6px; }
+.claims-table tr.prio-low td.c-id::before      { content: "◆"; color: var(--text-3); margin-right: 6px; }
+
+.prio-pill {
+  display: inline-block; font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 8px; border-radius: 3px; text-transform: uppercase;
+  letter-spacing: 0.08em; font-weight: 700;
+}
+.prio-pill.critical { background: var(--bad-bg); color: var(--bad); }
+.prio-pill.high     { background: var(--warn-bg); color: var(--warn); }
+.prio-pill.medium   { background: var(--surface-2); color: var(--text-2); }
+.prio-pill.low      { background: var(--surface-2); color: var(--text-3); }
+
+.run-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  margin-bottom: 12px;
+}
+.run-card h3 { font-family: var(--font-mono); font-size: 14px; margin: 0; color: var(--text); }
+.run-card .run-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); margin: 4px 0 16px; }
+.run-metrics { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.run-metric {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 6px 12px;
+  border-radius: var(--radius-sm); color: var(--text-2);
+}
+.run-metric b { color: var(--text-3); font-weight: 500; margin-right: 6px; }
+.run-metric .v { color: var(--text); font-weight: 600; }
+.run-rbc { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.run-rbc li {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-2); padding: 4px 8px;
+  border-radius: 3px; color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.run-rbc li.pass    { border-left: 2px solid var(--ok); }
+.run-rbc li.partial { border-left: 2px solid var(--warn); }
+.run-rbc li.fail    { border-left: 2px solid var(--bad); }
+.run-rbc li.skip    { border-left: 2px solid var(--skip); }
+
+pre.md {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+pre.md code { color: var(--text); }
+
+footer {
+  margin-top: 80px; padding-top: 32px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+footer a { color: var(--text-2); text-decoration: none; border-bottom: 1px solid var(--border); }
+footer a:hover { color: var(--text); border-color: var(--text-3); }
+
+.dim { color: var(--text-3); }
+
+/* i18n — dual-language content swap */
+.i18n::before { content: attr(data-en); }
+html[lang="zh"] .i18n::before { content: attr(data-zh); }
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:            #fbf8f3;
+    --surface-0:     #ffffff;
+    --surface-1:     #f6f1e9;
+    --surface-2:     #ede6d9;
+    --border:        rgba(20, 18, 14, 0.07);
+    --border-strong: rgba(20, 18, 14, 0.16);
+    --text:   #1a1714;
+    --text-2: #5c5246;
+    --text-3: #8a7e6f;
+    --skip:    #8a7e6f;
+    --skip-bg: rgba(138, 126, 111, 0.10);
+  }
+}
+
+@media (max-width: 720px) {
+  main { padding: 0 20px 80px; }
+  .hero { padding: 8px 0 48px; margin-bottom: 48px; }
+  section { margin-bottom: 64px; }
+  h1.repo-title { font-size: 40px; }
+  .tagline { margin-bottom: 48px; }
+  .section-head h2 { font-size: 24px; }
+  .capabilities-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<main>
+
+  <div class="topbar">
+    <div class="wordmark">repo<span class="dot">·</span>evals</div>
+    <div class="lang-toggle" aria-label="language toggle">
+      <button data-lang="en" onclick="setLang('en')">EN</button>
+      <button data-lang="zh" onclick="setLang('zh')">中</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">
+      <span class="i18n" data-en="Verdict report" data-zh="评测结论"></span>
+      <span class="sep">·</span>
+      <span>2026-05-04</span>
+      <span class="sep">·</span><span>main@HEAD (v0.2.1, JCST&#x27;26 paper)</span>
+    </div>
+
+    <h1 class="repo-title">OpenMAIC</h1>
+    <div class="repo-slug">THU-MAIC/OpenMAIC</div>
+
+    <p class="tagline"><span class="i18n" data-en="An open-source Next.js + LangGraph multi-agent platform that turns any topic or document into an interactive classroom — AI teachers + AI peers + auto-generated slides / quizzes / interactive simulations / whiteboard / TTS, with 5 LLM providers and 5 TTS providers wired in. Vercel-deploy or self-host; OpenClaw skill ships for chat-app integration." data-zh="清华团队开源的 Next.js + LangGraph 多 Agent 教学平台：把任何题目或文档变成互动课堂 —— AI 老师 + AI 同学一起讲、画白板、生成幻灯片 / 测验 / 互动模拟 / TTS 朗读。配套 5 家 LLM provider + 5 家 TTS provider，可一键 Vercel 部署或本机自建；自带 OpenClaw skill，能从飞书 / Slack / Discord / Telegram 直接生成课堂。"></span></p>
+
+    <div class="verdict-block">
+      <div>
+        <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
+        <div class="verdict-word">unknown</div>
+      </div>
+
+      <div class="verdict-meta">
+        <div class="label"><span class="i18n" data-en="Confidence" data-zh="置信度"></span></div>
+        <div class="confidence"><span class="value">unknown</span><span class="layer-pill layer-compound" title="compound"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Compound" data-zh="复合物"></span></span></div>
+
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 7 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 5"></span><span class="s-skip" style="flex: 2"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">5</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">2</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="pull-quotes">
+    <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Self-learners and educators who want to turn a paper / chapter / topic into an interactive classroom with AI agents that actually teach (not just summarize) — willing to bring their own LLM key, comfortable with Next.js or one-click Vercel deploy." data-zh="想把一篇论文 / 一章书 / 一个主题变成有 AI 老师真讲课的互动课堂的自学者和教育者；自己有 LLM key，能 Vercel 一键部署或会跑 Next.js。"></span></div></section>
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="AGPL-3.0 — any modified deployment must release source under AGPL. The platform stitches together a lot of moving parts (5 LLM, 5 TTS, LangGraph multi-agent, whiteboard, TTS streaming). Compound layer means any single agent / LLM provider / TTS provider going down can break a classroom mid-flight; the eval/ harness only covers two surfaces (outline-language, whiteboard-layout). Per-classroom token + TTS spend can be substantial — pin a model + voice before opening to non-technical users.
+" data-zh="AGPL-3.0 协议 —— 任何二次部署如果改了代码必须按 AGPL 开源。平台缝合了非常多组件（5 家 LLM、5 家 TTS、LangGraph 多 agent 编排、白板、TTS 流式）。Compound 层意味着任意一家 LLM / TTS 中断都可能让课堂中途崩；自带 eval/ 只覆盖两个面（outline-language、whiteboard-layout）。每堂课的 token + TTS 成本可能不小，给非技术用户开放前先锁定模型和声音。
+"></span></div></section>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <h2><span class="i18n" data-en="What we verified" data-zh="我们验证了什么"></span></h2>
+      <span class="count">5 / 7</span>
+    </div>
+    <div class="capabilities-grid">
+      <article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-001</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Next.js + React 19 + LangGraph 1.1 真栈一致" data-zh="Next.js + React 19 + LangGraph 1.1 真栈一致"></span></h3>  <p class="cap-description"><span class="i18n" data-en="用户拉来源码不会遇到 README 与 lockfile 不一致的&quot;装得上跑不通&quot;。
+" data-zh="用户拉来源码不会遇到 README 与 lockfile 不一致的&quot;装得上跑不通&quot;。
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-002</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="5 家 LLM provider 真有 env-var 入口" data-zh="5 家 LLM provider 真有 env-var 入口"></span></h3>  <p class="cap-description"><span class="i18n" data-en="用户用任意一家已有 key 起跑，不绑死单一 provider。
+" data-zh="用户用任意一家已有 key 起跑，不绑死单一 provider。
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-003</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="5 家 TTS provider 真有 env-var 入口" data-zh="5 家 TTS provider 真有 env-var 入口"></span></h3>  <p class="cap-description"><span class="i18n" data-en="课堂的 TTS 不绑死一家，可降级。
+" data-zh="课堂的 TTS 不绑死一家，可降级。
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-004</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="自带 eval harness（不只 talk，真有自测）" data-zh="自带 eval harness（不只 talk，真有自测）"></span></h3>  <p class="cap-description"><span class="i18n" data-en="项目方对自己的 LLM 输出有持续校验，而不是发完就摆烂。
+" data-zh="项目方对自己的 LLM 输出有持续校验，而不是发完就摆烂。
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-005</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="OpenClaw skill 真存在（README 集成段不是营销词）" data-zh="OpenClaw skill 真存在（README 集成段不是营销词）"></span></h3>  <p class="cap-description"><span class="i18n" data-en="&quot;在 Feishu / Slack / Discord 调起 OpenMAIC&quot; 不是 PR 段落，是真 skill。
+" data-zh="&quot;在 Feishu / Slack / Discord 调起 OpenMAIC&quot; 不是 PR 段落，是真 skill。
+"></span></p>  </article>
+<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-006</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="端到端 happy path：一句话 → 真课堂" data-zh="端到端 happy path：一句话 → 真课堂"></span></h3>  <p class="cap-description"><span class="i18n" data-en="&quot;one-click lesson generation&quot; 不只是 demo 录像，新主题真能跑出来。
+" data-zh="&quot;one-click lesson generation&quot; 不只是 demo 录像，新主题真能跑出来。
+"></span></p>  </article>
+<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-007</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="AGPL-3.0 + 多 provider 部署成本曲线披露" data-zh="AGPL-3.0 + 多 provider 部署成本曲线披露"></span></h3>  <p class="cap-description"><span class="i18n" data-en="非技术用户开放使用前知道每节课大致烧多少 token + TTS 时长。
+" data-zh="非技术用户开放使用前知道每节课大致烧多少 token + TTS 时长。
+"></span></p>  </article>
+    </div>
+  </section>
+
+  <section><div class='section-head'><h2><span class='i18n' data-en='How we evaluated this · by layer' data-zh='我们如何按层级评测'></span></h2></div>
+    <div class="layer-hero">
+      <div class="layer-hero-eyebrow">
+        <span class="i18n" data-en="Composition layer" data-zh="组合层级"></span>
+      </div>
+      <div class="layer-hero-name layer-compound"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div>
+      <div class="layer-hero-summary"><span class="i18n" data-en="Multiple molecules; call graph decided at runtime by an LLM or human." data-zh="多个分子；调用图在运行时由 LLM 或人决定。"></span></div>
+      <div class="layer-hero-source"><span class="i18n"
+        data-en="Declared in repo.yaml"
+        data-zh="已在 repo.yaml 中显式声明"></span></div>
+    </div>
+    <div class="layer-stack"><div class="layer-card layer-card-atom"><div class="layer-card-head"><h3><span class="i18n" data-en="Atom-level checks" data-zh="原子层检查"></span></h3><span class="layer-card-tag"><span class="i18n" data-en="applies (lower-level dependency)" data-zh="适用（下层依赖）"></span></span></div><p class="layer-card-summary"><span class="i18n" data-en="Single responsibility. Same input → same output. No skill-level callouts." data-zh="单一职责。同样输入产出同样输出。不调用其他 skill 级单元。"></span></p><table class="layer-dim-table"><tbody><tr><th><code>input_contract</code></th><td><span class="i18n" data-en="Does the atom reject malformed input with a clear, actionable error?" data-zh="原子在收到非法输入时，是否抛出一个清晰、可操作的错误？"></span></td></tr><tr><th><code>output_contract</code></th><td><span class="i18n" data-en="Does the output shape match what the README/SKILL.md claims?" data-zh="输出的结构是否与 README/SKILL.md 的承诺一致？"></span></td></tr><tr><th><code>determinism</code></th><td><span class="i18n" data-en="Same input → same output within stated tolerance. (LLM atoms: structurally equivalent, not byte-equal.)" data-zh="同样输入产出同样输出（容差内）。LLM 原子的容差是「结构等价」，不是字节相等。"></span></td></tr><tr><th><code>idempotence</code></th><td><span class="i18n" data-en="Re-running with the same input produces the same observable end state." data-zh="同样输入重复运行，最终可观察状态保持一致。"></span></td></tr><tr><th><code>no_skill_callouts</code></th><td><span class="i18n" data-en="Does the atom avoid invoking other documented skills? Primitives only (LLM API, stdlib, OS)." data-zh="原子是否避免调用其他 skill？只能调用 primitive（LLM API、stdlib、OS）。"></span></td></tr><tr><th><code>failure_mode_clarity</code></th><td><span class="i18n" data-en="Does each documented failure mode produce a distinct, recognisable error?" data-zh="每一种文档化的失败模式，是否都对应一个独特且可识别的错误？"></span></td></tr></tbody></table></div><div class="layer-card layer-card-molecule"><div class="layer-card-head"><h3><span class="i18n" data-en="Molecule-level checks" data-zh="分子层检查"></span></h3><span class="layer-card-tag"><span class="i18n" data-en="applies (lower-level dependency)" data-zh="适用（下层依赖）"></span></span></div><p class="layer-card-summary"><span class="i18n" data-en="2–10 atoms wired by predefined orchestration. No runtime LLM routing." data-zh="2–10 个原子，按预定义编排串起来。运行时不让 LLM 临时决定路由。"></span></p><table class="layer-dim-table"><tbody><tr><th><code>workflow_correctness</code></th><td><span class="i18n" data-en="Does an end-to-end happy path run from initial input to final output?" data-zh="从初始输入到最终输出，端到端 happy path 能跑通吗？"></span></td></tr><tr><th><code>declared_call_graph</code></th><td><span class="i18n" data-en="Are the atoms the molecule documents as using actually the ones it calls? No undocumented hidden dependencies." data-zh="分子文档里声明依赖的原子，是否就是它实际调用的原子？没有未文档化的隐藏依赖？"></span></td></tr><tr><th><code>stop_conditions</code></th><td><span class="i18n" data-en="Do documented stop conditions (success, max-retries, timeout) trigger and halt cleanly?" data-zh="文档化的停止条件（成功 / 重试上限 / 超时）是否真的触发并干净退出？"></span></td></tr><tr><th><code>handoff_points</code></th><td><span class="i18n" data-en="When the molecule should hand back to a human, does it do so at the documented trigger?" data-zh="分子需要把控制权交还给人时，是否按文档化的触发点执行？"></span></td></tr><tr><th><code>atom_evidence</code></th><td><span class="i18n" data-en="Does every declared atom dependency have a passing atom-level eval (referenced or co-located)?" data-zh="每一个声明依赖的原子，是否都有对应的、通过的 atom 级评测（引用或同仓）？"></span></td></tr><tr><th><code>error_propagation</code></th><td><span class="i18n" data-en="Does a downstream atom failure surface at the molecule boundary with enough info to act?" data-zh="下游原子失败时，错误是否在分子边界处响亮地冒泡出来，并带足够信息让人定位？"></span></td></tr><tr><th><code>partial_failure_handling</code></th><td><span class="i18n" data-en="When one atom fails, does the molecule avoid silently producing an incomplete &#x27;success&#x27;?" data-zh="某个原子失败时，分子是否避免静默输出一个看似「成功」其实不完整的产物？"></span></td></tr></tbody></table></div><div class="layer-card layer-card-compound"><div class="layer-card-head"><h3><span class="i18n" data-en="Compound-level checks" data-zh="复合物层检查"></span></h3><span class="layer-card-tag"><span class="i18n" data-en="applies (this layer)" data-zh="适用（当前层）"></span></span></div><p class="layer-card-summary"><span class="i18n" data-en="Multiple molecules; call graph decided at runtime by an LLM or human." data-zh="多个分子；调用图在运行时由 LLM 或人决定。"></span></p><table class="layer-dim-table"><tbody><tr><th><code>goal_achievement</code></th><td><span class="i18n" data-en="In N real scenarios, does the system reach a useful end state — not just &#x27;ran without error&#x27;?" data-zh="在 N 个真实场景里，系统是否真的达到了有用的终态 —— 而不仅仅是「跑完没报错」？"></span></td></tr><tr><th><code>direction_judgment</code></th><td><span class="i18n" data-en="When the goal is ambiguous, does the system ask, pick a reasonable default, or wedge?" data-zh="目标不明确时，系统是会反问、合理默认，还是卡死？"></span></td></tr><tr><th><code>quality_judgment</code></th><td><span class="i18n" data-en="Does the system stop when output is good enough, instead of overshooting or stopping too early?" data-zh="输出「足够好」时系统是否会停下来？还是会过度生产或过早停下？"></span></td></tr><tr><th><code>meaningful_autonomy</code></th><td><span class="i18n" data-en="When left to drive itself, does it actually make progress, or does it spin / loop / hallucinate?" data-zh="放手让它自己跑，是真有进展，还是空转 / 死循环 / 幻觉？"></span></td></tr><tr><th><code>handoff_timing</code></th><td><span class="i18n" data-en="When the system asks for help, is that the right moment?" data-zh="系统找人介入时，时机是不是恰到好处？"></span></td></tr><tr><th><code>observed_call_graph</code></th><td><span class="i18n" data-en="Was the call graph recorded during each scenario? Does each sub-molecule called have a passing molecule-level eval?" data-zh="每个场景跑完，调用图是否被记录下来？被调用到的每个子分子，是否都有通过的 molecule 级评测？"></span></td></tr><tr><th><code>failure_recovery</code></th><td><span class="i18n" data-en="When a sub-call fails, does the LLM adapt (try alternative, ask user) or wedge?" data-zh="子调用失败时，LLM 是会调整路径（换方案 / 问用户），还是卡死？"></span></td></tr></tbody></table></div></div><div class="layer-experiments"><div class="layer-experiments-eyebrow"><span class="i18n" data-en="Compound experiments — human-driven" data-zh="复合物实验 — 人驱动"></span></div><p class="layer-experiments-intro"><span class="i18n" data-en="The call graph is decided at runtime, so compound eval is scenario-driven. Run each scenario, observe the behaviour, log a verdict in runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md." data-zh="复合物的调用图是运行时决定的，所以评测是场景驱动。逐个场景跑下来，观察行为，把判断记到 runs/&lt;date&gt;/run-&lt;slug&gt;/business-notes.md。"></span></p><div class="layer-experiment"><div class="layer-experiment-head"><span class="layer-experiment-num"><span class="i18n" data-en="Scenario 1" data-zh="场景 1"></span></span><h4><span class="i18n" data-en="Happy-path multi-step request" data-zh="多步骤 happy path 请求"></span></h4></div><div class="layer-experiment-label"><span class="i18n" data-en="System prompt" data-zh="System prompt（起手提示）"></span></div><blockquote class="layer-experiment-prompt"><span class="i18n" data-en="Give the system a realistic multi-step request that obviously needs more than one sub-skill to complete (e.g., &#x27;find X, summarise it, and post the result&#x27;). Do not coach it on which tool to use." data-zh="给系统一个真实的多步骤请求，明显需要不止一个子技能才能完成（比如「找到 X，总结它，把结果发出来」）。不要提示它该用哪个工具。"></span></blockquote><div class="layer-experiment-label"><span class="i18n" data-en="What to watch for" data-zh="观察要点"></span></div><ul class="layer-experiment-watch"><li><span class="i18n" data-en="Does it pick the right sub-molecules without prompting?" data-zh="不提示的情况下，它是否选对了子分子？"></span></li><li><span class="i18n" data-en="Does it complete end-to-end with a useful artefact (not just &#x27;done&#x27;)?" data-zh="是否端到端完成，并产出有用的成果（不是只回一个「完成」）？"></span></li><li><span class="i18n" data-en="Does it skip steps or invent steps that were not asked for?" data-zh="是否漏步骤、或自己加上没被要求的步骤？"></span></li></ul><div class="layer-experiment-meta"><span class="i18n" data-en="Sub-skills expected: " data-zh="预期触发的子技能："></span><span class="i18n" data-en="TBD — observe" data-zh="待定 —— 观察"></span></div></div><div class="layer-experiment"><div class="layer-experiment-head"><span class="layer-experiment-num"><span class="i18n" data-en="Scenario 2" data-zh="场景 2"></span></span><h4><span class="i18n" data-en="Ambiguous goal — does it ask or assume?" data-zh="目标模糊 —— 反问还是默认？"></span></h4></div><div class="layer-experiment-label"><span class="i18n" data-en="System prompt" data-zh="System prompt（起手提示）"></span></div><blockquote class="layer-experiment-prompt"><span class="i18n" data-en="Give the system an under-specified request (e.g., &#x27;clean this up&#x27; with no further detail). Wait and see what it does." data-zh="给系统一个非常模糊的请求（比如「清理一下这个」，不给任何细节），然后等着看它怎么做。"></span></blockquote><div class="layer-experiment-label"><span class="i18n" data-en="What to watch for" data-zh="观察要点"></span></div><ul class="layer-experiment-watch"><li><span class="i18n" data-en="Does it ask a clarifying question, or silently pick a direction?" data-zh="它会反问澄清，还是默默选一条路？"></span></li><li><span class="i18n" data-en="If it picks a direction, is the choice reasonable for a default user?" data-zh="如果它默认选了方向，对一个普通用户来说这个默认是不是合理？"></span></li><li><span class="i18n" data-en="Does it avoid destructive actions until the ambiguity is resolved?" data-zh="在模糊解除前，它是否避免了破坏性操作？"></span></li></ul><div class="layer-experiment-meta"><span class="i18n" data-en="Sub-skills expected: " data-zh="预期触发的子技能："></span><span class="i18n" data-en="TBD — observe" data-zh="待定 —— 观察"></span></div></div><div class="layer-experiment"><div class="layer-experiment-head"><span class="layer-experiment-num"><span class="i18n" data-en="Scenario 3" data-zh="场景 3"></span></span><h4><span class="i18n" data-en="Induced sub-skill failure — does it recover?" data-zh="人为制造子技能失败 —— 它会恢复吗？"></span></h4></div><div class="layer-experiment-label"><span class="i18n" data-en="System prompt" data-zh="System prompt（起手提示）"></span></div><blockquote class="layer-experiment-prompt"><span class="i18n" data-en="Run a normal request, but arrange for one sub-skill to fail (e.g., revoke a credential, point at a broken URL, fill a queue). Observe the response." data-zh="跑一个正常请求，但人为让某个子技能失败（比如撤销凭据、指向坏链接、塞满队列），观察系统反应。"></span></blockquote><div class="layer-experiment-label"><span class="i18n" data-en="What to watch for" data-zh="观察要点"></span></div><ul class="layer-experiment-watch"><li><span class="i18n" data-en="Does the failure surface clearly, or get hidden behind a fake &#x27;success&#x27;?" data-zh="失败是否被清楚地暴露出来？还是被一个假的「成功」盖住？"></span></li><li><span class="i18n" data-en="Does the system attempt an alternative path or escalate to the human?" data-zh="系统是会换条路走，还是把问题升级给人？"></span></li><li><span class="i18n" data-en="Does it avoid wedging in a retry loop?" data-zh="它是否避免陷入死循环式的重试？"></span></li></ul><div class="layer-experiment-meta"><span class="i18n" data-en="Sub-skills expected: " data-zh="预期触发的子技能："></span><span class="i18n" data-en="TBD — observe" data-zh="待定 —— 观察"></span></div></div><div class="layer-experiment"><div class="layer-experiment-head"><span class="layer-experiment-num"><span class="i18n" data-en="Scenario 4" data-zh="场景 4"></span></span><h4><span class="i18n" data-en="Long-horizon autonomy" data-zh="长时间自主运行"></span></h4></div><div class="layer-experiment-label"><span class="i18n" data-en="System prompt" data-zh="System prompt（起手提示）"></span></div><blockquote class="layer-experiment-prompt"><span class="i18n" data-en="Give the system a goal that takes 10+ minutes of unattended work (e.g., &#x27;audit the past week and produce a summary&#x27;). Leave it alone for 15 minutes." data-zh="给系统一个需要 10 分钟以上无人值守工作的目标（比如「审计过去一周并产出一份总结」），然后离开 15 分钟。"></span></blockquote><div class="layer-experiment-label"><span class="i18n" data-en="What to watch for" data-zh="观察要点"></span></div><ul class="layer-experiment-watch"><li><span class="i18n" data-en="Did it produce a real artefact, or did it spin / lose context?" data-zh="回来时是否产出了真实成果？还是空转 / 丢失上下文？"></span></li><li><span class="i18n" data-en="Are the intermediate steps sensible, or did it hallucinate?" data-zh="中间步骤是否合理？有没有幻觉？"></span></li><li><span class="i18n" data-en="Did it know when to stop, or did it over-shoot the goal?" data-zh="它是否知道什么时候该停？还是越过了目标？"></span></li></ul><div class="layer-experiment-meta"><span class="i18n" data-en="Sub-skills expected: " data-zh="预期触发的子技能："></span><span class="i18n" data-en="TBD — observe" data-zh="待定 —— 观察"></span></div></div><div class="layer-experiment"><div class="layer-experiment-head"><span class="layer-experiment-num"><span class="i18n" data-en="Scenario 5" data-zh="场景 5"></span></span><h4><span class="i18n" data-en="Routing correctness across all downstreams" data-zh="所有下游的路由正确性"></span></h4></div><div class="layer-experiment-label"><span class="i18n" data-en="System prompt" data-zh="System prompt（起手提示）"></span></div><blockquote class="layer-experiment-prompt"><span class="i18n" data-en="Send one request that should fan out to every documented downstream (one input per area). Observe the routing log." data-zh="发起一个请求，让它分发到每一个文档化的下游（每个 area 一个输入），观察路由日志。"></span></blockquote><div class="layer-experiment-label"><span class="i18n" data-en="What to watch for" data-zh="观察要点"></span></div><ul class="layer-experiment-watch"><li><span class="i18n" data-en="Did each input land at the correct downstream?" data-zh="每一个输入是否都被路由到正确的下游？"></span></li><li><span class="i18n" data-en="Are downstream call traces visible in the orchestrator log?" data-zh="在 orchestrator 日志里，下游调用是否可追踪？"></span></li><li><span class="i18n" data-en="Do partial failures stop unrelated downstreams from running?" data-zh="部分失败时，是否影响到了不相关的下游？"></span></li></ul><div class="layer-experiment-meta"><span class="i18n" data-en="Sub-skills expected: " data-zh="预期触发的子技能："></span><span class="i18n" data-en="One per documented downstream area." data-zh="每个文档化的下游 area 一个。"></span></div></div></div></section>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Technical details" data-zh="技术细节"></span></summary>
+    <div class="body">
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Ceiling &amp; blocking reasons" data-zh="Ceiling 与 Blocking 理由"></span></h3>
+        <div class="grid-two">
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Why capped" data-zh="为什么封顶"></span></h4>
+            <ul><li class="dim"><span class="i18n" data-en="none" data-zh="无"></span></li></ul>
+          </div>
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h4>
+            <ul><li class="dim"><span class="i18n" data-en="none" data-zh="无"></span></li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Derivation" data-zh="推导路径"></span></h3>
+        <div class="flow"><div class="flow-row"><span class="flow-node start">archetype: orchestrator</span><span class="flow-arrow">→</span><span class="flow-node decision">core_layer_tested? <b style="color:inherit">False</b></span><span class="flow-arrow">→</span><span class="flow-node">evidence: —</span><span class="flow-arrow">→</span><span class="flow-node">recommended: unknown</span><span class="flow-arrow">→</span><span class="flow-node final">final: unknown</span></div></div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Claim ledger" data-zh="Claim 清单"></span></h3>
+        <table class="claims-table">
+          <thead>
+            <tr>
+              <th style="width:110px"><span class="i18n" data-en="ID" data-zh="ID"></span></th>
+              <th><span class="i18n" data-en="Title" data-zh="标题"></span></th>
+              <th style="width:100px"><span class="i18n" data-en="Priority" data-zh="优先级"></span></th>
+              <th style="width:170px"><span class="i18n" data-en="Area" data-zh="领域"></span></th>
+              <th style="width:130px"><span class="i18n" data-en="Status" data-zh="状态"></span></th>
+              <th><span class="i18n" data-en="Note" data-zh="备注"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="prio-critical"><td class="c-id">claim-001</td><td class="c-title">Next.js + React 19 + LangGraph 1.1 真栈一致</td><td><span class="prio-pill critical">critical</span></td><td>tech-stack</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-002</td><td class="c-title">5 家 LLM provider 真有 env-var 入口</td><td><span class="prio-pill critical">critical</span></td><td>ai-providers</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-003</td><td class="c-title">5 家 TTS provider 真有 env-var 入口</td><td><span class="prio-pill high">high</span></td><td>tts-providers</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-004</td><td class="c-title">自带 eval harness（不只 talk，真有自测）</td><td><span class="prio-pill high">high</span></td><td>testing-discipline</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-005</td><td class="c-title">OpenClaw skill 真存在（README 集成段不是营销词）</td><td><span class="prio-pill high">high</span></td><td>openclaw-integration</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-006</td><td class="c-title">端到端 happy path：一句话 → 真课堂</td><td><span class="prio-pill critical">critical</span></td><td>end-to-end</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-007</td><td class="c-title">AGPL-3.0 + 多 provider 部署成本曲线披露</td><td><span class="prio-pill high">high</span></td><td>economics</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Runs &amp; metrics" data-zh="Runs 与指标"></span></h3>
+        <div class="metric-tiles">
+          <div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="pass rate" data-zh="通过率"></span></div>  <div class="mt-value">0<span class="mt-unit">%</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="elapsed" data-zh="耗时"></span></div>  <div class="mt-value">0.00<span class="mt-unit">s</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="token output" data-zh="token 输出"></span></div>  <div class="mt-value">0</div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="in · 0 / out · 0" data-zh="输入 · 0 / 输出 · 0"></span></div></div>
+        </div>
+        <div class="run-card">  <h3>run-static-checks</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-05-04</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  </div>
+      </div>
+
+    </div>
+  </details>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Test log — all probes we ran" data-zh="测试日志 — 我们跑过的所有探针"></span></summary>
+    <div class="body">
+      <div class="run-card">  <h3>run-static-checks</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-05-04</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  </div>
+    </div>
+  </details>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Raw verdict archive (authored by evaluator)" data-zh="原始 verdict 存档（评测者原文）"></span></summary>
+    <div class="body">
+<pre class="md"># OpenMAIC — final verdict (2026-05-04)
+
+## Repo
+
+- **Name:** THU-MAIC/OpenMAIC
+- **Branch evaluated:** main@HEAD (v0.2.1, JCST&#x27;26 paper)
+- **Archetype:** orchestrator
+- **Layer:** **compound** — LangGraph multi-agent classroom
+  generation
+- **Eval framework:** repo-evals layer model v1 (f9ed1e9)
+
+## Bucket
+
+**`usable`** — strong static layer with rare positive signals
+(in-repo eval harness, well-disclosed multi-provider env, clean
+OpenClaw integration). Compound rule caps `usable` until at least one
+logged live classroom generation.
+
+## What was evaluated
+
+### Atom + molecule level (static, this run)
+
+| Claim | Status | Notes |
+|---|---|---|
+| 001 tech stack | passed | next 16.1.2 / react 19.2.3 / langgraph ^1.1.1 / tailwind ^4 — matches README badges |
+| 002 5 LLM providers | passed | OpenAI/Anthropic/Google/DeepSeek/Grok all with KEY+BASE_URL+MODELS |
+| 003 5 TTS providers | passed | OpenAI/Azure/GLM/Qwen/MiniMax all with KEY+BASE_URL; MiniMax has default endpoint |
+| 004 eval harness | passed | 2 named eval scripts (eval:whiteboard + eval:outline-language) reference real tsx runners |
+| 005 OpenClaw skill | passed | skills/openmaic/SKILL.md (102 lines) with user-invocable, confirmation-heavy SOP |
+
+### Compound level (deferred)
+
+| Claim | Status | Required |
+|---|---|---|
+| 006 live classroom generation | untested | open.maic.chat or self-hosted; verify slides + quiz + sim + whiteboard + TTS |
+| 007 cost transparency | untested | README to add per-classroom token + TTS cost estimate |
+
+## Real findings worth surfacing
+
+1. **In-repo eval harness is rare and disciplined.** Most &quot;AI demo&quot;
+   repos don&#x27;t ship `eval/`. OpenMAIC has two named evals
+   (whiteboard-layout, outline-language) with their own runners and
+   a `shared/` for common code. That&#x27;s a strong testing-intent
+   signal.
+
+2. **OpenClaw SOP is safety-conscious.** The skill explicitly says
+   &quot;Run one phase at a time and ask for confirmation before each
+   state-changing step&quot;. This is the right posture for a multi-step
+   AI orchestrator that might write files / clone repos / start
+   services on the user&#x27;s machine.
+
+3. **TTS surface is unusually broad.** 5 commercial providers + a
+   self-hosted VoxCPM2 (added in v0.2.1) means the classroom doesn&#x27;t
+   degrade silently if one provider has issues — the operator can
+   fail over.
+
+4. **Active development cadence.** 4 minor releases in the 6 weeks
+   leading up to eval (v0.1.0 through v0.2.1). Healthy for an
+   academic-affiliated open-source project.
+
+## Why not higher
+
+`usable` because:
+
+- No live classroom generation logged on this evaluator&#x27;s machine.
+  Compound layer&#x27;s user value is the multi-agent dance — static
+  evidence cannot validate that the agents actually teach
+  meaningfully.
+- Cost transparency is genuinely missing; non-technical users would
+  benefit from a &quot;a 30-min classroom on a typical topic costs roughly
+  $X with default config&quot; line.
+
+## Path to `reusable`
+
+1. Run a live classroom on open.maic.chat with a real LLM key.
+2. Self-host a fork; verify Vercel one-click deploy works.
+3. Try one PDF-upload classroom; verify the OpenClaw skill SOP
+   end-to-end.
+4. Trigger an LLM-provider failure (revoked key) and verify the
+   classroom degrades gracefully.
+5. Update claim-006 → `passed`. If the README later adds a cost
+   estimate, claim-007 → `passed`. Re-run verdict_calculator.
+
+## Recommended
+
+```yaml
+current_bucket: usable
+status: evaluated
+```
+</pre>
+    </div>
+  </details>
+
+  <footer>
+    <div><span class="i18n" data-en="Rendered by repo-evals · render_verdict_html.py" data-zh="由 repo-evals · render_verdict_html.py 生成"></span></div>
+    <div><a href="https://github.com/THU-MAIC/OpenMAIC" target="_blank" rel="noopener">THU-MAIC/OpenMAIC</a></div>
+  </footer>
+
+</main>
+
+<script>
+  const LANG_KEY = 'repoEvalsVerdictLang';
+  const INITIAL_LANG = "auto";
+  function detectLang() {
+    try {
+      const p = new URLSearchParams(location.search).get('lang');
+      if (p === 'en' || p === 'zh') return p;
+    } catch (_) {}
+    const stored = localStorage.getItem(LANG_KEY);
+    if (stored === 'en' || stored === 'zh') return stored;
+    if (INITIAL_LANG === 'en' || INITIAL_LANG === 'zh') return INITIAL_LANG;
+    if ((navigator.language || '').toLowerCase().startsWith('zh')) return 'zh';
+    return 'en';
+  }
+  function setLang(lang) {
+    document.documentElement.lang = lang;
+    try { localStorage.setItem(LANG_KEY, lang); } catch (_) {}
+  }
+  setLang(detectLang());
+</script>
+
+</body>
+</html>
