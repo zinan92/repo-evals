@@ -1,0 +1,5 @@
+PlatformEnum -> ['xhs', 'dy', 'ks', 'bili', 'wb', 'tieba', 'zhihu']
+LoginTypeEnum -> ['qrcode', 'phone', 'cookie']
+CrawlerTypeEnum -> ['search', 'detail', 'creator']
+SaveDataOptionEnum -> ['csv', 'db', 'json', 'jsonl', 'sqlite', 'mongodb', 'excel', 'postgres']
+InitDbOptionEnum -> ['sqlite', 'mysql', 'postgres']

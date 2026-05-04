@@ -1,0 +1,55 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: NanmiCoder
+  repo: MediaCrawler
+  source_commit: main HEAD at run time (not pinned)
+  python_version: "3.11"
+  playwright_version: "1.45.0"
+
+scope: |
+  Static-checkable claims only. Live multi-platform runs (claim-005 e2e,
+  claim-006 failure modes, claim-007 adapter isolation) require real
+  account credentials + a clone of the repo and are deferred to
+  molecule-level scenario runs.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "7 entries in CrawlerFactory.CRAWLERS, 7 dirs under media_platform/, perfect 1:1 match"
+  - id: claim-002
+    status: passed
+    note: "All README CLI choices present in cmd_arg/arg.py Enums; code is richer than docs (creator type + mongodb + postgres backends not surfaced in English README)"
+  - id: claim-003
+    status: passed
+    note: "Python 3.11, playwright 1.45.0, aiomysql + aiosqlite + motor + asyncmy + openpyxl + sqlalchemy all present"
+  - id: claim-004
+    status: passed_with_concerns
+    note: "libs/ ships only 3 JS files (douyin.js, stealth.min.js, zhihu.js); xhs depends on third-party xhshow package; other platforms appear to handle signing inside media_platform/<x>/ — user surface clean (claim holds), but the 'no encryption' framing understates how much per-platform plumbing is happening"
+
+claims_deferred:
+  - claim-005  # end-to-end search per platform — needs account + browser
+  - claim-006  # failure-mode UX — needs induced failure scenarios
+  - claim-007  # adapter isolation — needs repo clone + import probe
+
+artifacts:
+  - artifacts/python-version.txt
+  - artifacts/requirements.txt
+
+logs:
+  - logs/crawlers-dict.txt
+  - logs/media-platform-dirs.txt
+  - logs/cli-enums.txt
+  - logs/install-deps.txt
+  - logs/libs-contents.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/NanmiCoder/MediaCrawler/main/main.py"
+    - "raw.githubusercontent.com/NanmiCoder/MediaCrawler/main/cmd_arg/arg.py"
+    - "raw.githubusercontent.com/NanmiCoder/MediaCrawler/main/requirements.txt"
+    - "raw.githubusercontent.com/NanmiCoder/MediaCrawler/main/.python-version"
+    - "gh api repos/NanmiCoder/MediaCrawler/contents/{media_platform,libs}"
+  network_dependent: true
+  reproducible: "yes — re-fetch raw URLs and gh api at any time"

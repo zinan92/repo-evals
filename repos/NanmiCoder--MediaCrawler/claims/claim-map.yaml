@@ -1,0 +1,135 @@
+# MediaCrawler claim map (adapter archetype, molecule layer).
+#
+# Sources:
+#   - https://raw.githubusercontent.com/NanmiCoder/MediaCrawler/main/README.md
+#   - https://raw.githubusercontent.com/NanmiCoder/MediaCrawler/main/README_en.md
+#   - main.py (CrawlerFactory.CRAWLERS)
+#   - cmd_arg/arg.py (PlatformEnum / LoginTypeEnum / CrawlerTypeEnum / SaveDataOptionEnum)
+#   - requirements.txt + .python-version
+
+claims:
+  - id: claim-001
+    title: 7 个平台的 adapter 与 README 列表完全一致
+    source: README + main.py
+    source_ref: "CrawlerFactory.CRAWLERS"
+    priority: critical
+    area: platform-coverage
+    statement: |
+      README 声称支持 xhs / dy / ks / bili / wb / tieba / zhihu 七个平台。
+      main.py 的 CrawlerFactory.CRAWLERS 必须真有 7 个 entry 且
+      media_platform/ 目录下每个平台都有自己的子模块。
+    business_expectation: |
+      用户用任意一个 README 列出的 platform 值都能命中真实代码路径。
+    evidence_needed: |
+      CRAWLERS dict + media_platform/ 子目录列表 + README 平台清单的对照。
+    status: passed
+    last_run: runs/2026-05-04/run-static-checks
+    note: "7 entries in CrawlerFactory.CRAWLERS, 7 dirs under media_platform/, perfect 1:1"
+
+  - id: claim-002
+    title: CLI 暴露的 type/lt/save_data_option 与文档一致
+    source: cmd_arg/arg.py
+    source_ref: "Enums in arg.py"
+    priority: critical
+    area: cli-contract
+    statement: |
+      README 描述的 --type 取值（search / detail / creator）、
+      --lt 取值（qrcode / phone / cookie）、
+      --save_data_option 取值（csv / db / json / jsonl / sqlite / excel）
+      在 cmd_arg/arg.py 的 Enum 中必须能找到。代码可以多于文档（隐藏能力），
+      但不能少于文档（虚假承诺）。
+    business_expectation: |
+      用户照 README 命令行示例敲下去不会拿到 "invalid choice"。
+    evidence_needed: |
+      arg.py Enum 定义 + README 示例命令对照。
+    status: passed
+    last_run: runs/2026-05-04/run-static-checks
+    note: "All README CLI choices present; code richer (creator type + mongodb/postgres backends not in English README)"
+
+  - id: claim-003
+    title: 安装路径所需的依赖在 requirements.txt 真实声明
+    source: README + requirements.txt
+    source_ref: "uv run main.py prerequisites"
+    priority: critical
+    area: install
+    statement: |
+      README 声称需要 Python 3.11 + Playwright 1.45 + 浏览器驱动。
+      .python-version、requirements.txt、playwright 版本应一致；
+      MySQL / SQLite / PostgreSQL / MongoDB 的存储后端如果在 README 里
+      被宣传，对应的客户端依赖（aiomysql / aiosqlite / asyncpg-equivalent /
+      motor）也要在 requirements.txt 出现。
+    business_expectation: |
+      用户照 README install 步骤一步到位，不会在第一次跑就缺包。
+    evidence_needed: |
+      requirements.txt + .python-version + README 安装段对照。
+    status: passed
+    last_run: runs/2026-05-04/run-static-checks
+    note: "Python 3.11, playwright 1.45.0, all storage clients (aiomysql / aiosqlite / motor / sqlalchemy / openpyxl) declared"
+
+  - id: claim-004
+    title: 「无需逆向加密」承诺：用户不需要自己处理签名
+    source: README_en.md
+    source_ref: '"No need to reverse complex encryption algorithms"'
+    priority: high
+    area: dx-promise
+    statement: |
+      README 强力卖点："不需要逆向复杂的加密算法"。承诺的是用户操作面，不是
+      仓库内部不处理加密 —— 仓库自己带了 libs/ 下的 JS hook 和签名辅助。
+      验证：libs/ 目录下确实存在 platform-specific helpers，并且
+      media_platform/<platform>/ 模块直接调用它们，用户在 main.py / config
+      层面看不到任何「请填入 a-bogus / x-s-common」之类的 token。
+    business_expectation: |
+      非逆向工程师能跑通，无需自己 patch 签名。
+    evidence_needed: |
+      libs/ 子目录列表 + media_platform/<platform>/client 类对加密 helper
+      的引用 + main.py / config 中没有暴露给用户的 token 字段。
+    status: passed_with_concerns
+    last_run: runs/2026-05-04/run-static-checks
+    note: "User surface is clean (no token flags) but signing lives in 3 places (vendored JS / xhshow pip dep / per-platform client.py); 'no encryption' framing oversells simplicity"
+
+  - id: claim-005
+    title: 端到端 happy path：每个平台的 search 流程能跑出真实数据
+    source: README "快速开始" / 使用案例
+    source_ref: "uv run main.py --platform xhs --lt qrcode --type search"
+    priority: critical
+    area: end-to-end
+    statement: |
+      给 7 个平台中至少 1 个跑 search 流程：扫码登录后 → 输入关键词 →
+      返回 N 条真实公开数据 → 写入 SAVE_DATA_OPTION 指定的存储 →
+      退出码 0。重新跑一次（cache login）不需要再扫码。
+    business_expectation: |
+      新用户照 README 一条命令真的能拿到数据，不需要自己改代码。
+    evidence_needed: |
+      molecule 级评测，需要真实账号 + 网络 + 平台未在评测当天改版。建议
+      先跑 xhs / bili / weibo（业内反爬相对稳）；ks / dy 易破。每次跑都
+      产出 store/ 下的产物 + 退出码 + 大致条目数。
+
+  - id: claim-006
+    title: 失败模式：未登录 / 关键词无结果 / 平台限流，错误清晰
+    source: framework
+    source_ref: "error propagation + partial failure"
+    priority: high
+    area: error-propagation
+    statement: |
+      三类典型失败 —— (a) 用户没扫码就触发 search、(b) 关键词在平台真没数据、
+      (c) 平台开始返回限流页面 —— 这些情况下，CLI 不应输出空 csv/json 装
+      作成功，应明确提示 + 非零退出码 / 至少在日志层标记。
+    business_expectation: |
+      用户能照错误信息判断该重新登录、换关键词、还是换 IP。
+    evidence_needed: |
+      molecule 级，每种失败造一个真实场景。
+
+  - id: claim-007
+    title: 单一适配器损坏不影响其他平台模块导入
+    source: framework
+    source_ref: "adapter independence"
+    priority: high
+    area: structure
+    statement: |
+      故意让 media_platform/xhs/__init__.py import 一个不存在的符号，
+      其他 6 个平台的 crawler 仍然可以被 import 和实例化（验证适配器
+      之间没有隐藏耦合）。
+    business_expectation: |
+      一个平台被反爬打死，用户改代码 / 等修复时不影响别的平台。
+    evidence_needed: |
+      故障注入实验：runs/<date>/run-isolation/ 下记录 import 行为。

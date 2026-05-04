@@ -1,0 +1,9 @@
+    CRAWLERS: dict[str, Type[AbstractCrawler]] = {
+        "xhs": XiaoHongShuCrawler,
+        "dy": DouYinCrawler,
+        "ks": KuaishouCrawler,
+        "bili": BilibiliCrawler,
+        "wb": WeiboCrawler,
+        "tieba": TieBaCrawler,
+        "zhihu": ZhihuCrawler,
+    }

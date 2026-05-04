@@ -1,0 +1,42 @@
+{
+  "slug": "NanmiCoder--MediaCrawler",
+  "display_name": "MediaCrawler",
+  "owner": "NanmiCoder",
+  "repo": "MediaCrawler",
+  "repo_url": "https://github.com/NanmiCoder/MediaCrawler",
+  "repo_type": "tool",
+  "archetype": "adapter",
+  "layer": "molecule",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "Python tool that uses Playwright browser automation to crawl 7 Chinese social platforms (xhs / douyin / kuaishou / bilibili / weibo / tieba / zhihu) for posts + comments + creator data. 48,800+ stars, custom non-commercial license. Python 3.11 (.python-version), CRAWLERS factory…",
+  "repo_path": "repos/NanmiCoder--MediaCrawler",
+  "claims_summary": {
+    "total": 7,
+    "passed": 4,
+    "failed": 0,
+    "untested": 3,
+    "critical_total": 4,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 3
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/NanmiCoder--MediaCrawler/plans/2026-05-04-eval-plan.md",
+  "verdict_path": "repos/NanmiCoder--MediaCrawler/verdicts/2026-05-04-final-verdict.md",
+  "attention_level": "medium"
+}

@@ -1,0 +1,7 @@
+  playwright: playwright==1.45.0
+  aiomysql: aiomysql==0.2.0
+  aiosqlite: aiosqlite==0.21.0
+  motor: motor>=3.3.0
+  sqlalchemy: sqlalchemy>=2.0.43
+  openpyxl: openpyxl>=3.1.2
+  asyncmy: asyncmy>=0.2.10
