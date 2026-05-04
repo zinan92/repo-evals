@@ -4,48 +4,104 @@ display_name: OpenMAIC
 repo_url: https://github.com/THU-MAIC/OpenMAIC
 repo_type: platform
 archetype: orchestrator
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-# Multi-agent classroom (AI teachers + AI peers discussing, drawing
-# whiteboard, generating slides + quizzes + sims via LangGraph).
-# Agent-orchestrated at runtime → compound.
 layer: compound
 complexity: complex
 uses_areas: false
 status: evaluated
 current_bucket: usable
-last_evaluated: "2026-05-04"
-version_tested: "main@HEAD (v0.2.1, JCST'26 paper)"
-notes: |
-  Tsinghua-affiliated open-source AI classroom platform (paper in JCST'26).
+last_evaluated: '2026-05-04'
+version_tested: main@HEAD (v0.2.1, JCST'26 paper)
+notes: 'Tsinghua-affiliated open-source AI classroom platform (paper in JCST''26).
+
   Next.js 16 + React 19 + LangGraph 1.1 + Tailwind 4. AGPL-3.0,
+
   16,750 stars, very active (4 release cuts in last 6 weeks). Ships
+
   with one-click Vercel deploy, hosted demo at open.maic.chat.
 
+
   Multi-agent classroom: AI teachers + AI peers generate slides /
+
   quizzes / interactive HTML simulations / project-based learning
+
   activities, with TTS (5 providers: OpenAI / Azure / GLM / Qwen /
+
   MiniMax + VoxCPM2 self-hosted) and whiteboard. 5 LLM providers
+
   (OpenAI / Anthropic / Google / DeepSeek / Grok) all with BASE_URL +
+
   MODELS overrides.
 
+
   Has its own eval/ harness with two named evals (outline-language,
+
   whiteboard-layout) — uncommon for a "demo project" repo, signal of
+
   serious testing intent.
 
+
   OpenClaw integration via skills/openmaic/ ships an OpenClaw skill
+
   so users in Feishu / Slack / Discord / Telegram can ask their Claw
+
   to "generate a quantum physics classroom" and have it served from
+
   open.maic.chat or a self-hosted instance.
 
+  '
 product_view:
   one_liner:
-    en: "An open-source Next.js + LangGraph multi-agent platform that turns any topic or document into an interactive classroom — AI teachers + AI peers + auto-generated slides / quizzes / interactive simulations / whiteboard / TTS, with 5 LLM providers and 5 TTS providers wired in. Vercel-deploy or self-host; OpenClaw skill ships for chat-app integration."
-    zh: "清华团队开源的 Next.js + LangGraph 多 Agent 教学平台：把任何题目或文档变成互动课堂 —— AI 老师 + AI 同学一起讲、画白板、生成幻灯片 / 测验 / 互动模拟 / TTS 朗读。配套 5 家 LLM provider + 5 家 TTS provider，可一键 Vercel 部署或本机自建；自带 OpenClaw skill，能从飞书 / Slack / Discord / Telegram 直接生成课堂。"
+    en: An open-source Next.js + LangGraph multi-agent platform that turns any topic
+      or document into an interactive classroom — AI teachers + AI peers + auto-generated
+      slides / quizzes / interactive simulations / whiteboard / TTS, with 5 LLM providers
+      and 5 TTS providers wired in. Vercel-deploy or self-host; OpenClaw skill ships
+      for chat-app integration.
+    zh: 清华团队开源的 Next.js + LangGraph 多 Agent 教学平台：把任何题目或文档变成互动课堂 —— AI 老师 + AI 同学一起讲、画白板、生成幻灯片
+      / 测验 / 互动模拟 / TTS 朗读。配套 5 家 LLM provider + 5 家 TTS provider，可一键 Vercel 部署或本机自建；自带
+      OpenClaw skill，能从飞书 / Slack / Discord / Telegram 直接生成课堂。
   best_for:
-    en: "Self-learners and educators who want to turn a paper / chapter / topic into an interactive classroom with AI agents that actually teach (not just summarize) — willing to bring their own LLM key, comfortable with Next.js or one-click Vercel deploy."
-    zh: "想把一篇论文 / 一章书 / 一个主题变成有 AI 老师真讲课的互动课堂的自学者和教育者；自己有 LLM key，能 Vercel 一键部署或会跑 Next.js。"
+    en: Self-learners and educators who want to turn a paper / chapter / topic into
+      an interactive classroom with AI agents that actually teach (not just summarize)
+      — willing to bring their own LLM key, comfortable with Next.js or one-click
+      Vercel deploy.
+    zh: 想把一篇论文 / 一章书 / 一个主题变成有 AI 老师真讲课的互动课堂的自学者和教育者；自己有 LLM key，能 Vercel 一键部署或会跑
+      Next.js。
   watch_out:
-    en: |
-      AGPL-3.0 — any modified deployment must release source under AGPL. The platform stitches together a lot of moving parts (5 LLM, 5 TTS, LangGraph multi-agent, whiteboard, TTS streaming). Compound layer means any single agent / LLM provider / TTS provider going down can break a classroom mid-flight; the eval/ harness only covers two surfaces (outline-language, whiteboard-layout). Per-classroom token + TTS spend can be substantial — pin a model + voice before opening to non-technical users.
-    zh: |
-      AGPL-3.0 协议 —— 任何二次部署如果改了代码必须按 AGPL 开源。平台缝合了非常多组件（5 家 LLM、5 家 TTS、LangGraph 多 agent 编排、白板、TTS 流式）。Compound 层意味着任意一家 LLM / TTS 中断都可能让课堂中途崩；自带 eval/ 只覆盖两个面（outline-language、whiteboard-layout）。每堂课的 token + TTS 成本可能不小，给非技术用户开放前先锁定模型和声音。
+    en: 'AGPL-3.0 — any modified deployment must release source under AGPL. The platform
+      stitches together a lot of moving parts (5 LLM, 5 TTS, LangGraph multi-agent,
+      whiteboard, TTS streaming). Compound layer means any single agent / LLM provider
+      / TTS provider going down can break a classroom mid-flight; the eval/ harness
+      only covers two surfaces (outline-language, whiteboard-layout). Per-classroom
+      token + TTS spend can be substantial — pin a model + voice before opening to
+      non-technical users.
+
+      '
+    zh: 'AGPL-3.0 协议 —— 任何二次部署如果改了代码必须按 AGPL 开源。平台缝合了非常多组件（5 家 LLM、5 家 TTS、LangGraph
+      多 agent 编排、白板、TTS 流式）。Compound 层意味着任意一家 LLM / TTS 中断都可能让课堂中途崩；自带 eval/ 只覆盖两个面（outline-language、whiteboard-layout）。每堂课的
+      token + TTS 成本可能不小，给非技术用户开放前先锁定模型和声音。
+
+      '
+  use_for:
+  - en: Self-learners and educators who want to turn a paper / chapter / topic into
+      an interactive AI classroom.
+    zh: 想把一篇论文 / 一章书 / 一个主题变成 AI 互动课堂的自学者和教育者。
+  - en: Want AI teachers + AI peers that actually teach (slides, quizzes, simulations,
+      whiteboard, TTS), not just summarize.
+    zh: 想要 AI 老师 + AI 同学真讲课（幻灯片 / 测验 / 模拟 / 白板 / TTS），不是只做总结。
+  - en: Comfortable bringing your own LLM key, OK with one-click Vercel deploy or
+      self-host.
+    zh: 自己有 LLM key，能 Vercel 一键部署或会跑 Next.js 自建。
+  dont_use_for:
+  - en: Don't deploy modified versions without releasing source — AGPL-3.0 means any
+      modified deployment must be open-sourced.
+    zh: 改了代码再部署一定要按 AGPL-3.0 开源 —— 不开源就别二次部署。
+  - en: Don't open it to non-technical users without first pinning model + voice —
+      per-classroom token + TTS spend can be substantial.
+    zh: 对非技术用户开放前一定锁定 model + voice —— 每堂课 token + TTS 成本不小。
+stars: 16758
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 2
+eval_discipline_score: 3
+recently_active: true

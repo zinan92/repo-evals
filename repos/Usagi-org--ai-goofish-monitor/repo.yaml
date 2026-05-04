@@ -3,49 +3,98 @@ repo: ai-goofish-monitor
 display_name: ai-goofish-monitor
 repo_url: https://github.com/Usagi-org/ai-goofish-monitor
 repo_type: service
-# This is closer to api-service than hybrid-skill — it's a FastAPI
-# backend with a Vue web UI that runs Playwright scrapers + LLM
-# analysis on a scheduled basis. Reclassified.
 archetype: api-service
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-# Predefined pipeline (LLM generates criteria → scheduler → Playwright
-# fetch → LLM analyze → notify). LLM is used at multiple stages but
-# not for runtime routing → molecule.
 layer: molecule
 complexity: complex
 uses_areas: false
 status: evaluated
 current_bucket: usable
-last_evaluated: "2026-05-04"
-version_tested: "master@HEAD (Docker image ghcr.io/usagi-org/ai-goofish:latest)"
-notes: |
-  FastAPI + Vue + Playwright + APScheduler + OpenAI-compatible LLM
+last_evaluated: '2026-05-04'
+version_tested: master@HEAD (Docker image ghcr.io/usagi-org/ai-goofish:latest)
+notes: 'FastAPI + Vue + Playwright + APScheduler + OpenAI-compatible LLM
+
   service for monitoring 闲鱼 (XianYu) listings against natural-language
+
   user criteria. 11.5K stars, MIT, very popular in CN secondhand-buyer
+
   community. Single docker-compose service (app on port 8000), Chromium
+
   bundled in image. SQLite primary store at data/app.sqlite3 with
+
   legacy import from config.json/jsonl/price_history.
 
+
   Notification channels: ntfy.sh, Bark, 企业微信, Telegram, Gotify,
-  Webhook. Companion chrome-extension/ exports user's logged-in XianYu
+
+  Webhook. Companion chrome-extension/ exports user''s logged-in XianYu
+
   cookie state into state/acc_*.json (no API key needed for XianYu).
 
+
   Source layout is clean DDD-style (src/api + core + domain +
+
   services + infrastructure). Multi-stage Dockerfile (Vue build →
+
   Python venv build → lean final).
 
+
   Molecule layer: predefined pipeline, LLM at criteria generation +
+
   product analysis stages but not for runtime routing.
 
+  '
 product_view:
   one_liner:
-    en: "A self-hosted FastAPI + Vue dashboard for monitoring 闲鱼 (XianYu, China's biggest secondhand market) — natural-language criteria, multi-task scheduling, Playwright scraping, multi-modal LLM filtering, and 6 notification channels (ntfy/Bark/WeWork/Telegram/Gotify/Webhook). One docker-compose, SQLite, Chromium bundled."
-    zh: "一个自建的 FastAPI + Vue 闲鱼监控看板：用自然语言写「我想要什么」，多任务并发跑 Playwright 抓页面 + 多模态 LLM 筛选，命中就推 6 种渠道（ntfy / Bark / 企微 / Telegram / Gotify / Webhook）。一行 docker compose，SQLite，镜像自带 Chromium。"
+    en: A self-hosted FastAPI + Vue dashboard for monitoring 闲鱼 (XianYu, China's biggest
+      secondhand market) — natural-language criteria, multi-task scheduling, Playwright
+      scraping, multi-modal LLM filtering, and 6 notification channels (ntfy/Bark/WeWork/Telegram/Gotify/Webhook).
+      One docker-compose, SQLite, Chromium bundled.
+    zh: 一个自建的 FastAPI + Vue 闲鱼监控看板：用自然语言写「我想要什么」，多任务并发跑 Playwright 抓页面 + 多模态 LLM 筛选，命中就推
+      6 种渠道（ntfy / Bark / 企微 / Telegram / Gotify / Webhook）。一行 docker compose，SQLite，镜像自带
+      Chromium。
   best_for:
-    en: "Mainland-China secondhand buyers who want a 24/7 monitor for 闲鱼 listings on specific gear (cameras, MacBooks, vintage), comfortable running a Docker host and pasting their own XianYu login cookie."
-    zh: "想 24/7 蹲特定型号商品（相机、MacBook、复古件）的咸鱼买家。前提：能跑 Docker，能用配套 Chrome 扩展把自己闲鱼登录 cookie 粘进来，自己付 LLM 账单。"
+    en: Mainland-China secondhand buyers who want a 24/7 monitor for 闲鱼 listings on
+      specific gear (cameras, MacBooks, vintage), comfortable running a Docker host
+      and pasting their own XianYu login cookie.
+    zh: 想 24/7 蹲特定型号商品（相机、MacBook、复古件）的咸鱼买家。前提：能跑 Docker，能用配套 Chrome 扩展把自己闲鱼登录 cookie
+      粘进来，自己付 LLM 账单。
   watch_out:
-    en: |
-      Driving a real XianYu account is the same anti-bot risk as MediaCrawler / xiaohongshu-skills — XianYu does run anti-automation, and a too-aggressive task can get the account limited. The default Web UI password is `admin/admin123`; change it before exposing port 8000 to anything beyond localhost. The OpenAI-compatible BASE_URL points at modelscope.cn by default, which is China-friendly but means Wendy's data is going to a 3rd-party model gateway unless you change it. SQLite is OK for single-host; if you want HA you'd need to fork.
-    zh: |
-      用真实闲鱼账号跑爬取，反风险和 MediaCrawler / xiaohongshu-skills 一样：闲鱼有反自动化检测，跑得太凶账号会被限。Web UI 默认密码是 `admin/admin123`，对外暴露 8000 端口前一定改掉。`OPENAI_BASE_URL` 默认是 modelscope.cn — 国内友好但你的数据会过一遍第三方模型网关，介意的话自己换 endpoint。SQLite 单机够用，要高可用得自己 fork。
+    en: 'Driving a real XianYu account is the same anti-bot risk as MediaCrawler /
+      xiaohongshu-skills — XianYu does run anti-automation, and a too-aggressive task
+      can get the account limited. The default Web UI password is `admin/admin123`;
+      change it before exposing port 8000 to anything beyond localhost. The OpenAI-compatible
+      BASE_URL points at modelscope.cn by default, which is China-friendly but means
+      Wendy''s data is going to a 3rd-party model gateway unless you change it. SQLite
+      is OK for single-host; if you want HA you''d need to fork.
+
+      '
+    zh: '用真实闲鱼账号跑爬取，反风险和 MediaCrawler / xiaohongshu-skills 一样：闲鱼有反自动化检测，跑得太凶账号会被限。Web
+      UI 默认密码是 `admin/admin123`，对外暴露 8000 端口前一定改掉。`OPENAI_BASE_URL` 默认是 modelscope.cn
+      — 国内友好但你的数据会过一遍第三方模型网关，介意的话自己换 endpoint。SQLite 单机够用，要高可用得自己 fork。
+
+      '
+  use_for:
+  - en: Mainland-China secondhand buyers who want a 24/7 monitor for 闲鱼 (XianYu) listings
+      on specific gear.
+    zh: 想 24/7 蹲特定型号商品（相机、MacBook、复古件）的咸鱼买家。
+  - en: Comfortable running Docker, pasting your own XHS login cookie, paying your
+      own LLM bills.
+    zh: 能跑 Docker、能用扩展导出真实闲鱼 cookie、自己付 LLM 账单。
+  - en: Want multi-channel notifications (ntfy / Bark / 企微 / Telegram / Gotify / Webhook).
+    zh: 想要多渠道推送（ntfy / Bark / 企微 / Telegram / Gotify / Webhook）。
+  dont_use_for:
+  - en: Don't deploy to a public VPS without changing WEB_PASSWORD from default `admin123`
+      and binding port to 127.0.0.1.
+    zh: 公网 VPS 上一定先改 WEB_PASSWORD（默认是 admin123）+ 端口绑到 127.0.0.1，别裸暴。
+  - en: Don't keep OPENAI_BASE_URL on the default modelscope.cn endpoint if you mind
+      your prompts going to a third-party model gateway.
+    zh: 介意 prompt 经过第三方模型网关的话别用默认 modelscope.cn endpoint。
+  - en: Don't run aggressive monitoring — XHS anti-automation can limit your account.
+    zh: 监控频率别太激进 —— 闲鱼反自动化会限你的账号。
+stars: 11561
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 3
+eval_discipline_score: 1
+recently_active: true

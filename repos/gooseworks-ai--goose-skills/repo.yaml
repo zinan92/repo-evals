@@ -4,46 +4,92 @@ display_name: goose-skills
 repo_url: https://github.com/gooseworks-ai/goose-skills
 repo_type: skill-catalog
 archetype: prompt-skill
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-# The repo itself is a catalog — a collection of 204 skills wired by an
-# installer + skills-index.json. Predefined orchestration, no LLM-driven
-# routing → molecule. Individual skills have their own per-skill layer:
-# 143 capabilities (atom) + 56 composites (molecule) + 5 playbooks (compound).
 layer: molecule
 complexity: complex
 uses_areas: false
 status: evaluated
 current_bucket: usable
-last_evaluated: "2026-05-04"
-version_tested: "main@HEAD (skills-index v1.2.0, generated 2026-04-29)"
-notes: |
-  GTM / sales / marketing / SEO / CI / lead-gen skill catalog distributed
+last_evaluated: '2026-05-04'
+version_tested: main@HEAD (skills-index v1.2.0, generated 2026-04-29)
+notes: 'GTM / sales / marketing / SEO / CI / lead-gen skill catalog distributed
+
   as the `goose-skills` npm package (v1.0.1, MIT). Master skill installs
+
   via `npx goose-skills install --claude/--cursor/--codex/--all`. Each
+
   individual skill ships with SKILL.md + skill.meta.json, declaring
+
   install support for claude / cursor / codex.
 
+
   The internal Cap/Comp/Play taxonomy is a near-perfect parallel of
-  repo-evals' atom / molecule / compound layer model — the project
+
+  repo-evals'' atom / molecule / compound layer model — the project
+
   formalized the same insight independently. We treat the repo as a
+
   molecule (catalog with a predefined assembly contract), and the
+
   individual skills inside as having their own per-skill layer.
 
+
   Static layer: skill-index manifest, skill count by category, npm
+
   package shape, per-skill metadata contract are all auditable.
 
+
   Live layer: actually invoking a skill in Claude Code / Cursor / Codex
+
   needs an install + LLM session. Deferred to molecule scenarios.
 
+  '
 product_view:
   one_liner:
-    en: "An npm-installed catalog of 204 GTM / sales / marketing / competitive-intelligence skills for Claude Code, Cursor, and Codex — broken out into 143 capabilities (atoms), 56 composites (molecules), and 5 playbooks (compounds), each with its own SKILL.md."
-    zh: "一个 npm 安装的 GTM / 销售 / 营销 / 竞品分析 skill 目录，目前 204 个 skill：143 个 capability（原子）+ 56 个 composite（分子）+ 5 个 playbook（复合物），适配 Claude Code、Cursor、Codex，每个 skill 有自己的 SKILL.md。"
+    en: An npm-installed catalog of 204 GTM / sales / marketing / competitive-intelligence
+      skills for Claude Code, Cursor, and Codex — broken out into 143 capabilities
+      (atoms), 56 composites (molecules), and 5 playbooks (compounds), each with its
+      own SKILL.md.
+    zh: 一个 npm 安装的 GTM / 销售 / 营销 / 竞品分析 skill 目录，目前 204 个 skill：143 个 capability（原子）+
+      56 个 composite（分子）+ 5 个 playbook（复合物），适配 Claude Code、Cursor、Codex，每个 skill 有自己的
+      SKILL.md。
   best_for:
-    en: "Solo founders / GTM ops people who use coding agents for non-engineering work and want a curated library of growth skills they don't have to write themselves."
-    zh: "用 coding agent 做非工程工作的独立创始人、GTM ops 同学；想要一份现成的增长 skills 库，不想自己从头写。"
+    en: Solo founders / GTM ops people who use coding agents for non-engineering work
+      and want a curated library of growth skills they don't have to write themselves.
+    zh: 用 coding agent 做非工程工作的独立创始人、GTM ops 同学；想要一份现成的增长 skills 库，不想自己从头写。
   watch_out:
-    en: |
-      The README still advertises 108 skills, but skills-index.json (generated 2026-04-29) shipped 204 — the docs are stale, the catalog is bigger. Each skill's quality is independent, and there are 204 of them; do not treat "the catalog is great" as "every skill is great". The npm package is the install path, but skill content is just markdown — you can also `git clone` the repo and copy specific skills if you want offline / version-pinned use.
-    zh: |
-      README 还在宣传 108 个 skill，实际 skills-index.json（2026-04-29 生成）已经 204 个 —— 文档过时，目录更大。每个 skill 质量独立，一共 204 个，别把「目录质量高」直接等同于「每个 skill 都好」。npm 是官方安装路径，但 skill 内容就是 markdown —— 想离线 / 锁版本可以直接 git clone 后挑你要的 skill。
+    en: 'The README still advertises 108 skills, but skills-index.json (generated
+      2026-04-29) shipped 204 — the docs are stale, the catalog is bigger. Each skill''s
+      quality is independent, and there are 204 of them; do not treat "the catalog
+      is great" as "every skill is great". The npm package is the install path, but
+      skill content is just markdown — you can also `git clone` the repo and copy
+      specific skills if you want offline / version-pinned use.
+
+      '
+    zh: 'README 还在宣传 108 个 skill，实际 skills-index.json（2026-04-29 生成）已经 204 个 —— 文档过时，目录更大。每个
+      skill 质量独立，一共 204 个，别把「目录质量高」直接等同于「每个 skill 都好」。npm 是官方安装路径，但 skill 内容就是 markdown
+      —— 想离线 / 锁版本可以直接 git clone 后挑你要的 skill。
+
+      '
+  use_for:
+  - en: Solo founders / GTM ops people using AI agents (Claude Code / Cursor / Codex)
+      for non-engineering work.
+    zh: 用 AI agent 做非工程工作的独立创始人 / GTM ops。
+  - en: Want a curated GTM / sales / marketing skill library, not write your own from
+      scratch.
+    zh: 想要一份现成的 GTM / 销售 / 营销 skill 库，不想自己从零写。
+  - en: Want a 'install once, get all 204 skills' npm install path.
+    zh: 想要 'npm 一键装 204 个 skill' 的简单安装方式。
+  dont_use_for:
+  - en: Don't assume catalog quality = per-skill quality; sample before relying on
+      any specific skill in production.
+    zh: 不要把「目录质量」等同于「每个 skill 的质量」—— 上生产前先抽样具体 skill 验证。
+  - en: Don't trust the README headline numbers (108 skills) — manifest has 204; check
+      skills-index.json for current count.
+    zh: 别信 README 上写的 108 个 skill —— manifest 已经 204 个；要看 skills-index.json 取最新数。
+stars: 650
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 2
+eval_discipline_score: 1
+recently_active: true

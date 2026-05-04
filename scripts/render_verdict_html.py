@@ -297,9 +297,12 @@ def _derive_verdict_input(repo: dict[str, Any], claims: list[dict[str, Any]]) ->
             "id": str(c.get("id", "")),
             "priority": str(c.get("priority", "medium")).lower(),
             "status": str(c.get("status", "untested")).lower(),
+            # Pass `area` through so the score model can apply
+            # privacy/security penalties to passed_with_concerns claims.
+            "area": str(c.get("area", "") or ""),
         })
 
-    return {
+    out: dict[str, Any] = {
         "repo": f"{owner}/{name}" if owner and name else (name or owner or "unknown"),
         "archetype": archetype,
         "core_layer_tested": core_layer_tested,
@@ -307,6 +310,19 @@ def _derive_verdict_input(repo: dict[str, Any], claims: list[dict[str, Any]]) ->
         "claims": derived_claims,
         "_derived": True,  # marker so reviewers know this wasn't hand-authored
     }
+
+    # Score-model inputs — read from repo.yaml when set so the 0-100
+    # score can incorporate ecosystem + maintainer evidence. Each is
+    # optional; the score function defaults to zero / false if missing.
+    for key in (
+        "stars", "archived", "has_license",
+        "multilingual_readme", "release_pipeline_score",
+        "eval_discipline_score", "recently_active",
+    ):
+        if key in repo:
+            out[key] = repo[key]
+
+    return out
 
 
 def _latest_verdict_files(repo_dir: Path, date: str | None) -> tuple[Path, Path | None]:
@@ -1091,6 +1107,104 @@ def render_layer_section(vd: VerdictData) -> str:
     )
 
 
+def render_score_block(vd: VerdictData) -> str:
+    """Big-number score + emoji + bilingual tier label + blurb."""
+
+    score = vd.verdict_input.get("score")
+    if score is None:
+        return ""  # legacy verdict-input without score field
+    tier_emoji = vd.verdict_input.get("tier_emoji", "")
+    tier_en = _esc(vd.verdict_input.get("tier_en", ""))
+    tier_zh = _esc(vd.verdict_input.get("tier_zh", ""))
+    blurb_en = _esc(vd.verdict_input.get("tier_blurb_en", ""))
+    blurb_zh = _esc(vd.verdict_input.get("tier_blurb_zh", ""))
+    tier_key = vd.verdict_input.get("tier_key", "unknown")
+
+    return (
+        f'<div class="score-hero tier-{tier_key}">'
+        f'<div class="score-hero-row">'
+        f'<span class="score-emoji">{tier_emoji}</span>'
+        f'<span class="score-num">{int(score)}</span>'
+        f'<span class="score-denom">/ 100</span>'
+        f'</div>'
+        f'<div class="score-tier">'
+        f'<span class="i18n" data-en="{tier_en}" data-zh="{tier_zh}"></span>'
+        f'</div>'
+        f'<p class="score-blurb">'
+        f'<span class="i18n" data-en="{blurb_en}" data-zh="{blurb_zh}"></span>'
+        f'</p>'
+        f'</div>'
+    )
+
+
+def render_score_breakdown(vd: VerdictData) -> str:
+    """Collapsible breakdown so readers can audit each point."""
+
+    bd = vd.verdict_input.get("score_breakdown")
+    if not bd:
+        return ""
+
+    rows: list[str] = []
+    for label_key, value in bd.items():
+        label_en = {
+            "base": "Base",
+            "static_eval": "Static eval (claims)",
+            "maintainer_evidence": "Maintainer evidence",
+            "ecosystem": "Ecosystem (stars)",
+            "penalties": "Penalties",
+        }.get(label_key, label_key)
+        label_zh = {
+            "base": "基础分",
+            "static_eval": "静态评测（claim）",
+            "maintainer_evidence": "维护者证据",
+            "ecosystem": "生态（stars）",
+            "penalties": "罚分",
+        }.get(label_key, label_key)
+        sign = "+" if value > 0 else ""
+        rows.append(
+            f'<tr><th><span class="i18n" data-en="{label_en}" data-zh="{label_zh}"></span></th>'
+            f'<td class="num">{sign}{int(value)}</td></tr>'
+        )
+    return (
+        '<details class="score-breakdown">'
+        '<summary><span class="i18n" data-en="How the score was computed" '
+        'data-zh="分数是怎么算的"></span></summary>'
+        '<table class="breakdown-table"><tbody>'
+        + "".join(rows) +
+        '</tbody></table></details>'
+    )
+
+
+def render_scenarios(vd: VerdictData) -> str:
+    """Render the ✅ use_for / ❌ dont_use_for lists from product_view."""
+
+    pv = vd.repo.get("product_view") or {}
+    use_for = pv.get("use_for") or []
+    dont_use_for = pv.get("dont_use_for") or []
+    if not use_for and not dont_use_for:
+        return ""
+
+    items: list[str] = []
+    for s in use_for:
+        items.append(
+            f'<li class="scenario scenario-yes">'
+            f'<span class="scenario-mark">✅</span>{dual_lang(s)}</li>'
+        )
+    for s in dont_use_for:
+        items.append(
+            f'<li class="scenario scenario-no">'
+            f'<span class="scenario-mark">❌</span>{dual_lang(s)}</li>'
+        )
+    return (
+        '<section class="scenarios-section">'
+        '<div class="section-head">'
+        '<h2><span class="i18n" data-en="Use it for / Don\'t use it for" '
+        'data-zh="什么时候用 / 什么时候别用"></span></h2></div>'
+        f'<ul class="scenarios">{"".join(items)}</ul>'
+        '</section>'
+    )
+
+
 def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     """Editorial dossier template — dark warm palette, zero external
     dependencies (no Chart.js, Mermaid, or Google Fonts), bucket-driven
@@ -1125,6 +1239,9 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     test_log_html = render_test_log_editorial(vd)
     layer_section_html = render_layer_section(vd)
     layer_pill_html = render_layer_pill(vd)
+    score_block_html = render_score_block(vd)
+    score_breakdown_html = render_score_breakdown(vd)
+    scenarios_html = render_scenarios(vd)
 
     verdict_md_escaped = _esc(vd.verdict_md)
 
@@ -1316,6 +1433,86 @@ h1.repo-title {{
   text-transform: uppercase; letter-spacing: 0.08em;
 }}
 .verdict-meta .confidence .value {{ color: var(--bucket); font-weight: 700; }}
+
+/* --- 0-100 score hero ----------------------------------------------- */
+
+.score-hero {{ margin: 0; }}
+.score-hero-row {{
+  display: flex; align-items: baseline; gap: 16px;
+  flex-wrap: wrap;
+}}
+.score-emoji {{ font-size: 60px; line-height: 1; }}
+.score-num {{
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(80px, 12vw, 144px); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 0.85;
+}}
+.score-denom {{
+  font-family: var(--font-mono); font-size: 16px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}}
+.score-tier {{
+  font-family: var(--font-display, var(--font-serif));
+  font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+  margin-top: 4px;
+}}
+.score-blurb {{
+  margin: 14px 0 0; max-width: 60ch;
+  color: var(--text-2); font-size: 16px; line-height: 1.55;
+}}
+
+/* tier-driven accent — overrides --bucket */
+.score-hero.tier-recommend  .score-num {{ color: #4ade80; }}
+.score-hero.tier-team       .score-num {{ color: #60a5fa; }}
+.score-hero.tier-self       .score-num {{ color: #c084fc; }}
+.score-hero.tier-try        .score-num {{ color: #f59e0b; }}
+.score-hero.tier-risky      .score-num {{ color: #f87171; }}
+.score-hero.tier-broken     .score-num {{ color: #f87171; }}
+
+/* --- score breakdown (collapsible) ---------------------------------- */
+
+details.score-breakdown {{
+  margin-top: 22px; border: 1px solid var(--border);
+  border-radius: 10px; padding: 0;
+}}
+details.score-breakdown > summary {{
+  list-style: none; cursor: pointer;
+  padding: 10px 14px; font-family: var(--font-mono);
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--text-3);
+}}
+details.score-breakdown > summary::-webkit-details-marker {{ display: none; }}
+details.score-breakdown > summary::after {{
+  content: "+"; float: right; font-weight: 700;
+}}
+details.score-breakdown[open] > summary::after {{ content: "−"; }}
+.breakdown-table {{ width: 100%; border-collapse: collapse; }}
+.breakdown-table th, .breakdown-table td {{
+  padding: 8px 14px; border-top: 1px solid var(--border);
+  font-size: 13px; text-align: left;
+}}
+.breakdown-table th {{ font-weight: 500; color: var(--text-2); width: 60%; }}
+.breakdown-table td.num {{
+  text-align: right; font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums; color: var(--text);
+}}
+
+/* --- ✅ / ❌ scenarios section -------------------------------------- */
+
+.scenarios-section {{ margin: 24px 0 56px; }}
+.scenarios {{
+  list-style: none; padding: 0; margin: 12px 0 0;
+  display: grid; gap: 10px;
+}}
+.scenario {{
+  display: flex; gap: 12px; padding: 12px 16px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface-1); align-items: baseline;
+  font-size: 15px; line-height: 1.55;
+}}
+.scenario-mark {{ font-size: 18px; flex-shrink: 0; }}
+.scenario-yes {{ border-left: 3px solid #4ade80; }}
+.scenario-no  {{ border-left: 3px solid #f87171; color: var(--text-2); }}
 
 .stats-bar {{
   display: flex; height: 10px; border-radius: 999px;
@@ -1851,7 +2048,7 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
     <div class="verdict-block">
       <div>
         <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="verdict-word">{_esc(bucket)}</div>
+        {score_block_html or f'<div class="verdict-word">{_esc(bucket)}</div>'}
       </div>
 
       <div class="verdict-meta">
@@ -1861,9 +2058,13 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
         <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · {total_claims} <span class="i18n" data-en="total" data-zh="共"></span></div>
         <div class="stats-bar">{stats_bar_html}</div>
         <div class="stats-legend">{stats_legend_html}</div>
+
+        {score_breakdown_html}
       </div>
     </div>
   </header>
+
+  {scenarios_html}
 
   <div class="pull-quotes">
     {best_for_html or ''}

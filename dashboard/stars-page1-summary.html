@@ -118,6 +118,24 @@ table.repo-table tr:hover { background: var(--surface-1); }
 .bucket-pill.recommendable { background: var(--good-bg); color: var(--good); border: 1px solid rgba(74,222,128,.3); }
 .bucket-pill.unusable      { background: var(--bad-bg); color: var(--bad); border: 1px solid rgba(248,113,113,.3); }
 
+/* New score model — emoji + 0-100 + tier label */
+.score-cell { display: inline-flex; align-items: baseline; gap: 6px; font-family: var(--font-mono); font-size: 13px; }
+.score-cell .emoji { font-size: 16px; line-height: 1; }
+.score-cell .num { font-size: 17px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.score-cell .tier { color: var(--text-2); font-size: 12px; }
+.score-cell.tier-recommend .num { color: #4ade80; }
+.score-cell.tier-team      .num { color: #60a5fa; }
+.score-cell.tier-self      .num { color: #c084fc; }
+.score-cell.tier-try       .num { color: #f59e0b; }
+.score-cell.tier-risky     .num { color: #f87171; }
+.score-cell.tier-broken    .num { color: #f87171; }
+
+.dist-recommend { background: #4ade80; }
+.dist-team { background: #60a5fa; }
+.dist-self { background: #c084fc; }
+.dist-try { background: #f59e0b; }
+.dist-risky { background: #f87171; }
+
 .archetype-pill { background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); }
 
 .findings { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 22px 24px; margin: 16px 0; }
@@ -161,12 +179,18 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
       <div class="tile-detail"><span class="i18n" data-en="page 1, repos #1–#10" data-zh="第 1 页，仓库 #1–#10"></span></div>
     </div>
     <div class="tile">
-      <div class="tile-label"><span class="i18n" data-en="Bucket distribution" data-zh="桶分布"></span></div>
-      <div class="dist"><span class="dist-usable" style="width:100%"></span></div>
-      <div class="dist-legend">
-        <span><span class="dot dot-usable"></span><span class="i18n" data-en="usable: 10" data-zh="usable：10"></span></span>
+      <div class="tile-label"><span class="i18n" data-en="Score distribution (0-100)" data-zh="分数分布 (0-100)"></span></div>
+      <div class="dist">
+        <span class="dist-self" style="width:30%"></span>
+        <span class="dist-try"  style="width:40%"></span>
+        <span class="dist-risky" style="width:30%"></span>
       </div>
-      <div class="tile-detail"><span class="i18n" data-en="all capped by static-only eval; live runs not yet logged" data-zh="全部受 static-only 评测限制；live run 尚未登记"></span></div>
+      <div class="dist-legend">
+        <span><span class="dot" style="background:#c084fc"></span><span class="i18n" data-en="🛠 self-use (75-79): 3" data-zh="🛠 自用 OK (75-79)：3"></span></span>
+        <span><span class="dot" style="background:#f59e0b"></span><span class="i18n" data-en="🧪 try (60-69): 6" data-zh="🧪 试一下 (60-69)：6"></span></span>
+        <span><span class="dot" style="background:#f87171"></span><span class="i18n" data-en="⚠️ risky (40-59): 1" data-zh="⚠️ 慎用 (40-59)：1"></span></span>
+      </div>
+      <div class="tile-detail"><span class="i18n" data-en="0 broken / 0 team-ready / 0 recommend — no live runs logged, but real spread now" data-zh="0 别用 / 0 团队就绪 / 0 公开推荐 —— 没跑过 live run，但已有真实分布"></span></div>
     </div>
     <div class="tile">
       <div class="tile-label"><span class="i18n" data-en="Layer distribution" data-zh="分层分布"></span></div>
@@ -199,7 +223,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <th><span class="i18n" data-en="Repo · stars" data-zh="仓库 · stars"></span></th>
         <th><span class="i18n" data-en="Archetype" data-zh="Archetype"></span></th>
         <th><span class="i18n" data-en="Layer" data-zh="Layer"></span></th>
-        <th><span class="i18n" data-en="Bucket" data-zh="桶"></span></th>
+        <th><span class="i18n" data-en="Score" data-zh="分数"></span></th>
         <th><span class="i18n" data-en="One-line key finding" data-zh="一句话关键发现"></span></th>
         <th><span class="i18n" data-en="Dossier" data-zh="Dossier"></span></th>
       </tr>
@@ -210,7 +234,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/tukuaiai--tradecat/verdicts/2026-05-04-verdict.html">tukuaiai/tradecat</a> <span class="meta">928★ · Python · 0.1.0</span></td>
         <td><span class="archetype-pill">pure-cli</span></td>
         <td><span class="layer-pill molecule"><span class="i18n" data-en="molecule 分子" data-zh="分子 molecule"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-try"><span class="emoji">🧪</span><span class="num">63</span><span class="tier"><span class="i18n" data-en="Try" data-zh="试一下"></span></span></span></td>
         <td><span class="i18n" data-en="Honest README; data backbone is Google Sheets — auto-update can pull breaking schema changes silently." data-zh="README 很诚实；数据底座是 Google Sheets — 自动更新可能悄悄拉到破坏性 schema 变更。"></span></td>
         <td><a href="../repos/tukuaiai--tradecat/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>
@@ -219,7 +243,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/gooseworks-ai--goose-skills/verdicts/2026-05-04-verdict.html">gooseworks-ai/goose-skills</a> <span class="meta">650★ · Python · 1.0.1</span></td>
         <td><span class="archetype-pill">prompt-skill</span></td>
         <td><span class="layer-pill molecule"><span class="i18n" data-en="molecule 分子" data-zh="分子 molecule"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-try"><span class="emoji">🧪</span><span class="num">65</span><span class="tier"><span class="i18n" data-en="Try" data-zh="试一下"></span></span></span></td>
         <td><span class="i18n" data-en="Cap/Comp/Play taxonomy ≈ atom/molecule/compound — same insight, formalised independently. README says 108 skills; manifest has 204." data-zh="Cap/Comp/Play 分类 ≈ atom/molecule/compound —— 各自独立得出同一洞见。README 说 108 个 skill，manifest 实际 204。"></span></td>
         <td><a href="../repos/gooseworks-ai--goose-skills/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>
@@ -228,7 +252,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/zarazhangrui--tab-out/verdicts/2026-05-04-verdict.html">zarazhangrui/tab-out</a> <span class="meta">1,146★ · JS · 1.0.0</span></td>
         <td><span class="archetype-pill">adapter</span></td>
         <td><span class="layer-pill atom"><span class="i18n" data-en="atom 原子" data-zh="原子 atom"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-risky"><span class="emoji">⚠️</span><span class="num">57</span><span class="tier"><span class="i18n" data-en="Risky" data-zh="慎用"></span></span></span></td>
         <td><span class="i18n" data-en="“100% local / no external API calls” — but every tab’s domain leaks to Google’s favicon endpoint (3 sites in app.js)." data-zh="自称「100% local，无外部 API 调用」—— 但每个 tab 的域名都会发到 Google 的 favicon 服务（app.js 里 3 处调用）。"></span></td>
         <td><a href="../repos/zarazhangrui--tab-out/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>
@@ -237,7 +261,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/brokermr810--QuantDinger/verdicts/2026-05-04-verdict.html">brokermr810/QuantDinger</a> <span class="meta">2,929★ · Python · 3.0.3</span></td>
         <td><span class="archetype-pill">orchestrator</span></td>
         <td><span class="layer-pill compound"><span class="i18n" data-en="compound 复合物" data-zh="复合物 compound"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-self"><span class="emoji">🛠</span><span class="num">76</span><span class="tier"><span class="i18n" data-en="Self-use" data-zh="自用 OK"></span></span></span></td>
         <td><span class="i18n" data-en="Real safety baseline: AGENT_LIVE_TRADING_ENABLED=false default; localhost-only ports for postgres/redis/backend. MT5 forex is structurally Linux-incompatible." data-zh="安全底子真实：AGENT_LIVE_TRADING_ENABLED=false 默认关；postgres/redis/backend 默认只 bind 127.0.0.1。MT5 外汇本质上 Linux 跑不了。"></span></td>
         <td><a href="../repos/brokermr810--QuantDinger/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>
@@ -246,7 +270,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/remotion-dev--skills/verdicts/2026-05-04-verdict.html">remotion-dev/skills</a> <span class="meta">2,999★ · TS · 4.0.456 (private)</span></td>
         <td><span class="archetype-pill">prompt-skill</span></td>
         <td><span class="layer-pill atom"><span class="i18n" data-en="atom 原子" data-zh="原子 atom"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-try"><span class="emoji">🧪</span><span class="num">64</span><span class="tier"><span class="i18n" data-en="Try" data-zh="试一下"></span></span></span></td>
         <td><span class="i18n" data-en="Public README is one sentence (“internal package, no documentation”) — but the actual content is 110 KB of curated guidance authored by the official Remotion team." data-zh="公开 README 只有一句话（“internal package, no documentation”）—— 但真实内容是 Remotion 官方亲自写的 110 KB 高质量素材。"></span></td>
         <td><a href="../repos/remotion-dev--skills/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>
@@ -255,7 +279,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/autoclaw-cc--xiaohongshu-skills/verdicts/2026-05-04-verdict.html">autoclaw-cc/xiaohongshu-skills</a> <span class="meta">1,184★ · Python · 1.0.0</span></td>
         <td><span class="archetype-pill">hybrid-skill</span></td>
         <td><span class="layer-pill molecule"><span class="i18n" data-en="molecule 分子" data-zh="分子 molecule"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-risky"><span class="emoji">⚠️</span><span class="num">56</span><span class="tier"><span class="i18n" data-en="Risky" data-zh="慎用"></span></span></span></td>
         <td><span class="i18n" data-en="Companion Chrome extension uses `debugger` permission — real privilege escalation, not disclosed in README. Also `homepage` field points to a different repo." data-zh="配套 Chrome 扩展用 `debugger` 权限 —— 真实的权限升级，README 没列出来。另外 `homepage` 字段指向另一个 repo。"></span></td>
         <td><a href="../repos/autoclaw-cc--xiaohongshu-skills/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>
@@ -264,7 +288,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/Usagi-org--ai-goofish-monitor/verdicts/2026-05-04-verdict.html">Usagi-org/ai-goofish-monitor</a> <span class="meta">11,555★ · Python</span></td>
         <td><span class="archetype-pill">api-service</span></td>
         <td><span class="layer-pill molecule"><span class="i18n" data-en="molecule 分子" data-zh="分子 molecule"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-try"><span class="emoji">🧪</span><span class="num">66</span><span class="tier"><span class="i18n" data-en="Try" data-zh="试一下"></span></span></span></td>
         <td><span class="i18n" data-en="Foot-shotgun: WEB_PASSWORD=admin123 default + 8000:8000 binding = public-VPS users get an internet-reachable admin login on day one." data-zh="脚踢自己一枪：默认 WEB_PASSWORD=admin123 + 0.0.0.0:8000 端口绑定 —— 公网 VPS 用户开箱就能被外人登录。"></span></td>
         <td><a href="../repos/Usagi-org--ai-goofish-monitor/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>
@@ -273,7 +297,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/RKiding--Awesome-finance-skills/verdicts/2026-05-04-verdict.html">RKiding/Awesome-finance-skills</a> <span class="meta">2,034★ · Python</span></td>
         <td><span class="archetype-pill">hybrid-skill</span></td>
         <td><span class="layer-pill molecule"><span class="i18n" data-en="molecule 分子" data-zh="分子 molecule"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-risky"><span class="emoji">⚠️</span><span class="num">58</span><span class="tier"><span class="i18n" data-en="Risky" data-zh="慎用"></span></span></span></td>
         <td><span class="i18n" data-en="Each skill is real hybrid (SKILL.md + 4 scripts + references + tests). 3 install paths (Antigravity / OpenCode / OpenClaw) — all concrete, copy-pastable." data-zh="每个 skill 都是真正的 hybrid（SKILL.md + 4 个脚本 + references + tests）。3 个安装路径（Antigravity / OpenCode / OpenClaw）都具体到可直接复制。"></span></td>
         <td><a href="../repos/RKiding--Awesome-finance-skills/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>
@@ -282,7 +306,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/THU-MAIC--OpenMAIC/verdicts/2026-05-04-verdict.html">THU-MAIC/OpenMAIC</a> <span class="meta">16,750★ · TS · 0.2.1</span></td>
         <td><span class="archetype-pill">orchestrator</span></td>
         <td><span class="layer-pill compound"><span class="i18n" data-en="compound 复合物" data-zh="复合物 compound"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-self"><span class="emoji">🛠</span><span class="num">77</span><span class="tier"><span class="i18n" data-en="Self-use" data-zh="自用 OK"></span></span></span></td>
         <td><span class="i18n" data-en="In-repo eval/ harness with 2 named runners (whiteboard-layout + outline-language). Rare for a multi-agent demo project — strong testing-intent signal." data-zh="自带 eval/ 测试集（whiteboard-layout + outline-language 两个 runner）。这种多 agent 演示项目里很少见，是强的测试纪律信号。"></span></td>
         <td><a href="../repos/THU-MAIC--OpenMAIC/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>
@@ -291,7 +315,7 @@ footer { border-top: 1px solid var(--border); margin-top: 48px; padding-top: 18p
         <td class="repo-name"><a href="../repos/router-for-me--CLIProxyAPI/verdicts/2026-05-04-verdict.html">router-for-me/CLIProxyAPI</a> <span class="meta">30,477★ · Go · v6.10.4</span></td>
         <td><span class="archetype-pill">api-service</span></td>
         <td><span class="layer-pill molecule"><span class="i18n" data-en="molecule 分子" data-zh="分子 molecule"></span></span></td>
-        <td><span class="bucket-pill usable">usable</span></td>
+        <td><span class="score-cell tier-self"><span class="emoji">🛠</span><span class="num">75</span><span class="tier"><span class="i18n" data-en="Self-use" data-zh="自用 OK"></span></span></span></td>
         <td><span class="i18n" data-en="8-platform release binaries + 7 OAuth flows (Kimi + Vertex extra) + 9-package SDK with EN+CN docs. Sponsor table front-loads 50 lines before Overview." data-zh="8 个平台 release + 7 家 OAuth（Kimi + Vertex 额外）+ 9 包 SDK（EN+CN 双语文档）。赞助商表格在 Overview 前占了 50 行。"></span></td>
         <td><a href="../repos/router-for-me--CLIProxyAPI/verdicts/2026-05-04-verdict.html">→</a></td>
       </tr>

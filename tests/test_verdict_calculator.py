@@ -248,6 +248,116 @@ def test_buckets_constant_matches_docs():
     assert BUCKETS == ["unusable", "usable", "reusable", "recommendable"]
 
 
+# --- 0-100 score model ----------------------------------------------------
+
+
+def test_score_base_is_40_for_empty_eval():
+    """A minimal compute returns the base 40 — no claims = no static delta."""
+
+    out = compute_verdict({
+        "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": False,
+        "claims": [], "stars": 0, "has_license": True,
+    })
+    assert "score" in out
+    assert out["score_breakdown"]["base"] == 40
+
+
+def test_score_clean_static_eval_lifts_above_pass_line():
+    """All-passed critical claims should land above 60 (the 'try' line)."""
+
+    out = compute_verdict({
+        "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": False,
+        "claims": [
+            {"id": "c1", "priority": "critical", "status": "passed"},
+            {"id": "c2", "priority": "critical", "status": "passed"},
+            {"id": "c3", "priority": "critical", "status": "passed"},
+            {"id": "c4", "priority": "high", "status": "passed"},
+        ],
+        "stars": 0, "has_license": True,
+    })
+    # 40 base + 5+5+5 critical + 2 high = 57 — below 60 (try) line.
+    # A 4-claim pass shouldn't be enough to clear 60 alone — need
+    # ecosystem or maintainer evidence too.
+    assert out["score"] == 57
+    assert out["tier_key"] == "risky"
+
+
+def test_score_with_ecosystem_clears_try_line():
+    """Same claims + 5K stars should clear 60 (tier 'try')."""
+
+    out = compute_verdict({
+        "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": False,
+        "claims": [
+            {"id": "c1", "priority": "critical", "status": "passed"},
+            {"id": "c2", "priority": "critical", "status": "passed"},
+            {"id": "c3", "priority": "critical", "status": "passed"},
+            {"id": "c4", "priority": "high", "status": "passed"},
+        ],
+        "stars": 5_000, "has_license": True,
+    })
+    assert out["score"] >= 60
+    assert out["tier_key"] in {"try", "self"}
+
+
+def test_score_failed_critical_pulls_below_pass_line():
+    out = compute_verdict({
+        "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": True,
+        "claims": [
+            {"id": "c1", "priority": "critical", "status": "failed"},
+            {"id": "c2", "priority": "critical", "status": "passed"},
+        ],
+        "stars": 100_000, "has_license": True,
+    })
+    assert out["score"] < 60
+
+
+def test_score_archived_repo_floors_score():
+    out = compute_verdict({
+        "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": True,
+        "claims": [{"id": "c1", "priority": "critical", "status": "passed"}],
+        "stars": 50_000, "has_license": True, "archived": True,
+    })
+    assert out["score"] < 40
+    assert out["tier_key"] == "broken"
+
+
+def _input_with_concern_area(area: str) -> dict:
+    return {
+        "repo": "x/y", "archetype": "adapter", "core_layer_tested": True,
+        "claims": [
+            {"id": "c1", "priority": "critical",
+             "status": "passed_with_concerns", "area": area},
+        ],
+        "stars": 1_000, "has_license": True,
+    }
+
+
+def test_score_privacy_concerns_penalised():
+    """passed_with_concerns in a privacy/security area should cost points."""
+
+    cosmetic = compute_verdict(_input_with_concern_area("install-quality"))
+    privacy  = compute_verdict(_input_with_concern_area("privacy"))
+    assert privacy["score"] < cosmetic["score"]
+
+
+def test_score_tier_thresholds():
+    """Tier boundaries match docs: 90/80/70/60/40/0."""
+    from verdict_calculator import tier_for_score
+    assert tier_for_score(95)["key"] == "recommend"
+    assert tier_for_score(85)["key"] == "team"
+    assert tier_for_score(75)["key"] == "self"
+    assert tier_for_score(65)["key"] == "try"
+    assert tier_for_score(50)["key"] == "risky"
+    assert tier_for_score(20)["key"] == "broken"
+    # Boundary checks
+    assert tier_for_score(90)["key"] == "recommend"
+    assert tier_for_score(89)["key"] == "team"
+    assert tier_for_score(60)["key"] == "try"
+    assert tier_for_score(59)["key"] == "risky"
+    assert tier_for_score(40)["key"] == "risky"
+    assert tier_for_score(39)["key"] == "broken"
+
+
 # --- Ad-hoc runner (so tests work without pytest) --------------------------
 
 if __name__ == "__main__":

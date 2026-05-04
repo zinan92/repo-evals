@@ -91,6 +91,185 @@ PASS_STATUSES = {"passed", "pass", "passed_with_concerns", "pass-with-concerns"}
 FAIL_STATUSES = {"failed", "fail", "failed_partial", "fail-partial"}
 UNTESTED_STATUSES = {"untested", "pending", "unknown"}
 
+# A claim status is "with_concerns" if it passed but with caveats — these
+# count toward coverage but earn fewer points and trigger area-based
+# penalties (privacy/security concerns hurt more than cosmetic ones).
+WITH_CONCERNS_STATUSES = {"passed_with_concerns", "pass-with-concerns"}
+
+
+# --- 0-100 score model ---------------------------------------------------
+#
+# The 4-bucket model (unusable/usable/reusable/recommendable) was too
+# coarse — once readers crossed `usable` everything looked OK. The score
+# model gives every dossier an explicit 0-100 number with a clear
+# 60-is-pass threshold + 6 named tiers.
+#
+# Score is built up additively from explainable components, so every
+# point can be traced back to a piece of evidence.
+
+SCORE_BASE = 40         # given for "project is real, not archived, has license"
+SCORE_STATIC_CAP = 30   # ±30 from claim outcomes
+SCORE_MAINTAINER_CAP = 15
+SCORE_ECOSYSTEM_CAP = 15
+
+# Tier thresholds + bilingual labels.
+TIERS: tuple[dict[str, object], ...] = (
+    {"min": 90, "key": "recommend", "emoji": "⭐",
+     "en": "Recommend", "zh": "公开推荐",
+     "blurb_en": "Recommend to strangers, blog posts, PR integrations.",
+     "blurb_zh": "可以推荐给陌生人 / 写博客 / 写进 PR 集成。"},
+    {"min": 80, "key": "team", "emoji": "🏭",
+     "en": "Team-ready", "zh": "团队就绪",
+     "blurb_en": "Safe to depend on in team / production pipelines.",
+     "blurb_zh": "团队 / 生产 pipeline 可以依赖。"},
+    {"min": 70, "key": "self", "emoji": "🛠",
+     "en": "Self-use OK", "zh": "自用 OK",
+     "blurb_en": "Use it yourself; not yet ready to recommend to others.",
+     "blurb_zh": "你自己日常用没问题，还不到推荐给陌生人的程度。"},
+    {"min": 60, "key": "try", "emoji": "🧪",
+     "en": "Try once", "zh": "试一下",
+     "blurb_en": "Install and try; do not put in your critical path yet.",
+     "blurb_zh": "装上玩一下行；别让生产环境 / 工作流依赖它。"},
+    {"min": 40, "key": "risky", "emoji": "⚠️",
+     "en": "Risky", "zh": "慎用",
+     "blurb_en": "Runs but has unverified critical issues; expect surprises.",
+     "blurb_zh": "跑得通但有未验证的关键问题，会有意外。"},
+    {"min": 0, "key": "broken", "emoji": "🛑",
+     "en": "Don't use", "zh": "别用",
+     "blurb_en": "Won't install / core feature broken / archived.",
+     "blurb_zh": "装不上 / 核心功能坏 / 已 archived。"},
+)
+
+
+def tier_for_score(score: int) -> dict[str, object]:
+    """Look up the tier dict for a given 0-100 score."""
+    for t in TIERS:
+        if score >= t["min"]:  # type: ignore[operator]
+            return t
+    return TIERS[-1]
+
+
+def _stars_band_points(stars: int) -> int:
+    """Ecosystem validation from GitHub stars. Capped at +12.
+
+    Idea: stars are 'others have already verified this' evidence —
+    weak per-user but strong in aggregate. We cap at +12 of the +15
+    ecosystem budget so other validators can fill the remainder.
+    """
+    if stars > 50_000:
+        return 12
+    if stars >= 15_000:
+        return 9
+    if stars >= 5_000:
+        return 6
+    if stars >= 1_000:
+        return 3
+    return 0
+
+
+def compute_score(inp: dict, claims: list[dict]) -> dict:
+    """Compute a 0-100 quality score from claim statuses + repo metadata.
+
+    Reads the same `inp` dict that compute_verdict() reads, plus a few
+    optional fields that may be supplied via repo.yaml or derived in
+    render_verdict_html._derive_verdict_input():
+
+      stars                       (int)         — GitHub stargazers
+      archived                    (bool)        — repo archived flag
+      has_license                 (bool)        — LICENSE file present
+      multilingual_readme         (bool)        — ≥2 languages
+      release_pipeline_score      (0..3)        — see docs/IMPROVEMENT_PLAN.md
+      eval_discipline_score       (0..3)        — repo-internal eval/ harness
+      recently_active             (bool)        — release in last 90 days
+
+    Returns a dict with `score`, `tier`, and a `breakdown` mapping
+    showing where every point came from. The breakdown is what makes
+    the score auditable — readers can challenge any number.
+    """
+
+    breakdown: dict[str, int] = {"base": SCORE_BASE}
+    score = SCORE_BASE
+
+    # --- Static eval contribution (claim-by-claim) ----------------------
+    static_delta = 0
+    privacy_concern_count = 0
+    for c in claims:
+        prio = str(c.get("priority", "medium")).strip().lower()
+        status = str(c.get("status", "untested")).strip().lower()
+        area = str(c.get("area", "") or "").strip().lower()
+        if prio == "critical":
+            if status in PASS_STATUSES and status not in WITH_CONCERNS_STATUSES:
+                static_delta += 5
+            elif status in WITH_CONCERNS_STATUSES:
+                static_delta += 3
+            elif status in FAIL_STATUSES:
+                static_delta -= 10
+            elif status in UNTESTED_STATUSES:
+                static_delta -= 3
+        elif prio == "high":
+            if status in PASS_STATUSES and status not in WITH_CONCERNS_STATUSES:
+                static_delta += 2
+            elif status in WITH_CONCERNS_STATUSES:
+                static_delta += 1
+            elif status in FAIL_STATUSES:
+                static_delta -= 4
+        # Privacy / security concerns get an extra penalty regardless of
+        # priority, because user-facing risk dwarfs categorical priority.
+        if status in WITH_CONCERNS_STATUSES and (
+            "privacy" in area or "security" in area or "safety" in area
+        ):
+            privacy_concern_count += 1
+
+    static_delta = max(-SCORE_STATIC_CAP, min(SCORE_STATIC_CAP, static_delta))
+    breakdown["static_eval"] = static_delta
+    score += static_delta
+
+    # --- Maintainer evidence (CI, eval, multi-platform release) --------
+    maint = 0
+    if int(inp.get("release_pipeline_score", 0) or 0) >= 2:
+        maint += 5
+    if int(inp.get("eval_discipline_score", 0) or 0) >= 2:
+        maint += 5
+    if bool(inp.get("recently_active", False)):
+        maint += 3
+    if bool(inp.get("multilingual_readme", False)):
+        maint += 2
+    maint = min(SCORE_MAINTAINER_CAP, maint)
+    breakdown["maintainer_evidence"] = maint
+    score += maint
+
+    # --- Ecosystem validation (stars-based, conservative) --------------
+    eco = _stars_band_points(int(inp.get("stars", 0) or 0))
+    eco = min(SCORE_ECOSYSTEM_CAP, eco)
+    breakdown["ecosystem"] = eco
+    score += eco
+
+    # --- Penalties -----------------------------------------------------
+    penalties = 0
+    if privacy_concern_count:
+        penalties -= 3 * privacy_concern_count
+    if not bool(inp.get("has_license", True)):
+        penalties -= 5
+    if bool(inp.get("archived", False)):
+        penalties -= 50
+    breakdown["penalties"] = penalties
+    score += penalties
+
+    # Clamp + tier
+    score = max(0, min(100, score))
+    tier = tier_for_score(score)
+
+    return {
+        "score": score,
+        "breakdown": breakdown,
+        "tier_key": tier["key"],
+        "tier_emoji": tier["emoji"],
+        "tier_en": tier["en"],
+        "tier_zh": tier["zh"],
+        "tier_blurb_en": tier["blurb_en"],
+        "tier_blurb_zh": tier["blurb_zh"],
+    }
+
 
 class VerdictError(ValueError):
     pass
@@ -316,6 +495,11 @@ def compute_verdict(inp: dict) -> dict:
         }
         final = ob
 
+    # 0-100 score (new model). Computed alongside the legacy bucket so
+    # consumers can switch over without breaking; bucket stays for
+    # backward compat (existing tests, JSON sidecars, dashboards).
+    score_block = compute_score(inp, claims)
+
     return {
         "repo": repo,
         "archetype": archetype,
@@ -336,6 +520,15 @@ def compute_verdict(inp: dict) -> dict:
             "critical_failed": stats["critical_failed"],
         },
         "override": override_out,
+        # New fields — score model
+        "score": score_block["score"],
+        "score_breakdown": score_block["breakdown"],
+        "tier_key": score_block["tier_key"],
+        "tier_emoji": score_block["tier_emoji"],
+        "tier_en": score_block["tier_en"],
+        "tier_zh": score_block["tier_zh"],
+        "tier_blurb_en": score_block["tier_blurb_en"],
+        "tier_blurb_zh": score_block["tier_blurb_zh"],
     }
 
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bucket="unknown">
+<html lang="en" data-bucket="usable">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -173,6 +173,86 @@ h1.repo-title {
   text-transform: uppercase; letter-spacing: 0.08em;
 }
 .verdict-meta .confidence .value { color: var(--bucket); font-weight: 700; }
+
+/* --- 0-100 score hero ----------------------------------------------- */
+
+.score-hero { margin: 0; }
+.score-hero-row {
+  display: flex; align-items: baseline; gap: 16px;
+  flex-wrap: wrap;
+}
+.score-emoji { font-size: 60px; line-height: 1; }
+.score-num {
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(80px, 12vw, 144px); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 0.85;
+}
+.score-denom {
+  font-family: var(--font-mono); font-size: 16px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.score-tier {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+  margin-top: 4px;
+}
+.score-blurb {
+  margin: 14px 0 0; max-width: 60ch;
+  color: var(--text-2); font-size: 16px; line-height: 1.55;
+}
+
+/* tier-driven accent — overrides --bucket */
+.score-hero.tier-recommend  .score-num { color: #4ade80; }
+.score-hero.tier-team       .score-num { color: #60a5fa; }
+.score-hero.tier-self       .score-num { color: #c084fc; }
+.score-hero.tier-try        .score-num { color: #f59e0b; }
+.score-hero.tier-risky      .score-num { color: #f87171; }
+.score-hero.tier-broken     .score-num { color: #f87171; }
+
+/* --- score breakdown (collapsible) ---------------------------------- */
+
+details.score-breakdown {
+  margin-top: 22px; border: 1px solid var(--border);
+  border-radius: 10px; padding: 0;
+}
+details.score-breakdown > summary {
+  list-style: none; cursor: pointer;
+  padding: 10px 14px; font-family: var(--font-mono);
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--text-3);
+}
+details.score-breakdown > summary::-webkit-details-marker { display: none; }
+details.score-breakdown > summary::after {
+  content: "+"; float: right; font-weight: 700;
+}
+details.score-breakdown[open] > summary::after { content: "−"; }
+.breakdown-table { width: 100%; border-collapse: collapse; }
+.breakdown-table th, .breakdown-table td {
+  padding: 8px 14px; border-top: 1px solid var(--border);
+  font-size: 13px; text-align: left;
+}
+.breakdown-table th { font-weight: 500; color: var(--text-2); width: 60%; }
+.breakdown-table td.num {
+  text-align: right; font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums; color: var(--text);
+}
+
+/* --- ✅ / ❌ scenarios section -------------------------------------- */
+
+.scenarios-section { margin: 24px 0 56px; }
+.scenarios {
+  list-style: none; padding: 0; margin: 12px 0 0;
+  display: grid; gap: 10px;
+}
+.scenario {
+  display: flex; gap: 12px; padding: 12px 16px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface-1); align-items: baseline;
+  font-size: 15px; line-height: 1.55;
+}
+.scenario-mark { font-size: 18px; flex-shrink: 0; }
+.scenario-yes { border-left: 3px solid #4ade80; }
+.scenario-no  { border-left: 3px solid #f87171; color: var(--text-2); }
 
 .stats-bar {
   display: flex; height: 10px; border-radius: 999px;
@@ -708,19 +788,23 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
     <div class="verdict-block">
       <div>
         <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="verdict-word">unknown</div>
+        <div class="score-hero tier-self"><div class="score-hero-row"><span class="score-emoji">🛠</span><span class="score-num">72</span><span class="score-denom">/ 100</span></div><div class="score-tier"><span class="i18n" data-en="Self-use OK" data-zh="自用 OK"></span></div><p class="score-blurb"><span class="i18n" data-en="Use it yourself; not yet ready to recommend to others." data-zh="你自己日常用没问题，还不到推荐给陌生人的程度。"></span></p></div>
       </div>
 
       <div class="verdict-meta">
         <div class="label"><span class="i18n" data-en="Confidence" data-zh="置信度"></span></div>
-        <div class="confidence"><span class="value">unknown</span><span class="layer-pill layer-molecule" title="molecule"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Molecule" data-zh="分子"></span></span></div>
+        <div class="confidence"><span class="value">low</span><span class="layer-pill layer-molecule" title="molecule"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Molecule" data-zh="分子"></span></span></div>
 
         <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 7 <span class="i18n" data-en="total" data-zh="共"></span></div>
         <div class="stats-bar"><span class="s-pass" style="flex: 3"></span><span class="s-warn" style="flex: 1"></span><span class="s-skip" style="flex: 3"></span></div>
         <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">3</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">3</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+
+        <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+13</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+10</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+9</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
       </div>
     </div>
   </header>
+
+  <section class="scenarios-section"><div class="section-head"><h2><span class="i18n" data-en="Use it for / Don't use it for" data-zh="什么时候用 / 什么时候别用"></span></h2></div><ul class="scenarios"><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Researchers and indie devs who already know Python and want a working baseline crawler for the 7 supported Chinese platforms." data-zh="懂 Python、想要这 7 个中文平台开箱可跑爬虫的研究者 / 独立开发者。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Willing to maintain login state by hand, willing to update code when a platform breaks." data-zh="愿意手动维护登录态、愿意在平台改版时自己改代码。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t use for any non-research purpose — custom non-commercial license (NOASSERTION); read LICENSE before any non-research use." data-zh="任何非研究用途都不行 —— 自定义非商用 license（NOASSERTION），用前一定先读 LICENSE。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t run at scale — README disclaimer + platforms&#x27; anti-bot will limit your account." data-zh="不要大规模爬取 —— README 免责声明很明确，平台反爬也会限你的账号。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t assume &#x27;no encryption reversal&#x27; — signing lives in 3 places (libs/*.js, xhshow pip, per-platform client.py); platform changes break runs." data-zh="别相信「无需逆向」—— 签名藏在 3 个地方（libs/*.js、xhshow pip、各平台 client.py），平台一升级就坏。"></span></li></ul></section>
 
   <div class="pull-quotes">
     <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Researchers and indie devs who already know Python and want a working baseline crawler for these specific Chinese platforms — willing to maintain login state by hand, willing to update the code when a platform breaks." data-zh="懂 Python、想要这 7 个中文平台开箱可跑爬虫的研究者 / 独立开发者。前提：愿意手动维护登录态，愿意在平台改版时自己改代码。"></span></div></section>
@@ -783,18 +867,18 @@ Login state caches are local plain-text files; do not commit them. Use the IP pr
         <div class="grid-two">
           <div class="mini-card">
             <h4><span class="i18n" data-en="Why capped" data-zh="为什么封顶"></span></h4>
-            <ul><li class="dim"><span class="i18n" data-en="none" data-zh="无"></span></li></ul>
+            <ul><li>core user-facing layer untested → capped at &#x27;usable&#x27;</li><li>evidence_completeness=&#x27;partial&#x27; (not portable) → capped at &#x27;usable&#x27;</li></ul>
           </div>
           <div class="mini-card">
             <h4><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h4>
-            <ul><li class="dim"><span class="i18n" data-en="none" data-zh="无"></span></li></ul>
+            <ul><li>only 3/4 critical claims covered</li></ul>
           </div>
         </div>
       </div>
 
       <div class="subsection">
         <h3><span class="i18n" data-en="Derivation" data-zh="推导路径"></span></h3>
-        <div class="flow"><div class="flow-row"><span class="flow-node start">archetype: adapter</span><span class="flow-arrow">→</span><span class="flow-node decision">core_layer_tested? <b style="color:inherit">False</b></span><span class="flow-arrow">→</span><span class="flow-node">evidence: —</span><span class="flow-arrow">→</span><span class="flow-node">recommended: unknown</span><span class="flow-arrow">→</span><span class="flow-node final">final: unknown</span></div></div>
+        <div class="flow"><div class="flow-row"><span class="flow-node start">archetype: adapter</span><span class="flow-arrow">→</span><span class="flow-node decision">core_layer_tested? <b style="color:inherit">False</b></span><span class="flow-arrow">→</span><span class="flow-node">evidence: partial</span><span class="flow-arrow">→</span><span class="flow-node">recommended: usable</span><span class="flow-arrow">→</span><span class="flow-node final">final: usable</span></div><div class="flow-notes"><div class="note">ceiling 1 · core user-facing layer untested → capped at &#x27;usable&#x27;</div><div class="note">ceiling 2 · evidence_completeness=&#x27;partial&#x27; (not portable) → capped at &#x27;usable&#x27;</div></div></div>
       </div>
 
       <div class="subsection">

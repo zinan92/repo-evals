@@ -3,35 +3,56 @@ repo: skills-manage
 display_name: skills-manage
 repo_url: https://github.com/iamzhihuix/skills-manage
 repo_type: skill
-# Archetype drives scaffolding and verdict-calculator ceiling rules.
-# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
 archetype: adapter
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-# Multi-platform skill manager — routes across 28 platforms, molecule.
 layer: molecule
 complexity: simple
 uses_areas: false
 status: evaluated
 current_bucket: usable
-last_evaluated: "2026-04-24"
-notes: |
-  Tauri desktop app managing AI coding agent skills across 28 platforms via
-  ~/.agents/skills/ central dir + symlinks. v0.9.1, 11 days old, 910 stars.
-  Eval was source-inspection + DMG integrity only; runtime GUI skipped
-  because tester's live ~/.agents/skills/ and ~/.claude/skills/ are in use.
-  Adapter archetype hybrid-cap applied: core user-facing layer untested → capped at 'usable'.
+last_evaluated: '2026-04-24'
+notes: 'Tauri desktop app managing AI coding agent skills across 28 platforms via
 
-# Product view — user-facing descriptions in both languages.
-# The renderer picks whichever matches the user's active UI language.
-# If a field is missing for one language the renderer falls back to
-# the other language. These fields are what non-technical readers see.
+  ~/.agents/skills/ central dir + symlinks. v0.9.1, 11 days old, 910 stars.
+
+  Eval was source-inspection + DMG integrity only; runtime GUI skipped
+
+  because tester''s live ~/.agents/skills/ and ~/.claude/skills/ are in use.
+
+  Adapter archetype hybrid-cap applied: core user-facing layer untested → capped at
+  ''usable''.
+
+  '
 product_view:
   one_liner:
-    en: "Manage skills across 28 AI coding tools (Claude Code, Cursor, Codex, Gemini CLI, Trae, etc.) from one desktop app. Edit a skill once, sync to every tool."
-    zh: "一个桌面应用，帮你管理 Claude Code、Cursor、Codex、Gemini CLI、Trae 等 28 个 AI 编程工具的技能库。技能改一处，所有工具同步更新。"
+    en: Manage skills across 28 AI coding tools (Claude Code, Cursor, Codex, Gemini
+      CLI, Trae, etc.) from one desktop app. Edit a skill once, sync to every tool.
+    zh: 一个桌面应用，帮你管理 Claude Code、Cursor、Codex、Gemini CLI、Trae 等 28 个 AI 编程工具的技能库。技能改一处，所有工具同步更新。
   best_for:
-    en: "Users who juggle multiple AI coding tools and haven't already adopted another skill manager."
-    zh: "同时在用多个 AI 编程工具，且还没有另一套技能管理方案的用户。"
+    en: Users who juggle multiple AI coding tools and haven't already adopted another
+      skill manager.
+    zh: 同时在用多个 AI 编程工具，且还没有另一套技能管理方案的用户。
   watch_out:
-    en: "Pre-1.0 (v0.9.1). macOS build is unsigned (one-time xattr workaround needed). API keys stored in cleartext in ~/.skillsmanage/db.sqlite. Runtime workflow never observed end-to-end in this eval."
-    zh: "还不到 1.0（v0.9.1）。macOS 版本未签名（首次启动需要手动运行 xattr 命令一次）。API key 在 ~/.skillsmanage/db.sqlite 里明文存储。本次评测没有真的打开 app 跑完整流程。"
+    en: Pre-1.0 (v0.9.1). macOS build is unsigned (one-time xattr workaround needed).
+      API keys stored in cleartext in ~/.skillsmanage/db.sqlite. Runtime workflow
+      never observed end-to-end in this eval.
+    zh: 还不到 1.0（v0.9.1）。macOS 版本未签名（首次启动需要手动运行 xattr 命令一次）。API key 在 ~/.skillsmanage/db.sqlite
+      里明文存储。本次评测没有真的打开 app 跑完整流程。
+  use_for:
+  - en: Users who juggle multiple AI coding tools (Claude Code / Cursor / Codex /
+      Gemini CLI / Trae...) and haven't already adopted another skill manager.
+    zh: 同时在用多个 AI 编程工具，且还没有其它技能管理方案的用户。
+  - en: Want to edit a skill once and sync it to every tool.
+    zh: 想要一次编辑 skill、同步到所有工具。
+  dont_use_for:
+  - en: Don't store production API keys here — they go cleartext into ~/.skillsmanage/db.sqlite.
+    zh: 别在这里存生产 API key —— 明文存进 ~/.skillsmanage/db.sqlite。
+  - en: Don't expect signed macOS builds yet (pre-1.0); first launch needs a one-time
+      `xattr` workaround.
+    zh: 别期待 macOS 签名（还没到 1.0）—— 第一次启动需要手动跑一次 `xattr`。
+stars: 1551
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 2
+eval_discipline_score: 1
+recently_active: true

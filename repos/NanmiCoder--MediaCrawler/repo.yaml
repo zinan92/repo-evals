@@ -3,49 +3,104 @@ repo: MediaCrawler
 display_name: MediaCrawler
 repo_url: https://github.com/NanmiCoder/MediaCrawler
 repo_type: tool
-# Archetype drives scaffolding and verdict-calculator ceiling rules.
-# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
 archetype: adapter
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-# Wraps 7 platforms with predefined per-platform pipelines (login →
-# search/detail/creator → store). No LLM-driven runtime routing —
-# molecule, not compound.
 layer: molecule
 complexity: complex
 uses_areas: false
 status: evaluated
 current_bucket: usable
-last_evaluated: "2026-05-04"
-notes: |
-  Python tool that uses Playwright browser automation to crawl 7
+last_evaluated: '2026-05-04'
+notes: 'Python tool that uses Playwright browser automation to crawl 7
+
   Chinese social platforms (xhs / douyin / kuaishou / bilibili / weibo /
+
   tieba / zhihu) for posts + comments + creator data. 48,800+ stars,
+
   custom non-commercial license. Python 3.11 (.python-version),
+
   CRAWLERS factory in main.py wires PlatformEnum → per-platform
+
   crawler class. CLI types: search / detail / creator. Login: qrcode /
+
   phone / cookie. Storage: csv / db / json / jsonl / sqlite / mongodb /
+
   excel / postgres.
 
+
   Static layer: source layout, declared platform list, declared storage
+
   backends, and CLI surface can all be checked from this machine.
 
+
   Molecule layer: end-to-end flows on each platform need a real run
+
   with platform credentials. Anti-bot is the dominant risk — these
+
   pipelines break weekly when platforms change DOM / signing.
+
   Per-platform reusable verdict cannot be claimed without a recent
+
   live run on that platform.
 
+  '
 product_view:
   one_liner:
-    en: "A Python crawler that uses Playwright browser automation to harvest public posts, comments, creator pages, and search results from 7 Chinese platforms (Xiaohongshu, Douyin, Kuaishou, Bilibili, Weibo, Tieba, Zhihu) — login by QR / phone / cookie, store to 8 backends (CSV, JSON, JSONL, Excel, SQLite, MySQL, PostgreSQL, MongoDB)."
-    zh: "一个用 Playwright 浏览器自动化抓 7 个中文平台（小红书 / 抖音 / 快手 / B 站 / 微博 / 贴吧 / 知乎）公开帖子、评论、创作者主页和搜索结果的 Python 爬虫。支持二维码 / 手机 / cookie 三种登录，可写入 8 种存储（CSV / JSON / JSONL / Excel / SQLite / MySQL / PostgreSQL / MongoDB）。"
+    en: A Python crawler that uses Playwright browser automation to harvest public
+      posts, comments, creator pages, and search results from 7 Chinese platforms
+      (Xiaohongshu, Douyin, Kuaishou, Bilibili, Weibo, Tieba, Zhihu) — login by QR
+      / phone / cookie, store to 8 backends (CSV, JSON, JSONL, Excel, SQLite, MySQL,
+      PostgreSQL, MongoDB).
+    zh: 一个用 Playwright 浏览器自动化抓 7 个中文平台（小红书 / 抖音 / 快手 / B 站 / 微博 / 贴吧 / 知乎）公开帖子、评论、创作者主页和搜索结果的
+      Python 爬虫。支持二维码 / 手机 / cookie 三种登录，可写入 8 种存储（CSV / JSON / JSONL / Excel / SQLite
+      / MySQL / PostgreSQL / MongoDB）。
   best_for:
-    en: "Researchers and indie devs who already know Python and want a working baseline crawler for these specific Chinese platforms — willing to maintain login state by hand, willing to update the code when a platform breaks."
-    zh: "懂 Python、想要这 7 个中文平台开箱可跑爬虫的研究者 / 独立开发者。前提：愿意手动维护登录态，愿意在平台改版时自己改代码。"
+    en: Researchers and indie devs who already know Python and want a working baseline
+      crawler for these specific Chinese platforms — willing to maintain login state
+      by hand, willing to update the code when a platform breaks.
+    zh: 懂 Python、想要这 7 个中文平台开箱可跑爬虫的研究者 / 独立开发者。前提：愿意手动维护登录态，愿意在平台改版时自己改代码。
   watch_out:
-    en: |
-      Custom non-commercial license — read it before any non-research use. Anti-bot moves fast: per-platform pipelines break frequently when DOM or signing changes; treat any green run as a snapshot of that day, not a permanent guarantee. README promises "no need to reverse complex encryption algorithms" but the codebase ships its own JS hooks (libs/) and signing helpers — encryption isn't reversed by you, but it is being handled, so updates to platform signing can still break runs. The hosted PRO version (paid) explicitly removes the Playwright dependency; the OSS version always needs a real browser.
-      Login state caches are local plain-text files; do not commit them. Use the IP proxy pool config if you plan more than a handful of requests, and keep request rates conservative — the disclaimer is explicit about "no large-scale crawling".
-    zh: |
-      自定义非商用 license — 任何非研究用途都要先读原文。反爬迭代很快：单平台流水线经常因为 DOM / 签名变化而坏掉，所以任何一次绿色跑通，只能当成「那一天的快照」，不是永久保障。README 说「无需逆向复杂加密」但仓库里自己带了一套 JS hook（libs/）和签名辅助 —— 不是你来逆向，但加密一直在被处理，所以平台签名一旦升级仍然会让跑批失败。付费的 PRO 版本明确去掉了 Playwright 依赖；开源版必须有真实浏览器。
+    en: 'Custom non-commercial license — read it before any non-research use. Anti-bot
+      moves fast: per-platform pipelines break frequently when DOM or signing changes;
+      treat any green run as a snapshot of that day, not a permanent guarantee. README
+      promises "no need to reverse complex encryption algorithms" but the codebase
+      ships its own JS hooks (libs/) and signing helpers — encryption isn''t reversed
+      by you, but it is being handled, so updates to platform signing can still break
+      runs. The hosted PRO version (paid) explicitly removes the Playwright dependency;
+      the OSS version always needs a real browser.
+
+      Login state caches are local plain-text files; do not commit them. Use the IP
+      proxy pool config if you plan more than a handful of requests, and keep request
+      rates conservative — the disclaimer is explicit about "no large-scale crawling".
+
+      '
+    zh: '自定义非商用 license — 任何非研究用途都要先读原文。反爬迭代很快：单平台流水线经常因为 DOM / 签名变化而坏掉，所以任何一次绿色跑通，只能当成「那一天的快照」，不是永久保障。README
+      说「无需逆向复杂加密」但仓库里自己带了一套 JS hook（libs/）和签名辅助 —— 不是你来逆向，但加密一直在被处理，所以平台签名一旦升级仍然会让跑批失败。付费的
+      PRO 版本明确去掉了 Playwright 依赖；开源版必须有真实浏览器。
+
       登录态缓存以明文存到本地，别提交进 git。请求量超过几个就用自带的 IP 代理池配置，并保持保守频率 —— 免责声明里写得很清楚「不得用于大规模爬取」。
+
+      '
+  use_for:
+  - en: Researchers and indie devs who already know Python and want a working baseline
+      crawler for the 7 supported Chinese platforms.
+    zh: 懂 Python、想要这 7 个中文平台开箱可跑爬虫的研究者 / 独立开发者。
+  - en: Willing to maintain login state by hand, willing to update code when a platform
+      breaks.
+    zh: 愿意手动维护登录态、愿意在平台改版时自己改代码。
+  dont_use_for:
+  - en: Don't use for any non-research purpose — custom non-commercial license (NOASSERTION);
+      read LICENSE before any non-research use.
+    zh: 任何非研究用途都不行 —— 自定义非商用 license（NOASSERTION），用前一定先读 LICENSE。
+  - en: Don't run at scale — README disclaimer + platforms' anti-bot will limit your
+      account.
+    zh: 不要大规模爬取 —— README 免责声明很明确，平台反爬也会限你的账号。
+  - en: Don't assume 'no encryption reversal' — signing lives in 3 places (libs/*.js,
+      xhshow pip, per-platform client.py); platform changes break runs.
+    zh: 别相信「无需逆向」—— 签名藏在 3 个地方（libs/*.js、xhshow pip、各平台 client.py），平台一升级就坏。
+stars: 48809
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 1
+eval_discipline_score: 2
+recently_active: true

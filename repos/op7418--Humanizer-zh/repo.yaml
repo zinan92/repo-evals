@@ -4,31 +4,67 @@ display_name: Humanizer-zh
 repo_url: https://github.com/op7418/Humanizer-zh
 repo_type: skill
 archetype: prompt-skill
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-# Pure prompt-skill, single SKILL.md, no sub-files — atom.
 layer: atom
 complexity: simple
 uses_areas: false
 status: evaluated
 current_bucket: usable
-last_evaluated: "2026-04-24"
-notes: |
-  Pure prompt-skill: SKILL.md (484 lines) + README.md, no code, no referenced
-  sub-files. Translated from blader/humanizer + borrows checklist from
-  hardikpandya/stop-slop. Lists 24 AI-writing tells in 4 categories and a
-  5-dim 50-point quality rubric. Evaluated via live session on a deliberately
-  AI-sloppy Chinese paragraph; skill reliably identified and rewrote the
-  targeted patterns. prompt-skill archetype ceiling rule applies — no
-  automated quality harness exists, so bucket is capped at 'usable'.
+last_evaluated: '2026-04-24'
+notes: 'Pure prompt-skill: SKILL.md (484 lines) + README.md, no code, no referenced
 
+  sub-files. Translated from blader/humanizer + borrows checklist from
+
+  hardikpandya/stop-slop. Lists 24 AI-writing tells in 4 categories and a
+
+  5-dim 50-point quality rubric. Evaluated via live session on a deliberately
+
+  AI-sloppy Chinese paragraph; skill reliably identified and rewrote the
+
+  targeted patterns. prompt-skill archetype ceiling rule applies — no
+
+  automated quality harness exists, so bucket is capped at ''usable''.
+
+  '
 product_view:
   one_liner:
-    en: "A Claude Code skill that rewrites Chinese AI-generated text to sound human — removes 24 AI-writing tells (三段式法则, 否定式排比, AI 词汇, 破折号滥用) and scores the result on a 50-point rubric."
-    zh: "一个 Claude Code 技能，把中文 AI 生成文本改写得像人说的话 — 识别并修掉 24 种 AI 味（三段式法则 / 否定式排比 / AI 词汇 / 破折号滥用），改完还给 1-50 分打分。"
+    en: A Claude Code skill that rewrites Chinese AI-generated text to sound human
+      — removes 24 AI-writing tells (三段式法则, 否定式排比, AI 词汇, 破折号滥用) and scores the result
+      on a 50-point rubric.
+    zh: 一个 Claude Code 技能，把中文 AI 生成文本改写得像人说的话 — 识别并修掉 24 种 AI 味（三段式法则 / 否定式排比 / AI
+      词汇 / 破折号滥用），改完还给 1-50 分打分。
   best_for:
-    en: "Writers / editors / marketers who need to clean Chinese AI-generated copy before publishing, and don't already have their own style guide loaded into Claude."
-    zh: "需要把中文 AI 稿件改得自然再发的写作者、编辑和运营。尤其适合还没有把自己那套风格约束塞进 Claude 的用户。"
+    en: Writers / editors / marketers who need to clean Chinese AI-generated copy
+      before publishing, and don't already have their own style guide loaded into
+      Claude.
+    zh: 需要把中文 AI 稿件改得自然再发的写作者、编辑和运营。尤其适合还没有把自己那套风格约束塞进 Claude 的用户。
   watch_out:
-    en: "It rewrites content, not just style — the humanized output is always shorter and often drops claims the original invented. That's the point, but re-check facts before publishing. Also, the npx install path (`npx skills add`) depends on an external CLI that's not bundled; if it doesn't work, fall back to `git clone` into ~/.claude/skills/humanizer-zh."
-    zh: |
-      它改的不只是文风 — 去痕之后内容往往会变短，原文里「看起来很对但其实是 AI 编的」部分会直接被删掉。这是设计意图，但发稿前还是要自己核一下事实。另外 README 里的 `npx skills add` 依赖外部 CLI，不保证在你机器上能跑；跑不通就 `git clone` 到 ~/.claude/skills/humanizer-zh。
+    en: It rewrites content, not just style — the humanized output is always shorter
+      and often drops claims the original invented. That's the point, but re-check
+      facts before publishing. Also, the npx install path (`npx skills add`) depends
+      on an external CLI that's not bundled; if it doesn't work, fall back to `git
+      clone` into ~/.claude/skills/humanizer-zh.
+    zh: '它改的不只是文风 — 去痕之后内容往往会变短，原文里「看起来很对但其实是 AI 编的」部分会直接被删掉。这是设计意图，但发稿前还是要自己核一下事实。另外
+      README 里的 `npx skills add` 依赖外部 CLI，不保证在你机器上能跑；跑不通就 `git clone` 到 ~/.claude/skills/humanizer-zh。
+
+      '
+  use_for:
+  - en: Writers / editors / marketers who need to clean Chinese AI-generated copy
+      before publishing.
+    zh: 需要把中文 AI 稿件改得自然再发的写作者、编辑、运营。
+  - en: Don't already have your own style-guide loaded into Claude — this gives you
+      a 24-tell humanizer + 50-point quality rubric.
+    zh: 还没把自己那套风格约束塞进 Claude —— 这个 skill 提供 24 种 AI 味识别 + 50 分质量打分。
+  dont_use_for:
+  - en: Don't trust the rewritten output without a fact-check — it drops claims the
+      original AI invented (intentional, but verify).
+    zh: 改完别直接发 —— 它会删掉原文里 AI 编的「看起来对其实是编」内容（设计如此，但发稿前自己再核一下事实）。
+  - en: Don't rely on `npx skills add` install path; if it fails, fall back to `git
+      clone` into ~/.claude/skills/humanizer-zh.
+    zh: 别只依赖 `npx skills add` —— 失败的话 `git clone` 到 ~/.claude/skills/humanizer-zh。
+stars: 6916
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 1
+recently_active: false
