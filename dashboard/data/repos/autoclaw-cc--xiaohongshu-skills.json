@@ -1,0 +1,42 @@
+{
+  "slug": "autoclaw-cc--xiaohongshu-skills",
+  "display_name": "xiaohongshu-skills",
+  "owner": "autoclaw-cc",
+  "repo": "xiaohongshu-skills",
+  "repo_url": "https://github.com/autoclaw-cc/xiaohongshu-skills",
+  "repo_type": "skill-bundle",
+  "archetype": "hybrid-skill",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "Xiaohongshu (小红书) automation skill bundle for OpenClaw / Claude Code. 5 atomic sub-skills (xhs-auth, xhs-publish, xhs-explore, xhs-interact, xhs-content-ops) under skills/, routed by a root SKILL.md. Driven via a Chrome MV3 extension (\"XHS Bridge\") that talks to the Python side…",
+  "repo_path": "repos/autoclaw-cc--xiaohongshu-skills",
+  "claims_summary": {
+    "total": 6,
+    "passed": 5,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 4,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 2
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/autoclaw-cc--xiaohongshu-skills/plans/2026-05-04-eval-plan.md",
+  "verdict_path": "repos/autoclaw-cc--xiaohongshu-skills/verdicts/2026-05-04-final-verdict.md",
+  "attention_level": "medium"
+}

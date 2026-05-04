@@ -1,0 +1,87 @@
+=== claim-001 npm publish status ===
+package.json private: true
+curl: (56) The requested URL returned error: 404
+
+=== claim-002 SKILL.md frontmatter ===
+---
+name: remotion-best-practices
+description: Best practices for Remotion - Video creation in React
+metadata:
+  tags: remotion, video, react, animation, composition
+---
+
+## When to use
+
+Use this skills whenever you are dealing with Remotion code to obtain the domain-specific knowledge.
+
+=== claim-003 rules count + sizes ===
+36
+rule files (.md):
+35
+
+=== claim-004 src/ entry shape ===
+import {registerRoot} from 'remotion';
+import {RemotionRoot} from './Root';
+
+registerRoot(RemotionRoot);
+size:        4 lines
+
+Root.tsx size:       39 lines
+import {Composition} from 'remotion';
+import {MyAnimation as BarChartAnimation} from '../skills/remotion/rules/assets/charts-bar-chart';
+import {MyAnimation as TypewriterAnimation} from '../skills/remotion/rules/assets/text-animations-typewriter';
+import {MyAnimation as WordHighlightAnimation} from '../skills/remotion/rules/assets/text-animations-word-highlight';
+
+export const RemotionRoot = () => {
+	return (
+		<>
+			<Composition
+				id="BarChart"
+				component={BarChartAnimation}
+				durationInFrames={120}
+				fps={30}
+				width={1280}
+				height={720}
+			/>
+			<Composition
+				id="Typewriter"
+				component={TypewriterAnimation}
+				durationInFrames={180}
+=== claim-001 SKILL.md frontmatter ===
+---
+name: remotion-best-practices
+description: Best practices for Remotion - Video creation in React
+metadata:
+  tags: remotion, video, react, animation, composition
+---
+
+## When to use
+1
+  ↑ 'When to use' sections
+
+=== claim-002 rules count + 1KB threshold ===
+rules .md total: 35
+rules .md > 1024 bytes: 30
+
+=== claim-003 private + npm 404 ===
+true
+npm registry status: 404
+
+=== claim-004 src/ harness ===
+src/index.ts:
+import {registerRoot} from 'remotion';
+import {RemotionRoot} from './Root';
+
+registerRoot(RemotionRoot);
+
+Compositions in Root.tsx:
+3
+import paths from rules/assets:
+import {MyAnimation as BarChartAnimation} from '../skills/remotion/rules/assets/charts-bar-chart';
+import {MyAnimation as TypewriterAnimation} from '../skills/remotion/rules/assets/text-animations-typewriter';
+import {MyAnimation as WordHighlightAnimation} from '../skills/remotion/rules/assets/text-animations-word-highlight';
+
+Verify the import targets exist:
+  rules/assets/charts-bar-chart.tsx: 200
+  rules/assets/text-animations-typewriter.tsx: 200
+  rules/assets/text-animations-word-highlight.tsx: 200

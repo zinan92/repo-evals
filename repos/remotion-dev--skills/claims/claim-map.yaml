@@ -1,0 +1,102 @@
+claims:
+- id: claim-001
+  title: SKILL.md 存在且具备 Claude Skills frontmatter
+  source: SKILL.md
+  source_ref: skills/remotion/SKILL.md
+  priority: critical
+  area: skill-shape
+  statement: 'skills/remotion/SKILL.md 必须存在且头部声明 name + description + metadata.tags
+
+    的 YAML frontmatter — 这是 AI agent skills 装载器期望的契约。文件主体应给出
+
+    "When to use" 段，让 LLM 知道何时调用。
+
+    '
+  business_expectation: '用户复制 SKILL.md 到 AI agent skills 目录，就能被识别为标准 skill。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: SKILL.md has standard frontmatter + When to use; 340-line body with code examples
+- id: claim-002
+  title: rules/ 目录是 SKILL.md 的深度参考资料
+  source: SKILL.md + rules/
+  source_ref: skills/remotion/rules/
+  priority: high
+  area: depth
+  statement: 'rules/ 下至少 ≥10 个 .md 文件，覆盖 README/SKILL.md 没穷举的 Remotion 子主题
+
+    （audio / captions / ffmpeg / lottie / fonts / 图表等）。这些 rules 不是垃圾占位，
+
+    每个都有真实正文（>= 1KB）。
+
+    '
+  business_expectation: 'LLM 在生成 Remotion 代码时能引用具体子主题的规则，而不是泛泛而谈。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 35 .md rules, 30 over 1 KB; covers audio/captions/ffmpeg/lottie/mapbox/etc.
+- id: claim-003
+  title: 包是 internal / private，不通过 npm 公开发行
+  source: README "internal package" + package.json
+  source_ref: package.json::private
+  priority: high
+  area: distribution
+  statement: 'package.json 必须 `private: true` 且 npm registry 上 `@remotion/skills/latest`
+
+    返回 404 — 与 README 自述「internal package」一致；不会有用户误以为可以
+
+    `npm install @remotion/skills`。
+
+    '
+  business_expectation: '用户清楚 internal-only，去 monorepo / clone 复制使用，不会"装不上"。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: private:true + npm registry 404, consistent with internal package README
+- id: claim-004
+  title: src/ 是真实可跑的 Remotion studio harness
+  source: package.json::scripts.dev
+  source_ref: src/index.ts + src/Root.tsx
+  priority: high
+  area: harness
+  statement: 'src/index.ts 调 registerRoot(RemotionRoot) — 标准 Remotion 入口；src/Root.tsx
+
+    声明 ≥1 个 <Composition>，import 路径指向 rules/assets/ 下真实存在的 TS 文件。
+
+    `npm run dev` 即 `remotion studio` 能起一个本地预览。
+
+    '
+  business_expectation: '官方维护者自己跑过 SKILL.md 里推的几条规则，rules 不是死文档。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: src/index.ts calls registerRoot; Root.tsx has 3 Compositions; all rules/assets
+    imports resolve
+- id: claim-005
+  title: 端到端：把 SKILL.md 装到自己的 agent，写出符合规则的 Remotion 代码
+  source: framework
+  source_ref: SKILL.md
+  priority: critical
+  area: end-to-end
+  statement: '把 SKILL.md + rules/ 复制到 ~/.claude/skills/remotion/，在 Claude Code
+
+    session 里说"用 Remotion 写一个淡入动画"，agent 应主动 reference SKILL.md
+
+    并按规则生成代码（用 `useCurrentFrame()` + `interpolate()` + Easing）而不是
+
+    自由发挥。
+
+    '
+  business_expectation: 'Skill 真的影响 agent 行为，不是陈列。
+
+    '
+  evidence_needed: 'atom 级 — 需要 Claude Code session 录像。建议 1 个简单动画 + 1 个 audio /
+
+    captions 子主题，验证 LLM 是否引用对应 rules/*.md。
+
+    '
+  status: untested

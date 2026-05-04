@@ -1,0 +1,53 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: autoclaw-cc
+  repo: xiaohongshu-skills
+  branch: main
+  skill_version: "1.0.0"
+  python_required: ">=3.11"
+  extension_manifest_version: 3
+
+scope: |
+  Static-checkable claims for the 5-skill bundle, root SKILL.md
+  routing layer, Chrome extension permissions, Python deps, and
+  OpenClaw + Claude Code cross-platform contract. Live composite
+  workflow (claim-006) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "All 5 sub-skill SKILL.md files exist (HTTP 200): xhs-{auth,publish,explore,interact,content-ops}"
+  - id: claim-002
+    status: passed
+    note: "Root SKILL.md mentions sub-skill names 11 times — active routing layer, not a stub"
+  - id: claim-003
+    status: passed_with_concerns
+    note: "Extension permissions include `debugger` (high-privilege) + `cookies` + `scripting`; host_permissions are scoped to xhs domains + ws://localhost only — by design per README, but worth disclosing"
+  - id: claim-004
+    status: passed
+    note: "Deps: python-socks, requests, websockets — minimal browser-bridge stack; dev extras have ruff + pytest"
+  - id: claim-005
+    status: passed_with_concerns
+    note: "metadata.openclaw block present (requires.bins, emoji, os); but homepage field points to xpzouying/xiaohongshu-skills, not autoclaw-cc — repo may be a fork/rename"
+
+claims_deferred:
+  - claim-006  # live e2e composite — needs real XHS account + browser session
+
+artifacts:
+  - artifacts/pyproject.toml
+  - artifacts/SKILL.md
+  - artifacts/manifest.json
+
+logs:
+  - logs/skills-dirs.txt
+  - logs/static-evidence.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/autoclaw-cc/xiaohongshu-skills/main/{pyproject.toml,SKILL.md,extension/manifest.json}"
+    - "gh api repos/autoclaw-cc/xiaohongshu-skills/contents/skills"
+    - "HEAD checks on skills/<sub>/SKILL.md raw URLs"
+  network_dependent: true
+  reproducible: yes

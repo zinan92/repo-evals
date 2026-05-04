@@ -1,0 +1,116 @@
+=== claim-001 docker-compose services ===
+  postgres:
+    image: ${IMAGE_PREFIX:-}postgres:16-alpine
+    container_name: quantdinger-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-quantdinger}
+      POSTGRES_USER: ${POSTGRES_USER:-quantdinger}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-quantdinger123}
+      TZ: ${TZ:-Asia/Shanghai}
+    command:
+    volumes:
+    ports:
+    networks:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-quantdinger} -d ${POSTGRES_DB:-quantdinger}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: ${IMAGE_PREFIX:-}redis:7-alpine
+    container_name: quantdinger-redis
+    restart: unless-stopped
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+    networks:
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  backend:
+    build:
+      context: ./backend_api_python
+      dockerfile: Dockerfile
+      args:
+        BASE_IMAGE: ${IMAGE_PREFIX:-}python:3.12-slim-bookworm
+    container_name: quantdinger-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+
+=== claim-002 services + ports ===
+services: 4
+  - postgres: image=${IMAGE_PREFIX:-}postgres:16-alpine ports=['${DB_PORT:-127.0.0.1:5432}:5432']
+  - redis: image=${IMAGE_PREFIX:-}redis:7-alpine ports=['${REDIS_PORT:-127.0.0.1:6379}:6379']
+  - backend: image=(local build) ports=['${BACKEND_PORT:-127.0.0.1:5000}:5000']
+  - frontend: image=(local build) ports=['${FRONTEND_PORT:-8888}:80']
+
+=== claim-003 mcp_server pyproject ===
+name = "quantdinger-mcp"
+version = "0.1.0"
+description = "Model Context Protocol (MCP) server for the QuantDinger Agent Gateway — exposes market data, strategies, backtests and paper trading to AI agents (Cursor, Claude Code, Codex, OpenClaw, NanoBot, ...)."
+requires-python = ">=3.10"
+  "mcp",
+  "mcp>=1.2.0",
+quantdinger-mcp = "quantdinger_mcp.server:main"
+
+=== claim-004 env.example major sections ===
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+# =========================
+
+=== claim-005 backend_api_python Python version ===
+ls: repos/brokermr810--QuantDinger/runs/2026-05-04/run-static-checks/artifacts/backend-pyproject.toml: No such file or directory
+
+=== claim-005b multi-agent / AI references ===
+7
+  ↑ mentions of LLM providers in env.example
+=== claim-006 default port bindings ===
+  postgres: ${DB_PORT:-127.0.0.1:5432}:5432  → localhost-only
+  redis: ${REDIS_PORT:-127.0.0.1:6379}:6379  → localhost-only
+  backend: ${BACKEND_PORT:-127.0.0.1:5000}:5000  → localhost-only
+  frontend: ${FRONTEND_PORT:-8888}:80  → PUBLIC
+
+=== claim-008 auto-fire / paper-trading defaults ===
+AGENT_LIVE_TRADING_ENABLED=false
+#                    paper_only and the T (Trading) scope.
+#                    `paper_only` is force-pinned to true and any attempt to
+
+
+ccxt + ib_insync + MetaTrader5 in requirements.txt:
+finnhub-python>=2.4.18
+yfinance>=0.2.18
+ccxt>=4.0.0
+akshare>=1.12.0
+ib_insync>=0.9.86
+
+=== full backend reqs file fetch & check brokers/data ===
+finnhub-python>=2.4.18
+yfinance>=0.2.18
+ccxt>=4.0.0
+akshare>=1.12.0
+ib_insync>=0.9.86

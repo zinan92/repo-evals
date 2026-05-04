@@ -1,0 +1,118 @@
+claims:
+- id: claim-001
+  title: README 列出的 5 个子技能 SKILL.md 都真实存在
+  source: README "功能概览" 表
+  source_ref: skills/{xhs-auth,xhs-publish,xhs-explore,xhs-interact,xhs-content-ops}/SKILL.md
+  priority: critical
+  area: skill-coverage
+  statement: 'README 表格列了 5 个技能（xhs-auth / xhs-publish / xhs-explore / xhs-interact
+    /
+
+    xhs-content-ops）。skills/ 目录下每个对应子目录都必须存在 SKILL.md，且 frontmatter
+
+    合法。
+
+    '
+  business_expectation: '用户用自然语言提到任意一项功能，agent 都能路由到真实 SKILL.md。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: All 5 sub-skill SKILL.md files exist (HTTP 200)
+- id: claim-002
+  title: 根 SKILL.md 真的引用 5 个子技能（路由层不是空架子）
+  source: README "支持连贯操作" 段
+  source_ref: SKILL.md
+  priority: critical
+  area: orchestration
+  statement: '根 SKILL.md 在内容中提到全部 5 个 sub-skill 名称至少一次，并给出何时调用哪个的
+
+    规则；否则 agent 无从分发。
+
+    '
+  business_expectation: '"搜索 → 收藏 → 总结" 这类自然语言命令能被根 SKILL.md 拆成正确子调用序列。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: Root SKILL.md mentions sub-skill names 11 times — active routing layer
+- id: claim-003
+  title: Chrome 扩展权限申请与功能边界匹配（无过度授权）
+  source: README "第二步：安装浏览器扩展"
+  source_ref: extension/manifest.json
+  priority: critical
+  area: privacy-security
+  statement: 'manifest.permissions / host_permissions 应只覆盖小红书域 + localhost websocket；
+
+    `debugger` / `cookies` 等高权限若存在，README 应已明确说明「使用真实账号」的设计
+
+    意图。不应申请 `<all_urls>` 或不相关的 host。
+
+    '
+  business_expectation: '用户对扩展权限的实际使用范围有透明认知。
+
+    '
+  status: passed_with_concerns
+  last_run: runs/2026-05-04/run-static-checks
+  note: Extension perms include debugger + cookies + scripting; README does not enumerate
+    them
+- id: claim-004
+  title: Python 端依赖最小化、与 README 安装步骤一致
+  source: README "第一步：安装项目"
+  source_ref: pyproject.toml
+  priority: high
+  area: install
+  statement: 'pyproject.toml 声明 requires-python>=3.11；dependencies 只是 browser bridge
+    必要
+
+    包（websocket + http），没有偷偷拉无关的大型框架；optional-dependencies.dev
+
+    存在 ruff / pytest 之类常规工具。
+
+    '
+  business_expectation: '`uv sync` 一步到位，不会装出几百兆奇怪东西。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: Minimal browser-bridge deps (python-socks + requests + websockets); ruff +
+    pytest in dev
+- id: claim-005
+  title: 兼容 OpenClaw + Claude Code（README 双声明真有契约支撑）
+  source: README "支持 OpenClaw 及所有兼容 SKILL.md 格式的 AI Agent 平台"
+  source_ref: SKILL.md::metadata.openclaw
+  priority: high
+  area: cross-platform
+  statement: '根 SKILL.md frontmatter 中存在 metadata.openclaw 段（标准 OpenClaw skill 契约），
+
+    并且文件本身遵循 Claude Skills 的 SKILL.md 格式（name + description + body）。
+
+    '
+  business_expectation: '声称的 cross-platform 是契约级支持，不是营销词。
+
+    '
+  status: passed_with_concerns
+  last_run: runs/2026-05-04/run-static-checks
+  note: metadata.openclaw block real; homepage points to different repo (xpzouying/xiaohongshu-skills)
+- id: claim-006
+  title: 端到端：复合命令能在真实账号下完成"搜索 → 收藏 → 总结"
+  source: README "你可以用自然语言下达复合指令"
+  source_ref: skills/xhs-content-ops/SKILL.md
+  priority: critical
+  area: end-to-end
+  statement: '在已登录小红书的 Chrome 中装好扩展，发"搜索刺客信条最火的图文，收藏并告诉我讲了
+
+    什么"给 agent。agent 应自动 search → 筛图文 → 排序 → 收藏 → 拉详情 → 摘要，全程
+
+    不需要用户重新接管，最终产物是一段总结文字 + 收藏行为执行成功。
+
+    '
+  business_expectation: 'Skill 真的能驱动 agent 跑通复合工作流，不是单步演示。
+
+    '
+  evidence_needed: 'molecule 级 — 需要真实小红书账号 + Chrome + agent session。建议 1 个 happy path
+
+    + 1 个登录态过期场景（验证 xhs-auth 正确触发重新登录）。
+
+    '
+  status: untested

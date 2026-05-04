@@ -1,0 +1,42 @@
+{
+  "slug": "remotion-dev--skills",
+  "display_name": "@remotion/skills",
+  "owner": "remotion-dev",
+  "repo": "skills",
+  "repo_url": "https://github.com/remotion-dev/skills",
+  "repo_type": "skill",
+  "archetype": "prompt-skill",
+  "layer": "atom",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "Official Remotion skill bundled inside the remotion-dev monorepo. Single SKILL.md (`remotion-best-practices`, 340 lines) telling LLM agents how to write Remotion code, plus 35 reference markdown files in rules/ covering specific topics (3d, audio, captions, ffmpeg, fonts, lottie…",
+  "repo_path": "repos/remotion-dev--skills",
+  "claims_summary": {
+    "total": 5,
+    "passed": 4,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 2,
+    "critical_passed": 1,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 3
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/remotion-dev--skills/plans/2026-05-04-eval-plan.md",
+  "verdict_path": "repos/remotion-dev--skills/verdicts/2026-05-04-final-verdict.md",
+  "attention_level": "medium"
+}

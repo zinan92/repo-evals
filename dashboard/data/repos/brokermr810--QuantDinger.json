@@ -1,0 +1,42 @@
+{
+  "slug": "brokermr810--QuantDinger",
+  "display_name": "QuantDinger",
+  "owner": "brokermr810",
+  "repo": "QuantDinger",
+  "repo_url": "https://github.com/brokermr810/QuantDinger",
+  "repo_type": "platform",
+  "archetype": "orchestrator",
+  "layer": "compound",
+  "layer_inferred": "compound",
+  "status": "evaluated",
+  "current_bucket": "usable",
+  "uses_areas": false,
+  "notes_excerpt": "Self-hosted full-stack AI quant trading platform. 4-service Docker Compose stack: postgres + redis + Flask backend (Python 3.12) + prebuilt React frontend. Adds a separate MCP server (quantdinger-mcp v0.1.0, requires-python>=3.10) for Cursor / Claude Code / Codex / OpenClaw / Na…",
+  "repo_path": "repos/brokermr810--QuantDinger",
+  "claims_summary": {
+    "total": 8,
+    "passed": 7,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 5,
+    "critical_passed": 4,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 3
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/brokermr810--QuantDinger/plans/2026-05-04-eval-plan.md",
+  "verdict_path": "repos/brokermr810--QuantDinger/verdicts/2026-05-04-final-verdict.md",
+  "attention_level": "medium"
+}

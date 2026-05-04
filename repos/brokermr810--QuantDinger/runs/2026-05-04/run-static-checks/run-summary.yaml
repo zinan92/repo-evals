@@ -1,0 +1,63 @@
+run_id: run-static-checks
+date: 2026-05-04
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: brokermr810
+  repo: QuantDinger
+  branch: main
+  app_version: "3.0.3"
+  base_image: "python:3.12-slim-bookworm"
+
+scope: |
+  Static-checkable claims for the docker-compose stack, Python image,
+  LLM providers, broker integrations, MCP server, port-bind defaults,
+  and live-trading safety pin. Agent-driven end-to-end (claim-007) and
+  manual-approval verification (claim-008) deferred to compound runs.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "4 services in docker-compose: postgres + redis + backend (Flask, build) + frontend; healthchecks present"
+  - id: claim-002
+    status: passed
+    note: "Dockerfile ARG BASE_IMAGE=python:3.12-slim-bookworm matches docker-compose backend.build.args.BASE_IMAGE default"
+  - id: claim-003
+    status: passed
+    note: "OPENAI_API_KEY + DEEPSEEK_API_KEY + GROK_API_KEY all declared with _MODEL and _BASE_URL overrides"
+  - id: claim-004
+    status: passed
+    note: "ccxt (crypto), ib_insync (IBKR), finnhub-python, yfinance, akshare all in requirements.txt; MetaTrader5 conditional per Windows-only platform note"
+  - id: claim-005
+    status: passed
+    note: "mcp_server is its own pyproject (quantdinger-mcp 0.1.0); description names Cursor/Claude Code/Codex/OpenClaw/NanoBot; mcp>=1.2.0 dep + console_scripts entry"
+  - id: claim-006
+    status: passed
+    note: "postgres/redis/backend bind to 127.0.0.1 by default; only frontend is public (8888 → 80) by design"
+  - id: claim-008
+    status: passed
+    note: "AGENT_LIVE_TRADING_ENABLED=false default; env.example also references paper_only being force-pinned"
+
+claims_deferred:
+  - claim-007  # MCP-agent e2e — needs LLM key + Cursor/Claude Code session
+  # claim-008 partially covered by static (default flag is false); live confirmation also valuable
+
+artifacts:
+  - artifacts/docker-compose.yml
+  - artifacts/env.example
+  - artifacts/mcp-pyproject.toml
+  - artifacts/backend-Dockerfile
+  - artifacts/backend-requirements.txt
+
+logs:
+  - logs/compose-services.txt
+  - logs/backend-dirs.txt
+  - logs/backend-files.txt
+  - logs/mcp-server.txt
+  - logs/static-evidence.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/brokermr810/QuantDinger/main/{docker-compose.yml,backend_api_python/{Dockerfile,requirements.txt,env.example},mcp_server/pyproject.toml}"
+    - "gh api repos/brokermr810/QuantDinger/contents/{backend_api_python,mcp_server}"
+  network_dependent: true
+  reproducible: yes

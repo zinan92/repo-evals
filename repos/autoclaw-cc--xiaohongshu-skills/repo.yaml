@@ -1,0 +1,44 @@
+owner: autoclaw-cc
+repo: xiaohongshu-skills
+display_name: xiaohongshu-skills
+repo_url: https://github.com/autoclaw-cc/xiaohongshu-skills
+repo_type: skill-bundle
+archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# 5 atomic sub-skills (xhs-auth/publish/explore/interact/content-ops)
+# wired by a root SKILL.md routing layer. No runtime LLM-driven graph;
+# routing keyed by user intent → molecule.
+layer: molecule
+complexity: medium
+uses_areas: false
+status: evaluated
+current_bucket: usable
+last_evaluated: "2026-05-04"
+version_tested: "main@HEAD (skill v1.0.0, Python 3.11+)"
+notes: |
+  Xiaohongshu (小红书) automation skill bundle for OpenClaw / Claude Code.
+  5 atomic sub-skills (xhs-auth, xhs-publish, xhs-explore, xhs-interact,
+  xhs-content-ops) under skills/, routed by a root SKILL.md. Driven via
+  a Chrome MV3 extension ("XHS Bridge") that talks to the Python side
+  over a localhost websocket. Uses the user's real logged-in browser
+  session — no platform reverse-engineering, no API key, but also no
+  protection against XHS detecting automation.
+
+  Security note: extension permissions include `debugger` (full Chrome
+  DevTools attach), `cookies`, `scripting`, and host_permissions for
+  xiaohongshu.com domains + `ws://localhost/*`. README explicitly says
+  "use real user account" — the privileged Chrome surface is by design
+  but worth flagging for users who don't read manifests.
+
+product_view:
+  one_liner:
+    en: "A 5-skill OpenClaw / Claude Code bundle that automates Xiaohongshu (小红书) — login, publish, search, comment/like/bookmark, and orchestrated workflows like trend-tracking — by driving the user's real Chrome session through a paired browser extension. No XHS API key, no encryption reversal."
+    zh: "一组 5 个 OpenClaw / Claude Code 技能：在小红书做登录、发布、搜索、评论 / 点赞 / 收藏 + 复合运营（追热点、竞品、批量互动）。通过自带的 Chrome 扩展驱动你自己的真实小红书账号，不需要 XHS API key，也不用逆向加密。"
+  best_for:
+    en: "Xiaohongshu creators or operators who already manage a real account in Chrome and want an AI agent (Claude Code / OpenClaw) to drive search, publish, and engagement workflows — willing to give the paired extension `debugger` + `cookies` permissions on xiaohongshu.com."
+    zh: "已经有真实小红书账号、希望让 AI agent（Claude Code / OpenClaw）帮你跑搜索、发布、互动工作流的运营 / 创作者；接受配套 Chrome 扩展拿 `debugger` + `cookies` 权限。"
+  watch_out:
+    en: |
+      The Chrome extension requires `debugger`, `cookies`, and `scripting` permissions on xiaohongshu.com — a real privilege escalation. Anyone evaluating this for production use should read manifest.json before installing, and pin the source commit. README itself recommends rate-limiting because XHS does run anti-automation; "use real account" mode is more humane than headless scraping but still violates the platform ToS in spirit, and your account is at risk if you move too fast.
+    zh: |
+      Chrome 扩展需要 `debugger` + `cookies` + `scripting` 三项高权限并绑定 xiaohongshu.com — 真实的权限升级。生产用前先读 manifest.json，并锁定 commit。README 自己也建议控制速率：XHS 有反自动化检测；用「真实账号」模式比 headless 爬取温和，但精神上仍违反平台 ToS，太频繁会让账号受限。

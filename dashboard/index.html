@@ -12,14 +12,14 @@
       <h1>repo-evals operator dashboard</h1>
       <p>One place to see what is usable, what is still shaky, and what changed recently — without hiding low-confidence baselines or missing provenance.</p>
       <div class="meta-row">
-        <span class="chip">generated at 2026-05-04T04:17:49Z</span>
-        <span class="chip">source commit fe256e5</span>
+        <span class="chip">generated at 2026-05-04T04:30:58Z</span>
+        <span class="chip">source commit 4acbd5d</span>
         <a class="chip" href="data/index.json">raw dashboard data</a>
       </div>
     </section>
 
     <section class="grid stats">
-      <div class="stat-card"><h3>Evaluated repos</h3><div class="stat-value">15</div><div class="muted small">out of 15 total repos</div></div>
+      <div class="stat-card"><h3>Evaluated repos</h3><div class="stat-value">18</div><div class="muted small">out of 18 total repos</div></div>
       <div class="stat-card"><h3>Critical unresolved gaps</h3><div class="stat-value">19</div><div class="muted small">from latest committed gap reports</div></div>
       <div class="stat-card"><h3>Full provenance repos</h3><div class="stat-value">6</div><div class="muted small">repos whose current runs are fully captured</div></div>
       <div class="stat-card"><h3>Medium/low diff confidence</h3><div class="stat-value">4</div><div class="muted small">latest committed diffs needing careful reading</div></div>
@@ -29,7 +29,7 @@
     <section class="grid stats">
       <div class="stat-card"><h3>Recommendable</h3><div class="stat-value">0</div></div>
       <div class="stat-card"><h3>Reusable</h3><div class="stat-value">2</div></div>
-      <div class="stat-card"><h3>Usable</h3><div class="stat-value">12</div></div>
+      <div class="stat-card"><h3>Usable</h3><div class="stat-value">15</div></div>
       <div class="stat-card"><h3>Unusable / Unknown</h3><div class="stat-value">1</div></div>
     </section>
 
@@ -294,6 +294,66 @@
       </div>
     </article>
 <article class="panel repo-card attention-medium" data-role="repo-card"
+      data-search="autoclaw-cc--xiaohongshu-skills xiaohongshu-skills xiaohongshu-skills autoclaw-cc hybrid-skill usable evaluated"
+      data-bucket="usable"
+      data-confidence="unknown">
+      <header>
+        <div>
+          <h3><a href="repos/autoclaw-cc--xiaohongshu-skills.html">xiaohongshu-skills</a></h3>
+          <p class="muted small">autoclaw-cc/xiaohongshu-skills · skill-bundle · hybrid-skill</p>
+        </div>
+        <div><span class="badge bucket-usable">bucket: usable</span></div>
+      </header>
+      <div class="meta-row">
+        <span class="badge layer-molecule">layer: molecule</span>
+        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="badge bucket-usable">status: evaluated</span>
+      </div>
+      <p>Xiaohongshu (小红书) automation skill bundle for OpenClaw / Claude Code. 5 atomic sub-skills (xhs-auth, xhs-publish, xhs-explore, xhs-interact, xhs-content-ops) under skills/, routed by a root SKILL.md. Driven via a Chrome MV3 extension (&quot;XHS Bridge&quot;) that talks to the Python side…</p>
+      <div class="headline">No committed re-eval diff yet.</div>
+      <div class="kv">
+        <div><strong>Claims</strong>5 passed / 0 failed / 1 untested</div>
+        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Unresolved Gaps</strong>No gap report yet</div>
+        <div><strong>Areas</strong>0</div>
+      </div>
+      <div class="source-links">
+        <a href="repos/autoclaw-cc--xiaohongshu-skills.html">Open detail</a>
+        <a href="../repos/autoclaw-cc--xiaohongshu-skills/repo.yaml">repo.yaml</a>
+      </div>
+    </article>
+<article class="panel repo-card attention-medium" data-role="repo-card"
+      data-search="brokermr810--QuantDinger QuantDinger QuantDinger brokermr810 orchestrator usable evaluated"
+      data-bucket="usable"
+      data-confidence="unknown">
+      <header>
+        <div>
+          <h3><a href="repos/brokermr810--QuantDinger.html">QuantDinger</a></h3>
+          <p class="muted small">brokermr810/QuantDinger · platform · orchestrator</p>
+        </div>
+        <div><span class="badge bucket-usable">bucket: usable</span></div>
+      </header>
+      <div class="meta-row">
+        <span class="badge layer-compound">layer: compound</span>
+        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="badge bucket-usable">status: evaluated</span>
+      </div>
+      <p>Self-hosted full-stack AI quant trading platform. 4-service Docker Compose stack: postgres + redis + Flask backend (Python 3.12) + prebuilt React frontend. Adds a separate MCP server (quantdinger-mcp v0.1.0, requires-python&gt;=3.10) for Cursor / Claude Code / Codex / OpenClaw / Na…</p>
+      <div class="headline">No committed re-eval diff yet.</div>
+      <div class="kv">
+        <div><strong>Claims</strong>7 passed / 0 failed / 1 untested</div>
+        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Unresolved Gaps</strong>No gap report yet</div>
+        <div><strong>Areas</strong>0</div>
+      </div>
+      <div class="source-links">
+        <a href="repos/brokermr810--QuantDinger.html">Open detail</a>
+        <a href="../repos/brokermr810--QuantDinger/repo.yaml">repo.yaml</a>
+      </div>
+    </article>
+<article class="panel repo-card attention-medium" data-role="repo-card"
       data-search="gooseworks-ai--goose-skills goose-skills goose-skills gooseworks-ai prompt-skill usable evaluated"
       data-bucket="usable"
       data-confidence="unknown">
@@ -321,6 +381,36 @@
       <div class="source-links">
         <a href="repos/gooseworks-ai--goose-skills.html">Open detail</a>
         <a href="../repos/gooseworks-ai--goose-skills/repo.yaml">repo.yaml</a>
+      </div>
+    </article>
+<article class="panel repo-card attention-medium" data-role="repo-card"
+      data-search="remotion-dev--skills @remotion/skills skills remotion-dev prompt-skill usable evaluated"
+      data-bucket="usable"
+      data-confidence="unknown">
+      <header>
+        <div>
+          <h3><a href="repos/remotion-dev--skills.html">@remotion/skills</a></h3>
+          <p class="muted small">remotion-dev/skills · skill · prompt-skill</p>
+        </div>
+        <div><span class="badge bucket-usable">bucket: usable</span></div>
+      </header>
+      <div class="meta-row">
+        <span class="badge layer-atom">layer: atom</span>
+        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="badge bucket-usable">status: evaluated</span>
+      </div>
+      <p>Official Remotion skill bundled inside the remotion-dev monorepo. Single SKILL.md (`remotion-best-practices`, 340 lines) telling LLM agents how to write Remotion code, plus 35 reference markdown files in rules/ covering specific topics (3d, audio, captions, ffmpeg, fonts, lottie…</p>
+      <div class="headline">No committed re-eval diff yet.</div>
+      <div class="kv">
+        <div><strong>Claims</strong>4 passed / 0 failed / 1 untested</div>
+        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Unresolved Gaps</strong>No gap report yet</div>
+        <div><strong>Areas</strong>0</div>
+      </div>
+      <div class="source-links">
+        <a href="repos/remotion-dev--skills.html">Open detail</a>
+        <a href="../repos/remotion-dev--skills/repo.yaml">repo.yaml</a>
       </div>
     </article>
 <article class="panel repo-card attention-medium" data-role="repo-card"

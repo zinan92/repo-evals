@@ -1,0 +1,163 @@
+claims:
+- id: claim-001
+  title: '"Try in 2 minutes" 一键安装命令真的能装出 4 个服务'
+  source: README "Try in 2 minutes"
+  source_ref: docker-compose.yml
+  priority: critical
+  area: install
+  statement: 'docker-compose.yml 必须真有 README 描述的服务：postgres + redis + 后端
+
+    Flask + 前端（4 个 service），每个 container_name 以 quantdinger- 开头，
+
+    端口默认 bind 到 127.0.0.1（localhost-only），有 healthcheck。
+
+    '
+  business_expectation: 'README 第一条命令一次到位，4 个容器都跑起来，不用手工编排。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: '4 services in docker-compose: postgres + redis + backend + frontend; healthchecks
+    present'
+- id: claim-002
+  title: 后端基础镜像与 Python 版本声明一致
+  source: README "Python 3.10+ | Docker image 3.12"
+  source_ref: backend_api_python/Dockerfile + docker-compose.yml
+  priority: high
+  area: install-consistency
+  statement: 'docker-compose.yml backend service 的 build args.BASE_IMAGE 默认值与
+
+    backend_api_python/Dockerfile 内 ARG BASE_IMAGE 默认值一致，且都是
+
+    python:3.12-slim-bookworm —— Docker 镜像版本与 README badge 一致。
+
+    '
+  business_expectation: '不会在 build 时遇到镜像找不到 / Python 版本不对。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: 'Dockerfile ARG BASE_IMAGE matches docker-compose backend.build.args.BASE_IMAGE:
+    python:3.12-slim-bookworm'
+- id: claim-003
+  title: 多 LLM provider 支持（OpenAI / DeepSeek / Grok）真实可配
+  source: README "AI Capabilities" + env.example
+  source_ref: backend_api_python/env.example
+  priority: critical
+  area: ai-providers
+  statement: 'env.example 中存在 OPENAI_API_KEY / DEEPSEEK_API_KEY / GROK_API_KEY
+
+    三组 var，每个都有对应的 _MODEL 和 _BASE_URL。BASE_URL 可被覆盖（兼容
+
+    自己的代理 / 网关）。
+
+    '
+  business_expectation: '用户能用自己已有的任意一家 key 起跑，不绑死单一 provider。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: OpenAI + DeepSeek + Grok all with API_KEY/MODEL/BASE_URL
+- id: claim-004
+  title: 多 broker 集成在 requirements.txt 真实声明
+  source: README "Multi-Market Coverage"
+  source_ref: backend_api_python/requirements.txt
+  priority: high
+  area: brokers
+  statement: 'requirements.txt 中有 ccxt（crypto）+ ib_insync（IBKR stocks），并且
+
+    MetaTrader5（forex）在文件里至少作为 optional dep / 注释提到「Windows-only」。
+
+    yfinance / akshare / finnhub 之类的数据源也明确出现。
+
+    '
+  business_expectation: '"支持 crypto / IBKR / MT5" 不是营销词，requirements 文件兜得住。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: ccxt + ib_insync + finnhub + yfinance + akshare in requirements; MT5 Windows-only
+    note
+- id: claim-005
+  title: MCP server 是独立 Python 包，可被 AI agent 调起
+  source: README "Use it from an AI agent (Cursor / Claude Code / Codex / MCP)"
+  source_ref: mcp_server/pyproject.toml
+  priority: critical
+  area: mcp-integration
+  statement: 'mcp_server/ 是独立 pyproject.toml 的 Python 包（quantdinger-mcp），声明
+
+    `mcp` 依赖 + console_scripts entry-point；description 字段明确列出支持的
+
+    agent 名称（Cursor / Claude Code / Codex / OpenClaw / NanoBot）。
+
+    '
+  business_expectation: 'AI agent 用户照 README 的「Step 2 — Wire the MCP server」可以接上。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: quantdinger-mcp 0.1.0 with mcp>=1.2.0; supports Cursor/Claude Code/Codex/OpenClaw/NanoBot
+- id: claim-006
+  title: 默认 docker-compose 不裸暴公网（端口 bind 到 127.0.0.1）
+  source: framework
+  source_ref: docker-compose.yml::services.*.ports
+  priority: high
+  area: security
+  statement: 'postgres / redis / backend 的 ports 默认值至少 bind 到 127.0.0.1（localhost），
+
+    不是 0.0.0.0。frontend 暴露在 8888 是设计意图，但其它服务不应该默认对外。
+
+    '
+  business_expectation: '用户用默认 compose 跑起来不会立刻把 postgres/redis 裸暴公网。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: postgres/redis/backend bind 127.0.0.1 by default; frontend public-by-design
+    (8888)
+- id: claim-007
+  title: 端到端 happy path：MCP agent 触发一次回测能拿到结果
+  source: README "Step 3 — Talk to your agent"
+  source_ref: mcp_server + backend
+  priority: critical
+  area: end-to-end
+  statement: '照 README "Step 3" 在 Cursor / Claude Code 接上 MCP，问 agent 跑一个
+
+    backtest，agent 应通过 MCP 调起 backend 的回测 endpoint，并把结构化结果
+
+    返给用户。整个 chain 不需要用户手动接管。
+
+    '
+  business_expectation: 'MCP 不只是 README 上的词，AI agent 真能在一个 session 内驱动完整工作流。
+
+    '
+  evidence_needed: 'compound 级 — 需要安装 + 真实 LLM key + agent session 录像 / log。
+
+    建议 1 个 happy-path（拉行情 → 回测 → 看结果）+ 1 个故障注入（bad key
+
+    / 假 ticker）。
+
+    '
+  status: untested
+- id: claim-008
+  title: AI 生成的策略不会自动下真实订单（人工审批）
+  source: framework / 风险防护
+  source_ref: README "Live Trading and Operations"
+  priority: critical
+  area: safety
+  statement: 'README 描述 live trading 能力时，应该明确人在回路（manual approval）
+
+    或 paper-trading-first；env.example / docker-compose 里不应有「auto-fire
+
+    LLM-generated orders to live broker」的默认开关。
+
+    '
+  business_expectation: '用户在没看清楚 LLM 输出时，不会被自动下单"惊吓"。
+
+    '
+  evidence_needed: 'compound 级 — 在测试环境验证下单路径需要至少一次人工确认 step。
+
+    '
+  status: passed
+  last_run: runs/2026-05-04/run-static-checks
+  note: AGENT_LIVE_TRADING_ENABLED=false default; paper_only force-pinned per env.example

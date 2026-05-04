@@ -1,0 +1,15 @@
+.dockerignore
+.gitignore
+Dockerfile
+README.md
+app
+docker-entrypoint.sh
+env.example
+gunicorn_config.py
+migrations
+requirements-windows.txt
+requirements.txt
+run.py
+scripts
+start.sh
+tests

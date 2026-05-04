@@ -1,0 +1,5 @@
+services: 4
+  - postgres: image=${IMAGE_PREFIX:-}postgres:16-alpine ports=['${DB_PORT:-127.0.0.1:5432}:5432']
+  - redis: image=${IMAGE_PREFIX:-}redis:7-alpine ports=['${REDIS_PORT:-127.0.0.1:6379}:6379']
+  - backend: image=(local build) ports=['${BACKEND_PORT:-127.0.0.1:5000}:5000']
+  - frontend: image=(local build) ports=['${FRONTEND_PORT:-8888}:80']

@@ -1,0 +1,52 @@
+owner: remotion-dev
+repo: skills
+display_name: skills
+repo_url: https://github.com/remotion-dev/skills
+repo_type: skill
+display_name: "@remotion/skills"
+archetype: prompt-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Single SKILL.md (remotion-best-practices) plus 35 reference rule files
+# in rules/. The skill is one composable unit even though it has deep
+# reference material — atom, not molecule.
+layer: atom
+complexity: simple
+uses_areas: false
+status: evaluated
+current_bucket: usable
+last_evaluated: "2026-05-04"
+version_tested: "main@HEAD (4.0.456, private package, not on npm registry)"
+notes: |
+  Official Remotion skill bundled inside the remotion-dev monorepo.
+  Single SKILL.md (`remotion-best-practices`, 340 lines) telling LLM
+  agents how to write Remotion code, plus 35 reference markdown files
+  in rules/ covering specific topics (3d, audio, captions, ffmpeg,
+  fonts, lottie, mapbox, etc.) — total reference surface ≈ 110 KB of
+  curated guidance.
+
+  Public-facing README is one sentence ("internal package, no
+  documentation"). package.json declares `private: true` and the
+  npm registry returns 404 for `@remotion/skills/latest` — this skill
+  is consumed inside the Remotion ecosystem (likely via
+  `create-video` / Remotion CLI or monorepo wiring), not as a
+  separate `npm install`.
+
+  The repo also ships a small Remotion studio (src/Root.tsx + index.ts)
+  that loads selected rule assets as live compositions — so a few
+  rules are validated by being executed at studio time.
+
+  Atom layer: it's one skill the LLM consumes, not a chain of
+  multiple skills.
+
+product_view:
+  one_liner:
+    en: "The official @remotion/skills package — one Claude/Codex/Cursor skill (`remotion-best-practices`, 340 lines) plus 35 deep-dive markdown rules covering audio, captions, ffmpeg, fonts, lottie, mapbox, and more. Lives inside the Remotion monorepo; not published on npm; consumed by Remotion's own tooling."
+    zh: "Remotion 官方 @remotion/skills 包：一个 Claude/Codex/Cursor skill（remotion-best-practices，340 行）+ 35 个细分规则文档（audio/captions/ffmpeg/fonts/lottie/mapbox 等）。在 Remotion monorepo 里维护，没发到 npm，由 Remotion 自家工具链消费。"
+  best_for:
+    en: "Anyone using Remotion to make videos in React who wants their AI agent (Claude Code / Cursor / Codex) to follow the official Remotion best practices, not invent its own."
+    zh: "用 Remotion 在 React 里做视频、并且让 AI agent（Claude Code / Cursor / Codex）跟着官方最佳实践走、不要自由发挥的人。"
+  watch_out:
+    en: |
+      The repo's public README is one sentence ("internal package, no documentation"); the value lives inside SKILL.md and rules/. Because the package is `private: true`, you can't `npm install @remotion/skills` — to use it standalone you'd need to clone the repo and copy SKILL.md + rules/ into your AI agent's skills directory. The Root.tsx inside src/ is a Remotion studio test-harness, not a delivery surface.
+    zh: |
+      仓库公开 README 只有一句话（"internal package, no documentation"），真正的内容在 SKILL.md 和 rules/。因为 package 标了 private: true，npm 装不到 `@remotion/skills`；想单独用就得 clone 仓库把 SKILL.md + rules/ 复制到自己的 AI agent skills 目录。src/Root.tsx 是个 Remotion studio 的自测台，不是对外的产品入口。

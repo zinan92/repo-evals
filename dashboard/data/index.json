@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-04T04:17:49Z",
-  "generated_from_commit": "fe256e5",
+  "generated_at": "2026-05-04T04:30:58Z",
+  "generated_from_commit": "4acbd5d",
   "repos": [
     {
       "slug": "zarazhangrui--frontend-slides",
@@ -668,6 +668,90 @@
       "attention_level": "medium"
     },
     {
+      "slug": "autoclaw-cc--xiaohongshu-skills",
+      "display_name": "xiaohongshu-skills",
+      "owner": "autoclaw-cc",
+      "repo": "xiaohongshu-skills",
+      "repo_url": "https://github.com/autoclaw-cc/xiaohongshu-skills",
+      "repo_type": "skill-bundle",
+      "archetype": "hybrid-skill",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Xiaohongshu (小红书) automation skill bundle for OpenClaw / Claude Code. 5 atomic sub-skills (xhs-auth, xhs-publish, xhs-explore, xhs-interact, xhs-content-ops) under skills/, routed by a root SKILL.md. Driven via a Chrome MV3 extension (\"XHS Bridge\") that talks to the Python side…",
+      "repo_path": "repos/autoclaw-cc--xiaohongshu-skills",
+      "claims_summary": {
+        "total": 6,
+        "passed": 5,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 4,
+        "critical_passed": 3,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 2
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/autoclaw-cc--xiaohongshu-skills/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/autoclaw-cc--xiaohongshu-skills/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
+      "slug": "brokermr810--QuantDinger",
+      "display_name": "QuantDinger",
+      "owner": "brokermr810",
+      "repo": "QuantDinger",
+      "repo_url": "https://github.com/brokermr810/QuantDinger",
+      "repo_type": "platform",
+      "archetype": "orchestrator",
+      "layer": "compound",
+      "layer_inferred": "compound",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Self-hosted full-stack AI quant trading platform. 4-service Docker Compose stack: postgres + redis + Flask backend (Python 3.12) + prebuilt React frontend. Adds a separate MCP server (quantdinger-mcp v0.1.0, requires-python>=3.10) for Cursor / Claude Code / Codex / OpenClaw / Na…",
+      "repo_path": "repos/brokermr810--QuantDinger",
+      "claims_summary": {
+        "total": 8,
+        "passed": 7,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 5,
+        "critical_passed": 4,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 3
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/brokermr810--QuantDinger/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/brokermr810--QuantDinger/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
       "slug": "gooseworks-ai--goose-skills",
       "display_name": "goose-skills",
       "owner": "gooseworks-ai",
@@ -707,6 +791,48 @@
       "areas": [],
       "plan_path": "repos/gooseworks-ai--goose-skills/plans/2026-05-04-eval-plan.md",
       "verdict_path": "repos/gooseworks-ai--goose-skills/verdicts/2026-05-04-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
+      "slug": "remotion-dev--skills",
+      "display_name": "@remotion/skills",
+      "owner": "remotion-dev",
+      "repo": "skills",
+      "repo_url": "https://github.com/remotion-dev/skills",
+      "repo_type": "skill",
+      "archetype": "prompt-skill",
+      "layer": "atom",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Official Remotion skill bundled inside the remotion-dev monorepo. Single SKILL.md (`remotion-best-practices`, 340 lines) telling LLM agents how to write Remotion code, plus 35 reference markdown files in rules/ covering specific topics (3d, audio, captions, ffmpeg, fonts, lottie…",
+      "repo_path": "repos/remotion-dev--skills",
+      "claims_summary": {
+        "total": 5,
+        "passed": 4,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 2,
+        "critical_passed": 1,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 3
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/remotion-dev--skills/plans/2026-05-04-eval-plan.md",
+      "verdict_path": "repos/remotion-dev--skills/verdicts/2026-05-04-final-verdict.md",
       "attention_level": "medium"
     },
     {
@@ -1028,8 +1154,8 @@
     }
   ],
   "stats": {
-    "repo_count": 15,
-    "evaluated_count": 15,
+    "repo_count": 18,
+    "evaluated_count": 18,
     "planned_count": 0,
     "critical_gap_total": 19,
     "warning_gap_total": 3,
@@ -1038,7 +1164,7 @@
     "bucket_counts": {
       "recommendable": 0,
       "reusable": 2,
-      "usable": 12,
+      "usable": 15,
       "unusable": 1,
       "unknown": 0
     }
