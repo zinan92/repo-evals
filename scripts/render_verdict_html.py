@@ -260,6 +260,55 @@ def _read_yaml(path: Path) -> dict[str, Any]:
         return yaml.safe_load(f) or {}
 
 
+def _derive_verdict_input(repo: dict[str, Any], claims: list[dict[str, Any]]) -> dict[str, Any]:
+    """Build a verdict-input dict from repo.yaml + claim-map.yaml.
+
+    Without a hand-authored verdict-input.yaml sidecar, the dossier
+    used to render `bucket: unknown` even when repo.yaml already had
+    `current_bucket: usable`. This derives the same shape that
+    verdict_calculator.compute_verdict() expects, so the live
+    calculation reflects the evaluator's actual claim statuses.
+
+    Heuristics:
+      - core_layer_tested is true only for an atom layer (no deferred
+        molecule/compound work). Molecule and compound caps stay
+        active until the evaluator explicitly hand-writes a sidecar
+        with core_layer_tested: true.
+      - evidence_completeness defaults to 'partial' (we have static
+        artifacts and per-claim notes, no full live-run trace).
+
+    The evaluator can always override by hand-writing a real
+    verdict-input.yaml file — this only fills in for the missing case.
+    """
+
+    layer = str(repo.get("layer", "unknown")).strip().lower()
+    archetype = str(repo.get("archetype", "unknown")).strip().lower()
+    owner = repo.get("owner", "")
+    name = repo.get("repo", "")
+
+    # Atoms have no deferred molecule layer above them, so a fully-passed
+    # static eval is the user-facing layer. Molecule + compound layers
+    # have deferred live runs above them, so the core layer is untested.
+    core_layer_tested = (layer == "atom")
+
+    derived_claims: list[dict[str, Any]] = []
+    for c in claims:
+        derived_claims.append({
+            "id": str(c.get("id", "")),
+            "priority": str(c.get("priority", "medium")).lower(),
+            "status": str(c.get("status", "untested")).lower(),
+        })
+
+    return {
+        "repo": f"{owner}/{name}" if owner and name else (name or owner or "unknown"),
+        "archetype": archetype,
+        "core_layer_tested": core_layer_tested,
+        "evidence_completeness": "partial",
+        "claims": derived_claims,
+        "_derived": True,  # marker so reviewers know this wasn't hand-authored
+    }
+
+
 def _latest_verdict_files(repo_dir: Path, date: str | None) -> tuple[Path, Path | None]:
     verdicts_dir = repo_dir / "verdicts"
     if not verdicts_dir.exists():
@@ -291,6 +340,13 @@ def load_verdict(slug: str, date: str | None) -> VerdictData:
     md_path, input_path = _latest_verdict_files(repo_dir, date)
     verdict_md = md_path.read_text() if md_path and md_path.exists() else ""
     verdict_input = _read_yaml(input_path) if input_path else {}
+
+    # If no verdict-input.yaml sidecar exists, derive one from claim-map.yaml
+    # + repo.yaml so the dossier reflects what the evaluator actually wrote.
+    # Without this, every freshly-evaluated repo renders as `unknown` even
+    # when repo.yaml says `current_bucket: usable`.
+    if not verdict_input and claims:
+        verdict_input = _derive_verdict_input(repo, claims)
 
     # Derive date from whatever's available
     derived_date = ""

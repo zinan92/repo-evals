@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bucket="unknown">
+<html lang="en" data-bucket="usable">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -708,12 +708,12 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
     <div class="verdict-block">
       <div>
         <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="verdict-word">unknown</div>
+        <div class="verdict-word">usable</div>
       </div>
 
       <div class="verdict-meta">
         <div class="label"><span class="i18n" data-en="Confidence" data-zh="置信度"></span></div>
-        <div class="confidence"><span class="value">unknown</span><span class="layer-pill layer-compound" title="compound"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Compound" data-zh="复合物"></span></span></div>
+        <div class="confidence"><span class="value">low</span><span class="layer-pill layer-compound" title="compound"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Compound" data-zh="复合物"></span></span></div>
 
         <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 8 <span class="i18n" data-en="total" data-zh="共"></span></div>
         <div class="stats-bar"><span class="s-pass" style="flex: 7"></span><span class="s-skip" style="flex: 1"></span></div>
@@ -784,18 +784,18 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
         <div class="grid-two">
           <div class="mini-card">
             <h4><span class="i18n" data-en="Why capped" data-zh="为什么封顶"></span></h4>
-            <ul><li class="dim"><span class="i18n" data-en="none" data-zh="无"></span></li></ul>
+            <ul><li>core user-facing layer untested → capped at &#x27;usable&#x27;</li><li>hybrid-repo rule: archetype &#x27;orchestrator&#x27; requires end-to-end evaluation of the user-facing layer</li><li>evidence_completeness=&#x27;partial&#x27; (not portable) → capped at &#x27;usable&#x27;</li></ul>
           </div>
           <div class="mini-card">
             <h4><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h4>
-            <ul><li class="dim"><span class="i18n" data-en="none" data-zh="无"></span></li></ul>
+            <ul><li>only 4/5 critical claims covered</li></ul>
           </div>
         </div>
       </div>
 
       <div class="subsection">
         <h3><span class="i18n" data-en="Derivation" data-zh="推导路径"></span></h3>
-        <div class="flow"><div class="flow-row"><span class="flow-node start">archetype: orchestrator</span><span class="flow-arrow">→</span><span class="flow-node decision">core_layer_tested? <b style="color:inherit">False</b></span><span class="flow-arrow">→</span><span class="flow-node">evidence: —</span><span class="flow-arrow">→</span><span class="flow-node">recommended: unknown</span><span class="flow-arrow">→</span><span class="flow-node final">final: unknown</span></div></div>
+        <div class="flow"><div class="flow-row"><span class="flow-node start">archetype: orchestrator</span><span class="flow-arrow">→</span><span class="flow-node decision">core_layer_tested? <b style="color:inherit">False</b></span><span class="flow-arrow">→</span><span class="flow-node">evidence: partial</span><span class="flow-arrow">→</span><span class="flow-node">recommended: usable</span><span class="flow-arrow">→</span><span class="flow-node final">final: usable</span></div><div class="flow-notes"><div class="note">ceiling 1 · core user-facing layer untested → capped at &#x27;usable&#x27;</div><div class="note">ceiling 2 · hybrid-repo rule: archetype &#x27;orchestrator&#x27; requires end-to-end evaluation of the user-facing layer</div><div class="note">ceiling 3 · evidence_completeness=&#x27;partial&#x27; (not portable) → capped at &#x27;usable&#x27;</div></div></div>
       </div>
 
       <div class="subsection">
