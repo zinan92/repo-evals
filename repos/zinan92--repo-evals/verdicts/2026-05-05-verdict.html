@@ -1,0 +1,1587 @@
+<!DOCTYPE html>
+<html lang="en" data-bucket="unusable" data-category="available">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>repo-evals — verdict · repo-evals</title>
+<style>
+/* ============================================================
+   REPO-EVALS VERDICT PAGE — Editorial Dossier style
+   Pure HTML + CSS, zero external dependencies, zero JS frameworks.
+   One small inline <script> at the bottom handles language toggle.
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", "Courier New", monospace;
+
+  --bg:            #0a0908;
+  --surface-0:     #141210;
+  --surface-1:     #1c1a17;
+  --surface-2:     #26231f;
+  --border:        rgba(255, 248, 235, 0.07);
+  --border-strong: rgba(255, 248, 235, 0.16);
+
+  --text:   #f5efe6;
+  --text-2: #a6998a;
+  --text-3: #6b6157;
+
+  --bucket:      #f59e0b;
+  --bucket-bg:   rgba(245, 158, 11, 0.10);
+  --bucket-soft: rgba(245, 158, 11, 0.16);
+
+  --ok:      #4ade80;
+  --ok-bg:   rgba(74, 222, 128, 0.10);
+  --warn:    #fbbf24;
+  --warn-bg: rgba(251, 191, 36, 0.10);
+  --bad:     #f87171;
+  --bad-bg:  rgba(248, 113, 113, 0.10);
+  --skip:    #a6998a;
+  --skip-bg: rgba(166, 153, 138, 0.08);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+}
+
+html[data-bucket="usable"]        { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-bucket="reusable"]      { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-bucket="recommendable"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+/* 4-category theming (2026-05-05). Replaces the per-tier accent
+   so the page color tracks the top-level category, not the fine
+   tier inside it. */
+html[data-category="production"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-category="available"]  { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-category="risky"]      { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+/* --- Category chip (above score number) --- */
+.category-chip {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 10px 18px; margin-bottom: 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: 999px;
+}
+.category-emoji { font-size: 22px; line-height: 1; }
+.category-text { display: flex; flex-direction: column; line-height: 1.25; }
+.category-name {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--bucket); font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.category-blurb { font-size: 13px; color: var(--text-2); }
+
+/* --- Cost chip (one-line cost summary near the score) --- */
+.cost-chip {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  font-size: 14px; line-height: 1.55; color: var(--text);
+}
+.cost-label {
+  display: block;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}
+.cost-body { color: var(--text-2); }
+
+/* --- Layer strip (atom · molecule · compound) ---------------------- */
+.layer-strip-section { margin-bottom: 40px; }
+.layer-strip {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 0;
+}
+@media (max-width: 720px) {
+  .layer-strip { grid-template-columns: 1fr; }
+  .layer-strip-arrow { display: none; }
+}
+.layer-strip-card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 22px 22px 24px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: opacity .15s, border-color .15s;
+}
+.layer-strip-card.is-dim { opacity: 0.42; }
+.layer-strip-card.is-active {
+  background: var(--bucket-bg);
+  border-color: var(--bucket-soft);
+  box-shadow: 0 0 0 2px var(--bucket-soft);
+}
+.layer-strip-card.layer-atom.is-active     { --bucket: #2d7866; --bucket-bg: rgba(45,120,102,0.10); --bucket-soft: rgba(45,120,102,0.4); }
+.layer-strip-card.layer-molecule.is-active { --bucket: #5a3aa1; --bucket-bg: rgba(192,132,252,0.10); --bucket-soft: rgba(192,132,252,0.4); }
+.layer-strip-card.layer-compound.is-active { --bucket: #a13d30; --bucket-bg: rgba(248,113,113,0.10); --bucket-soft: rgba(248,113,113,0.4); }
+.layer-strip-emoji { font-size: 32px; line-height: 1; }
+.layer-strip-name {
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text); font-weight: 700;
+}
+.layer-strip-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
+.layer-strip-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); color: var(--text-3);
+  padding: 0 8px;
+}
+
+/* --- Category strip (4-zone score bar with pointer) ---------------- */
+.category-strip-section { margin-bottom: 40px; }
+.cat-strip-wrap { position: relative; margin-bottom: 14px; }
+.cat-strip {
+  display: flex; gap: 4px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cat-zone {
+  padding: 14px 14px 16px;
+  text-align: center;
+  background: var(--surface-2);
+  opacity: 0.55;
+  transition: opacity .15s;
+}
+.cat-zone.is-active { opacity: 1; }
+.cat-zone-emoji { font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.cat-zone-name {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text); font-weight: 600;
+}
+.cat-zone-range { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }
+.cat-zone-dont_use.is-active   { background: rgba(248, 113, 113, 0.18); }
+.cat-zone-risky.is-active      { background: rgba(245, 158, 11, 0.18); }
+.cat-zone-available.is-active  { background: rgba(96, 165, 250, 0.18); }
+.cat-zone-production.is-active { background: rgba(74, 222, 128, 0.18); }
+
+.cat-pointer-lane {
+  position: relative; height: 32px;
+  margin-top: 6px;
+}
+.cat-pointer {
+  position: absolute; top: 0; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--font-mono);
+}
+.cat-pointer-arrow { color: var(--bucket); font-size: 14px; line-height: 1; }
+.cat-pointer-score { font-size: 13px; color: var(--bucket); font-weight: 700; line-height: 1.2; }
+
+.cat-summary {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}
+.cat-summary-headline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-summary-emoji { font-size: 18px; }
+.cat-summary-name { font-family: var(--font-mono); font-size: 12px; color: var(--bucket); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.cat-summary-score { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.cat-summary-blurb { font-size: 14px; color: var(--text-2); }
+.cat-summary-production { --bucket: #4ade80; }
+.cat-summary-available  { --bucket: #60a5fa; }
+.cat-summary-risky      { --bucket: #f59e0b; }
+.cat-summary-dont_use   { --bucket: #f87171; }
+
+/* --- Similar repos comparison ------------------------------------- */
+.similar-section { margin-bottom: 80px; }
+.similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
+.similar-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+.similar-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.similar-card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.similar-card-name { color: var(--text); font-size: 14px; text-decoration: none; }
+.similar-card-name:hover strong { text-decoration: underline; }
+.similar-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.similar-cat-pill {
+  font-family: var(--font-mono); font-size: 10.5px; padding: 3px 9px;
+  border-radius: 999px; background: var(--surface-2); color: var(--text-2);
+  letter-spacing: 0.06em; white-space: nowrap;
+}
+.similar-cat-pill.cat-production { color: #4ade80; }
+.similar-cat-pill.cat-available  { color: #60a5fa; }
+.similar-cat-pill.cat-risky      { color: #f59e0b; }
+.similar-cat-pill.cat-dont_use   { color: #f87171; }
+.similar-layer-pill {
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 8px;
+  border-radius: 4px; background: var(--surface-2); color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.similar-layer-pill.layer-atom     { color: #6cae9d; }
+.similar-layer-pill.layer-molecule { color: #c084fc; }
+.similar-layer-pill.layer-compound { color: #f87171; }
+
+.similar-row {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 12px; padding: 8px 0; border-top: 1px solid var(--border);
+}
+.similar-row:first-of-type { border-top: 0; }
+.similar-row-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); padding-top: 2px; line-height: 1.55;
+}
+.similar-row-body { font-size: 13px; line-height: 1.55; color: var(--text-2); white-space: pre-wrap; }
+.similar-row-this  .similar-row-label { color: var(--ok); }
+.similar-row-other .similar-row-label { color: #c084fc; }
+
+.similar-pending {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+.similar-pending-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.similar-pending-row {
+  font-size: 13.5px; line-height: 1.55;
+  color: var(--text-2); white-space: pre-wrap;
+}
+.similar-pending-row + .similar-pending-row { margin-top: 8px; }
+
+/* --- Workflow diagram (atom / molecule / compound) ----------------- */
+.workflow-diagram-section { margin-bottom: 80px; }
+.wd-why {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.wd-why-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 6px;
+}
+.wd-why-body { font-size: 14px; color: var(--text-2); line-height: 1.55; white-space: pre-wrap; }
+
+.wd-legend {
+  list-style: none; padding: 0; margin: 0 0 14px;
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.wd-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.wd-legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.wd-legend-atom     { background: rgba(96, 165, 250, 0.4); }
+.wd-legend-decision { background: rgba(251, 191, 36, 0.55); transform: rotate(45deg); }
+.wd-legend-start    { background: rgba(166, 153, 138, 0.5); border-radius: 5px; }
+
+.wd-canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  overflow-x: auto;
+}
+.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+
+.wd-shape { stroke-width: 1.5; }
+.wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
+.wd-molecule { fill: rgba(192, 132, 252, 0.10); stroke: rgba(192, 132, 252, 0.55); }
+.wd-decision { fill: rgba(251, 191, 36, 0.18); stroke: rgba(251, 191, 36, 0.85); stroke-width: 2; }
+.wd-start    { fill: rgba(166, 153, 138, 0.18); stroke: rgba(166, 153, 138, 0.65); }
+.wd-end      { fill: rgba(74, 222, 128, 0.14);  stroke: rgba(74, 222, 128, 0.6); }
+
+.wd-canvas svg { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+.wd-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-anchor: middle;
+  fill: var(--text);
+  letter-spacing: 0.01em;
+}
+/* SVG text language toggle — pseudo-elements don't work in SVG, so
+   we duplicate text in EN + ZH and toggle display based on <html lang>. */
+.wd-lang-en, .wd-lang-zh { display: none; }
+html[lang="en"] .wd-lang-en { display: block; }
+html[lang="zh"] .wd-lang-zh { display: block; }
+/* CJK gets a slightly smaller size + tighter tracking so 4-character
+   labels feel even-density next to 2-character labels. */
+html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
+.wd-edge { fill: none; stroke: rgba(166, 153, 138, 0.6); stroke-width: 1.6; }
+.wd-edge-dashed { stroke-dasharray: 5,4; }
+.wd-arrowhead { fill: rgba(166, 153, 138, 0.85); }
+
+.wd-edge-label-bg {
+  fill: var(--surface-1); stroke: var(--border); stroke-width: 1;
+}
+.wd-edge-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
+/* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
+.benefits-section { margin-bottom: 80px; }
+.benefits-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 720px) {
+  .benefits-grid { grid-template-columns: 1fr; }
+}
+.benefit-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.benefit-card.benefit-without {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.15);
+}
+.benefit-card.benefit-with {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}
+.benefit-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
+}
+.benefit-icon { font-size: 16px; }
+.benefit-body {
+  font-size: 15px; line-height: 1.62;
+  color: var(--text); white-space: pre-wrap;
+}
+
+/* Concrete usage examples (lives inside the benefits section) */
+.usex-block { margin-top: 28px; }
+.usex-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 12px;
+}
+.usex-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.usex-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.usex-row { display: flex; flex-direction: column; gap: 4px; }
+.usex-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+}
+.usex-body { font-size: 13.5px; line-height: 1.55; color: var(--text); }
+.usex-row.usex-quote .usex-body {
+  margin: 0; padding: 10px 14px;
+  border-left: 3px solid var(--bucket);
+  background: var(--bucket-bg);
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--text); border-radius: 0 4px 4px 0;
+  font-style: normal;
+}
+.usex-row.usex-quote .usex-body::before { content: "\201C"; color: var(--bucket); margin-right: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-quote .usex-body::after { content: "\201D"; color: var(--bucket); margin-left: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-what .usex-body { color: var(--text-2); }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 1200px 800px at 70% -10%, var(--bucket-bg), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 0% 100%, rgba(255,248,235,0.025), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+main { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 32px 120px; }
+
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 0 48px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.wordmark { color: var(--text-2); font-weight: 600; }
+.wordmark .dot { color: var(--bucket); }
+
+.lang-toggle { display: inline-flex; gap: 2px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px; padding: 3px; }
+.lang-toggle button {
+  background: transparent; border: 0; cursor: pointer;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  color: var(--text-3); padding: 5px 12px; border-radius: 999px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: color 0.15s, background 0.15s;
+}
+.lang-toggle button:hover { color: var(--text); }
+html[lang="en"] .lang-toggle button[data-lang="en"],
+html[lang="zh"] .lang-toggle button[data-lang="zh"] {
+  background: var(--text); color: var(--bg);
+}
+
+.hero { padding: 16px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
+
+.eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.16em; margin-bottom: 32px;
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}
+.eyebrow .sep { color: var(--border-strong); }
+
+h1.repo-title {
+  font-size: clamp(40px, 6vw, 68px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  margin: 0 0 14px;
+  color: var(--text);
+}
+.repo-slug {
+  font-family: var(--font-mono); font-size: 14px;
+  color: var(--text-2); margin-bottom: 36px;
+}
+.repo-slug::before { content: "↳ "; color: var(--text-3); }
+
+.tagline {
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.45; font-weight: 400;
+  color: var(--text); max-width: 62ch;
+  margin: 0;
+}
+
+.verdict-block { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }
+@media (max-width: 720px) { .verdict-block { grid-template-columns: 1fr; gap: 40px; } }
+
+.verdict-word {
+  font-size: clamp(80px, 14vw, 168px);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.85;
+  color: var(--bucket);
+  text-transform: lowercase;
+  margin: 0;
+  position: relative;
+  padding-right: 0.1em;
+}
+.verdict-word::after {
+  content: "";
+  display: inline-block;
+  width: 0.18em; height: 0.18em;
+  background: var(--bucket);
+  border-radius: 50%;
+  margin-left: 0.08em;
+  margin-bottom: 0.08em;
+  vertical-align: baseline;
+}
+
+.verdict-meta { padding-bottom: 14px; }
+.verdict-meta .label {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}
+.verdict-meta .confidence {
+  font-family: var(--font-mono); font-size: 15px;
+  color: var(--text); margin-bottom: 28px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.verdict-meta .confidence .value { color: var(--bucket); font-weight: 700; }
+.verdict-meta .layer-row { margin-bottom: 18px; }
+
+/* --- 0-100 score hero ----------------------------------------------- */
+
+.score-hero { margin: 0; }
+.score-hero-row {
+  display: flex; align-items: baseline; gap: 16px;
+  flex-wrap: wrap;
+}
+.score-emoji { font-size: 60px; line-height: 1; }
+.score-num {
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(80px, 12vw, 144px); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 0.85;
+}
+.score-denom {
+  font-family: var(--font-mono); font-size: 16px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.score-tier {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+  margin-top: 4px;
+}
+.score-blurb {
+  margin: 14px 0 0; max-width: 60ch;
+  color: var(--text-2); font-size: 16px; line-height: 1.55;
+}
+
+/* tier-driven accent — overrides --bucket */
+.score-hero.tier-recommend  .score-num { color: #4ade80; }
+.score-hero.tier-team       .score-num { color: #60a5fa; }
+.score-hero.tier-self       .score-num { color: #c084fc; }
+.score-hero.tier-try        .score-num { color: #f59e0b; }
+.score-hero.tier-risky      .score-num { color: #f87171; }
+.score-hero.tier-broken     .score-num { color: #f87171; }
+
+/* --- score breakdown (collapsible) ---------------------------------- */
+
+details.score-breakdown {
+  margin-top: 22px; border: 1px solid var(--border);
+  border-radius: 10px; padding: 0;
+}
+details.score-breakdown > summary {
+  list-style: none; cursor: pointer;
+  padding: 10px 14px; font-family: var(--font-mono);
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--text-3);
+}
+details.score-breakdown > summary::-webkit-details-marker { display: none; }
+details.score-breakdown > summary::after {
+  content: "+"; float: right; font-weight: 700;
+}
+details.score-breakdown[open] > summary::after { content: "−"; }
+.breakdown-table { width: 100%; border-collapse: collapse; }
+.breakdown-table th, .breakdown-table td {
+  padding: 8px 14px; border-top: 1px solid var(--border);
+  font-size: 13px; text-align: left;
+}
+.breakdown-table th { font-weight: 500; color: var(--text-2); width: 60%; }
+.breakdown-table td.num {
+  text-align: right; font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums; color: var(--text);
+}
+
+/* --- ✅ / ❌ scenarios section -------------------------------------- */
+
+.scenarios-section { margin: 24px 0 56px; }
+.scenarios {
+  list-style: none; padding: 0; margin: 12px 0 0;
+  display: grid; gap: 10px;
+}
+.scenario {
+  display: flex; gap: 12px; padding: 12px 16px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface-1); align-items: baseline;
+  font-size: 15px; line-height: 1.55;
+}
+.scenario-mark { font-size: 18px; flex-shrink: 0; }
+.scenario-yes { border-left: 3px solid #4ade80; }
+.scenario-no  { border-left: 3px solid #f87171; color: var(--text-2); }
+
+/* --- Deployment + 3rd-party services section ------------------------ */
+
+.deployment-section { margin: 24px 0 48px; }
+.deploy-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 12px;
+}
+@media (max-width: 720px) { .deploy-grid { grid-template-columns: 1fr; } }
+
+.deploy-card, .services-card {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+}
+.card-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 10px;
+}
+.card-headline { margin-bottom: 14px; }
+
+.deploy-status {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}
+.deploy-status.status-good { color: #4ade80; }
+.deploy-status.status-bad { color: #f87171; }
+
+.install-table {
+  width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 14px;
+}
+.install-table th, .install-table td {
+  padding: 8px 10px; border-top: 1px solid var(--border);
+  text-align: left; vertical-align: top; font-size: 13px;
+}
+.install-table th {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-weight: 600;
+}
+.install-table td code { font-size: 12px; word-break: break-word; }
+
+.install-table .badge {
+  display: inline-block; padding: 1px 7px; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.install-table .complexity-easy { color: #4ade80; border-color: rgba(74,222,128,.3); }
+.install-table .complexity-moderate { color: #f59e0b; border-color: rgba(245,158,11,.3); }
+.install-table .complexity-hard { color: #f87171; border-color: rgba(248,113,113,.3); }
+
+.deploy-flags { list-style: none; padding: 0; margin: 8px 0 0; }
+.deploy-flags li {
+  padding: 6px 0; font-size: 13px; color: var(--text-2);
+  display: flex; gap: 10px; align-items: baseline;
+}
+.flag-icon { flex-shrink: 0; }
+
+.service-card {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px;
+  background: var(--surface-2);
+}
+.service-card:last-child { margin-bottom: 0; }
+.service-head {
+  display: flex; justify-content: space-between;
+  gap: 12px; align-items: flex-start;
+}
+.service-name { font-weight: 600; color: var(--text); font-size: 14px; }
+.service-purpose {
+  font-size: 12px; color: var(--text-2);
+  margin-top: 2px; line-height: 1.45;
+}
+.service-pills {
+  display: flex; flex-direction: column;
+  gap: 4px; flex-shrink: 0; align-items: flex-end;
+}
+.service-pill {
+  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.service-pill.status-must  { background: rgba(248,113,113,.14); color: #f87171; }
+.service-pill.status-opt   { background: var(--surface-1); color: var(--text-3); }
+.service-pill.status-paid  { background: rgba(245,158,11,.14); color: #f59e0b; }
+.service-pill.status-free  { background: rgba(96,165,250,.14); color: #60a5fa; }
+.service-pill.status-signup { background: rgba(192,132,252,.14); color: #c084fc; }
+.service-pill.status-easy  { background: rgba(74,222,128,.14); color: #4ade80; }
+
+.service-cost {
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px; color: var(--text-2); line-height: 1.5;
+}
+
+.stats-bar {
+  display: flex; height: 10px; border-radius: 999px;
+  overflow: hidden; background: var(--surface-1);
+  border: 1px solid var(--border);
+  min-width: 280px; max-width: 420px;
+}
+.stats-bar span { display: block; height: 100%; }
+.stats-bar .s-pass { background: var(--ok); }
+.stats-bar .s-warn { background: var(--warn); }
+.stats-bar .s-bad  { background: var(--bad); }
+.stats-bar .s-skip { background: var(--skip); }
+
+.stats-legend {
+  display: flex; gap: 20px; margin-top: 14px;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2); flex-wrap: wrap;
+}
+.stats-legend .item { display: inline-flex; align-items: center; gap: 6px; }
+.stats-legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.stats-legend .num { color: var(--text); font-weight: 700; }
+
+.pull-quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 96px; }
+@media (max-width: 720px) { .pull-quotes { grid-template-columns: 1fr; } }
+
+.pull {
+  padding: 28px 32px;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  border-top: 3px solid;
+  position: relative;
+}
+.pull.best   { border-top-color: var(--ok); }
+.pull.watch  { border-top-color: var(--warn); }
+.pull .kicker {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 14px; font-weight: 700;
+}
+.pull.best .kicker  { color: var(--ok); }
+.pull.watch .kicker { color: var(--warn); }
+.pull .body { font-size: 16px; line-height: 1.55; color: var(--text); }
+
+.section-head {
+  display: flex; align-items: baseline; gap: 16px;
+  margin-bottom: 36px; padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-head h2 {
+  font-size: 32px; font-weight: 700;
+  letter-spacing: -0.022em; margin: 0;
+}
+.section-head .count {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+section { margin-bottom: 56px; }
+
+.capabilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+}
+
+.capability-card {
+  position: relative;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 24px 24px 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+.capability-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+
+.capability-card::before {
+  content: ""; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--skip);
+}
+.capability-card.status-passed::before,
+.capability-card.status-passed_with_concerns::before { background: var(--ok); }
+.capability-card.status-partial::before { background: var(--warn); }
+.capability-card.status-failed::before,
+.capability-card.status-failed_partial::before { background: var(--bad); }
+.capability-card.status-untested::before { background: var(--skip); }
+
+.cap-header {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.cap-badge {
+  padding: 3px 9px; border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 10px;
+  background: var(--skip-bg); color: var(--skip);
+}
+.capability-card.status-passed .cap-badge,
+.capability-card.status-passed_with_concerns .cap-badge { background: var(--ok-bg); color: var(--ok); }
+.capability-card.status-partial .cap-badge { background: var(--warn-bg); color: var(--warn); }
+.capability-card.status-failed .cap-badge,
+.capability-card.status-failed_partial .cap-badge { background: var(--bad-bg); color: var(--bad); }
+.capability-card.status-untested .cap-badge { background: var(--skip-bg); color: var(--skip); }
+
+.cap-id { margin-left: auto; color: var(--text-3); }
+
+.cap-title {
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.015em; line-height: 1.25;
+  color: var(--text); margin: 4px 0 0;
+}
+.cap-description {
+  font-size: 14px; line-height: 1.55;
+  color: var(--text-2); margin: 0;
+}
+.cap-skip {
+  margin-top: 4px;
+  font-size: 12.5px; color: var(--text-3);
+  font-family: var(--font-mono); line-height: 1.55;
+  padding: 10px 12px;
+  background: var(--surface-1);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--border-strong);
+  white-space: pre-wrap;
+}
+
+details.section-fold {
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+details.section-fold[open] { border-color: var(--border-strong); }
+details.section-fold > summary {
+  padding: 22px 28px;
+  cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.14em;
+  font-weight: 600; user-select: none;
+  list-style: none;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+details.section-fold > summary::-webkit-details-marker { display: none; }
+details.section-fold > summary::after {
+  content: "+"; font-family: var(--font-mono);
+  font-size: 18px; color: var(--text-3);
+  transition: transform 0.2s;
+  display: inline-block; line-height: 1;
+}
+details.section-fold[open] > summary::after { transform: rotate(45deg); color: var(--text); }
+details.section-fold > summary:hover { color: var(--text); background: var(--surface-1); }
+details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var(--border); }
+
+.subsection { margin: 28px 0; }
+.subsection h3 {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-3); font-weight: 700;
+  margin: 0 0 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .grid-two { grid-template-columns: 1fr; } }
+
+.mini-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+}
+.mini-card h4 {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 0 0 12px; font-weight: 700;
+}
+.mini-card ul { margin: 0; padding: 0; list-style: none; }
+.mini-card li {
+  padding: 8px 0; font-size: 14px; color: var(--text-2);
+  border-bottom: 1px dashed var(--border);
+  line-height: 1.5;
+}
+.mini-card li:last-child { border-bottom: 0; padding-bottom: 0; }
+.mini-card li:first-child { padding-top: 0; }
+
+/* --- Layer (atom / molecule / compound) section -------------------- */
+
+.layer-pill {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--surface-1); border: 1px solid var(--border-strong);
+  font-family: var(--font-mono); font-size: 12px;
+  margin-left: 12px;
+}
+.layer-pill-eyebrow {
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-size: 10px;
+}
+.layer-pill.layer-atom     { border-color: #4a9d8a; color: #2d7866; }
+.layer-pill.layer-molecule { border-color: #7a5fb8; color: #5a3aa1; }
+.layer-pill.layer-compound { border-color: #c75441; color: #a13d30; }
+
+.layer-hero {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px 28px; margin-bottom: 22px;
+}
+.layer-hero-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}
+.layer-hero-name {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 32px; font-weight: 700; line-height: 1.1;
+  margin-bottom: 10px;
+}
+.layer-hero-name.layer-atom     { color: #2d7866; }
+.layer-hero-name.layer-molecule { color: #5a3aa1; }
+.layer-hero-name.layer-compound { color: #a13d30; }
+.layer-hero-summary { font-size: 16px; color: var(--text-2); line-height: 1.55; max-width: 70ch; }
+.layer-hero-source { margin-top: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--text-3); }
+
+.layer-stack { display: grid; gap: 18px; margin-bottom: 28px; }
+
+.layer-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+}
+.layer-card-head {
+  display: flex; align-items: baseline;
+  justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.layer-card-head h3 {
+  margin: 0;
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}
+.layer-card-tag {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-3); padding: 2px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+}
+.layer-card-summary { color: var(--text-2); margin: 4px 0 14px; line-height: 1.55; }
+
+.layer-card.layer-card-atom     { border-left: 3px solid #4a9d8a; }
+.layer-card.layer-card-molecule { border-left: 3px solid #7a5fb8; }
+.layer-card.layer-card-compound { border-left: 3px solid #c75441; }
+
+.layer-dim-table { width: 100%; border-collapse: collapse; }
+.layer-dim-table th, .layer-dim-table td {
+  text-align: left; padding: 10px 12px;
+  border-top: 1px solid var(--border); vertical-align: top;
+  font-size: 14px; line-height: 1.55;
+}
+.layer-dim-table th {
+  width: 28%; font-weight: 600; color: var(--text);
+}
+.layer-dim-table td { color: var(--text-2); }
+.layer-dim-table th code {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 2px 6px; border-radius: 4px;
+}
+
+.layer-experiments {
+  margin-top: 28px; padding-top: 22px;
+  border-top: 1px dashed var(--border);
+}
+.layer-experiments-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}
+.layer-experiments-intro {
+  color: var(--text-2); margin: 0 0 18px; max-width: 70ch; line-height: 1.55;
+}
+
+.layer-experiment {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px; margin-bottom: 14px;
+}
+.layer-experiment-head {
+  display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px;
+}
+.layer-experiment-num {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3);
+  padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px;
+}
+.layer-experiment h4 {
+  margin: 0; font-family: var(--font-display, var(--font-serif));
+  font-size: 17px; font-weight: 700;
+}
+.layer-experiment-label {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 12px 0 6px;
+}
+.layer-experiment-prompt {
+  margin: 0 0 4px; padding: 12px 16px;
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface-2);
+  font-family: var(--font-serif); font-size: 14px; font-style: italic;
+  color: var(--text); line-height: 1.55;
+}
+.layer-experiment-watch {
+  margin: 0 0 4px; padding: 0 0 0 18px;
+}
+.layer-experiment-watch li { padding: 4px 0; color: var(--text-2); line-height: 1.5; }
+.layer-experiment-meta {
+  margin-top: 10px; font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3);
+}
+
+.flow {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+  overflow-x: auto;
+}
+.flow-row {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 13px;
+}
+.flow-node {
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+.flow-node.start { color: var(--text-2); }
+.flow-node.decision { background: var(--warn-bg); color: var(--warn); border-color: var(--warn); }
+.flow-node.final { background: var(--bucket-bg); color: var(--bucket); border-color: var(--bucket); font-weight: 700; }
+.flow-arrow { color: var(--text-3); font-family: var(--font-mono); }
+.flow-notes { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--border); }
+.flow-notes .note {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); padding: 4px 0; line-height: 1.5;
+}
+.flow-notes .note::before {
+  content: "▸"; color: var(--warn);
+  margin-right: 8px;
+}
+
+.metric-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+@media (max-width: 640px) { .metric-tiles { grid-template-columns: 1fr; } }
+.metric-tile {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 20px;
+}
+.metric-tile .mt-label {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 14px;
+}
+.metric-tile .mt-value {
+  font-size: 38px; font-weight: 800;
+  letter-spacing: -0.025em; line-height: 1;
+  color: var(--text); font-variant-numeric: tabular-nums;
+}
+.metric-tile .mt-unit { font-size: 16px; color: var(--text-3); font-weight: 500; margin-left: 4px; }
+.metric-tile .mt-bar {
+  margin-top: 14px; height: 4px;
+  background: var(--surface-2); border-radius: 2px; overflow: hidden;
+}
+.metric-tile .mt-bar-fill { height: 100%; background: var(--bucket); border-radius: 2px; }
+.metric-tile .mt-compare {
+  margin-top: 10px; font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.claims-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.claims-table th, .claims-table td {
+  text-align: left; padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.claims-table th {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 700;
+  background: var(--surface-1);
+}
+.claims-table td.c-id { font-family: var(--font-mono); color: var(--text-2); white-space: nowrap; }
+.claims-table td.c-title { color: var(--text); }
+.claims-table td.c-status { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
+.claims-table td.c-skip { font-size: 12px; color: var(--text-3); white-space: pre-wrap; line-height: 1.5; max-width: 320px; }
+.claims-table tr.prio-critical td.c-id::before { content: "◆"; color: var(--bad); margin-right: 6px; }
+.claims-table tr.prio-high td.c-id::before     { content: "◆"; color: var(--warn); margin-right: 6px; }
+.claims-table tr.prio-medium td.c-id::before   { content: "◆"; color: var(--text-2); margin-right: 6px; }
+.claims-table tr.prio-low td.c-id::before      { content: "◆"; color: var(--text-3); margin-right: 6px; }
+
+.prio-pill {
+  display: inline-block; font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 8px; border-radius: 3px; text-transform: uppercase;
+  letter-spacing: 0.08em; font-weight: 700;
+}
+.prio-pill.critical { background: var(--bad-bg); color: var(--bad); }
+.prio-pill.high     { background: var(--warn-bg); color: var(--warn); }
+.prio-pill.medium   { background: var(--surface-2); color: var(--text-2); }
+.prio-pill.low      { background: var(--surface-2); color: var(--text-3); }
+
+.run-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  margin-bottom: 12px;
+}
+.run-card h3 { font-family: var(--font-mono); font-size: 14px; margin: 0; color: var(--text); }
+.run-card .run-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); margin: 4px 0 16px; }
+.run-metrics { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.run-metric {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 6px 12px;
+  border-radius: var(--radius-sm); color: var(--text-2);
+}
+.run-metric b { color: var(--text-3); font-weight: 500; margin-right: 6px; }
+.run-metric .v { color: var(--text); font-weight: 600; }
+.run-rbc { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.run-rbc li {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-2); padding: 4px 8px;
+  border-radius: 3px; color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.run-rbc li.pass    { border-left: 2px solid var(--ok); }
+.run-rbc li.partial { border-left: 2px solid var(--warn); }
+.run-rbc li.fail    { border-left: 2px solid var(--bad); }
+.run-rbc li.skip    { border-left: 2px solid var(--skip); }
+
+pre.md {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+pre.md code { color: var(--text); }
+
+footer {
+  margin-top: 80px; padding-top: 32px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+footer a { color: var(--text-2); text-decoration: none; border-bottom: 1px solid var(--border); }
+footer a:hover { color: var(--text); border-color: var(--text-3); }
+
+.dim { color: var(--text-3); }
+
+/* i18n — dual-language content swap */
+.i18n::before { content: attr(data-en); }
+html[lang="zh"] .i18n::before { content: attr(data-zh); }
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:            #fbf8f3;
+    --surface-0:     #ffffff;
+    --surface-1:     #f6f1e9;
+    --surface-2:     #ede6d9;
+    --border:        rgba(20, 18, 14, 0.07);
+    --border-strong: rgba(20, 18, 14, 0.16);
+    --text:   #1a1714;
+    --text-2: #5c5246;
+    --text-3: #8a7e6f;
+    --skip:    #8a7e6f;
+    --skip-bg: rgba(138, 126, 111, 0.10);
+  }
+}
+
+@media (max-width: 720px) {
+  main { padding: 0 20px 80px; }
+  .hero { padding: 8px 0 48px; margin-bottom: 48px; }
+  section { margin-bottom: 64px; }
+  h1.repo-title { font-size: 40px; }
+  .tagline { margin-bottom: 48px; }
+  .section-head h2 { font-size: 24px; }
+  .capabilities-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<main>
+
+  <div class="topbar">
+    <div class="wordmark">repo<span class="dot">·</span>evals</div>
+    <div class="lang-toggle" aria-label="language toggle">
+      <button data-lang="en" onclick="setLang('en')">EN</button>
+      <button data-lang="zh" onclick="setLang('zh')">中</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">
+      <span class="i18n" data-en="Verdict report" data-zh="评测结论"></span>
+      <span class="sep">·</span>
+      <span>2026-05-05</span>
+      <span class="sep">·</span><span>main@b94031e</span>
+    </div>
+
+    <h1 class="repo-title">repo-evals</h1>
+    <div class="repo-slug">zinan92/repo-evals</div>
+
+    <p class="tagline"><span class="i18n" data-en="A claim-first evaluation framework that turns &quot;is this skill / repo any good?&quot; into a 0-100 score with a bilingual dossier — auditable point-by-point, comparable to the 30 other repos already evaluated under the same model." data-zh="一个 claim-first 的评测框架,把&quot;这个 skill / repo 到底能不能用?&quot;变成一份带 0-100 分的双语 dossier —— 每一分可以追到证据,可以跟我们已经评测过的 30 个 repo 横向对比。"></span></p>
+
+  </header>
+
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一层?"></span></h2></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+
+  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:55%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">55</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 55 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div></section>
+
+  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-icon">👤</span><span class="i18n" data-en="Who this is for" data-zh="谁会用上它"></span></div><div class="benefit-body"><span class="i18n" data-en="Someone with a backlog of &quot;should I depend on this?&quot; decisions and not enough time to read every repo deeply. Typically: a developer / lead picking between skill bundles for their team, a content creator picking between AI-generation tools, an indie hacker auditing their own work before publishing." data-zh="手里堆着一堆&quot;我该不该依赖它?&quot;决策、却没时间逐个读完仓库的人。典型: 给团队挑 skill 合集的开发者 / leader、在 AI 生成工具之间纠结的内容创作者、要发布前先审自己作品的独立开发者。"></span></div></article>
+<article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-icon">🎯</span><span class="i18n" data-en="When you'd reach for it" data-zh="什么时候用上"></span></div><div class="benefit-body"><span class="i18n" data-en="You&#x27;re about to commit budget / install / brand to a new tool — a crawler library for a research project, a methodology bundle for your team&#x27;s coding agent, a slide-generator for next month&#x27;s workshop. You want a structured &quot;is this real?&quot; check, not a vibe." data-zh="你准备投入(预算 / 安装 / 品牌)到一个新工具 —— 给研究项目挑爬虫库、给团队 coding agent 挑方法论合集、给下个月 workshop 挑 deck 生成器。你想要一份结构化的&quot;它是真的吗?&quot;检查,不只是凭感觉。"></span></div></article>
+<article class="benefit-card benefit-without"><div class="benefit-eyebrow"><span class="benefit-icon">😩</span><span class="i18n" data-en="What you'd do without it" data-zh="没它的时候怎么办"></span></div><div class="benefit-body"><span class="i18n" data-en="You skim the README + count GitHub stars + glance at &quot;last commit&quot; date. You miss real defects (missing LICENSE, broken core feature, signing helper that breaks weekly) until you&#x27;ve already integrated the tool into your workflow. By the time you find out, switching costs are sunk." data-zh="你扫一眼 README + 看 GitHub stars + 瞄一下&quot;最近一次提交&quot;。真问题(缺 LICENSE / 核心功能坏了 / 签名辅助每周失效)往往要等你已经把工具集成到工作流里才发现。等你发现,迁移成本已经埋下去了。"></span></div></article>
+<article class="benefit-card benefit-with"><div class="benefit-eyebrow"><span class="benefit-icon">✨</span><span class="i18n" data-en="What having it changes" data-zh="有它之后变化在哪"></span></div><div class="benefit-body"><span class="i18n" data-en="You get a structured one-page dossier: layer (atom / molecule / compound), 0-100 score with a 4-zone band, what the workflow actually looks like, who would reach for it and when, what specifically goes wrong, and how it stacks up against alternatives we&#x27;ve already evaluated. Every score is auditable; every claim has a status. You can disagree with the verdict but you have to do it on the evidence." data-zh="你拿到一份结构化的单页 dossier: 层级(原子 / 分子 / 复合物)、0-100 分加 4 档可用性带、工作流实际长啥样、谁会用 + 什么时候用、具体哪里会坏、跟我们已经评测过的同类比哪个更好。每一分可审计;每条 claim 有状态。你可以不认同结论,但必须基于证据反对。"></span></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A team lead picking between three &quot;skill catalogue&quot; repos to recommend to their team" data-zh="团队 leader 在三个&quot;skill 合集&quot;repo 之间挑选,要给团队推荐用哪个"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Eval each of obra/superpowers, HughYau/qiushi-skill, and remotion-dev/skills under repo-evals — I want a side-by-side I can show the team" data-zh="在 repo-evals 框架下分别评测 obra/superpowers、HughYau/qiushi-skill、remotion-dev/skills,我想要一份能给团队看的对比"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Each gets a dossier with layer + score + 4-card benefits + workflow diagram + watch-outs. The master dashboard lets you sort/filter the three side-by-side. The &quot;similar repos&quot; cross-links each dossier to the other two with explicit &quot;X wins at / Y wins at&quot; trade-offs." data-zh="每个仓库出一份 dossier,带层级 + 分数 + 4 卡 benefits + 工作流图 + 注意事项。master dashboard 可以排序/过滤这三个并排看。&quot;similar repos&quot;会在三份 dossier 之间互相打交叉链接,明确说&quot;X 在哪强 / Y 在哪强&quot;。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A solo dev who just released a public skill, wants to audit it before promoting on Twitter" data-zh="刚发布了一个公开 skill 的独立开发者,推上分享前想先自检"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Eval my own zinan92/content-extractor under the framework — I want to see what I&#x27;d flag if it were someone else&#x27;s" data-zh="在框架下评测我自己的 zinan92/content-extractor —— 我想看看如果是别人写的,我会标出哪些问题"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="You write 6-10 claims, run the static checks, get a verdict. The dossier surfaces real defects honestly (your repo lands in 🛑 Don&#x27;t use 29 because the core feature is broken). You either fix the defects or write a watch_out before promoting." data-zh="你写 6-10 条 claim,跑静态检查,出 verdict。dossier 老实地暴露问题(你的 repo 落在 🛑 不可使用 29 分,因为核心功能坏了)。你要么修问题,要么发推前先写一份 watch_out。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A maintainer of an existing eval framework comparing notes on methodology" data-zh="某个已有评测框架的维护者,想交流方法论"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Show me how repo-evals scores three repos I already evaluated — I want to see where our score models diverge" data-zh="给我看 repo-evals 怎么给我已评过的三个 repo 打分 —— 我想看看两个评分模型在哪里分歧"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Each repo&#x27;s dossier shows the 6-component breakdown (base / static_eval / maintainer / ecosystem / layer_bonus / penalties). You can challenge any single number. The breakdown is the API for methodology debate — not &quot;we think it&#x27;s an 8/10&quot; but &quot;you can see we gave −5 for missing LICENSE on a 50K+-star project; do you weight that differently?&quot;" data-zh="每份 dossier 显示 6 个组件的分数明细(base / static_eval / maintainer / ecosystem / layer_bonus / penalties)。你可以挑战任何一个数字。明细就是方法论讨论的 API —— 不再是&quot;我们觉得 8/10&quot;,而是&quot;你能看到我们给 50K+ 星项目缺 LICENSE 扣了 -5;你权重不同吗?&quot;"></span></span></div></article></div></div></section>
+
+  
+
+  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is molecule" data-zh="为什么是分子"></span></div><div class="wd-why-body"><span class="i18n" data-en="Molecule — a fixed pipeline of atom-level Python scripts. The
+evaluator (a human) runs each step in order; no LLM decides at
+runtime which step fires next. claim-extraction is helper-only;
+the score → render → dashboard chain is fully deterministic.
+" data-zh="Molecule — a fixed pipeline of atom-level Python scripts. The
+evaluator (a human) runs each step in order; no LLM decides at
+runtime which step fires next. claim-extraction is helper-only;
+the score → render → dashboard chain is fully deterministic.
+"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 1528 104" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M204,52.0 C244.0,52.0 244.0,52.0 284,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M464,52.0 C504.0,52.0 504.0,52.0 544,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M724,52.0 C764.0,52.0 764.0,52.0 804,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M984,52.0 C1024.0,52.0 1024.0,52.0 1064,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M1244,52.0 C1284.0,52.0 1284.0,52.0 1324,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="24" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-start"/><text x="114.0" y="49.0" class="wd-label wd-lang-en">new-repo-eval.sh</text><text x="114.0" y="49.0" class="wd-label wd-lang-zh">new-repo-eval.sh</text><text x="114.0" y="63.0" class="wd-label wd-lang-en">(scaffold dirs)</text><text x="114.0" y="63.0" class="wd-label wd-lang-zh">(生成目录)</text></g><g class="wd-node wd-type-atom"><rect x="284" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="374.0" y="49.0" class="wd-label wd-lang-en">Author claim-map.yaml</text><text x="374.0" y="49.0" class="wd-label wd-lang-zh">手写 claim-map.yaml</text><text x="374.0" y="63.0" class="wd-label wd-lang-en">(human, 30-60 min)</text><text x="374.0" y="63.0" class="wd-label wd-lang-zh">(人工 30-60 分钟)</text></g><g class="wd-node wd-type-atom"><rect x="544" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="634.0" y="49.0" class="wd-label wd-lang-en">Static checks</text><text x="634.0" y="49.0" class="wd-label wd-lang-zh">静态检查</text><text x="634.0" y="63.0" class="wd-label wd-lang-en">(verify each claim)</text><text x="634.0" y="63.0" class="wd-label wd-lang-zh">(逐条 claim 验证)</text></g><g class="wd-node wd-type-atom"><rect x="804" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="894.0" y="49.0" class="wd-label wd-lang-en">verdict_calculator.py</text><text x="894.0" y="49.0" class="wd-label wd-lang-zh">verdict_calculator.py</text><text x="894.0" y="63.0" class="wd-label wd-lang-en">(0-100 + category)</text><text x="894.0" y="63.0" class="wd-label wd-lang-zh">(0-100 + 类别)</text></g><g class="wd-node wd-type-atom"><rect x="1064" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="1154.0" y="49.0" class="wd-label wd-lang-en">render_verdict_html.py</text><text x="1154.0" y="49.0" class="wd-label wd-lang-zh">render_verdict_html.py</text><text x="1154.0" y="63.0" class="wd-label wd-lang-en">(bilingual dossier)</text><text x="1154.0" y="63.0" class="wd-label wd-lang-zh">(双语 dossier)</text></g><g class="wd-node wd-type-end"><rect x="1324" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-end"/><text x="1414.0" y="49.0" class="wd-label wd-lang-en">build_master_dashboard.py</text><text x="1414.0" y="49.0" class="wd-label wd-lang-zh">build_master_dashboard.py</text><text x="1414.0" y="63.0" class="wd-label wd-lang-en">(corpus index)</text><text x="1414.0" y="63.0" class="wd-label wd-lang-zh">(corpus 总目录)</text></g></svg></div></section>
+
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-pending"><div class="similar-pending-eyebrow"><span class="i18n" data-en="↳ Closer peers we have not evaluated yet" data-zh="↳ 还没评测过的更接近的同类"></span></div><div class="similar-pending-row"><span class="i18n" data-en="Pending evaluation: an evaluation framework comparable to repo-evals
+in our own corpus. None of our 30 evaluated repos are themselves
+eval frameworks (we have 14 catalogues, 6 atom skills, 3 crawlers,
+2 chart/visual atoms, 2 dev methodology compounds, 1 LLM-training
+compound, 2 broken/risky tools). The closest peer concept would be
+Anthropic&#x27;s evaluation methodology in skill-creator (already
+evaluated, but skill-creator is about authoring skills, not
+evaluating them). Real peer comparison would need at least one
+competing eval framework evaluated under the same model — e.g.,
+Inspect AI, lm-eval-harness, or a custom skill-quality scorer." data-zh="Pending evaluation: an evaluation framework comparable to repo-evals
+in our own corpus. None of our 30 evaluated repos are themselves
+eval frameworks (we have 14 catalogues, 6 atom skills, 3 crawlers,
+2 chart/visual atoms, 2 dev methodology compounds, 1 LLM-training
+compound, 2 broken/risky tools). The closest peer concept would be
+Anthropic&#x27;s evaluation methodology in skill-creator (already
+evaluated, but skill-creator is about authoring skills, not
+evaluating them). Real peer comparison would need at least one
+competing eval framework evaluated under the same model — e.g.,
+Inspect AI, lm-eval-harness, or a custom skill-quality scorer."></span></div></div></section>
+
+  <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>git clone + python3 -m pip install pyyaml</code></td><td>any (Python 3.11+)</td><td><span class="badge complexity-easy">easy</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">📡</span><span class="i18n" data-en="Works offline after install" data-zh="装完之后可离线运行"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">GitHub (target repos to evaluate)</div><div class="service-purpose">Source of repos being evaluated; needed only for cloning the target</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Public repos only — no auth required for the eval flow itself</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Python ecosystem (PyYAML)</div><div class="service-purpose">YAML parsing for repo.yaml + claim-map.yaml</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>pip install pyyaml — single dependency</div></div></div></div></section>
+
+  <div class="pull-quotes">
+    
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="Score for any repo is only as good as the claim-map you wrote for it — bad claims = bad score. Static-only evals can never reach 90+ (&quot;Production-ready&quot;) because that band is reserved for repos with logged live e2e runs; live-eval tooling isn&#x27;t built yet. Self-evaluation found two real defects in this very framework (no LICENSE file, README is stale). Treat the evaluator as fallible." data-zh="任何 repo 的分数只跟你给它写的 claim-map 一样好 —— claim 写得烂分数就烂。纯静态评测永远到不了 90+ (&quot;可用于生产&quot;)—— 那个档位留给跑过 live e2e 日志的 repo,live-eval 工具链还没建。自评在这个框架自己身上就发现了两个真问题(缺 LICENSE 文件、README 过时)。把评测人当成会犯错的人对待。"></span></div></section>
+  </div>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Score breakdown · how the 55 was computed" data-zh="分数明细 · 55 是怎么算的"></span></summary>
+    <div class="body">
+      <div class="claim-stats-row">
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 10 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 7"></span><span class="s-bad" style="flex: 2"></span><span class="s-skip" style="flex: 1"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">7</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--bad)"></span><span class="num">2</span> <span class="i18n" data-en="failed" data-zh="失败"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">1</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+      </div>
+      <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+7</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+10</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">-2</td></tr></tbody></table></details>
+    </div>
+  </details>
+
+  <section>
+    <div class="section-head">
+      <h2><span class="i18n" data-en="What we verified" data-zh="我们验证了什么"></span></h2>
+      <span class="count">9 / 10</span>
+    </div>
+    <div class="capabilities-grid">
+      <article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-001</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="0-100 score is auditable — every point traces to a named bucket" data-zh="0-100 score is auditable — every point traces to a named bucket"></span></h3>  <p class="cap-description"><span class="i18n" data-en="A reader who disagrees with a repo&#x27;s score can challenge any
+single number — there is no opaque &quot;judgment call&quot; hidden in the
+aggregation.
+" data-zh="A reader who disagrees with a repo&#x27;s score can challenge any
+single number — there is no opaque &quot;judgment call&quot; hidden in the
+aggregation.
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-002</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Dossier is bilingual EN/ZH with runtime toggle" data-zh="Dossier is bilingual EN/ZH with runtime toggle"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Both Chinese and English readers get a first-class read of the
+dossier; no second-class translation experience.
+" data-zh="Both Chinese and English readers get a first-class read of the
+dossier; no second-class translation experience.
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-003</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="4-category collapse (Production / Available / Risky / Don&#x27;t use) is tested at every boundary" data-zh="4-category collapse (Production / Available / Risky / Don&#x27;t use) is tested at every boundary"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The visible &quot;Production / Available / Risky / Don&#x27;t use&quot; pill on
+a dossier or dashboard is the same one a calling test would
+assert — no UI/calculator drift.
+" data-zh="The visible &quot;Production / Available / Risky / Don&#x27;t use&quot; pill on
+a dossier or dashboard is the same one a calling test would
+assert — no UI/calculator drift.
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-004</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Workflow diagram renders all 3 layouts (io / linear / tree)" data-zh="Workflow diagram renders all 3 layouts (io / linear / tree)"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The visual encoding of &quot;what kind of skill is this&quot; is consistent
+across the corpus — atoms always look like atoms, compounds always
+like compounds.
+" data-zh="The visual encoding of &quot;what kind of skill is this&quot; is consistent
+across the corpus — atoms always look like atoms, compounds always
+like compounds.
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-005</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Similar-repos comparison computes peer scores live, not from stored sidecars" data-zh="Similar-repos comparison computes peer scores live, not from stored sidecars"></span></h3>  <p class="cap-description"><span class="i18n" data-en="When the score model recalibrates, every cross-comparison stays
+in sync automatically — no stale numbers on a dossier that was
+rendered before the change.
+" data-zh="When the score model recalibrates, every cross-comparison stays
+in sync automatically — no stale numbers on a dossier that was
+rendered before the change.
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-006</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="A 30-repo corpus already exists for cross-comparison" data-zh="A 30-repo corpus already exists for cross-comparison"></span></h3>  <p class="cap-description"><span class="i18n" data-en="similar_repos comparisons have a real universe to draw from;
+the framework is past the cold-start phase.
+" data-zh="similar_repos comparisons have a real universe to draw from;
+the framework is past the cold-start phase.
+"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-007</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Test suite covers the new code paths and passes" data-zh="Test suite covers the new code paths and passes"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Refactoring the score model later cannot silently break the
+category mapping or the breakdown contract.
+" data-zh="Refactoring the score model later cannot silently break the
+category mapping or the breakdown contract.
+"></span></p>  </article>
+<article class="capability-card status-failed">  <div class="cap-header">    <span class="cap-badge">failed</span>    <span class="cap-id">claim-008</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Repository has a LICENSE file" data-zh="Repository has a LICENSE file"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Anyone reading this framework&#x27;s dossiers can legally fork the
+framework itself, redistribute it, or reuse its renderer/scorer
+in their own audit projects.
+" data-zh="Anyone reading this framework&#x27;s dossiers can legally fork the
+framework itself, redistribute it, or reuse its renderer/scorer
+in their own audit projects.
+"></span></p>  </article>
+<article class="capability-card status-failed">  <div class="cap-header">    <span class="cap-badge">failed</span>    <span class="cap-id">claim-009</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="README reflects the current scoring + category model" data-zh="README reflects the current scoring + category model"></span></h3>  <p class="cap-description"><span class="i18n" data-en="A new contributor reading README.md gets the same mental model
+of the framework that the dossiers actually express.
+" data-zh="A new contributor reading README.md gets the same mental model
+of the framework that the dossiers actually express.
+"></span></p>  </article>
+<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-010</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="End-to-end: a new evaluator can clone, scaffold, fill, render" data-zh="End-to-end: a new evaluator can clone, scaffold, fill, render"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Onboarding doesn&#x27;t require Wendy&#x27;s tribal knowledge.
+" data-zh="Onboarding doesn&#x27;t require Wendy&#x27;s tribal knowledge.
+"></span></p>  </article>
+    </div>
+  </section>
+
+  <section><div class='section-head'><h2><span class='i18n' data-en='How we evaluated this · by layer' data-zh='我们如何按层级评测'></span></h2></div>
+    <div class="layer-hero">
+      <div class="layer-hero-eyebrow">
+        <span class="i18n" data-en="Composition layer" data-zh="组合层级"></span>
+      </div>
+      <div class="layer-hero-name layer-molecule"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div>
+      <div class="layer-hero-summary"><span class="i18n" data-en="2–10 atoms wired by predefined orchestration. No runtime LLM routing." data-zh="2–10 个原子，按预定义编排串起来。运行时不让 LLM 临时决定路由。"></span></div>
+      <div class="layer-hero-source"><span class="i18n"
+        data-en="Declared in repo.yaml"
+        data-zh="已在 repo.yaml 中显式声明"></span></div>
+    </div>
+    <div class="layer-stack"><div class="layer-card layer-card-atom"><div class="layer-card-head"><h3><span class="i18n" data-en="Atom-level checks" data-zh="原子层检查"></span></h3><span class="layer-card-tag"><span class="i18n" data-en="applies (lower-level dependency)" data-zh="适用（下层依赖）"></span></span></div><p class="layer-card-summary"><span class="i18n" data-en="Single responsibility. Same input → same output. No skill-level callouts." data-zh="单一职责。同样输入产出同样输出。不调用其他 skill 级单元。"></span></p><table class="layer-dim-table"><tbody><tr><th><code>input_contract</code></th><td><span class="i18n" data-en="Does the atom reject malformed input with a clear, actionable error?" data-zh="原子在收到非法输入时，是否抛出一个清晰、可操作的错误？"></span></td></tr><tr><th><code>output_contract</code></th><td><span class="i18n" data-en="Does the output shape match what the README/SKILL.md claims?" data-zh="输出的结构是否与 README/SKILL.md 的承诺一致？"></span></td></tr><tr><th><code>determinism</code></th><td><span class="i18n" data-en="Same input → same output within stated tolerance. (LLM atoms: structurally equivalent, not byte-equal.)" data-zh="同样输入产出同样输出（容差内）。LLM 原子的容差是「结构等价」，不是字节相等。"></span></td></tr><tr><th><code>idempotence</code></th><td><span class="i18n" data-en="Re-running with the same input produces the same observable end state." data-zh="同样输入重复运行，最终可观察状态保持一致。"></span></td></tr><tr><th><code>no_skill_callouts</code></th><td><span class="i18n" data-en="Does the atom avoid invoking other documented skills? Primitives only (LLM API, stdlib, OS)." data-zh="原子是否避免调用其他 skill？只能调用 primitive（LLM API、stdlib、OS）。"></span></td></tr><tr><th><code>failure_mode_clarity</code></th><td><span class="i18n" data-en="Does each documented failure mode produce a distinct, recognisable error?" data-zh="每一种文档化的失败模式，是否都对应一个独特且可识别的错误？"></span></td></tr></tbody></table></div><div class="layer-card layer-card-molecule"><div class="layer-card-head"><h3><span class="i18n" data-en="Molecule-level checks" data-zh="分子层检查"></span></h3><span class="layer-card-tag"><span class="i18n" data-en="applies (this layer)" data-zh="适用（当前层）"></span></span></div><p class="layer-card-summary"><span class="i18n" data-en="2–10 atoms wired by predefined orchestration. No runtime LLM routing." data-zh="2–10 个原子，按预定义编排串起来。运行时不让 LLM 临时决定路由。"></span></p><table class="layer-dim-table"><tbody><tr><th><code>workflow_correctness</code></th><td><span class="i18n" data-en="Does an end-to-end happy path run from initial input to final output?" data-zh="从初始输入到最终输出，端到端 happy path 能跑通吗？"></span></td></tr><tr><th><code>declared_call_graph</code></th><td><span class="i18n" data-en="Are the atoms the molecule documents as using actually the ones it calls? No undocumented hidden dependencies." data-zh="分子文档里声明依赖的原子，是否就是它实际调用的原子？没有未文档化的隐藏依赖？"></span></td></tr><tr><th><code>stop_conditions</code></th><td><span class="i18n" data-en="Do documented stop conditions (success, max-retries, timeout) trigger and halt cleanly?" data-zh="文档化的停止条件（成功 / 重试上限 / 超时）是否真的触发并干净退出？"></span></td></tr><tr><th><code>handoff_points</code></th><td><span class="i18n" data-en="When the molecule should hand back to a human, does it do so at the documented trigger?" data-zh="分子需要把控制权交还给人时，是否按文档化的触发点执行？"></span></td></tr><tr><th><code>atom_evidence</code></th><td><span class="i18n" data-en="Does every declared atom dependency have a passing atom-level eval (referenced or co-located)?" data-zh="每一个声明依赖的原子，是否都有对应的、通过的 atom 级评测（引用或同仓）？"></span></td></tr><tr><th><code>error_propagation</code></th><td><span class="i18n" data-en="Does a downstream atom failure surface at the molecule boundary with enough info to act?" data-zh="下游原子失败时，错误是否在分子边界处响亮地冒泡出来，并带足够信息让人定位？"></span></td></tr><tr><th><code>partial_failure_handling</code></th><td><span class="i18n" data-en="When one atom fails, does the molecule avoid silently producing an incomplete &#x27;success&#x27;?" data-zh="某个原子失败时，分子是否避免静默输出一个看似「成功」其实不完整的产物？"></span></td></tr></tbody></table></div></div></section>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Technical details" data-zh="技术细节"></span></summary>
+    <div class="body">
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Ceiling &amp; blocking reasons" data-zh="Ceiling 与 Blocking 理由"></span></h3>
+        <div class="grid-two">
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Why capped" data-zh="为什么封顶"></span></h4>
+            <ul><li>core user-facing layer untested → capped at &#x27;usable&#x27;</li><li>evidence_completeness=&#x27;partial&#x27; (not portable) → capped at &#x27;usable&#x27;</li></ul>
+          </div>
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h4>
+            <ul><li>critical claim claim-008 failed</li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Derivation" data-zh="推导路径"></span></h3>
+        <div class="flow"><div class="flow-row"><span class="flow-node start">archetype: pure-cli</span><span class="flow-arrow">→</span><span class="flow-node decision">core_layer_tested? <b style="color:inherit">False</b></span><span class="flow-arrow">→</span><span class="flow-node">evidence: partial</span><span class="flow-arrow">→</span><span class="flow-node">recommended: unusable</span><span class="flow-arrow">→</span><span class="flow-node final">final: unusable</span></div><div class="flow-notes"><div class="note">ceiling 1 · core user-facing layer untested → capped at &#x27;usable&#x27;</div><div class="note">ceiling 2 · evidence_completeness=&#x27;partial&#x27; (not portable) → capped at &#x27;usable&#x27;</div></div></div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Claim ledger" data-zh="Claim 清单"></span></h3>
+        <table class="claims-table">
+          <thead>
+            <tr>
+              <th style="width:110px"><span class="i18n" data-en="ID" data-zh="ID"></span></th>
+              <th><span class="i18n" data-en="Title" data-zh="标题"></span></th>
+              <th style="width:100px"><span class="i18n" data-en="Priority" data-zh="优先级"></span></th>
+              <th style="width:170px"><span class="i18n" data-en="Area" data-zh="领域"></span></th>
+              <th style="width:130px"><span class="i18n" data-en="Status" data-zh="状态"></span></th>
+              <th><span class="i18n" data-en="Note" data-zh="备注"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="prio-critical"><td class="c-id">claim-001</td><td class="c-title">0-100 score is auditable — every point traces to a named bucket</td><td><span class="prio-pill critical">critical</span></td><td>score-auditability</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-002</td><td class="c-title">Dossier is bilingual EN/ZH with runtime toggle</td><td><span class="prio-pill critical">critical</span></td><td>i18n</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-003</td><td class="c-title">4-category collapse (Production / Available / Risky / Don&#x27;t use) is tested at every boundary</td><td><span class="prio-pill critical">critical</span></td><td>category-correctness</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-004</td><td class="c-title">Workflow diagram renders all 3 layouts (io / linear / tree)</td><td><span class="prio-pill high">high</span></td><td>visualization</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-005</td><td class="c-title">Similar-repos comparison computes peer scores live, not from stored sidecars</td><td><span class="prio-pill high">high</span></td><td>comparison-freshness</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-006</td><td class="c-title">A 30-repo corpus already exists for cross-comparison</td><td><span class="prio-pill high">high</span></td><td>corpus-size</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-007</td><td class="c-title">Test suite covers the new code paths and passes</td><td><span class="prio-pill high">high</span></td><td>test-discipline</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-008</td><td class="c-title">Repository has a LICENSE file</td><td><span class="prio-pill critical">critical</span></td><td>licensing</td><td class="c-status" style="color:var(--bad)">✕ failed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-009</td><td class="c-title">README reflects the current scoring + category model</td><td><span class="prio-pill high">high</span></td><td>docs-currency</td><td class="c-status" style="color:var(--bad)">✕ failed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-010</td><td class="c-title">End-to-end: a new evaluator can clone, scaffold, fill, render</td><td><span class="prio-pill critical">critical</span></td><td>end-to-end</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Runs &amp; metrics" data-zh="Runs 与指标"></span></h3>
+        <div class="metric-tiles">
+          <div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="pass rate" data-zh="通过率"></span></div>  <div class="mt-value">78<span class="mt-unit">%</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:78%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="elapsed" data-zh="耗时"></span></div>  <div class="mt-value">0.00<span class="mt-unit">s</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="token output" data-zh="token 输出"></span></div>  <div class="mt-value">0</div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="in · 0 / out · 0" data-zh="输入 · 0 / 输出 · 0"></span></div></div>
+        </div>
+        <div class="run-card">  <h3>run-static-checks</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-05-05</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">78%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-001 · passed</li><li class="pass">claim-002 · passed</li><li class="pass">claim-003 · passed</li><li class="pass">claim-004 · passed</li><li class="pass">claim-005 · passed</li><li class="pass">claim-006 · passed</li><li class="pass">claim-007 · passed</li><li class="fail">claim-008 · failed</li><li class="fail">claim-009 · failed</li><li class="skip">claim-010 · untested</li></ul></div>
+      </div>
+
+    </div>
+  </details>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Test log — all probes we ran" data-zh="测试日志 — 我们跑过的所有探针"></span></summary>
+    <div class="body">
+      <div class="run-card">  <h3>run-static-checks</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-05-05</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">78%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-001 · passed</li><li class="pass">claim-002 · passed</li><li class="pass">claim-003 · passed</li><li class="pass">claim-004 · passed</li><li class="pass">claim-005 · passed</li><li class="pass">claim-006 · passed</li><li class="pass">claim-007 · passed</li><li class="fail">claim-008 · failed</li><li class="fail">claim-009 · failed</li><li class="skip">claim-010 · untested</li></ul></div>
+    </div>
+  </details>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Raw verdict archive (authored by evaluator)" data-zh="原始 verdict 存档（评测者原文）"></span></summary>
+    <div class="body">
+<pre class="md"># zinan92/repo-evals — final verdict (2026-05-05)
+
+## Repo
+
+- **Name:** zinan92/repo-evals · **Stars:** 0 (private/personal)
+- **Archetype:** pure-cli · **Layer:** **molecule**
+- **License:** README claims MIT but no LICENSE file
+- **Pushed:** 2026-05-05 (today, commit `b94031e`)
+
+## What was evaluated
+
+| Claim | Status | Notes |
+|---|---|---|
+| 001 score is auditable | passed | 6 named breakdown buckets, math tested |
+| 002 bilingual EN/ZH | passed | All 30 dossiers + new SVG diagrams toggle correctly |
+| 003 4-category mapping | passed | All 6 boundaries tested |
+| 004 3-layout workflow diagrams | passed | io / linear / tree all rendered in 3 golden dossiers |
+| 005 similar-repos live scores | passed | _load_other_repo_for_compare calls compute_verdict at render time |
+| 006 30-repo corpus exists | passed | 30 dirs under repos/ |
+| 007 tests pass | passed | 142/142 |
+| 008 LICENSE | **failed** | README says MIT but no LICENSE file (HTTP 404 if browsed) |
+| 009 README is current | **failed** | README still describes the deprecated 4-bucket model |
+| 010 live e2e onboarding | untested | needs a fresh user + logged session |
+
+## Real findings — meta-eval edition
+
+1. **The framework caught its own LICENSE gap.** This is the same defect
+   we flagged on `karpathy/autoresearch`: README has a `## License — MIT`
+   section + a license-MIT badge but no LICENSE file. The score model
+   correctly applies the −2 penalty (small repo tier, &lt;1K stars). Same
+   one-line fix.
+
+2. **README is now stale.** The framework migrated to the 0-100 score
+   + 4-category model on 2026-05-05. README still says:
+     &gt; 评测分两层 ... 每个被评测的 repo 最终落入且只落入一个可靠性桶
+     &gt; unusable / usable / reusable / recommendable
+   That&#x27;s the deprecated 4-bucket model. Anyone reading README will
+   form a mental model that doesn&#x27;t match what the dossiers actually
+   show.
+
+3. **Score-model auditability is the real product.** Six named
+   components — base 40, static_eval ±30, maintainer +15, ecosystem +15,
+   layer_bonus, penalties — every dossier shows the breakdown. That&#x27;s
+   the API for methodology debate. A reader who disagrees can challenge
+   any single number.
+
+4. **30-repo corpus is past cold-start.** When the similar-repos block
+   was added, it had 30 candidates to draw from. For repo-evals itself
+   though, the corpus has zero peers — none of our 30 are eval
+   frameworks, so we honestly say so in `similar_repos_pending` rather
+   than forcing a wrong comparison.
+
+5. **Self-eval as discipline test.** A framework that&#x27;s unwilling to
+   flag its own gaps will always shade its own claims. This eval found
+   2 real defects (LICENSE, stale README) and 1 honest gap (no live
+   e2e logged). That&#x27;s the pattern we want to keep.
+
+## Why the score lands where it does
+
+- 7/9 testable claims passed; 2 failed (LICENSE + stale README); 1 untested
+- 0 stars → ecosystem +0
+- Recently active +5 + eval_discipline_score=3 (max +5) +
+  release_pipeline_score=1 (no release tags yet) → maintainer +10
+- Molecule layer: +0
+- LICENSE missing: −2 (small-repo tier)
+- High claim failed (claim-009 README): −4
+- Critical claim failed (claim-008 LICENSE): −10
+
+Predicted score: roughly **45-50** — somewhere between ⚠️ Risky and
+🛠 Available. The honest read is that repo-evals scores its own
+status correctly: usable for its current author + immediate audience,
+but not yet at &quot;share with strangers&quot; because of the LICENSE +
+out-of-date README.
+
+## Path to higher score
+
+1. **Add LICENSE file.** One commit. Recovers +10 from the failed
+   critical claim → ~55-60 (mid 🛠 Available).
+2. **Update README to describe 0-100 + 4-category model.** Recovers
+   +4 + the failed-high deduction → ~60-65 (firm 🛠 Available).
+3. **Run a logged live e2e** — fresh clone, scaffold a new repo,
+   render its dossier, log the session. Moves claim-010 to passed
+   and unblocks the path to 70+ (entering 🏭 Production-ready
+   territory).
+4. **Build the live-eval tooling** the framework keeps assuming
+   exists. Right now no claim can earn the &quot;evidence_completeness:
+   full&quot; tier without a manual logged session.
+
+## Recommended
+
+```yaml
+status: evaluated
+```
+</pre>
+    </div>
+  </details>
+
+  <footer>
+    <div><span class="i18n" data-en="Rendered by repo-evals · render_verdict_html.py" data-zh="由 repo-evals · render_verdict_html.py 生成"></span></div>
+    <div><a href="https://github.com/zinan92/repo-evals" target="_blank" rel="noopener">zinan92/repo-evals</a></div>
+  </footer>
+
+</main>
+
+<script>
+  const LANG_KEY = 'repoEvalsVerdictLang';
+  const INITIAL_LANG = "auto";
+  function detectLang() {
+    try {
+      const p = new URLSearchParams(location.search).get('lang');
+      if (p === 'en' || p === 'zh') return p;
+    } catch (_) {}
+    const stored = localStorage.getItem(LANG_KEY);
+    if (stored === 'en' || stored === 'zh') return stored;
+    if (INITIAL_LANG === 'en' || INITIAL_LANG === 'zh') return INITIAL_LANG;
+    if ((navigator.language || '').toLowerCase().startsWith('zh')) return 'zh';
+    return 'en';
+  }
+  function setLang(lang) {
+    document.documentElement.lang = lang;
+    try { localStorage.setItem(LANG_KEY, lang); } catch (_) {}
+  }
+  setLang(detectLang());
+</script>
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+owner: zinan92
+repo: repo-evals
+display_name: repo-evals
+repo_url: https://github.com/zinan92/repo-evals
+repo_type: framework
+archetype: pure-cli
+layer: molecule
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-05'
+version_tested: main@b94031e
+stars: 0
+archived: false
+has_license: false
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 3
+recently_active: true
+notes: |
+  A claim-first evaluation framework for skill / repo quality. Inputs:
+  one GitHub repo. Outputs: bilingual HTML dossier with 0-100 score,
+  layer classification (atom / molecule / compound), category band
+  (Production / Available / Risky / Don't use), workflow diagram,
+  benefits-driven product view, and similar-repo comparison cards
+  drawn from the same evaluated corpus.
+
+  The framework was built incrementally for Wendy's own decision-making
+  (which skills/repos to depend on, recommend, or avoid) and now hosts
+  30 evaluated repos. The score model is auditable: every point traces
+  to one of six named buckets (base, static_eval, maintainer_evidence,
+  ecosystem, layer_bonus, penalties).
+
+  Self-evaluation is the meta-test: the framework needs to be willing
+  to flag its own gaps. It found two real ones — no LICENSE file
+  despite a README MIT claim (same defect we flagged on karpathy/
+  autoresearch), and a README that still describes the deprecated
+  4-bucket model from before the 2026-05-05 score-model migration.
+product_view:
+  one_liner:
+    en: |-
+      A claim-first evaluation framework that turns "is this skill / repo any good?" into a 0-100 score with a bilingual dossier — auditable point-by-point, comparable to the 30 other repos already evaluated under the same model.
+    zh: |-
+      一个 claim-first 的评测框架,把"这个 skill / repo 到底能不能用?"变成一份带 0-100 分的双语 dossier —— 每一分可以追到证据,可以跟我们已经评测过的 30 个 repo 横向对比。
+  persona:
+    en: |-
+      Someone with a backlog of "should I depend on this?" decisions and not enough time to read every repo deeply. Typically: a developer / lead picking between skill bundles for their team, a content creator picking between AI-generation tools, an indie hacker auditing their own work before publishing.
+    zh: |-
+      手里堆着一堆"我该不该依赖它?"决策、却没时间逐个读完仓库的人。典型: 给团队挑 skill 合集的开发者 / leader、在 AI 生成工具之间纠结的内容创作者、要发布前先审自己作品的独立开发者。
+  scenario:
+    en: |-
+      You're about to commit budget / install / brand to a new tool — a crawler library for a research project, a methodology bundle for your team's coding agent, a slide-generator for next month's workshop. You want a structured "is this real?" check, not a vibe.
+    zh: |-
+      你准备投入(预算 / 安装 / 品牌)到一个新工具 —— 给研究项目挑爬虫库、给团队 coding agent 挑方法论合集、给下个月 workshop 挑 deck 生成器。你想要一份结构化的"它是真的吗?"检查,不只是凭感觉。
+  without_this:
+    en: |-
+      You skim the README + count GitHub stars + glance at "last commit" date. You miss real defects (missing LICENSE, broken core feature, signing helper that breaks weekly) until you've already integrated the tool into your workflow. By the time you find out, switching costs are sunk.
+    zh: |-
+      你扫一眼 README + 看 GitHub stars + 瞄一下"最近一次提交"。真问题(缺 LICENSE / 核心功能坏了 / 签名辅助每周失效)往往要等你已经把工具集成到工作流里才发现。等你发现,迁移成本已经埋下去了。
+  with_this:
+    en: |-
+      You get a structured one-page dossier: layer (atom / molecule / compound), 0-100 score with a 4-zone band, what the workflow actually looks like, who would reach for it and when, what specifically goes wrong, and how it stacks up against alternatives we've already evaluated. Every score is auditable; every claim has a status. You can disagree with the verdict but you have to do it on the evidence.
+    zh: |-
+      你拿到一份结构化的单页 dossier: 层级(原子 / 分子 / 复合物)、0-100 分加 4 档可用性带、工作流实际长啥样、谁会用 + 什么时候用、具体哪里会坏、跟我们已经评测过的同类比哪个更好。每一分可审计;每条 claim 有状态。你可以不认同结论,但必须基于证据反对。
+  cost_summary:
+    en: |-
+      Free framework but unlicensed (README claims MIT, no LICENSE file yet). Requires Python 3.11+ + PyYAML. Manual labour cost: writing claim-map.yaml for each new repo (~30-60 min for a thoughtful 6-10 claim set). No external services, no API keys.
+    zh: |-
+      框架免费但 license 缺失(README 写 MIT 但没 LICENSE 文件)。需要 Python 3.11+ + PyYAML。人工成本: 每个新 repo 要手写一份 claim-map.yaml(认真写 6-10 条 claim 大约 30-60 分钟)。没有外部服务,没有 API key。
+  watch_out:
+    en: |-
+      Score for any repo is only as good as the claim-map you wrote for it — bad claims = bad score. Static-only evals can never reach 90+ ("Production-ready") because that band is reserved for repos with logged live e2e runs; live-eval tooling isn't built yet. Self-evaluation found two real defects in this very framework (no LICENSE file, README is stale). Treat the evaluator as fallible.
+    zh: |-
+      任何 repo 的分数只跟你给它写的 claim-map 一样好 —— claim 写得烂分数就烂。纯静态评测永远到不了 90+ ("可用于生产")—— 那个档位留给跑过 live e2e 日志的 repo,live-eval 工具链还没建。自评在这个框架自己身上就发现了两个真问题(缺 LICENSE 文件、README 过时)。把评测人当成会犯错的人对待。
+  examples:
+  - context:
+      en: |-
+        A team lead picking between three "skill catalogue" repos to recommend to their team
+      zh: |-
+        团队 leader 在三个"skill 合集"repo 之间挑选,要给团队推荐用哪个
+    you_say:
+      en: |-
+        Eval each of obra/superpowers, HughYau/qiushi-skill, and remotion-dev/skills under repo-evals — I want a side-by-side I can show the team
+      zh: |-
+        在 repo-evals 框架下分别评测 obra/superpowers、HughYau/qiushi-skill、remotion-dev/skills,我想要一份能给团队看的对比
+    what_happens:
+      en: |-
+        Each gets a dossier with layer + score + 4-card benefits + workflow diagram + watch-outs. The master dashboard lets you sort/filter the three side-by-side. The "similar repos" cross-links each dossier to the other two with explicit "X wins at / Y wins at" trade-offs.
+      zh: |-
+        每个仓库出一份 dossier,带层级 + 分数 + 4 卡 benefits + 工作流图 + 注意事项。master dashboard 可以排序/过滤这三个并排看。"similar repos"会在三份 dossier 之间互相打交叉链接,明确说"X 在哪强 / Y 在哪强"。
+  - context:
+      en: |-
+        A solo dev who just released a public skill, wants to audit it before promoting on Twitter
+      zh: |-
+        刚发布了一个公开 skill 的独立开发者,推上分享前想先自检
+    you_say:
+      en: |-
+        Eval my own zinan92/content-extractor under the framework — I want to see what I'd flag if it were someone else's
+      zh: |-
+        在框架下评测我自己的 zinan92/content-extractor —— 我想看看如果是别人写的,我会标出哪些问题
+    what_happens:
+      en: |-
+        You write 6-10 claims, run the static checks, get a verdict. The dossier surfaces real defects honestly (your repo lands in 🛑 Don't use 29 because the core feature is broken). You either fix the defects or write a watch_out before promoting.
+      zh: |-
+        你写 6-10 条 claim,跑静态检查,出 verdict。dossier 老实地暴露问题(你的 repo 落在 🛑 不可使用 29 分,因为核心功能坏了)。你要么修问题,要么发推前先写一份 watch_out。
+  - context:
+      en: |-
+        A maintainer of an existing eval framework comparing notes on methodology
+      zh: |-
+        某个已有评测框架的维护者,想交流方法论
+    you_say:
+      en: |-
+        Show me how repo-evals scores three repos I already evaluated — I want to see where our score models diverge
+      zh: |-
+        给我看 repo-evals 怎么给我已评过的三个 repo 打分 —— 我想看看两个评分模型在哪里分歧
+    what_happens:
+      en: |-
+        Each repo's dossier shows the 6-component breakdown (base / static_eval / maintainer / ecosystem / layer_bonus / penalties). You can challenge any single number. The breakdown is the API for methodology debate — not "we think it's an 8/10" but "you can see we gave −5 for missing LICENSE on a 50K+-star project; do you weight that differently?"
+      zh: |-
+        每份 dossier 显示 6 个组件的分数明细(base / static_eval / maintainer / ecosystem / layer_bonus / penalties)。你可以挑战任何一个数字。明细就是方法论讨论的 API —— 不再是"我们觉得 8/10",而是"你能看到我们给 50K+ 星项目缺 LICENSE 扣了 -5;你权重不同吗?"
+similar_repos: []
+similar_repos_pending:
+- slug_note: |-
+    Pending evaluation: an evaluation framework comparable to repo-evals
+    in our own corpus. None of our 30 evaluated repos are themselves
+    eval frameworks (we have 14 catalogues, 6 atom skills, 3 crawlers,
+    2 chart/visual atoms, 2 dev methodology compounds, 1 LLM-training
+    compound, 2 broken/risky tools). The closest peer concept would be
+    Anthropic's evaluation methodology in skill-creator (already
+    evaluated, but skill-creator is about authoring skills, not
+    evaluating them). Real peer comparison would need at least one
+    competing eval framework evaluated under the same model — e.g.,
+    Inspect AI, lm-eval-harness, or a custom skill-quality scorer.
+workflow_diagram:
+  layout: linear
+  why_layer: |
+    Molecule — a fixed pipeline of atom-level Python scripts. The
+    evaluator (a human) runs each step in order; no LLM decides at
+    runtime which step fires next. claim-extraction is helper-only;
+    the score → render → dashboard chain is fully deterministic.
+  nodes:
+  - id: scaffold
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        new-repo-eval.sh
+        (scaffold dirs)
+      zh: |-
+        new-repo-eval.sh
+        (生成目录)
+  - id: claim_authoring
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Author claim-map.yaml
+        (human, 30-60 min)
+      zh: |-
+        手写 claim-map.yaml
+        (人工 30-60 分钟)
+  - id: static_checks
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Static checks
+        (verify each claim)
+      zh: |-
+        静态检查
+        (逐条 claim 验证)
+  - id: verdict_calc
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        verdict_calculator.py
+        (0-100 + category)
+      zh: |-
+        verdict_calculator.py
+        (0-100 + 类别)
+  - id: render
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        render_verdict_html.py
+        (bilingual dossier)
+      zh: |-
+        render_verdict_html.py
+        (双语 dossier)
+  - id: dashboard
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        build_master_dashboard.py
+        (corpus index)
+      zh: |-
+        build_master_dashboard.py
+        (corpus 总目录)
+  edges:
+  - from: scaffold
+    to: claim_authoring
+  - from: claim_authoring
+    to: static_checks
+  - from: static_checks
+    to: verdict_calc
+  - from: verdict_calc
+    to: render
+  - from: render
+    to: dashboard
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + python3 -m pip install pyyaml
+    platform: any (Python 3.11+)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: GitHub (target repos to evaluate)
+  purpose: Source of repos being evaluated; needed only for cloning the target
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Public repos only — no auth required for the eval flow itself
+- name: Python ecosystem (PyYAML)
+  purpose: YAML parsing for repo.yaml + claim-map.yaml
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: pip install pyyaml — single dependency

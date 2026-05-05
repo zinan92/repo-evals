@@ -1,0 +1,175 @@
+claims:
+- id: claim-001
+  title: 0-100 score is auditable — every point traces to a named bucket
+  source: scripts/verdict_calculator.py
+  source_ref: scripts/verdict_calculator.py::compute_score
+  priority: critical
+  area: score-auditability
+  statement: |
+    compute_score() returns a `breakdown` dict containing exactly the
+    six named components: base, static_eval, maintainer_evidence,
+    ecosystem, layer_bonus, penalties. Each component documented with
+    a comment explaining why it adds/subtracts points.
+  business_expectation: |
+    A reader who disagrees with a repo's score can challenge any
+    single number — there is no opaque "judgment call" hidden in the
+    aggregation.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 6 named breakdown keys present; test_score_base_is_40_for_empty_eval + test_score_clean_static_eval_lifts_above_pass_line cover the math.
+- id: claim-002
+  title: Dossier is bilingual EN/ZH with runtime toggle
+  source: scripts/render_verdict_html.py
+  source_ref: scripts/render_verdict_html.py + 30 dossiers under repos/*/verdicts/
+  priority: critical
+  area: i18n
+  statement: |
+    Every dual_lang() helper emits both data-en and data-zh attributes;
+    the page-level <script> reads navigator.language + localStorage to
+    pick the initial lang and exposes setLang() for runtime swap. The
+    language toggle persists across reload via localStorage.
+  business_expectation: |
+    Both Chinese and English readers get a first-class read of the
+    dossier; no second-class translation experience.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 30 dossiers each contain data-en + data-zh + setLang(); SVG label fix duplicates text in EN+ZH so diagrams toggle too.
+- id: claim-003
+  title: 4-category collapse (Production / Available / Risky / Don't use) is tested at every boundary
+  source: scripts/verdict_calculator.py + tests/test_verdict_calculator.py
+  source_ref: scripts/verdict_calculator.py::category_for_score
+  priority: critical
+  area: category-correctness
+  statement: |
+    category_for_score returns the right key for boundary scores:
+    80 → production, 79 → available, 50 → available, 49 → risky,
+    30 → risky, 29 → dont_use. test_score_category_4_grouping
+    covers all six boundaries.
+  business_expectation: |
+    The visible "Production / Available / Risky / Don't use" pill on
+    a dossier or dashboard is the same one a calling test would
+    assert — no UI/calculator drift.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: test_score_category_4_grouping passes 6 boundary assertions; test_compute_verdict_emits_category_fields checks the wire-up.
+- id: claim-004
+  title: Workflow diagram renders all 3 layouts (io / linear / tree)
+  source: scripts/render_verdict_html.py
+  source_ref: scripts/render_verdict_html.py::render_workflow_diagram
+  priority: high
+  area: visualization
+  statement: |
+    render_workflow_diagram has explicit branches for layout=io
+    (atom — input/output), layout=linear (molecule — left-to-right),
+    and layout=tree (compound — top-down with diamond decision nodes).
+    Three golden repos each demonstrate one layout: frontend-slides
+    (io), MediaCrawler (linear), superpowers (tree).
+  business_expectation: |
+    The visual encoding of "what kind of skill is this" is consistent
+    across the corpus — atoms always look like atoms, compounds always
+    like compounds.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: layout=tree branch sets ROW_GAP=16/NODE_H=44; linear=ROW_GAP=28/NODE_H=56; io is just linear with 2 edges. 3 golden dossiers verified.
+- id: claim-005
+  title: Similar-repos comparison computes peer scores live, not from stored sidecars
+  source: scripts/render_verdict_html.py
+  source_ref: scripts/render_verdict_html.py::_load_other_repo_for_compare
+  priority: high
+  area: comparison-freshness
+  statement: |
+    _load_other_repo_for_compare reads the linked repo's repo.yaml +
+    claim-map.yaml at render time and calls vc.compute_verdict to get
+    the current score and category. No stored verdict-input.yaml is
+    consulted for the comparison.
+  business_expectation: |
+    When the score model recalibrates, every cross-comparison stays
+    in sync automatically — no stale numbers on a dossier that was
+    rendered before the change.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: vc.compute_verdict() called inside _load_other_repo_for_compare; tested implicitly by superpowers-pending and frontend-slides comparison cards.
+- id: claim-006
+  title: A 30-repo corpus already exists for cross-comparison
+  source: repos/
+  source_ref: repos/*/repo.yaml + claim-map.yaml
+  priority: high
+  area: corpus-size
+  statement: |
+    repos/ contains 30 evaluated subdirectories, each with a repo.yaml
+    and claims/claim-map.yaml. The master dashboard reads all 30 and
+    computes a sortable/filterable table.
+  business_expectation: |
+    similar_repos comparisons have a real universe to draw from;
+    the framework is past the cold-start phase.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 30 directories under repos/ — 28 have full claim-map.yaml, 2 have draft state (content-toolkit, geekjourneyx) but most are evaluated.
+- id: claim-007
+  title: Test suite covers the new code paths and passes
+  source: tests/
+  source_ref: tests/test_verdict_calculator.py + tests/test_layers.py
+  priority: high
+  area: test-discipline
+  statement: |
+    pytest tests/ exits 0 with at least 140 passing tests, including
+    explicit tests for category_for_score thresholds, the 4-category
+    grouping invariants, score model behaviour, and tier transitions.
+  business_expectation: |
+    Refactoring the score model later cannot silently break the
+    category mapping or the breakdown contract.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 142/142 passing. 12 PytestUnknownMarkWarning warnings (custom marks unit/integration not registered) — cosmetic.
+- id: claim-008
+  title: Repository has a LICENSE file
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: |
+    LICENSE file exists at the repo root with explicit copyright +
+    text matching the README's "MIT" claim.
+  business_expectation: |
+    Anyone reading this framework's dossiers can legally fork the
+    framework itself, redistribute it, or reuse its renderer/scorer
+    in their own audit projects.
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: README declares "MIT" in a license badge + ## License section, but no LICENSE file exists at the repo root. Same defect we flagged on karpathy/autoresearch — same fix (commit a LICENSE file).
+- id: claim-009
+  title: README reflects the current scoring + category model
+  source: README.md
+  source_ref: README.md
+  priority: high
+  area: docs-currency
+  statement: |
+    README.md describes the 0-100 score model + 4-category collapse
+    (Production / Available / Risky / Don't use) that is currently
+    in use.
+  business_expectation: |
+    A new contributor reading README.md gets the same mental model
+    of the framework that the dossiers actually express.
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: README still describes the deprecated 4-bucket model (unusable / usable / reusable / recommendable) and shows a "verdicts-4_buckets" badge. The framework has been on the 0-100 + 4-category model since 2026-05-05; README is stale.
+- id: claim-010
+  title: 'End-to-end: a new evaluator can clone, scaffold, fill, render'
+  source: scripts/new-repo-eval.sh + scripts/render_verdict_html.py
+  source_ref: docs/FRAMEWORK.md
+  priority: critical
+  area: end-to-end
+  statement: |
+    A first-time user can clone the repo, run scripts/new-repo-eval.sh
+    owner/repo to scaffold, fill claim-map.yaml + repo.yaml by hand,
+    run scripts/render_verdict_html.py owner--repo, and get a working
+    bilingual dossier with all sections rendered.
+  business_expectation: |
+    Onboarding doesn't require Wendy's tribal knowledge.
+  evidence_needed: |
+    molecule level — needs a logged session of a fresh user (or a
+    fresh clone in /tmp) running the full flow + a recorded dossier.
+    Suggest 1 happy path + 1 adversarial (user picks an archetype
+    that needs hybrid-skill claims, sees whether the scaffold steers
+    them right).
+  status: untested

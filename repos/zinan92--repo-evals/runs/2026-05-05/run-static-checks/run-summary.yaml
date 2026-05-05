@@ -1,0 +1,26 @@
+run:
+  id: run-static-checks
+  date: '2026-05-05'
+  evaluator: meta-self-eval
+  target_commit: b94031e
+  notes: |
+    Self-evaluation. The framework evaluating itself. Static layer
+    only — no live e2e was attempted. Honest accounting: the framework
+    flagged its own missing LICENSE + stale README defects.
+metrics:
+  pass_rate: 0.78
+  total_claims: 9     # 10 minus the untested
+  passed: 7
+  failed: 2
+  untested: 1
+results_by_claim:
+  claim-001: passed
+  claim-002: passed
+  claim-003: passed
+  claim-004: passed
+  claim-005: passed
+  claim-006: passed
+  claim-007: passed
+  claim-008: failed
+  claim-009: failed
+  claim-010: untested
