@@ -1,0 +1,54 @@
+run_id: run-static-checks
+date: 2026-05-05
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: zarazhangrui
+  repo: youtube-to-ebook
+  branch: main
+
+scope: |
+  Static-checkable claims for the 5-stage pipeline files, SKILL.md,
+  requirements, Streamlit dashboard, Mac LaunchAgent plists, and
+  LICENSE. Live e2e (claim-007) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "5 stage files all real: get_videos (157) + get_transcripts (137) + write_articles (108) + send_email (404) + video_tracker (92) lines"
+  - id: claim-002
+    status: passed
+    note: "SKILL.md is 171 lines with name + description frontmatter"
+  - id: claim-003
+    status: passed
+    note: "All 5 README-claimed deps present: google-api-python-client + youtube-transcript-api + anthropic + ebooklib + python-dotenv"
+  - id: claim-004
+    status: passed
+    note: "dashboard.py is 890 lines with streamlit imports — substantial Web UI"
+  - id: claim-005
+    status: passed
+    note: "Both plist files (.plist + .dashboard.plist) are 34/36 lines with Label + ProgramArguments — valid LaunchAgent format"
+  - id: claim-006
+    status: failed
+    note: "No LICENSE file at root (HTTP 404) — same gap as Zara's other skills"
+
+claims_deferred:
+  - claim-007  # live YouTube → EPUB pipeline
+
+artifacts:
+  - artifacts/SKILL.md
+  - artifacts/main.py
+  - artifacts/dashboard.py
+  - artifacts/requirements.txt
+  - artifacts/com.youtube.newsletter.plist
+  - artifacts/com.youtube.newsletter.dashboard.plist
+
+logs:
+  - logs/root.txt
+  - logs/static-checks.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/zarazhangrui/youtube-to-ebook/main/{*.py,*.plist,SKILL.md,requirements.txt}"
+    - "gh api repos/zarazhangrui/youtube-to-ebook/contents"
+  network_dependent: true
+  reproducible: yes

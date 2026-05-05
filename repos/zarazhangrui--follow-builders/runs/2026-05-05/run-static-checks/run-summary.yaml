@@ -1,0 +1,56 @@
+run_id: run-static-checks
+date: 2026-05-05
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: zarazhangrui
+  repo: follow-builders
+  branch: main
+
+scope: |
+  Static-checkable claims for SKILL.md, prompt files, source list,
+  Node.js scripts, bilingual support, and LICENSE. Live agent-driven
+  end-to-end (claim-007) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "SKILL.md is 466 lines with frontmatter; description names trigger phrases"
+  - id: claim-002
+    status: passed
+    note: "All 5 prompt files exist (1.0-2.6 KB each): summarize-{podcast,tweets,blogs} + digest-intro + translate"
+  - id: claim-003
+    status: passed
+    note: "config/default-sources.json declares 25 x_accounts + 6 podcasts + 2 blogs — matches README exactly"
+  - id: claim-004
+    status: passed
+    note: "scripts/generate-feed.js (38 KB) + prepare-digest.js (5 KB) + deliver.js (7 KB) — real implementations"
+  - id: claim-005
+    status: passed
+    note: "README.zh-CN.md exists; prompts/translate.md ships translation prompt"
+  - id: claim-006
+    status: failed
+    note: "No LICENSE file at repo root (HTTP 404)"
+
+claims_deferred:
+  - claim-007  # live setup + delivery flow
+
+artifacts:
+  - artifacts/SKILL.md
+  - artifacts/feed-x.json
+  - artifacts/feed-podcasts.json
+  - artifacts/feed-blogs.json
+  - artifacts/default-sources.json
+  - artifacts/scripts-package.json
+
+logs:
+  - logs/root.txt
+  - logs/prompts.txt
+  - logs/scripts.txt
+  - logs/static-checks.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/zarazhangrui/follow-builders/main/{SKILL.md,feed-*.json,config/default-sources.json,prompts/*.md}"
+    - "gh api repos/zarazhangrui/follow-builders/contents/{prompts,scripts,config}"
+  network_dependent: true
+  reproducible: yes

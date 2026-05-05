@@ -1,0 +1,141 @@
+claims:
+- id: claim-001
+  title: SKILL.md frontmatter 完整且有 trigger 短语清单
+  source: README "Trigger phrases"
+  source_ref: SKILL.md
+  priority: critical
+  area: skill-shape
+  statement: 'SKILL.md 必须有 `name + description` frontmatter；description 中明确列出
+
+    ≥4 个 trigger phrase（如 "turn this into a course"、"interactive tutorial
+
+    from this code"），让 Claude Code skill loader 能 auto-discover。
+
+    '
+  business_expectation: '用户说出 README 里任意一句触发短语，agent 都能命中这个 skill。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: SKILL.md (221 lines) frontmatter has 7+ trigger phrases
+- id: claim-002
+  title: references/ 真实 ship 了 CSS / JS / build.sh，不只是 markdown
+  source: README "Skill structure"
+  source_ref: references/
+  priority: critical
+  area: skill-completeness
+  statement: 'references/ 下必须真实存在：≥1 个 .css 文件（≥500 行）+ ≥1 个 .js 文件
+
+    （≥200 行）+ build.sh + 至少 1 个 HTML 模板。这些是 skill 实际产出
+
+    课程目录所必需的资产。
+
+    '
+  business_expectation: 'Skill 不是纯 markdown 的「假 hybrid」，真有可执行 / 可加载的代码资产。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: styles.css 1195 lines + main.js 498 lines + build.sh + 2 HTML templates
+- id: claim-003
+  title: 设计系统 / 内容哲学 / interactive-elements 三份文档真实有内容
+  source: README "Skill structure"
+  source_ref: references/{design-system,content-philosophy,interactive-elements}.md
+  priority: high
+  area: depth
+  statement: 'design-system.md / content-philosophy.md / interactive-elements.md 三份文档
+
+    每份至少 2KB（说明真有指导内容），interactive-elements.md 应是最大的
+
+    （quiz / animation / visualization 模式细节）。
+
+    '
+  business_expectation: 'LLM 在生成课程时引用的不是 1 行占位符，而是有指导意义的设计规范。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 5 reference docs all >2KB; interactive-elements.md is biggest at 32KB
+- id: claim-004
+  title: build.sh 是真实可执行的 assembler
+  source: README "single HTML file" + skill structure
+  source_ref: references/build.sh
+  priority: high
+  area: assembly-tooling
+  statement: 'references/build.sh 是真实 bash 脚本（非占位），用 `cat` 或类似命令把
+
+    _base.html + modules/*.html + _footer.html 拼成 index.html。set -e 设置，
+
+    错误能冒泡。
+
+    '
+  business_expectation: 'Skill 跑完后用户可以一键 `bash build.sh` 拼出最终课程，不用自己手工拼。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: build.sh real bash with set -e + cat assembler
+- id: claim-005
+  title: 目录结构与 README 描述一致
+  source: README "Skill structure" 段
+  source_ref: repo root
+  priority: high
+  area: contract-alignment
+  statement: '仓库根目录有：README.md / SKILL.md / references/。references/ 内文件清单
+
+    与 README 描述（design-system.md / interactive-elements.md）至少对得上。
+
+    '
+  business_expectation: '用户照 README 复制 `codebase-to-course/` 到 `~/.claude/skills/`，目录结构
+
+    与文档一致，不缺文件。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: Repo root README.md / SKILL.md / references/ matches docs
+- id: claim-006
+  title: 仓库有 LICENSE 文件，下游可二次使用
+  source: framework / 法律风险
+  source_ref: LICENSE
+  priority: high
+  area: licensing
+  statement: '仓库根目录应有 LICENSE 文件（MIT / Apache-2.0 / CC-BY 等开源协议之一），
+
+    声明用户可以转发、修改、用于商业。
+
+    '
+  business_expectation: '用户复制 skill 到自己 setup 不会有 license 灰区。
+
+    '
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: No LICENSE file at root (HTTP 404)
+- id: claim-007
+  title: 端到端 happy path：对一个真实代码库跑出一个能开的课程
+  source: README "How to use"
+  source_ref: 整条 pipeline
+  priority: critical
+  area: end-to-end
+  statement: '在 Claude Code 里说「turn this codebase into an interactive course」，
+
+    指向一个 ≤5000 行的真实代码库（如一个 Next.js demo），agent 应：
+
+    (a) 分析代码 → (b) 生成 5-7 个 module 的 brief →
+
+    (c) 调 references/ 下的模板生成 HTML →
+
+    (d) 跑 build.sh 出一个 index.html → 浏览器打开能看到完整滚动课程。
+
+    '
+  business_expectation: '"turn into a course" 不是 demo 录像，真新代码库也能跑出可用课程。
+
+    '
+  evidence_needed: 'molecule 级 — 需要 Claude Code session + 真实代码库 + 真实 LLM key。
+
+    建议 1 个 happy-path（小型 Next.js / Flask / Vue 项目）+ 1 个边界场景
+
+    （多语言 / monorepo，验证是否能优雅退化或要求 scope）。
+
+    '
+  status: untested

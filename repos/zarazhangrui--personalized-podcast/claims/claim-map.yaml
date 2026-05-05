@@ -1,0 +1,146 @@
+claims:
+- id: claim-001
+  title: SKILL.md + PROMPT.md 两份核心文档真实存在
+  source: README "/podcast" + "Customize the script prompt"
+  source_ref: SKILL.md + PROMPT.md
+  priority: critical
+  area: skill-shape
+  statement: '仓库根目录有 SKILL.md（slash command 注册 + 走查指引）和 PROMPT.md
+
+    （hosts 对话生成 prompt）。两者都不是 1 行占位（≥ 30 行）。
+
+    '
+  business_expectation: '用户能从 SKILL.md 看到怎么调用，从 PROMPT.md 看到怎么改主持人风格。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: SKILL.md 235 + PROMPT.md 33 lines
+- id: claim-002
+  title: 4 个 Python 脚本（bootstrap / publish / speak / utils）真有实现
+  source: README "How it works" + scripts/
+  source_ref: scripts/{bootstrap,publish,speak,utils}.py
+  priority: critical
+  area: pipeline
+  statement: 'scripts/ 下有 bootstrap.py + publish.py + speak.py + utils.py 四个 .py，
+
+    每个 ≥ 100 行。speak.py 应实现 Fish Audio 调用，publish.py 应实现 RSS feed
+
+    生成。
+
+    '
+  business_expectation: '"Fish Audio TTS + RSS feed" 不是营销词，真有实现。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: '4 scripts: bootstrap 352 / publish 295 / speak 254 / utils 195 lines'
+- id: claim-003
+  title: requirements 与 README 描述的依赖匹配
+  source: README "Quick start"
+  source_ref: scripts/requirements.txt
+  priority: high
+  area: install
+  statement: 'scripts/requirements.txt 至少有 httpx（Fish Audio API）+ pydub（拼音频）+
+
+    Jinja2（RSS 模板）+ PyYAML（config）。
+
+    '
+  business_expectation: 'bootstrap.py 装依赖时不会缺东西。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: httpx + pydub + Jinja2 + PyYAML — all 4 deps present
+- id: claim-004
+  title: RSS feed 模板真实存在
+  source: README "Set up an RSS feed"
+  source_ref: templates/feed_template.xml
+  priority: high
+  area: rss
+  statement: 'templates/feed_template.xml 是真实 RSS XML 模板（≥ 20 行），有 channel /
+
+    title / item 等基本节点；可被 Jinja2 渲染。
+
+    '
+  business_expectation: '"Listen in Apple Podcasts" 不靠用户自己写 XML，模板兜得住。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: feed_template.xml has real RSS XML with Jinja2 template tags
+- id: claim-005
+  title: config.example.yaml 暴露 README 提到的 5 类选项
+  source: README "Make it yours"
+  source_ref: config/config.example.yaml
+  priority: high
+  area: config-coverage
+  statement: 'config/config.example.yaml 包含 README 提到的可配置项：show_name + tone +
+
+    hosts 数 + voices（Fish Audio reference IDs）+ episode 长度。
+
+    '
+  business_expectation: '用户改 README 描述的任意一项偏好，配置入口都能对得上。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: config.example.yaml covers show_name + tone + hosts + voices + length + RSS
+    publish settings
+- id: claim-006
+  title: 仓库有 LICENSE
+  source: framework
+  source_ref: LICENSE
+  priority: high
+  area: licensing
+  statement: 'LICENSE 文件存在于根目录。
+
+    '
+  business_expectation: '用户能合法 fork / 修改 / 转发。
+
+    '
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: No LICENSE at root (HTTP 404)
+- id: claim-007
+  title: README 引用的安装路径与实际仓库一致
+  source: README "Quick start"
+  source_ref: gh repo clone 命令
+  priority: high
+  area: docs-correctness
+  statement: 'README 里 `gh repo clone <owner>/<repo>` 指向的目标实际存在。GitHub 自动
+
+    重定向不算真正"能装"—— README 应直接写正确路径。
+
+    '
+  business_expectation: '用户复制粘贴 README 命令不会看到 301 redirect 通知。
+
+    '
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: README clones personalized-podcast-skill but actual repo is personalized-podcast;
+    works via 301 redirect
+- id: claim-008
+  title: 端到端：能从一句 `/podcast <content>` 拿到 MP3
+  source: README "/podcast"
+  source_ref: SKILL.md 全链
+  priority: critical
+  area: end-to-end
+  statement: 'Claude Code 装好 skill + 配 Fish Audio key 后，发一句 `/podcast`
+
+    指向一段 1-2 KB 文本，应：(a) Claude 写出 2-host 对话 →
+
+    (b) 调 Fish Audio 出每位主持人的语音 → (c) pydub 拼音频 →
+
+    (d) MP3 文件本地播放。
+
+    '
+  business_expectation: '"first episode generates immediately" 不是营销词。
+
+    '
+  evidence_needed: 'molecule 级 — 需要 Claude Code session + 真实 Fish Audio key。建议
+
+    1 个 happy-path（短文本 → 1 episode）+ 1 个 Fish Audio rate-limit 场景。
+
+    '
+  status: untested

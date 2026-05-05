@@ -1,0 +1,30 @@
+=== claim-001 5 stage files ===
+  get_videos.py:      157 lines
+  get_transcripts.py:      137 lines
+  write_articles.py:      108 lines
+  send_email.py:      404 lines
+  video_tracker.py:       92 lines
+
+=== claim-002 SKILL.md ===
+  size:      171 lines
+---
+name: youtube-to-ebook
+description: Transform YouTube videos into beautifully formatted ebook articles with transcripts
+
+=== claim-003 requirements ===
+  google-api-python-client: google-api-python-client
+  youtube-transcript-api: youtube-transcript-api
+  anthropic: anthropic
+  ebooklib: ebooklib
+  python-dotenv: python-dotenv
+
+=== claim-004 dashboard.py ===
+  size:      890 lines
+  uses streamlit: 5
+
+=== claim-005 plist files ===
+  com.youtube.newsletter.plist:       34 lines, Label=1 ProgramArguments=1
+  com.youtube.newsletter.dashboard.plist:       36 lines, Label=1 ProgramArguments=1
+
+=== claim-006 LICENSE ===
+  HTTP 404

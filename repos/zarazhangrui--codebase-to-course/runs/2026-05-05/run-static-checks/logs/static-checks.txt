@@ -1,0 +1,25 @@
+=== claim-001 SKILL.md trigger phrases ===
+' '
+' '
+' '
+' '
+' '
+' or '
+
+=== claim-002 assets ===
+  styles.css:     1195 lines,    34781 bytes
+  main.js:      498 lines,    19539 bytes
+  build.sh:        6 lines,      210 bytes
+  _base.html:       55 lines,     2238 bytes
+  _footer.html:        4 lines,       27 bytes
+
+=== claim-004 build.sh ===
+#!/bin/bash
+# Assembles the course from parts.
+# Run from the course directory: bash build.sh
+set -e
+cat _base.html modules/*.html _footer.html > index.html
+echo "Built index.html — open it in your browser."
+
+=== claim-006 LICENSE ===
+  LICENSE HTTP 404

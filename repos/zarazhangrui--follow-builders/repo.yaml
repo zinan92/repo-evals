@@ -1,0 +1,67 @@
+owner: zarazhangrui
+repo: follow-builders
+display_name: follow-builders
+repo_url: https://github.com/zarazhangrui/follow-builders
+repo_type: skill
+archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Pipeline: pre-fetched feed JSONs (built centrally) → 5 prompt files
+# (summarize per type + translate) → digest → deliver via Telegram /
+# email / in-chat. Predefined orchestration → molecule.
+layer: molecule
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-05"
+version_tested: "main@HEAD"
+stars: 3689
+archived: false
+has_license: false
+multilingual_readme: true
+release_pipeline_score: 1
+eval_discipline_score: 0
+recently_active: true
+notes: |
+  AI-builder digest skill for Claude Code / OpenClaw. Tracks 25 X
+  builders + 6 AI podcasts + 2 official blogs. Architecture: Zara
+  maintains a central pipeline (Node.js scripts + cron) that
+  pre-fetches + summarizes content into feed-{x,podcasts,blogs}.json;
+  the user's skill reads those JSONs and delivers per their
+  preferences (Telegram / email / in-chat) in EN / ZH / bilingual.
+
+  466-line SKILL.md, 5 prompt files (digest-intro, summarize-blogs,
+  summarize-podcast, summarize-tweets, translate). 3 Node.js scripts
+  in scripts/ (generate-feed, prepare-digest, deliver). Bilingual
+  (EN + ZH READMEs). 3.7K stars, recently active, no LICENSE.
+
+  Clever design: "no API keys needed — all content fetched centrally"
+  means the user-facing skill is light, all the heavy lifting happens
+  on the maintainer's server. Trade-off: the central server is a
+  single point of failure / single source of curation bias.
+
+product_view:
+  one_liner:
+    en: "A Claude Code / OpenClaw skill that delivers a daily or weekly digest of what 25 top AI builders are saying — summaries of new podcast episodes (Latent Space, No Priors, Training Data, etc.), insights from X posts, and Anthropic / Claude blog articles. Bilingual EN / ZH. No API keys needed (centrally fetched feeds)."
+    zh: "一个 Claude Code / OpenClaw 技能：定期送上 25 位顶级 AI builder 的内容摘要 —— 顶尖 AI 播客（Latent Space / No Priors / Training Data 等）+ X 上的精华帖 + Anthropic / Claude 官方博客。中英双语，不需要 API key（feed 由项目方中心化抓取）。"
+  best_for:
+    en: "AI practitioners who want curated input from people who actually build, not from influencers — willing to trust the maintainer's curation list."
+    zh: "想从真正在做产品的人那里取信息（不是 KOL）的 AI 从业者；愿意信任维护者的 curation 名单。"
+  watch_out:
+    en: |
+      No LICENSE file at the repo root yet — fork / modify legality is unclear. The "no API keys needed" model means content fetching depends on Zara's central pipeline; if her server goes down or she stops maintaining it, your digest stops working and there's no documented fallback. Curation list is centrally controlled — you can't easily add your own builders without forking and running scripts/generate-feed yourself.
+    zh: |
+      仓库根目录还没 LICENSE —— fork / 改用法律状态不明。「不需要 API key」的代价是：内容抓取依赖 Zara 的中央服务器；她不维护了或者服务器挂了，你的 digest 就停。curation 名单也是中心化的，想加自己关注的 builder 得自己 fork 并跑 scripts/generate-feed。
+  use_for:
+    - en: "Daily / weekly AI-builder digest in your existing chat tool (Telegram / Discord / email) — light-touch consumption."
+      zh: "在你常用的 chat 工具（Telegram / Discord / 邮箱）里定期收 AI builder 摘要 —— 轻量消费。"
+    - en: "Bilingual readers who want both EN and ZH versions of summaries."
+      zh: "想同时看到中英文摘要的双语用户。"
+    - en: "Trust Zara's curation of 25 builders + 6 podcasts + 2 official blogs (Anthropic / Claude)."
+      zh: "信得过 Zara 选的 25 位 builder + 6 个播客 + 2 个官方博客（Anthropic / Claude）的清单。"
+  dont_use_for:
+    - en: "Don't depend on it for production / business intelligence — central pipeline is single point of failure with no documented SLA."
+      zh: "别把它当生产环境 / 商业情报源 —— 中央 pipeline 是单点故障，没有 SLA 承诺。"
+    - en: "Don't expect to easily customize the source list without forking and self-hosting scripts/generate-feed."
+      zh: "想自定义关注的 builder 不容易 —— 得 fork 仓库并自己跑 scripts/generate-feed。"
+    - en: "Don't redistribute generated digests commercially — no LICENSE at repo root."
+      zh: "生成的 digest 别商用分发 —— 仓库没 LICENSE。"

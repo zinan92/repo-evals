@@ -1,0 +1,42 @@
+{
+  "slug": "zarazhangrui--codebase-to-course",
+  "display_name": "codebase-to-course",
+  "owner": "zarazhangrui",
+  "repo": "codebase-to-course",
+  "repo_url": "https://github.com/zarazhangrui/codebase-to-course",
+  "repo_type": "skill",
+  "archetype": "hybrid-skill",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Claude Code skill that turns any codebase into a single-page interactive HTML course. SKILL.md (221 lines) + references/ shipping real CSS (1195 lines, 34 KB), real JS (498 lines, 19 KB), 4 reference docs (content-philosophy / design-system / gotchas / interactive-elements total…",
+  "repo_path": "repos/zarazhangrui--codebase-to-course",
+  "claims_summary": {
+    "total": 7,
+    "passed": 5,
+    "failed": 1,
+    "untested": 1,
+    "critical_total": 3,
+    "critical_passed": 2,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 4
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/zarazhangrui--codebase-to-course/plans/2026-05-05-eval-plan.md",
+  "verdict_path": "repos/zarazhangrui--codebase-to-course/verdicts/2026-05-05-final-verdict.md",
+  "attention_level": "high"
+}

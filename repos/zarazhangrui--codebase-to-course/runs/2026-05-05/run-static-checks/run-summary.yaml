@@ -1,0 +1,56 @@
+run_id: run-static-checks
+date: 2026-05-05
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: zarazhangrui
+  repo: codebase-to-course
+  branch: main
+
+scope: |
+  Static-checkable claims for SKILL.md frontmatter, references/ asset
+  shipment, reference-doc depth, build.sh assembler, directory layout,
+  and LICENSE presence. Live agent run on a real codebase
+  (claim-007) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "SKILL.md (221 lines) frontmatter has name + description with 7+ trigger-phrase quotes for auto-discovery"
+  - id: claim-002
+    status: passed
+    note: "styles.css (1195 lines, 34 KB) + main.js (498 lines, 19 KB) + build.sh + _base.html + _footer.html — real assets, not stubs"
+  - id: claim-003
+    status: passed
+    note: "5 reference docs all > 2 KB; interactive-elements.md is biggest (32 KB), design-system.md = 12 KB, content-philosophy.md = 9 KB"
+  - id: claim-004
+    status: passed
+    note: "build.sh is real bash with `set -e` + `cat _base.html modules/*.html _footer.html > index.html` — minimal but correct"
+  - id: claim-005
+    status: passed
+    note: "Repo root has README.md / SKILL.md / references/ matching README structure description"
+  - id: claim-006
+    status: failed
+    note: "No LICENSE file at repo root (HTTP 404) — downstream reuse legal status unclear"
+
+claims_deferred:
+  - claim-007  # live agent session generating a course from a real codebase
+
+artifacts:
+  - artifacts/SKILL.md
+  - artifacts/ref-build.sh
+  - artifacts/ref-styles.css
+  - artifacts/ref-main.js
+  - artifacts/ref-_base.html
+  - artifacts/ref-_footer.html
+
+logs:
+  - logs/references.txt
+  - logs/static-checks.txt
+  - logs/static-evidence.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/zarazhangrui/codebase-to-course/main/{SKILL.md,LICENSE,references/*}"
+    - "gh api repos/zarazhangrui/codebase-to-course/contents/references"
+  network_dependent: true
+  reproducible: yes

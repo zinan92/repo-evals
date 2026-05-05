@@ -1,0 +1,28 @@
+=== claim-001 SKILL.md size ===
+       466 lines
+---
+name: follow-builders
+description: AI builders digest — monitors top AI builders on X and YouTube podcasts, remixes their content into digestible summaries. Use when the user wants AI industry insights, builder updates, or invokes /ai. No API keys or dependencies required — all content is fetched from a central feed.
+
+=== claim-002 prompts files ===
+  summarize-podcast.md:     1351 bytes
+  summarize-tweets.md:     1169 bytes
+  summarize-blogs.md:     1082 bytes
+  digest-intro.md:     2594 bytes
+  translate.md:     1049 bytes
+
+=== claim-003 feed JSON shape ===
+feed-x.json: 10 X builders
+feed-podcasts.json: 1 podcasts
+feed-blogs.json: 0 blogs
+
+=== claim-004 scripts ===
+  generate-feed.js:    37939 bytes
+  prepare-digest.js:     5421 bytes
+  deliver.js:     6896 bytes
+
+=== claim-005 bilingual ===
+  README.zh-CN.md HTTP 200
+
+=== claim-006 LICENSE ===
+  LICENSE HTTP 404

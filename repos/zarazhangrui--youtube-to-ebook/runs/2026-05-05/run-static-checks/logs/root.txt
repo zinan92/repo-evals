@@ -1,0 +1,17 @@
+f .env.example
+d .github
+f .gitignore
+f README.md
+f SKILL.md
+f com.youtube.newsletter.dashboard.plist
+f com.youtube.newsletter.plist
+f dashboard.py
+f get_transcripts.py
+f get_videos.py
+f launch_dashboard.command
+f main.py
+f requirements.txt
+f run_newsletter.sh
+f send_email.py
+f video_tracker.py
+f write_articles.py

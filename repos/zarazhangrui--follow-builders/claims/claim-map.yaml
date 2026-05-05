@@ -1,0 +1,136 @@
+claims:
+- id: claim-001
+  title: SKILL.md 完整且 ≥ 200 行（不只是占位）
+  source: README "Quick Start"
+  source_ref: SKILL.md
+  priority: critical
+  area: skill-shape
+  statement: 'SKILL.md 必须存在、≥ 200 行、有 frontmatter（name + description）。
+
+    description 中包含 trigger 短语让 agent 自动发现（如 "set up follow
+
+    builders" / "follow-builders"）。
+
+    '
+  business_expectation: '用户照 README 一句"set up follow builders"，agent 真能命中这个 skill。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: SKILL.md is 466 lines with frontmatter + trigger phrases
+- id: claim-002
+  title: 5 个 prompt 文件真实存在且与 README 一致
+  source: README "Customizing the Summaries"
+  source_ref: prompts/{summarize-podcast,summarize-tweets,summarize-blogs,digest-intro,translate}.md
+  priority: critical
+  area: prompt-coverage
+  statement: 'prompts/ 下应有这 5 个文件：summarize-podcast.md / summarize-tweets.md /
+
+    summarize-blogs.md / digest-intro.md / translate.md。每个都要有真实内容
+
+    （不是 1 行占位）。
+
+    '
+  business_expectation: '用户照 README 编辑任一 prompt 文件都能找到，下次 digest 真的反映新偏好。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: All 5 prompt files exist, 1.0-2.6 KB each
+- id: claim-003
+  title: 三种 feed JSON 文件真实存在且对应 README 数字
+  source: README "Default Sources"
+  source_ref: feed-{x,podcasts,blogs}.json
+  priority: critical
+  area: feed-coverage
+  statement: '仓库根目录有 feed-x.json / feed-podcasts.json / feed-blogs.json。
+
+    README 说 25 个 X builder + 6 个 podcast + 2 个官方博客；feed 文件
+
+    内的 source/builder 数量与 README 数字一致或相差不大（README 可能滞后）。
+
+    '
+  business_expectation: 'Skill 实际能拉到 README 描述的全部源，不是只列了几个就摆烂。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'config/default-sources.json: 25 x_accounts + 6 podcasts + 2 blogs — matches
+    README exactly'
+- id: claim-004
+  title: scripts/ 真有 generate-feed + prepare-digest + deliver 三个 Node 脚本
+  source: README架构（中央拉取）+ scripts/
+  source_ref: scripts/{generate-feed,prepare-digest,deliver}.js
+  priority: high
+  area: pipeline
+  statement: 'scripts/ 目录下有 generate-feed.js + prepare-digest.js + deliver.js +
+
+    package.json。package.json 声明 `dotenv` + 文件锁等基础依赖；脚本本身
+
+    非占位（每个 ≥ 1KB）。
+
+    '
+  business_expectation: '"中央 pipeline" 是真有 Node.js 实现，不是空概念。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: generate-feed.js (38 KB) + prepare-digest.js (5 KB) + deliver.js (7 KB)
+- id: claim-005
+  title: 双语支持真实（README + 翻译 prompt）
+  source: README "Available in English, Chinese, or bilingual"
+  source_ref: README.zh-CN.md + prompts/translate.md
+  priority: high
+  area: i18n
+  statement: '仓库根目录有 README.zh-CN.md（中文 README）+ prompts/translate.md
+
+    （翻译 prompt）。两者都不是 1 行占位。
+
+    '
+  business_expectation: '中文用户能看懂文档，翻译 prompt 能自定义。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: README.zh-CN.md + prompts/translate.md both real
+- id: claim-006
+  title: 仓库有 LICENSE
+  source: framework
+  source_ref: LICENSE
+  priority: high
+  area: licensing
+  statement: '仓库根目录有 LICENSE 文件（开源协议之一），允许下游 fork / 修改 / 转发。
+
+    '
+  business_expectation: '用户能合法地 fork 自托管，或转发 digest 给团队。
+
+    '
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: No LICENSE file at repo root (HTTP 404)
+- id: claim-007
+  title: 端到端 happy path：用户能在 1 次对话内完成订阅
+  source: README "Quick Start"
+  source_ref: SKILL.md + 中央 pipeline
+  priority: critical
+  area: end-to-end
+  statement: '在 Claude Code 里说"set up follow builders"，agent 应：
+
+    (a) 走完文档化的 setup 对话（频率 / 语言 / 投递渠道）→
+
+    (b) 写出本地配置 → (c) 立刻拉一次 feed-*.json 并产出第一份 digest →
+
+    (d) 按用户选的渠道（Telegram / 邮件 / in-chat）真实送达。
+
+    '
+  business_expectation: '"Your first digest arrives immediately after setup" 不是营销词。
+
+    '
+  evidence_needed: 'molecule 级 — 需要 Claude Code session + 真实投递渠道（Telegram bot
+
+    token / 邮箱）。建议 1 个 happy-path（订阅 + 送达 1 次）+ 1 个
+
+    "中央 server 不可达" 场景（验证错误冒泡 vs 静默失败）。
+
+    '
+  status: untested

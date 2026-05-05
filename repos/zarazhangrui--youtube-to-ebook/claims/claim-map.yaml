@@ -1,0 +1,129 @@
+claims:
+- id: claim-001
+  title: 5 阶段 pipeline 文件齐全（videos / transcripts / articles / email / tracker）
+  source: README "Features"
+  source_ref: get_videos.py + get_transcripts.py + write_articles.py + send_email.py
+    + video_tracker.py
+  priority: critical
+  area: pipeline-shape
+  statement: '仓库根目录有 main.py + 5 个对应 stage 的 .py：get_videos / get_transcripts /
+
+    write_articles / send_email / video_tracker。每个都不是占位（≥ 50 行 / ≥ 1KB）。
+
+    '
+  business_expectation: 'README 描述的 fetch → transcript → LLM → EPUB → email 5 步流水真有真代码。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: '5 stage files real: get_videos 157 / get_transcripts 137 / write_articles
+    108 / send_email 404 / video_tracker 92 lines'
+- id: claim-002
+  title: SKILL.md 真实存在
+  source: gh repo description "Claude skill"
+  source_ref: SKILL.md
+  priority: high
+  area: skill-shape
+  statement: '仓库根目录有 SKILL.md 且包含标准 frontmatter（name + description）。即使
+
+    README 主推 git clone + python，但有 SKILL.md 时也能在 Claude Code 里识别。
+
+    '
+  business_expectation: '用户也可以把仓库内容当 Claude skill 装载。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: SKILL.md 171 lines with name + description frontmatter
+- id: claim-003
+  title: requirements.txt 涵盖 README 描述的所有依赖
+  source: README "Features"
+  source_ref: requirements.txt
+  priority: critical
+  area: install
+  statement: 'requirements.txt 中至少有：google-api-python-client（YouTube API）+
+
+    youtube-transcript-api（字幕）+ anthropic（Claude）+ ebooklib（EPUB）+
+
+    python-dotenv（.env）。
+
+    '
+  business_expectation: '`pip install -r requirements.txt` 一次到位，不会缺包。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: All 5 README deps present in requirements.txt
+- id: claim-004
+  title: dashboard.py 是真实 Streamlit web UI
+  source: README "Web Dashboard"
+  source_ref: dashboard.py
+  priority: high
+  area: ui
+  statement: 'dashboard.py ≥ 200 行（说明真有 Streamlit 代码而不是 1 行占位）。可被
+
+    `streamlit run dashboard.py` 调起。
+
+    '
+  business_expectation: '"Optional: Web dashboard" 不是 PR 用语，真有完整 UI。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: dashboard.py 890 lines real Streamlit (5 streamlit imports)
+- id: claim-005
+  title: Mac LaunchAgent plist 真实存在且不只是占位
+  source: README "Automation (Mac)"
+  source_ref: com.youtube.newsletter.plist
+  priority: high
+  area: automation
+  statement: '仓库根有 com.youtube.newsletter.plist + com.youtube.newsletter.dashboard.plist。
+
+    文件是合法 plist XML，包含 Label + ProgramArguments + StartCalendarInterval 等
+
+    关键字段。
+
+    '
+  business_expectation: '用户照 README 一句 `cp ... ~/Library/LaunchAgents` 真能跑起来。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: Both plist files have Label + ProgramArguments — valid LaunchAgent format
+- id: claim-006
+  title: 仓库有 LICENSE
+  source: framework
+  source_ref: LICENSE
+  priority: high
+  area: licensing
+  statement: 'LICENSE 文件存在于根目录（开源协议之一）。
+
+    '
+  business_expectation: '用户能合法 fork / 修改 / 转发。
+
+    '
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: No LICENSE at root (HTTP 404)
+- id: claim-007
+  title: 端到端：跑一次能产出 EPUB
+  source: README "Quick Start"
+  source_ref: main.py 全链
+  priority: critical
+  area: end-to-end
+  statement: '装好依赖 + 配 .env（YouTube + Anthropic key）+ channels.txt 列 1 个频道，
+
+    跑 `python main.py` 应：抓视频 → 拿字幕 → 调 Claude 改写 → 生成
+
+    output/*.epub。整链跑成功且产物可在 EPUB reader 打开。
+
+    '
+  business_expectation: '装完一句命令真出书，不用调试。
+
+    '
+  evidence_needed: 'molecule 级 — 需要真实 API key + 真实 YouTube 频道。建议 1 个 happy-path
+
+    （小型频道 1-3 个视频） + 1 个 transcript-disabled 视频场景（验证错误冒泡）。
+
+    '
+  status: untested

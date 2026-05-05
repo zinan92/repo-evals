@@ -1,0 +1,37 @@
+# =============================================================================
+# Personalized Podcast — Configuration
+# =============================================================================
+# API keys go in ~/.personalized-podcast/.env (NOT here).
+# =============================================================================
+
+# --- Show Settings ---
+show_name: "My Podcast"
+description: "A personalized AI-generated podcast."
+owner_email: ""                     # Required for Spotify — your email address
+hosts: 2
+length_minutes: 10
+tone: "casual and conversational"
+language: "en"
+
+# --- Text-to-Speech Settings ---
+# Fish Audio turns the script into audio.
+# Get your free API key at fish.audio, then paste it in .env as FISH_API_KEY
+tts:
+  provider: "fishaudio"
+  api_key_env: "FISH_API_KEY"
+  # Default voices — works out of the box. To pick your own, browse:
+  # https://fish.audio/discovery
+  # Find a voice you like, copy its reference ID, and paste it here.
+  host_a_voice_id: "544c5489106842be8d63d6b619f6a125"   # Male — natural, conversational
+  host_b_voice_id: "933563129e564b19a115bedd57b7406a"   # Sarah — warm, engaging female
+
+# --- RSS Feed (optional) ---
+# Set these up if you want episodes published to a podcast feed.
+# Leave empty to skip — episodes will just be saved as local MP3 files.
+# publish:
+#   github_repo: "yourusername/podcast-feed"
+#   base_url: "https://yourusername.github.io/podcast-feed"
+
+# --- Retention ---
+retention:
+  max_episodes: 30

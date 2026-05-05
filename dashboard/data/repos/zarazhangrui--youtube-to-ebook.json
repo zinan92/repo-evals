@@ -1,0 +1,42 @@
+{
+  "slug": "zarazhangrui--youtube-to-ebook",
+  "display_name": "youtube-to-ebook",
+  "owner": "zarazhangrui",
+  "repo": "youtube-to-ebook",
+  "repo_url": "https://github.com/zarazhangrui/youtube-to-ebook",
+  "repo_type": "skill",
+  "archetype": "hybrid-skill",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Python CLI tool that fetches YouTube videos from configured channels, extracts transcripts, uses Claude to rewrite as magazine-style articles, packages into EPUB, optionally emails. Ships SKILL.md alongside (so it can also load into Claude Code as a skill, though install path is…",
+  "repo_path": "repos/zarazhangrui--youtube-to-ebook",
+  "claims_summary": {
+    "total": 7,
+    "passed": 5,
+    "failed": 1,
+    "untested": 1,
+    "critical_total": 3,
+    "critical_passed": 2,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 4
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/zarazhangrui--youtube-to-ebook/plans/2026-05-05-eval-plan.md",
+  "verdict_path": "repos/zarazhangrui--youtube-to-ebook/verdicts/2026-05-05-final-verdict.md",
+  "attention_level": "high"
+}

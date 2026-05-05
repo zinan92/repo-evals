@@ -1,0 +1,63 @@
+owner: zarazhangrui
+repo: youtube-to-ebook
+display_name: youtube-to-ebook
+repo_url: https://github.com/zarazhangrui/youtube-to-ebook
+repo_type: skill
+archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Predefined Python pipeline: get_videos → get_transcripts → write_articles
+# (LLM) → ebooklib → send_email. Streamlit dashboard for management.
+# Mac LaunchAgent for cron. Predefined orchestration → molecule.
+layer: molecule
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-05"
+version_tested: "main@HEAD"
+stars: 440
+archived: false
+has_license: false
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 0
+recently_active: false
+notes: |
+  Python CLI tool that fetches YouTube videos from configured channels,
+  extracts transcripts, uses Claude to rewrite as magazine-style
+  articles, packages into EPUB, optionally emails. Ships SKILL.md
+  alongside (so it can also load into Claude Code as a skill, though
+  install path is `git clone + pip install`, not skills directory).
+  440 stars, last pushed 2026-01-28 (3+ months stale at eval time).
+
+  Source layout: main.py orchestrator + get_videos.py + get_transcripts.py
+  + write_articles.py + send_email.py + video_tracker.py + dashboard.py
+  (890-line Streamlit). Mac LaunchAgent plists for cron. No LICENSE.
+
+  Molecule layer: 5-stage pipeline, no LLM-driven runtime decisions.
+
+product_view:
+  one_liner:
+    en: "A Python tool + Claude skill that pulls latest videos from YouTube channels you follow, runs the transcripts through Claude to make magazine-style articles, packages them as an EPUB delivered to your email or Apple Books — set it on a Mac LaunchAgent for weekly auto-delivery."
+    zh: "一个 Python 工具 + Claude 技能：从你订阅的 YouTube 频道拉最新视频，把字幕用 Claude 改写成杂志体文章，打成 EPUB 邮件给你或导入 Apple Books。配 Mac LaunchAgent 就能每周自动送到。"
+  best_for:
+    en: "Long-form readers who'd rather read than watch — turn favorite YouTubers (mkbhd / veritasium / 3blue1brown) into a weekly ebook delivered to Kindle / Apple Books / email."
+    zh: "更喜欢看文字的人 —— 把自己关注的 YouTube 频道（mkbhd / veritasium / 3blue1brown 等）变成每周一本电子书，送到 Kindle / Apple Books / 邮箱。"
+  watch_out:
+    en: |
+      No LICENSE file at root — fork / commercial use legal status unclear. README's git-clone snippet still uses `YOUR_USERNAME` placeholder (Zara's repo, not yours, but the README templating leak is a polish gap). Not recently maintained (last push 2026-01-28, 3+ months at eval time); YouTube transcript API can break when YouTube changes the front-end. The Mac LaunchAgent path is Mac-only; Linux users need to write their own cron config.
+    zh: |
+      仓库根没有 LICENSE —— fork / 商用法律状态不明。README 的 git clone 命令里还写着 `YOUR_USERNAME` 占位符（其实是 Zara 自己的仓库，README 模板没改干净）。最近没维护（2026-01-28 最后一次 push，已 3 个月+）；YouTube 改前端时 transcript API 可能失效。Mac LaunchAgent 只 Mac 能用，Linux 用户要自己配 cron。
+  use_for:
+    - en: "Turn YouTube channels you follow regularly into a weekly EPUB ebook delivered to Kindle / Apple Books / email."
+      zh: "把常看的 YouTube 频道变成每周送到 Kindle / Apple Books / 邮箱的 EPUB 电子书。"
+    - en: "Mac users who want hands-off automation via LaunchAgent."
+      zh: "想用 Mac LaunchAgent 实现完全无人值守自动化的用户。"
+    - en: "Bring-your-own-key Anthropic + free-tier YouTube Data API."
+      zh: "自带 Anthropic key + 用免费的 YouTube Data API。"
+  dont_use_for:
+    - en: "Don't run on Linux without writing your own cron config — Mac LaunchAgent paths won't help."
+      zh: "Linux 上跑别指望仓库自带的 LaunchAgent，要自己写 cron 配置。"
+    - en: "Don't expect channels with auto-generated captions only to produce great articles — quality of LLM rewrite ≤ quality of source transcript."
+      zh: "只有机器自动字幕的频道，别指望产出精品文章 —— LLM 改写质量 ≤ 字幕源质量。"
+    - en: "Don't redistribute generated ebooks commercially — no LICENSE; YouTube transcripts have their own copyright considerations."
+      zh: "生成的电子书别商用分发 —— 没 LICENSE；YouTube 字幕本身也有版权问题要自己评估。"

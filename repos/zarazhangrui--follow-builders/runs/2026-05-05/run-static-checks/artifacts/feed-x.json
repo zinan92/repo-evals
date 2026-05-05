@@ -1,0 +1,354 @@
+{
+  "generatedAt": "2026-05-04T08:26:33.142Z",
+  "lookbackHours": 24,
+  "x": [
+    {
+      "source": "x",
+      "name": "Swyx",
+      "handle": "swyx",
+      "bio": "achieve ambition with intentionality, intensity, integrity & insanity.\n\naffiliations:\n- @dxtipshq \n- @cognition\n- @temporalio\n- @aidotengineer\n- @latentspacepod",
+      "tweets": [
+        {
+          "id": "2051115027210346936",
+          "text": "til the show is free on youtube!\n\nhttps://t.co/THkBpFyMsX",
+          "createdAt": "2026-05-04T01:41:45.000Z",
+          "url": "https://x.com/swyx/status/2051115027210346936",
+          "likes": 0,
+          "retweets": 0,
+          "replies": 1,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2051025640657449249",
+          "text": "ok @deepfates @mada299 it took me 3 years to do my second short story but i did one",
+          "createdAt": "2026-05-03T19:46:33.000Z",
+          "url": "https://x.com/swyx/status/2051025640657449249",
+          "likes": 2,
+          "retweets": 0,
+          "replies": 0,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2051025206228218103",
+          "text": "https://t.co/d1TQY3fKFH",
+          "createdAt": "2026-05-03T19:44:50.000Z",
+          "url": "https://x.com/swyx/status/2051025206228218103",
+          "likes": 18,
+          "retweets": 0,
+          "replies": 5,
+          "isQuote": false,
+          "quotedTweetId": null
+        }
+      ]
+    },
+    {
+      "source": "x",
+      "name": "Peter Yang",
+      "handle": "petergyang",
+      "bio": "Practical AI tutorials and interviews for busy people | Join 140K+ readers at https://t.co/XYKTmGVH14 | Product at Roblox",
+      "tweets": [
+        {
+          "id": "2051136319104098445",
+          "text": "I tweeted this as a joke but it's literally what I'm doing right now lol sigh https://t.co/dEpf9jcFRa",
+          "createdAt": "2026-05-04T03:06:21.000Z",
+          "url": "https://x.com/petergyang/status/2051136319104098445",
+          "likes": 50,
+          "retweets": 1,
+          "replies": 21,
+          "isQuote": true,
+          "quotedTweetId": "2044976766914265097"
+        },
+        {
+          "id": "2051129249348894754",
+          "text": "I caved and downloaded Hermes to try. \n\nFor those of you who have tried both Hermes and OpenClaw what difference do you notice?\n\nNo shilling please, just want some honest opinions",
+          "createdAt": "2026-05-04T02:38:15.000Z",
+          "url": "https://x.com/petergyang/status/2051129249348894754",
+          "likes": 496,
+          "retweets": 11,
+          "replies": 210,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2050963126234034387",
+          "text": "How to keep your agents running even when your macbook lid is closed:\n\n1. Go to Mac App Store and download Amphetamine\n\n2. Go to Settings → Session Defaults → uncheck everything below\n\nYou're welcome :) https://t.co/mRVEq7c7Ly https://t.co/YUkFqARudk",
+          "createdAt": "2026-05-03T15:38:09.000Z",
+          "url": "https://x.com/petergyang/status/2050963126234034387",
+          "likes": 589,
+          "retweets": 37,
+          "replies": 67,
+          "isQuote": true,
+          "quotedTweetId": "2050773588521992642"
+        }
+      ]
+    },
+    {
+      "source": "x",
+      "name": "Amjad Masad",
+      "handle": "amasad",
+      "bio": "ceo @replit. civilizationist",
+      "tweets": [
+        {
+          "id": "2051167532523074015",
+          "text": "10 active, 198 draft, 700+ done.\n\nI don’t think there’s more agentic parallelism happening anywhere else on the internet than what happens on @Replit. https://t.co/eoEkNlNsu9",
+          "createdAt": "2026-05-04T05:10:23.000Z",
+          "url": "https://x.com/amasad/status/2051167532523074015",
+          "likes": 134,
+          "retweets": 6,
+          "replies": 18,
+          "isQuote": true,
+          "quotedTweetId": "2051162631067594832"
+        },
+        {
+          "id": "2051166676256014844",
+          "text": "Man, I miss staying up for days hacking https://t.co/Ib6tzs2FLz",
+          "createdAt": "2026-05-04T05:06:59.000Z",
+          "url": "https://x.com/amasad/status/2051166676256014844",
+          "likes": 73,
+          "retweets": 1,
+          "replies": 11,
+          "isQuote": true,
+          "quotedTweetId": "2050904453100745021"
+        },
+        {
+          "id": "2051007848440877242",
+          "text": "Amazing what a single day of marathon vibe coding can achieve. https://t.co/4AUxk6s74i",
+          "createdAt": "2026-05-03T18:35:51.000Z",
+          "url": "https://x.com/amasad/status/2051007848440877242",
+          "likes": 164,
+          "retweets": 12,
+          "replies": 32,
+          "isQuote": true,
+          "quotedTweetId": "2050855056044433601"
+        }
+      ]
+    },
+    {
+      "source": "x",
+      "name": "Aaron Levie",
+      "handle": "levie",
+      "bio": "ceo @box - your business lives in content. unleash it with AI",
+      "tweets": [
+        {
+          "id": "2051057677984469277",
+          "text": "Whether it’s existing consulting firms, new ones that emerge, FDEs from agent vendors, or new internal agent engineering roles, the amount of work that is going to be created to implement agents in enterprises will exceed anything we imagine today.\n\nThe complexity of implementing agents in any existing organizations is very real. When I talk to large enterprises, as you move from a chat paradigm to agents that participate in meaningful workflows, there are a number of things they need to do.\n\nFirst, you have to get agents to be able to talk to your data securely across your systems. In many cases, enterprises have decades of legacy infrastructure that contain the valuable context for AI agents. That’s going to take a ton of work to go modernize and move to systems that work well with agents. \n\nThen, you need to ensure that you’ve implemented agents with the right access controls and entitlements, the right scopes to be safely used, and have ways of monitoring, logging, and securing the work that they do. \n\nNext, you need to actually document the processes in the organization in a way that agents can utilize for doing the work. You also need to figure out what the new workflow looks like when agents and people are working together on a process, and who steps in where. Just replicating the old workflow will mute the gains. Oh and you likely need to create evals for your top new end-state processes.\n\nFinally, you have to keep up with a rapidly changing set of best practices and architectural shifts happening in the agent space. While it’s fun for people to change their personal productivity tools on a dime, it’s 100X harder to do this in a business process. The speed of change is a blessing and a curse right now for anyone trying to keep a stable system design.\n\nAll of this means that individuals and companies that develop expertise on the above set of components (and more) are going to be needed to help organizations actually implement agents at scale. This is also the rationale for vertical AI agents right now that can go in deep on a business domain and help bring automation to it. \n\nThis is a huge opportunity right now whether you’re doing this internally or as an external business provider.",
+          "createdAt": "2026-05-03T21:53:51.000Z",
+          "url": "https://x.com/levie/status/2051057677984469277",
+          "likes": 1338,
+          "retweets": 162,
+          "replies": 102,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2051009208393589096",
+          "text": "In general, we should treat AI like a utility, not like a being. The more we confuse what AI is the more we will make ourselves go crazy with analogies that will never fully hold true. https://t.co/Ysezok4kUp",
+          "createdAt": "2026-05-03T18:41:15.000Z",
+          "url": "https://x.com/levie/status/2051009208393589096",
+          "likes": 245,
+          "retweets": 21,
+          "replies": 56,
+          "isQuote": true,
+          "quotedTweetId": "2050674460530004300"
+        }
+      ]
+    },
+    {
+      "source": "x",
+      "name": "Garry Tan",
+      "handle": "garrytan",
+      "bio": "President & CEO @ycombinator —Founder @garryslist—Creator of GStack & GBrain—designer/engineer who helps founders—SF Dem accelerating the boom loop",
+      "tweets": [
+        {
+          "id": "2051110206466302136",
+          "text": "This is why GBrain is open source. Why I run my own stack. The explosion in intelligence means building your own context is more important than ever. \n\nIf you own and run your own prompts and your own data, then you earn the ability to think for yourself. \n\nReal freedom.",
+          "createdAt": "2026-05-04T01:22:35.000Z",
+          "url": "https://x.com/garrytan/status/2051110206466302136",
+          "likes": 58,
+          "retweets": 2,
+          "replies": 9,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2051099735176659256",
+          "text": "The goal of Personal AI: civilization where individual humans, augmented by AI, can do consequential work without being captured by extractive institutions. \n\nFreedom to write your prompt and own your data. \n\nThis is the new battleground. \n\n2034 won’t have to be like 1984.",
+          "createdAt": "2026-05-04T00:40:59.000Z",
+          "url": "https://x.com/garrytan/status/2051099735176659256",
+          "likes": 618,
+          "retweets": 65,
+          "replies": 98,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2051089704658010321",
+          "text": "GBrain supports multiple repos, multiple MCP endpoints, and both full oAuth and Bearer Tokens, and all you have to do to get the admin panel is go to OpenClaw or Hermes and ask for the one-time admin login link.\n\nhttps://t.co/yFpFU4pn5b",
+          "createdAt": "2026-05-04T00:01:07.000Z",
+          "url": "https://x.com/garrytan/status/2051089704658010321",
+          "likes": 12,
+          "retweets": 1,
+          "replies": 2,
+          "isQuote": false,
+          "quotedTweetId": null
+        }
+      ]
+    },
+    {
+      "source": "x",
+      "name": "Zara Zhang",
+      "handle": "zarazhangrui",
+      "bio": "Builder. Dangerously skips permissions. Harvard’17. GitHub: https://t.co/KCuEajezlL YouTube: https://t.co/8xzbGWtf6w",
+      "tweets": [
+        {
+          "id": "2051192270632993176",
+          "text": "this is the coolest demo I've seen a while, a must-watch for anyone interested in human-agent interaction! https://t.co/syFFu0O790",
+          "createdAt": "2026-05-04T06:48:41.000Z",
+          "url": "https://x.com/zarazhangrui/status/2051192270632993176",
+          "likes": 28,
+          "retweets": 5,
+          "replies": 1,
+          "isQuote": true,
+          "quotedTweetId": "2050243598676013312"
+        },
+        {
+          "id": "2051155065331941873",
+          "text": "Before AI, you couldn't afford to build something small. Because the cost of software development was so high, you had to hire a team, convince other people, justify it to a committee.\n\nNow, it's literally just you and a coding agent. A coding agent doesn't need to be convinced. It will readily build whatever crazy and weird idea you have. So go build something that would get rejected in every big tech company's product review meeting.",
+          "createdAt": "2026-05-04T04:20:50.000Z",
+          "url": "https://x.com/zarazhangrui/status/2051155065331941873",
+          "likes": 49,
+          "retweets": 7,
+          "replies": 12,
+          "isQuote": true,
+          "quotedTweetId": "2050445806428438734"
+        }
+      ]
+    },
+    {
+      "source": "x",
+      "name": "Nikunj Kothari",
+      "handle": "nikunj",
+      "bio": "partner @fpvventures - investing in seed/A. previous: early hire @meter, @opendoor, @atlassian & others. love @shimoleejhaveri + 👦👧",
+      "tweets": [
+        {
+          "id": "2051096096110502063",
+          "text": "Never give up on your dreams.. persistence has immense alpha. \n\nBullish on this kid 🫡 https://t.co/vgUxB18LM8",
+          "createdAt": "2026-05-04T00:26:31.000Z",
+          "url": "https://x.com/nikunj/status/2051096096110502063",
+          "likes": 181,
+          "retweets": 0,
+          "replies": 3,
+          "isQuote": false,
+          "quotedTweetId": null
+        }
+      ]
+    },
+    {
+      "source": "x",
+      "name": "Peter Steinberger",
+      "handle": "steipete",
+      "bio": "Polyagentmorous ClawFather. Came back from retirement to mess with AI and help a lobster take over the world.\n@OpenClaw🦞 + @OpenAI",
+      "tweets": [
+        {
+          "id": "2051088325100831046",
+          "text": "Released 🚦RepoBar 0.4.0.\n\nThis one makes the GitHub menu a lot smarter: persistent SQLite caching, fewer wasted API calls, visible rate limits, better Issues/PR loading, archive fallback support.\n\nTiny menubar app, increasingly useful daily tool. https://t.co/KYzCTtXF1O https://t.co/ZKVoVVXqBC",
+          "createdAt": "2026-05-03T23:55:38.000Z",
+          "url": "https://x.com/steipete/status/2051088325100831046",
+          "likes": 1486,
+          "retweets": 83,
+          "replies": 65,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2051044240013083133",
+          "text": "brb calling @sama https://t.co/tORl3zzr3c",
+          "createdAt": "2026-05-03T21:00:28.000Z",
+          "url": "https://x.com/steipete/status/2051044240013083133",
+          "likes": 2031,
+          "retweets": 35,
+          "replies": 112,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2051033065367970195",
+          "text": "New claw beta is up! Id you're on our Discord, you can get the soundtrack. https://t.co/6OTnLxF7ao https://t.co/rOtRP2eORb",
+          "createdAt": "2026-05-03T20:16:03.000Z",
+          "url": "https://x.com/steipete/status/2051033065367970195",
+          "likes": 150,
+          "retweets": 12,
+          "replies": 14,
+          "isQuote": false,
+          "quotedTweetId": null
+        }
+      ]
+    },
+    {
+      "source": "x",
+      "name": "Dan Shipper",
+      "handle": "danshipper",
+      "bio": "ceo @every | the only subscription you need to stay at the edge of AI",
+      "tweets": [
+        {
+          "id": "2050997402514161781",
+          "text": "no mythos this week! \n\nbut some interesting stuff coming :) https://t.co/OEo0l4aeZR",
+          "createdAt": "2026-05-03T17:54:21.000Z",
+          "url": "https://x.com/danshipper/status/2050997402514161781",
+          "likes": 171,
+          "retweets": 7,
+          "replies": 14,
+          "isQuote": true,
+          "quotedTweetId": "2050946189701329153"
+        }
+      ]
+    },
+    {
+      "source": "x",
+      "name": "Sam Altman",
+      "handle": "sama",
+      "bio": "AI is cool i guess",
+      "tweets": [
+        {
+          "id": "2050998576671859003",
+          "text": "Agents SDK 2.0 is underrated",
+          "createdAt": "2026-05-03T17:59:01.000Z",
+          "url": "https://x.com/sama/status/2050998576671859003",
+          "likes": 2773,
+          "retweets": 88,
+          "replies": 435,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2050964040026050727",
+          "text": "impossible to imagine openai succeeding without greg!",
+          "createdAt": "2026-05-03T15:41:46.000Z",
+          "url": "https://x.com/sama/status/2050964040026050727",
+          "likes": 1357,
+          "retweets": 18,
+          "replies": 165,
+          "isQuote": false,
+          "quotedTweetId": null
+        },
+        {
+          "id": "2050964008480723059",
+          "text": "it has been a real pleasure to work with Greg over the past decade. i feel very lucky.\n\nthis post held up pretty well, but not did not sufficiently highlight his technical brilliance and sheer determination.\n\nhttps://t.co/wi03SGDLjU",
+          "createdAt": "2026-05-03T15:41:39.000Z",
+          "url": "https://x.com/sama/status/2050964008480723059",
+          "likes": 4058,
+          "retweets": 133,
+          "replies": 364,
+          "isQuote": false,
+          "quotedTweetId": null
+        }
+      ]
+    }
+  ],
+  "stats": {
+    "xBuilders": 10,
+    "totalTweets": 24
+  }
+}

@@ -1,0 +1,8 @@
+f .gitignore
+f PROMPT.md
+f README.md
+f SKILL.md
+d config
+d examples
+d scripts
+d templates

@@ -1,0 +1,61 @@
+run_id: run-static-checks
+date: 2026-05-05
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: zarazhangrui
+  repo: personalized-podcast
+  branch: main
+
+scope: |
+  Static-checkable claims for skill shape, Python pipeline, deps,
+  RSS template, config coverage, LICENSE, and README install path
+  correctness. Live `/podcast` end-to-end (claim-008) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "SKILL.md 235 lines + PROMPT.md 33 lines, both real"
+  - id: claim-002
+    status: passed
+    note: "4 scripts all real: bootstrap (352), publish (295), speak (254), utils (195) lines"
+  - id: claim-003
+    status: passed
+    note: "All 4 deps present: httpx + pydub + Jinja2 + PyYAML"
+  - id: claim-004
+    status: passed
+    note: "feed_template.xml is real RSS XML with Jinja2 template tags ({{ show_name }}, {{ episode.title }})"
+  - id: claim-005
+    status: passed
+    note: "config.example.yaml covers show_name + tone + hosts + voices (Fish Audio reference IDs) + length_minutes + RSS publish settings"
+  - id: claim-006
+    status: failed
+    note: "No LICENSE at root (HTTP 404) — same gap as Zara's other 3 skills"
+  - id: claim-007
+    status: failed
+    note: "README install path is `personalized-podcast-skill` but actual repo is `personalized-podcast`. GitHub redirects (HTTP 301), so it works, but README is technically wrong"
+
+claims_deferred:
+  - claim-008  # live /podcast end-to-end with Fish Audio
+
+artifacts:
+  - artifacts/SKILL.md
+  - artifacts/PROMPT.md
+  - artifacts/scripts-bootstrap.py
+  - artifacts/scripts-publish.py
+  - artifacts/scripts-speak.py
+  - artifacts/scripts-utils.py
+  - artifacts/scripts-requirements.txt
+  - artifacts/config-example.yaml
+  - artifacts/feed-template.xml
+
+logs:
+  - logs/root.txt
+  - logs/static-checks.txt
+  - logs/extra-checks.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/zarazhangrui/personalized-podcast/main/{SKILL.md,PROMPT.md,scripts/*,config/*,templates/*}"
+    - "gh api repos/zarazhangrui/personalized-podcast{,-skill}/contents"
+  network_dependent: true
+  reproducible: yes

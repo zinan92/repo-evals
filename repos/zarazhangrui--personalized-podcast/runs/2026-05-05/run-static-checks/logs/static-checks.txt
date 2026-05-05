@@ -1,0 +1,36 @@
+=== claim-001 SKILL.md / PROMPT.md ===
+SKILL.md:      235 lines
+---
+name: podcast
+description: Generate a podcast episode from content you provide. Paste text, point to local files, or describe a topic. Two AI hosts discuss it in a natural conversation. Listen locally or in your favorite podcast app via RSS.
+PROMPT.md:       33 lines
+
+=== claim-002 scripts ===
+  bootstrap.py:      352 lines
+  publish.py:      295 lines
+  speak.py:      254 lines
+  utils.py:      195 lines
+
+=== claim-003 requirements ===
+httpx>=0.27.0
+pydub>=0.25.1
+audioop-lts>=0.2.1
+PyYAML>=6.0
+Jinja2>=3.1
+python-dotenv>=1.0
+
+=== claim-004 RSS feed template ===
+  feed_template.xml:       47 lines
+
+=== claim-005 config.example.yaml shape ===
+  size:       37 lines
+show_name: "My Podcast"
+hosts: 2
+tone: "casual and conversational"
+
+=== claim-006 LICENSE ===
+  LICENSE HTTP 404
+
+=== claim-007 README install path consistency ===
+gh repo clone zarazhangrui/personalized-podcast-skill ~/.claude/skills/personalized-podcast
+```

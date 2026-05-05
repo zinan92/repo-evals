@@ -1,0 +1,42 @@
+{
+  "slug": "zarazhangrui--follow-builders",
+  "display_name": "follow-builders",
+  "owner": "zarazhangrui",
+  "repo": "follow-builders",
+  "repo_url": "https://github.com/zarazhangrui/follow-builders",
+  "repo_type": "skill",
+  "archetype": "hybrid-skill",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "AI-builder digest skill for Claude Code / OpenClaw. Tracks 25 X builders + 6 AI podcasts + 2 official blogs. Architecture: Zara maintains a central pipeline (Node.js scripts + cron) that pre-fetches + summarizes content into feed-{x,podcasts,blogs}.json; the user's skill reads t…",
+  "repo_path": "repos/zarazhangrui--follow-builders",
+  "claims_summary": {
+    "total": 7,
+    "passed": 5,
+    "failed": 1,
+    "untested": 1,
+    "critical_total": 4,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 3
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/zarazhangrui--follow-builders/plans/2026-05-05-eval-plan.md",
+  "verdict_path": "repos/zarazhangrui--follow-builders/verdicts/2026-05-05-final-verdict.md",
+  "attention_level": "high"
+}
