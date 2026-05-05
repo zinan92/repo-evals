@@ -305,6 +305,7 @@ def _derive_verdict_input(repo: dict[str, Any], claims: list[dict[str, Any]]) ->
     out: dict[str, Any] = {
         "repo": f"{owner}/{name}" if owner and name else (name or owner or "unknown"),
         "archetype": archetype,
+        "layer": layer,  # 2026-05-05: layer drives layer-bonus in score
         "core_layer_tested": core_layer_tested,
         "evidence_completeness": "partial",
         "claims": derived_claims,
@@ -1151,6 +1152,7 @@ def render_score_breakdown(vd: VerdictData) -> str:
             "static_eval": "Static eval (claims)",
             "maintainer_evidence": "Maintainer evidence",
             "ecosystem": "Ecosystem (stars)",
+            "layer_bonus": "Layer bonus",
             "penalties": "Penalties",
         }.get(label_key, label_key)
         label_zh = {
@@ -1158,6 +1160,7 @@ def render_score_breakdown(vd: VerdictData) -> str:
             "static_eval": "静态评测（claim）",
             "maintainer_evidence": "维护者证据",
             "ecosystem": "生态（stars）",
+            "layer_bonus": "分层加分",
             "penalties": "罚分",
         }.get(label_key, label_key)
         sign = "+" if value > 0 else ""

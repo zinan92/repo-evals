@@ -225,13 +225,16 @@ def compute_score(inp: dict, claims: list[dict]) -> dict:
     score += static_delta
 
     # --- Maintainer evidence (CI, eval, multi-platform release) --------
+    # Recently-active bumped from +3 → +5 (2026-05-05): for personal
+    # skills, regular maintenance is the strongest reliability signal
+    # we have; deserves more weight than 3 points.
     maint = 0
     if int(inp.get("release_pipeline_score", 0) or 0) >= 2:
         maint += 5
     if int(inp.get("eval_discipline_score", 0) or 0) >= 2:
         maint += 5
     if bool(inp.get("recently_active", False)):
-        maint += 3
+        maint += 5
     if bool(inp.get("multilingual_readme", False)):
         maint += 2
     maint = min(SCORE_MAINTAINER_CAP, maint)
@@ -244,12 +247,41 @@ def compute_score(inp: dict, claims: list[dict]) -> dict:
     breakdown["ecosystem"] = eco
     score += eco
 
+    # --- Layer bonus (2026-05-05) --------------------------------------
+    # Reflects what static evidence can validate at each layer:
+    #   atom     — static checks can fully validate the user-facing
+    #              contract (single capability, no runtime decisions);
+    #              earns +5
+    #   molecule — static checks validate the structure but not the
+    #              orchestration; +0
+    #   compound — static checks miss most of the runtime LLM-driven
+    #              behaviour; -5
+    layer = str(inp.get("layer", "") or "").strip().lower()
+    if layer == "atom":
+        layer_bonus = 5
+    elif layer == "compound":
+        layer_bonus = -5
+    else:
+        layer_bonus = 0
+    breakdown["layer_bonus"] = layer_bonus
+    score += layer_bonus
+
     # --- Penalties -----------------------------------------------------
+    # LICENSE penalty tiered by project size (2026-05-05). A 50K-star
+    # public-infra project without LICENSE is a real legal liability;
+    # a 300-star personal skill is a polish gap. Same flat penalty
+    # crushed small repos disproportionately.
     penalties = 0
     if privacy_concern_count:
         penalties -= 3 * privacy_concern_count
     if not bool(inp.get("has_license", True)):
-        penalties -= 5
+        stars = int(inp.get("stars", 0) or 0)
+        if stars >= 10_000:
+            penalties -= 5
+        elif stars >= 1_000:
+            penalties -= 3
+        else:
+            penalties -= 2
     if bool(inp.get("archived", False)):
         penalties -= 50
     breakdown["penalties"] = penalties

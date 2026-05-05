@@ -4,62 +4,94 @@ display_name: personalized-podcast
 repo_url: https://github.com/zarazhangrui/personalized-podcast
 repo_type: skill
 archetype: hybrid-skill
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-# /podcast slash command → Claude script writer → Fish Audio TTS →
-# pydub stitch → MP3. Predefined pipeline → molecule.
-layer: molecule
+layer: atom
 complexity: medium
 uses_areas: false
 status: evaluated
-last_evaluated: "2026-05-05"
-version_tested: "main@HEAD"
+last_evaluated: '2026-05-05'
+version_tested: main@HEAD
 stars: 338
 archived: false
 has_license: false
 multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 0
-recently_active: true  # last push 2026-04-08, < 90 days
-notes: |
-  Claude Code skill (`/podcast` slash command) that turns any content
+recently_active: true
+notes: 'Claude Code skill (`/podcast` slash command) that turns any content
+
   into a 2-host AI podcast episode. Architecture: SKILL.md (235 lines)
+
   + PROMPT.md (33 lines, the actual hosts-conversation prompt) +
+
   4 Python scripts (bootstrap 352 / publish 295 / speak 254 / utils
+
   195 lines) + Jinja2 RSS feed template + sample config.
 
+
   Uses Fish Audio (free API key) for TTS — different voice per host.
+
   pydub stitches the audio. publish.py generates an RSS feed for
+
   Apple Podcasts / Spotify / Overcast / etc. 338 stars, recently
+
   active (last push 2026-04-08, ~30 days at eval time).
 
+
   README typo: `gh repo clone zarazhangrui/personalized-podcast-skill`
+
   — the actual repo is `personalized-podcast` (no -skill suffix).
-  GitHub returns HTTP 301 redirect, so installs work, but it's a
+
+  GitHub returns HTTP 301 redirect, so installs work, but it''s a
+
   polish gap.
 
+  '
 product_view:
   one_liner:
-    en: "A Claude Code skill (`/podcast`) that turns any content (URL / file / text / a topic) into a 2-host AI conversation episode — Claude writes the script, Fish Audio voices it, pydub stitches the audio, optional RSS so it shows up in Apple Podcasts / Spotify / Overcast next to your real subscriptions."
-    zh: "一个 Claude Code 技能（`/podcast`）：把任何内容（URL / 文件 / 文字 / 主题）变成两位 AI 主持人对谈的播客 episode —— Claude 写台词，Fish Audio 配音，pydub 拼音频，可选 RSS 让它和你订阅的播客一起出现在 Apple Podcasts / Spotify / Overcast 里。"
+    en: A Claude Code skill (`/podcast`) that turns any content (URL / file / text
+      / a topic) into a 2-host AI conversation episode — Claude writes the script,
+      Fish Audio voices it, pydub stitches the audio, optional RSS so it shows up
+      in Apple Podcasts / Spotify / Overcast next to your real subscriptions.
+    zh: 一个 Claude Code 技能（`/podcast`）：把任何内容（URL / 文件 / 文字 / 主题）变成两位 AI 主持人对谈的播客 episode
+      —— Claude 写台词，Fish Audio 配音，pydub 拼音频，可选 RSS 让它和你订阅的播客一起出现在 Apple Podcasts /
+      Spotify / Overcast 里。
   best_for:
-    en: "Long-read consumers who'd rather listen on a walk / commute. Also: introspection — feed it your own writing / journal / resume and have the hosts 'eavesdrop' on you."
-    zh: "更想在通勤 / 散步时用耳朵消费长文的人。另外还有意外用法：把自己的写作 / 日记 / 简历喂进去，让两位主持人「在你不在场」时点评你。"
+    en: 'Long-read consumers who''d rather listen on a walk / commute. Also: introspection
+      — feed it your own writing / journal / resume and have the hosts ''eavesdrop''
+      on you.'
+    zh: 更想在通勤 / 散步时用耳朵消费长文的人。另外还有意外用法：把自己的写作 / 日记 / 简历喂进去，让两位主持人「在你不在场」时点评你。
   watch_out:
-    en: |
-      No LICENSE — fork / commercial use status unclear. README has a typo: `gh repo clone zarazhangrui/personalized-podcast-skill` should be `personalized-podcast` (GitHub redirects so it works, but copy-pasters will see a 301 redirect notice). Fish Audio is third-party — voices and rate limits depend on their service. The "feed it your personal content" use case is genuinely interesting but think before you upload your journal entries to Anthropic + Fish Audio.
-    zh: |
-      没 LICENSE —— fork / 商用法律状态不明。README 有一处小 typo：`gh repo clone zarazhangrui/personalized-podcast-skill` 应该是 `personalized-podcast`（GitHub 自动重定向所以能跑通，但复制粘贴会看到 301 redirect）。Fish Audio 是第三方服务 —— 音色和频率限制都看他们脸色。「把私人内容喂进去」这个用法很有意思，但上传日记前想清楚 Anthropic + Fish Audio 都会看到。
+    en: 'No LICENSE — fork / commercial use status unclear. README has a typo: `gh
+      repo clone zarazhangrui/personalized-podcast-skill` should be `personalized-podcast`
+      (GitHub redirects so it works, but copy-pasters will see a 301 redirect notice).
+      Fish Audio is third-party — voices and rate limits depend on their service.
+      The "feed it your personal content" use case is genuinely interesting but think
+      before you upload your journal entries to Anthropic + Fish Audio.
+
+      '
+    zh: '没 LICENSE —— fork / 商用法律状态不明。README 有一处小 typo：`gh repo clone zarazhangrui/personalized-podcast-skill`
+      应该是 `personalized-podcast`（GitHub 自动重定向所以能跑通，但复制粘贴会看到 301 redirect）。Fish Audio
+      是第三方服务 —— 音色和频率限制都看他们脸色。「把私人内容喂进去」这个用法很有意思，但上传日记前想清楚 Anthropic + Fish Audio
+      都会看到。
+
+      '
   use_for:
-    - en: "Convert long-form content (newsletters / research papers / Twitter threads) into audio you can listen to on a walk."
-      zh: "把长文（newsletter / 研究论文 / 推特长帖）变成走路 / 通勤时能听的音频。"
-    - en: "Self-reflection — feed it your own writing / meeting transcripts / resume; have the hosts 'eavesdrop' on you."
-      zh: "自我反思 —— 把自己的写作 / 会议录音 / 简历喂进去，让主持人「在你不在场时」点评你。"
-    - en: "Subscribe via RSS to your generated feed so episodes appear in Apple Podcasts / Spotify next to real subscriptions."
-      zh: "订阅自己生成的 RSS feed，episode 会和真订阅的节目一起出现在 Apple Podcasts / Spotify 里。"
+  - en: Convert long-form content (newsletters / research papers / Twitter threads)
+      into audio you can listen to on a walk.
+    zh: 把长文（newsletter / 研究论文 / 推特长帖）变成走路 / 通勤时能听的音频。
+  - en: Self-reflection — feed it your own writing / meeting transcripts / resume;
+      have the hosts 'eavesdrop' on you.
+    zh: 自我反思 —— 把自己的写作 / 会议录音 / 简历喂进去，让主持人「在你不在场时」点评你。
+  - en: Subscribe via RSS to your generated feed so episodes appear in Apple Podcasts
+      / Spotify next to real subscriptions.
+    zh: 订阅自己生成的 RSS feed，episode 会和真订阅的节目一起出现在 Apple Podcasts / Spotify 里。
   dont_use_for:
-    - en: "Don't upload sensitive personal content blindly — it goes to Anthropic + Fish Audio."
-      zh: "敏感个人内容别盲目上传 —— 内容会经过 Anthropic + Fish Audio 两家服务。"
-    - en: "Don't expect production-grade audio — Fish Audio quality is good but not studio-level, and pacing is automated."
-      zh: "音频质量别期待录音棚级别 —— Fish Audio 不错但还不到专业水准，节奏也是自动化的。"
-    - en: "Don't redistribute generated episodes commercially — no LICENSE; voice IP is its own consideration."
-      zh: "生成的 episode 别商用分发 —— 没 LICENSE；声音 IP 也是独立考量。"
+  - en: Don't upload sensitive personal content blindly — it goes to Anthropic + Fish
+      Audio.
+    zh: 敏感个人内容别盲目上传 —— 内容会经过 Anthropic + Fish Audio 两家服务。
+  - en: Don't expect production-grade audio — Fish Audio quality is good but not studio-level,
+      and pacing is automated.
+    zh: 音频质量别期待录音棚级别 —— Fish Audio 不错但还不到专业水准，节奏也是自动化的。
+  - en: Don't redistribute generated episodes commercially — no LICENSE; voice IP
+      is its own consideration.
+    zh: 生成的 episode 别商用分发 —— 没 LICENSE；声音 IP 也是独立考量。

@@ -4,16 +4,21 @@ display_name: frontend-slides
 repo_url: https://github.com/zarazhangrui/frontend-slides
 repo_type: skill
 archetype: hybrid-skill
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-layer: molecule
+layer: atom
 complexity: medium
 uses_areas: false
 status: evaluated
 current_bucket: usable
-notes: |
-  Claude Code skill (LLM-driven prompt) + 3 supporting scripts (extract-pptx,
+notes: 'Claude Code skill (LLM-driven prompt) + 3 supporting scripts (extract-pptx,
+
   export-pdf, deploy). Plugin marketplace structure is valid; SKILL.md references
+
   resolve to real files; testable scripts (extract-pptx + export-pdf) work end-to-end
+
   with both clear errors and exit codes. The LLM-driven generation phases (Phase 1-3)
+
   cannot be evaluated without running a real Claude Code session — under the
-  framework's hybrid-repo rule, that gap caps the overall repo at 'usable'.
+
+  framework''s hybrid-repo rule, that gap caps the overall repo at ''usable''.
+
+  '

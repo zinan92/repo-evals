@@ -4,17 +4,12 @@ display_name: codebase-to-course
 repo_url: https://github.com/zarazhangrui/codebase-to-course
 repo_type: skill
 archetype: hybrid-skill
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-# SKILL.md routes the LLM through multiple stages (analyze codebase →
-# write per-module briefs → render each via templates → assemble via
-# build.sh) — predefined orchestration, not LLM-driven runtime
-# routing → molecule.
-layer: molecule
+layer: atom
 complexity: medium
 uses_areas: false
 status: evaluated
-last_evaluated: "2026-05-05"
-version_tested: "main@HEAD"
+last_evaluated: '2026-05-05'
+version_tested: main@HEAD
 stars: 4224
 archived: false
 has_license: false
@@ -22,45 +17,73 @@ multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 0
 recently_active: true
-notes: |
-  Claude Code skill that turns any codebase into a single-page
+notes: 'Claude Code skill that turns any codebase into a single-page
+
   interactive HTML course. SKILL.md (221 lines) + references/ shipping
+
   real CSS (1195 lines, 34 KB), real JS (498 lines, 19 KB), 4 reference
+
   docs (content-philosophy / design-system / gotchas /
+
   interactive-elements totalling ~57 KB), HTML templates, and a
+
   build.sh assembler. 4.2K stars, recently active, no LICENSE file.
 
+
   Per the README: install by copying `codebase-to-course/` into
+
   `~/.claude/skills/`. Trigger phrases: "turn this into a course",
+
   "explain this codebase interactively", etc.
 
+
   Molecule layer: SKILL.md drives a multi-stage pipeline (read code →
+
   module briefs → per-module HTML → build.sh assembles into final
+
   course directory). Predefined stages, not runtime LLM routing.
 
+  '
 product_view:
   one_liner:
-    en: "A Claude Code skill that turns any codebase into a single-page interactive HTML course — scroll-based modules, animated data-flow diagrams, code↔plain-English side-by-side, embedded quizzes, glossary tooltips. Skill ships real CSS / JS / build.sh, not just a prompt; output is a directory you open in any browser."
-    zh: "一个 Claude Code 技能：把任意代码库变成一个单页交互式 HTML 课程 —— 滚动式模块、数据流动画、代码 ↔ 大白话对照、嵌入式 quiz、术语 tooltip。skill 自带真的 CSS / JS / build.sh，不只是 prompt；产物是一个目录，浏览器打开就能用。"
+    en: A Claude Code skill that turns any codebase into a single-page interactive
+      HTML course — scroll-based modules, animated data-flow diagrams, code↔plain-English
+      side-by-side, embedded quizzes, glossary tooltips. Skill ships real CSS / JS
+      / build.sh, not just a prompt; output is a directory you open in any browser.
+    zh: 一个 Claude Code 技能：把任意代码库变成一个单页交互式 HTML 课程 —— 滚动式模块、数据流动画、代码 ↔ 大白话对照、嵌入式 quiz、术语
+      tooltip。skill 自带真的 CSS / JS / build.sh，不只是 prompt；产物是一个目录，浏览器打开就能用。
   best_for:
-    en: "'Vibe coders' who already build software with AI tools but want to actually understand a codebase they shipped or forked, without taking a CS course."
-    zh: "已经在用 AI 工具写代码，但想真正搞懂自己已部署 / fork 的代码库的「vibe coder」—— 不想去读 CS 课。"
+    en: '''Vibe coders'' who already build software with AI tools but want to actually
+      understand a codebase they shipped or forked, without taking a CS course.'
+    zh: 已经在用 AI 工具写代码，但想真正搞懂自己已部署 / fork 的代码库的「vibe coder」—— 不想去读 CS 课。
   watch_out:
-    en: |
-      No LICENSE file at the repo root — until that's added, downstream reuse is legally murky. The skill assembles a directory of generated HTML/CSS/JS at runtime; quality of the rendered course depends entirely on the LLM's analysis pass over your code, and on whether your codebase actually fits the "scroll-based 5-7 module" template the skill encodes. Large monorepos / mixed-language repos may not produce a great course without manual scoping.
-    zh: |
-      仓库根目录没有 LICENSE —— 在补上之前，下游二次使用法律上是灰区。skill 在运行时拼出一个 HTML/CSS/JS 目录；最终课程质量完全取决于 LLM 对你代码库的分析，以及你的代码库是否能塞进它「滚动式 5-7 模块」的模板。大 monorepo / 多语言混合仓库不手动框定范围，产出可能不好。
+    en: 'No LICENSE file at the repo root — until that''s added, downstream reuse
+      is legally murky. The skill assembles a directory of generated HTML/CSS/JS at
+      runtime; quality of the rendered course depends entirely on the LLM''s analysis
+      pass over your code, and on whether your codebase actually fits the "scroll-based
+      5-7 module" template the skill encodes. Large monorepos / mixed-language repos
+      may not produce a great course without manual scoping.
+
+      '
+    zh: '仓库根目录没有 LICENSE —— 在补上之前，下游二次使用法律上是灰区。skill 在运行时拼出一个 HTML/CSS/JS 目录；最终课程质量完全取决于
+      LLM 对你代码库的分析，以及你的代码库是否能塞进它「滚动式 5-7 模块」的模板。大 monorepo / 多语言混合仓库不手动框定范围，产出可能不好。
+
+      '
   use_for:
-    - en: "Vibe coders who built or forked a codebase and want to actually understand how it works — without sitting through a CS course."
-      zh: "自己写了或者 fork 了一个项目、想搞懂它怎么工作的「vibe coder」—— 不想去上 CS 课。"
-    - en: "Onboarding a non-technical teammate to a small/medium codebase you maintain."
-      zh: "把一个你维护的中小型代码库讲给一个不懂技术的同事 / 合作者。"
-    - en: "Turn an open-source repo you depend on into a teaching artefact for your team."
-      zh: "把团队依赖的某个开源项目做成内部教学资料。"
+  - en: Vibe coders who built or forked a codebase and want to actually understand
+      how it works — without sitting through a CS course.
+    zh: 自己写了或者 fork 了一个项目、想搞懂它怎么工作的「vibe coder」—— 不想去上 CS 课。
+  - en: Onboarding a non-technical teammate to a small/medium codebase you maintain.
+    zh: 把一个你维护的中小型代码库讲给一个不懂技术的同事 / 合作者。
+  - en: Turn an open-source repo you depend on into a teaching artefact for your team.
+    zh: 把团队依赖的某个开源项目做成内部教学资料。
   dont_use_for:
-    - en: "Don't use on a giant monorepo or polyglot codebase without scoping a sub-directory first — the 5-7 module template won't survive."
-      zh: "别直接对着大 monorepo 或多语言混合代码库跑 —— 5-7 模块模板撑不住，先框一个子目录。"
-    - en: "Don't redistribute the generated course in a commercial context yet — repo has no LICENSE; legal status is unclear."
-      zh: "生成的课程暂时别商用 / 公开转发 —— 仓库没 LICENSE，法律状态不明。"
-    - en: "Don't expect a polished course out of a half-finished prototype — quality of the analysis ≤ quality of the codebase."
-      zh: "半成品原型别指望出精品课 —— 分析质量 ≤ 代码库本身的质量。"
+  - en: Don't use on a giant monorepo or polyglot codebase without scoping a sub-directory
+      first — the 5-7 module template won't survive.
+    zh: 别直接对着大 monorepo 或多语言混合代码库跑 —— 5-7 模块模板撑不住，先框一个子目录。
+  - en: Don't redistribute the generated course in a commercial context yet — repo
+      has no LICENSE; legal status is unclear.
+    zh: 生成的课程暂时别商用 / 公开转发 —— 仓库没 LICENSE，法律状态不明。
+  - en: Don't expect a polished course out of a half-finished prototype — quality
+      of the analysis ≤ quality of the codebase.
+    zh: 半成品原型别指望出精品课 —— 分析质量 ≤ 代码库本身的质量。

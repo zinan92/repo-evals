@@ -6,7 +6,7 @@
   "repo_url": "https://github.com/zarazhangrui/youtube-to-ebook",
   "repo_type": "skill",
   "archetype": "hybrid-skill",
-  "layer": "molecule",
+  "layer": "atom",
   "layer_inferred": "molecule",
   "status": "evaluated",
   "current_bucket": "unknown",
