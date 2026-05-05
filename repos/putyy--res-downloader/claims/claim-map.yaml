@@ -1,0 +1,93 @@
+claims:
+- id: claim-001
+  title: Go + Wails desktop app with cross-platform builds
+  source: README "A cross-platform resource downloader built with Go + Wails"
+  source_ref: main.go + go.mod + wails.json + system_*.go
+  priority: critical
+  area: cross-platform
+  statement: |
+    main.go + go.mod + wails.json present. core/ has system_darwin.go +
+    system_linux.go + system_windows.go for per-OS code. Wails framework
+    builds Go backend + frontend (frontend/ dir) into a single desktop binary.
+  business_expectation: |
+    "Cross-platform desktop downloader" claim is real Go code with
+    per-OS specialisation, not a wrapped web app.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'Confirmed — main.go + Wails + 3 system_*.go files (darwin / linux / windows). frontend/ has Vue/Vite source.'
+- id: claim-002
+  title: Multi-platform resource coverage (视频号 / 抖音 / 快手 / 小红书 / m3u8 / 酷狗 / QQ音乐 / etc.)
+  source: README headline platform list
+  source_ref: core/plugins/
+  priority: critical
+  area: platform-coverage
+  statement: |
+    core/ + plugins/ contain per-platform handlers covering at least the
+    9 platforms in README headline (视频号 / 小程序 / 抖音 / 快手 /
+    小红书 / 直播流 / m3u8 / 酷狗 / QQ音乐).
+  business_expectation: |
+    The 9-platform README claim corresponds to actual code, not aspiration.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'core/ has app.go + downloader.go + plugins/ + resource.go + storage.go etc. Per-platform handlers in plugins. Real implementation.'
+- id: claim-003
+  title: Apache 2.0 LICENSE present
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: |
+    LICENSE file at repo root, Apache 2.0.
+  business_expectation: |
+    Anyone can legally fork / redistribute under Apache.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: licenseInfo=Apache License 2.0. LICENSE file confirmed.'
+- id: claim-004
+  title: Recently active development
+  source: framework
+  source_ref: github.com/putyy/res-downloader/commits
+  priority: high
+  area: maintenance
+  statement: |
+    Pushed within the last 90 days, indicating active development.
+  business_expectation: |
+    The 9-platform support stays current as platforms iterate
+    anti-bot / signing.
+  status: failed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: pushedAt=2025-12-31. Today is 2026-05-06 → 4 months / ~127 days ago. Outside 90-day "recently active" window. Active in the broader sense (still maintained on past evidence) but not satisfying the recent-window criterion.'
+- id: claim-005
+  title: Live e2e — actually download from at least one of the 9 platforms today
+  source: README headline
+  source_ref: README "📖 Bilingual" + Aixiang
+  priority: critical
+  area: end-to-end
+  statement: |
+    Pick one supported platform (e.g., 抖音 or 小红书), use the desktop
+    app to download a real public-share-link resource, verify the file
+    lands locally + plays/opens correctly. Repeat per platform when
+    relying on it.
+  business_expectation: |
+    "Common network resource downloader" works against today's
+    platform anti-bot, not just yesterday's.
+  evidence_needed: |
+    Needs a real macOS / Windows / Linux box + the desktop binary +
+    a public-share link from each platform of interest. Suggest
+    抖音 first since it's the platform most affected by anti-bot
+    drift (4 months stale = real risk).
+  status: untested
+- id: claim-006
+  title: Bilingual README (EN + 中文)
+  source: README + README-EN.md
+  source_ref: README.md + README-EN.md
+  priority: medium
+  area: docs-i18n
+  statement: |
+    README.md (zh) + README-EN.md (en) both exist with substantive
+    content for each language.
+  business_expectation: |
+    Non-CN users can use it; CN-creator audience is well served.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: README.md + README-EN.md confirmed, both substantive.

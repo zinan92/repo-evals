@@ -104,11 +104,3 @@ third_party_services:
   signup_needed: true
   free_tier: true
   cost_note: Use GitHub Pages; only needed if you want podcast app delivery
-workflow_placements:
-- workflow_id: park-content-v1
-  stage_id: 06_assembly
-  role: primary
-  medium: audio
-  reason:
-    en: 'Podcast episode assembly. Medium: audio — turn an idea / brief into a finished podcast episode.'
-    zh: '播客 episode 组装。媒介: 音频 —— 把想法 / brief 变成成品 podcast。'

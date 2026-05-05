@@ -1,0 +1,280 @@
+owner: Panniantong
+repo: Agent-Reach
+display_name: Agent-Reach
+repo_url: https://github.com/Panniantong/Agent-Reach
+repo_type: tool
+archetype: pure-cli
+layer: molecule
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-06'
+version_tested: main@HEAD
+stars: 18796
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 2
+eval_discipline_score: 2
+recently_active: true
+business_category: content
+use_case_tags:
+- content-scraping
+notes: |
+  MIT-licensed Python CLI giving an AI agent "eyes" — read + search
+  Twitter (X) / Reddit / YouTube / GitHub / Bilibili / 小红书 from
+  one tool, no per-API fees. 19K stars, recently active. Quad-language
+  README (zh / en / ja / ko).
+
+  Architecture: agent_reach/ Python package + scripts/ + tests/ +
+  docs/. Solid project hygiene: CONTRIBUTING + SECURITY + CHANGELOG
+  + test.sh + uv.lock + constraints.txt + llms.txt + CLAUDE.md
+  (agent integration).
+
+  Live e2e (real-platform read) untested in this static eval.
+  "Zero API fees" is real but anti-bot durability per platform is
+  the running maintenance cost.
+
+  Molecule: per-platform reader handlers + a CLI router. URL or
+  query → platform identification → reader call → structured result.
+  No LLM-runtime decision about which platform.
+product_view:
+  one_liner:
+    en: |-
+      Give your AI agent eyes to see the entire internet — one CLI to read & search Twitter / Reddit / YouTube / GitHub / Bilibili / 小红书. MIT-licensed, zero API fees, 19K stars.
+    zh: |-
+      给你的 AI agent 装上看互联网的眼睛 —— 一个 CLI 读 + 搜 Twitter / Reddit / YouTube / GitHub / B 站 / 小红书。MIT 协议,无 API 费,19K stars。
+  persona:
+    en: |-
+      A creator / researcher / content strategist who needs their AI agent to ground its outputs in actual current internet content. Typical: a writer wanting trending topic intelligence, a researcher tracking a discussion across platforms, an analyst doing competitive content analysis.
+    zh: |-
+      要让 AI agent 基于真实当前互联网内容回答的创作者 / 研究者 / 内容策略师。典型: 想要热点选题情报的写作者、跨平台跟踪讨论的研究者、做竞品内容分析的分析师。
+  scenario:
+    en: |-
+      You ask your AI: "What are people saying about <topic> on X / Reddit / YouTube right now?". Without a tool like this the agent fabricates or refuses. With Agent-Reach the agent runs real searches and returns sourced summaries.
+    zh: |-
+      你问 AI: "现在 X / Reddit / YouTube 上大家在怎么聊 <某话题>?"。没有这种工具,agent 要么编要么拒绝。有了 Agent-Reach,agent 真去搜,拿带来源的总结回来。
+  without_this:
+    en: |-
+      Three options. (1) Manually browse each platform — slow + you miss cross-platform signals. (2) Pay platform APIs (Twitter API paid tier alone is $100+/mo) — costs add up fast across platforms. (3) Wire individual scrapers per platform yourself — multi-week project, ongoing maintenance.
+    zh: |-
+      三条路。(1) 手动逐平台浏览 —— 慢 + 跨平台信号会丢。(2) 付各平台 API 费(单 Twitter API 付费档就 $100+/月) —— 跨平台累加很快。(3) 自己写各平台的爬虫 —— 几周项目 + 持续维护。
+  with_this:
+    en: |-
+      One CLI install. Agent invokes it for any of the 6 platforms. Public-web access — no API fee tier needed. Returns structured results the LLM can quote / cite / link from. Multi-lang docs make it adoptable across regions.
+    zh: |-
+      一个 CLI 装一次。agent 在 6 个平台之间调它。走公开 web —— 不要付费档 API。返回结构化结果让 LLM 引用 / 标来源 / 链接。多语言文档跨区域好用。
+  cost_summary:
+    en: |-
+      MIT, free. No API fee tier needed. Cost is anti-bot drift per platform — Twitter / X especially churns post-2023, so durability not stability. Your agent's normal LLM cost still applies.
+    zh: |-
+      MIT 免费。不要付费档 API。成本是各平台反爬漂移 —— 尤其 Twitter / X 在 2023 年后 churn 很猛,看持久性不是稳定性。你 agent 平常的 LLM 成本照算。
+  how:
+    en: |-
+      Clone + `uv sync` (uv.lock present). Configure platform-specific auth where needed (cookies for X, GitHub token, etc.). Hand the CLI to your AI agent — for instance via Claude Code skill or Codex tool registration; CLAUDE.md + llms.txt help. Agent invokes it on demand for searches / fetches. Results come back as structured JSON the LLM consumes.
+    zh: |-
+      Clone + `uv sync`(有 uv.lock)。需要的平台配鉴权(X 用 cookie / GitHub token 等)。把 CLI 交给你的 AI agent —— 比如 Claude Code skill 或 Codex tool 注册;CLAUDE.md + llms.txt 有指引。Agent 按需调它做搜索 / 抓取。返回结构化 JSON 让 LLM 消费。
+  watch_out:
+    en: |-
+      "Zero API fees" is true at sign-up time; durability per platform varies. Twitter / X surface in particular is hostile to public reads since the 2023 API changes — expect to maintain auth / cookie state. CHANGELOG indicates active maintenance, but you still want to monitor when a platform breaks. Live e2e never logged in this eval; spot-check the platforms you depend on.
+    zh: |-
+      "无 API 费"在注册时是真的;各平台持久性看天分。X 在 2023 年 API 改了之后对公开读取很敌对 —— 准备维护鉴权 / cookie。CHANGELOG 看维护活跃,但平台坏了你还是要盯。本次评测没记录端到端跑通;依赖的平台先抽测。
+  examples:
+  - context:
+      en: |-
+        A creator researching what people are saying about Sora 2 across X + Reddit + YouTube
+      zh: |-
+        在 X + Reddit + YouTube 上研究"大家怎么聊 Sora 2"的创作者
+    you_say:
+      en: |-
+        Tell my AI agent to use agent-reach to search Twitter, Reddit, and YouTube for "Sora 2" mentions in the last 7 days, summarise the top sentiments + concerns
+      zh: |-
+        让 AI agent 用 agent-reach 在 Twitter / Reddit / YouTube 搜近 7 天 "Sora 2" 的提及,总结主流情绪 + 担忧
+    what_happens:
+      en: |-
+        Agent invokes 3 platform reads concurrently. Each returns posts + comments + view counts. Agent synthesises a bilingual summary with source links per claim. Total latency 30-60 seconds; cost = your LLM's own price (the reads themselves are free).
+      zh: |-
+        Agent 并行调 3 个平台读取。各家返回帖子 + 评论 + 阅读数。Agent 综合成一份带来源链接的双语总结。总延迟 30-60 秒;成本是你 LLM 的价格(读取本身免费)。
+  - context:
+      en: |-
+        A researcher cross-tracking how a GitHub release was discussed on Twitter
+      zh: |-
+        跨追踪 GitHub release 在 Twitter 上怎么被讨论的研究者
+    you_say:
+      en: |-
+        agent-reach github release zinan92/repo-evals && agent-reach twitter search "repo-evals"
+      zh: |-
+        agent-reach github release zinan92/repo-evals && agent-reach twitter search "repo-evals"
+    what_happens:
+      en: |-
+        First call returns the GitHub release notes + reaction counts. Second call returns Twitter posts that mention "repo-evals" + their engagement. Together: cross-platform sentiment without paying for two APIs.
+      zh: |-
+        第一个调用返回 GitHub release notes + 反应数。第二个返回 Twitter 上提到 "repo-evals" 的帖子 + 互动。组合起来: 跨平台情绪,不要付两份 API 钱。
+  - context:
+      en: |-
+        A 小红书 trend-tracker doing weekly competitive analysis
+      zh: |-
+        每周做小红书竞品分析的趋势追踪者
+    you_say:
+      en: |-
+        agent-reach xhs search "AI 短视频" --recent 7d
+      zh: |-
+        agent-reach xhs search "AI 短视频" --recent 7d
+    what_happens:
+      en: |-
+        CLI reads recent 小红书 posts matching the keyword. Returns post bodies + image-deck content + engagement counts. Feed into your weekly analysis pipeline. No 小红书 API needed.
+      zh: |-
+        CLI 读最近 7 天匹配关键词的小红书帖子。返回正文 + 图文 + 互动数。喂给你的周度分析 pipeline。不要小红书 API。
+  next_step:
+    en: |-
+      Run one logged read per platform you'll actually depend on (start with X since post-2023 it's the most fragile). Save the JSON output + any rate-limit / auth notes. Closes claim-006 (live e2e) for those platforms. Plus: check CHANGELOG cadence — a fast-iteration release pipeline is the maintenance signal that anti-bot drift is being handled.
+    zh: |-
+      给你真的会依赖的每个平台跑一次有日志的读取(先 X,2023 年后它最脆)。保存 JSON 输出 + rate-limit / 鉴权 notes。关掉那些平台的 claim-006(端到端)。再: 看 CHANGELOG 节奏 —— 快迭代 release 是反爬漂移被处理的信号。
+similar_repos:
+- slug: NanmiCoder--MediaCrawler
+  shared_purpose:
+    en: |-
+      Both target multi-platform content reading. Both use public-web access patterns, both face anti-bot drift.
+    zh: |-
+      都做多平台内容读取。都走公开 web,都面对反爬漂移。
+  this_better_at:
+    en: |-
+      International + Chinese platforms together (Twitter / Reddit / YouTube + Bilibili / 小红书). MIT-licensed for legal reuse anywhere. CLI-first design tuned for AI-agent integration (CLAUDE.md + llms.txt). 19K stars + cleaner project hygiene (SECURITY / CONTRIBUTING / CHANGELOG).
+    zh: |-
+      国际 + 中文平台一起(Twitter / Reddit / YouTube + B 站 / 小红书)。MIT 协议任意合法再用。CLI 优先设计,适合 AI agent 集成(CLAUDE.md + llms.txt)。19K stars + 更干净的工程卫生(SECURITY / CONTRIBUTING / CHANGELOG)。
+  other_better_at:
+    en: |-
+      Per-platform crawl modes (search / detail / creator / comments) + 8 storage backends. When you need to persist scraped data into a DB for offline analysis, MediaCrawler's data-layer is richer. Custom non-commercial license though (vs Agent-Reach's MIT).
+    zh: |-
+      各平台抓取模式更丰富(搜索 / 详情 / 创作者 / 评论) + 8 种存储后端。需要把抓的数据落进 DB 做离线分析时,MediaCrawler 数据层更全。但 license 是自定义非商用(vs Agent-Reach 的 MIT)。
+- slug: rohunvora--x-research-skill
+  shared_purpose:
+    en: |-
+      Both target X / Twitter research for AI agent contexts. Both supply structured JSON for LLM consumption.
+    zh: |-
+      都瞄准给 AI agent 做 X / Twitter 研究。都给 LLM 出结构化 JSON。
+  this_better_at:
+    en: |-
+      Multi-platform breadth — 6 platforms vs single X focus. When the workflow needs cross-platform signal, Agent-Reach wins.
+    zh: |-
+      多平台广度 —— 6 平台 vs 单 X 聚焦。工作流要跨平台信号时,Agent-Reach 赢。
+  other_better_at:
+    en: |-
+      X-specific depth — thread following, deep-dives. When research is X-only, the focused tool is leaner.
+    zh: |-
+      X 专门深度 —— thread 跟踪 / 深挖。研究只在 X 时,专门工具更精简。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — fixed pipeline (URL/query → platform identify → per-platform reader → structured result). Per-platform handlers are atoms; the CLI router is the orchestrator. No LLM-runtime routing.
+    zh: |
+      分子 —— 固定流水线(URL/查询 → 平台识别 → 各平台 reader → 结构化结果)。各平台 handler 是原子;CLI 路由是编排器。运行时无 LLM 路由。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Query / URL
+        from agent
+      zh: |-
+        查询 / URL
+        从 agent 来
+  - id: identify
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Platform identify
+      zh: |-
+        平台识别
+  - id: auth
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Auth / cookie
+        load
+      zh: |-
+        鉴权 / cookie
+        加载
+  - id: reader
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Per-platform reader
+        (search / fetch)
+      zh: |-
+        各平台 reader
+        (搜 / 抓)
+  - id: structure
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Structured JSON
+        for LLM
+      zh: |-
+        结构化 JSON
+        给 LLM
+  - id: out
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        Agent quotes /
+        cites with sources
+      zh: |-
+        Agent 引用 /
+        标来源
+  edges:
+  - {from: input, to: identify}
+  - {from: identify, to: auth}
+  - {from: auth, to: reader}
+  - {from: reader, to: structure}
+  - {from: structure, to: out}
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: '01_signal_scan'
+  role: primary
+  platforms:
+  - x
+  - reddit
+  - youtube
+  - github
+  - bilibili
+  - xiaohongshu
+  reason:
+    en: The cleanest 01 signal-scan tool in the corpus — multi-platform internet reading for AI agents. Fills the 01 gap that previously had no clean public-corpus candidate.
+    zh: corpus 里最干净的 01 信号扫描工具 —— 给 AI agent 用的多平台互联网读取。填了 01 之前没有干净候选的缺口。
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + uv sync
+    platform: any (Python 3.10+)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: Per-platform public web (Twitter / Reddit / YouTube / GitHub / Bilibili / 小红书)
+  purpose: Source of read content
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Public access; some platforms need cookie/token (X especially); zero per-call fees
+- name: AI agent harness (Claude Code / Codex / etc.)
+  purpose: Caller — invokes agent-reach as a tool
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Standard agent-side cost; agent-reach itself adds no LLM cost

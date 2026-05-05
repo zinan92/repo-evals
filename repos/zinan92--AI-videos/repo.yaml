@@ -1,0 +1,262 @@
+owner: zinan92
+repo: AI-videos
+display_name: AI-videos
+repo_url: https://github.com/zinan92/AI-videos
+repo_type: framework
+archetype: pure-cli
+layer: molecule
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-06'
+version_tested: main@HEAD
+stars: 4
+archived: false
+has_license: false
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 1
+recently_active: true
+business_category: content
+use_case_tags:
+- video-generation
+notes: |
+  Wendy's own AI virtual-character video pipeline. Inputs: a character
+  PNG + (optional) outfit reference PNG + a motion reference MP4.
+  Output: AI-generated video MP4 + JSON run log. Drives the RunningHub
+  v2 API for the actual generation.
+
+  Architecture: scripts/pipeline.py orchestrates; scripts/runninghub_client.py
+  is the API client. config/ holds run config; assets/ inputs; output/
+  results. video-generation-workflow.md describes the flow.
+
+  Two real defects: (1) no LICENSE file at root despite MIT badge in
+  README; (2) live e2e never logged — needs real RunningHub credits +
+  inputs. Plus single-commit visible history (force-pushed).
+
+  Molecule layer: 3-stage fixed pipeline (character / outfit-transfer /
+  motion-transfer). RunningHub does the heavy AI lifting; pipeline.py
+  decides nothing at runtime.
+product_view:
+  one_liner:
+    en: |-
+      A Python pipeline that turns a character PNG + outfit PNG + motion-reference MP4 into an AI-generated video — drives RunningHub v2 API, logs the run to JSON.
+    zh: |-
+      一个 Python pipeline,把人物 PNG + 服装 PNG + 动作参考 MP4 变成 AI 生成的视频 —— 驱动 RunningHub v2 API,运行日志写 JSON。
+  persona:
+    en: |-
+      A creator who wants AI-generated talking-head or character-driven short videos but doesn't want to wire RunningHub's API by hand for every video. Typical: short-form video creator who uses AI characters as their on-screen presence.
+    zh: |-
+      想要 AI 生成口播或角色驱动短视频、但不想每次手工对接 RunningHub API 的创作者。典型: 用 AI 角色作为出镜形象的短视频创作者。
+  scenario:
+    en: |-
+      You have a character image, an outfit you want them to wear, and a motion-reference video showing the kind of action you want. You want the finished video — with that character in that outfit doing that action — without API plumbing.
+    zh: |-
+      你有一个角色图、想给它穿的服装图、和一个表示要做什么动作的参考视频。你想直接拿到成品 —— 角色穿着这套衣服做那个动作的视频 —— 不要管 API 接线。
+  without_this:
+    en: |-
+      Wire RunningHub v2 API by hand for each pipeline stage; manually correlate character + outfit + motion request payloads; track job IDs through async generation; download finished assets. Multi-day plumbing per pipeline.
+    zh: |-
+      自己手工对接 RunningHub v2 API 各阶段;手工关联人物 + 服装 + 动作请求体;盯异步生成的 job ID;下载成品。一个 pipeline 自己接好几天。
+  with_this:
+    en: |-
+      One pipeline.py command. Pass paths to character PNG + outfit PNG + motion MP4. Pipeline does the 3-stage RunningHub call sequence, polls for completion, downloads result, writes JSON log of the whole run.
+    zh: |-
+      一个 pipeline.py 命令。传 人物 PNG + 服装 PNG + 动作 MP4 路径。pipeline 跑 RunningHub 3 阶段调用序列、轮询完成、下载成品、把整个运行记到 JSON 日志。
+  cost_summary:
+    en: |-
+      No LICENSE file (treat as personal-use until upstream commits one). RunningHub API needs credits — pay-per-generation; budget USD 1-5 per finished short video depending on quality settings. Local: Python 3.9+.
+    zh: |-
+      无 LICENSE 文件(在上游补之前当个人用看待)。RunningHub API 要 credits —— 按生成计费;一条成品短视频预算 1-5 美元,看质量设置。本地: Python 3.9+。
+  how:
+    en: |-
+      Clone + `pip install -r requirements.txt`. Set RUNNINGHUB_API_KEY env. Drop your inputs into assets/: character.png + outfit.png + motion.mp4. Edit config/run.yaml if needed (output resolution, motion fidelity). Run `python3 scripts/pipeline.py`. Output MP4 + run.json land in output/.
+    zh: |-
+      Clone + `pip install -r requirements.txt`。设 RUNNINGHUB_API_KEY 环境变量。把输入放进 assets/: character.png + outfit.png + motion.mp4。需要的话改 config/run.yaml(输出分辨率 / 动作保真度)。跑 `python3 scripts/pipeline.py`。输出 MP4 + run.json 在 output/。
+  watch_out:
+    en: |-
+      v0.x personal-toolkit — only 4 stars, single-author, single-commit visible history. README MIT badge but no LICENSE file. Live e2e never logged in this eval. RunningHub API costs add up if you iterate — budget consciously. Treat as "production-of-one"; for serious commercial use wait for LICENSE + a logged real run.
+    zh: |-
+      v0.x 个人工具箱 —— 只有 4 stars,单作者,可见历史只 1 个 commit。README MIT badge 但无 LICENSE 文件。本次评测没记录端到端跑通。RunningHub API 费用按次累加,迭代成本要预算。当 production-of-one 看;商业用途等 LICENSE + 真实跑通日志。
+  examples:
+  - context:
+      en: |-
+        A creator with a stable AI-character "host" who wants to release weekly short videos
+      zh: |-
+        有稳定 AI 角色"主持人"、想周更短视频的创作者
+    you_say:
+      en: |-
+        cp this-week-host.png assets/character.png && cp this-week-outfit.png assets/outfit.png && cp this-week-motion.mp4 assets/motion.mp4 && python3 scripts/pipeline.py
+      zh: |-
+        cp this-week-host.png assets/character.png && cp this-week-outfit.png assets/outfit.png && cp this-week-motion.mp4 assets/motion.mp4 && python3 scripts/pipeline.py
+    what_happens:
+      en: |-
+        Pipeline runs character → outfit-transfer → motion-transfer stages on RunningHub. Polls job IDs until complete. Downloads output/this-week.mp4 + output/run.json. The JSON log captures every API call + cost so you can audit budget.
+      zh: |-
+        Pipeline 在 RunningHub 上跑 角色 → 服装迁移 → 动作迁移 三阶段。轮询 job ID 到完成。下载 output/this-week.mp4 + output/run.json。JSON 日志记录每次 API 调用 + 成本以便审计预算。
+  - context:
+      en: |-
+        A creator iterating on outfit choices for the same character + motion
+      zh: |-
+        在同一个人物 + 动作上迭代不同服装的创作者
+    you_say:
+      en: |-
+        for outfit in red-dress.png blue-suit.png; do cp $outfit assets/outfit.png && python3 scripts/pipeline.py --output-suffix $(basename $outfit .png); done
+      zh: |-
+        for outfit in red-dress.png blue-suit.png; do cp $outfit assets/outfit.png && python3 scripts/pipeline.py --output-suffix $(basename $outfit .png); done
+    what_happens:
+      en: |-
+        Two parallel pipeline runs — same character + motion, different outfits. Output dir gets red-dress.mp4 + blue-suit.mp4 with separate JSON logs. Compare side-by-side to pick which outfit lands better.
+      zh: |-
+        两次 pipeline 跑 —— 同一人物 + 动作,不同服装。输出目录得到 red-dress.mp4 + blue-suit.mp4 + 各自 JSON 日志。并排对比挑哪套服装更出片。
+  - context:
+      en: |-
+        A creator testing motion fidelity by re-running the same inputs with config changes
+      zh: |-
+        通过改 config 重跑同一组输入测试动作保真度的创作者
+    you_say:
+      en: |-
+        Edit config/run.yaml motion_fidelity from 0.7 to 0.9, re-run, compare outputs
+      zh: |-
+        把 config/run.yaml 里 motion_fidelity 从 0.7 改到 0.9,重跑,对比输出
+    what_happens:
+      en: |-
+        Config-driven re-run. Higher motion_fidelity = AI-generated motion adheres closer to the reference; lower = more creative liberty. JSON log shows the config used, so you can A/B compare runs by reading logs.
+      zh: |-
+        config 驱动重跑。motion_fidelity 越高 = AI 生成的动作越贴近参考;越低 = 创作自由度越大。JSON 日志记录所用 config,看日志就能 A/B 对比运行。
+  next_step:
+    en: |-
+      Three highest-leverage actions. (1) Add LICENSE file (one commit) — closes claim-003, lifts ~+15. (2) Log one happy-path real generation with all 3 inputs + the resulting output MP4 + run.json. Closes claim-004. (3) Stop force-pushing — keep real git history. Closes claim-005. Together these move 50-something to ~75.
+    zh: |-
+      三个最高 ROI 动作。(1) 加 LICENSE 文件(一个 commit) —— 关掉 claim-003,~+15。(2) 跑一次有日志的真实生成,带 3 个输入 + 成品 MP4 + run.json。关掉 claim-004。(3) 停止 force-push,保留真实 git 历史。关掉 claim-005。三件加起来从 50 多推到 ~75。
+similar_repos:
+- slug: zinan92--videocut
+  shared_purpose:
+    en: |-
+      Both are author's own video pipelines, both produce MP4 + JSON log. Both wrap an external AI service (Claude CLI / RunningHub) over deterministic plumbing.
+    zh: |-
+      都是作者自己的视频 pipeline,都产出 MP4 + JSON 日志。都在确定性管道上包外部 AI 服务(Claude CLI / RunningHub)。
+  this_better_at:
+    en: |-
+      Generation side — making a video that didn't exist before. Virtual character + outfit + motion is the "creation" half of the loop.
+    zh: |-
+      生成侧 —— 做一个原本不存在的视频。虚拟人物 + 服装 + 动作是循环里的"创作"半。
+  other_better_at:
+    en: |-
+      Editing side — taking an existing recording and cleaning it up. Talking-head 后期 vs AI character generation. Different problem, both useful in the same creator's workflow.
+    zh: |-
+      后期侧 —— 拿已有录像清理。口播后期 vs AI 角色生成。不同问题,在同一个创作者的工作流里都有用。
+- slug: AIDC-AI--Pixelle-Video
+  shared_purpose:
+    en: |-
+      Both are full automated short-video pipelines. Both bet AI can replace the manual edit-floor work.
+    zh: |-
+      都是全自动短视频 pipeline。都押注 AI 能替代人工后期。
+  this_better_at:
+    en: |-
+      Virtual-character specialty — outfit + motion transfer is the focused use case. When you have a stable character "host" and want consistent appearances across episodes.
+    zh: |-
+      虚拟人物专门 —— 服装 + 动作迁移是聚焦 use case。当你有稳定角色"主持人"、想跨集保持一致形象时。
+  other_better_at:
+    en: |-
+      End-to-end automation surface (idea → finished video) without needing a character image to start. Better when you don't have a fixed AI character.
+    zh: |-
+      端到端自动化(想法 → 成品)不需要预先有角色图。当你没有固定 AI 角色时更合适。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — 3 fixed atoms (character → outfit-transfer → motion-transfer). pipeline.py executes them in order; no LLM-runtime routing. RunningHub does the AI generation but the pipeline orchestration is deterministic.
+    zh: |
+      分子 —— 3 个固定原子(角色 → 服装迁移 → 动作迁移)。pipeline.py 顺序执行;运行时没有 LLM 路由。RunningHub 做 AI 生成,但 pipeline 编排是确定性的。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        character PNG +
+        outfit PNG +
+        motion MP4
+      zh: |-
+        人物 PNG +
+        服装 PNG +
+        动作 MP4
+  - id: char
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Character setup
+        (RunningHub seed)
+      zh: |-
+        角色 setup
+        (RunningHub seed)
+  - id: outfit
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Outfit transfer
+        (RunningHub call 2)
+      zh: |-
+        服装迁移
+        (RunningHub call 2)
+  - id: motion
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Motion transfer
+        (RunningHub call 3)
+      zh: |-
+        动作迁移
+        (RunningHub call 3)
+  - id: out
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Output MP4
+        + run.json log
+      zh: |-
+        输出 MP4
+        + run.json 日志
+  edges:
+  - {from: input, to: char}
+  - {from: char, to: outfit}
+  - {from: outfit, to: motion}
+  - {from: motion, to: out}
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: '06_assembly'
+  role: primary
+  medium: video
+  platforms:
+  - douyin
+  - xiaohongshu
+  - tiktok
+  reason:
+    en: AI virtual-character video assembly. Different angle from videocut (which edits existing recordings) — this generates new video from a character + outfit + motion.
+    zh: AI 虚拟人物视频组装。跟 videocut(后期已录视频)角度不同 —— 这个从 人物 + 服装 + 动作 生成新视频。
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + pip install -r requirements.txt
+    platform: any (Python 3.9+)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: RunningHub v2 API
+  purpose: AI character + outfit-transfer + motion-transfer generation
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Pay-per-generation; budget 1-5 USD per finished video

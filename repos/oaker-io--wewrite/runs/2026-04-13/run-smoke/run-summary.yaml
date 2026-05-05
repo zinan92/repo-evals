@@ -1,0 +1,54 @@
+run_name: smoke
+date: 2026-04-13
+area: core
+scenario: "Smoke test of support layer: install, CLI, converter, hotspots, themes, personas, image providers, evals, scripts"
+provenance:
+  provenance_source: "auto"
+  captured: true
+  partial: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: "claude-opus-4-6"
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: "ebde34d"
+  target_repo_path: "/tmp/wewrite"
+  target_repo_ref: "main"
+  target_repo_commit: "8077635"
+  evaluated_at: "2026-04-13T14:53:11Z"
+  transcript_path: ""
+  command_log_path: ""
+  session_replay_notes: ""
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: true
+  manifest_path: "artifacts/manifest.yaml"
+fixtures:
+  - "simple test.md file for conversion"
+commands:
+  - "pip install -r requirements.txt"
+  - "python3 toolkit/cli.py --help"
+  - "python3 toolkit/cli.py preview test.md -t professional-clean -o output.html --no-open"
+  - "python3 toolkit/cli.py themes"
+  - "python3 toolkit/cli.py gallery --help"
+  - "python3 toolkit/cli.py publish --help"
+  - "python3 toolkit/cli.py image-post --help"
+  - "python3 toolkit/cli.py learn-theme --help"
+  - "python3 scripts/fetch_hotspots.py --limit 5"
+  - "python3 scripts/seo_keywords.py"
+  - "python3 scripts/humanness_score.py"
+  - "python3 scripts/diagnose.py"
+  - "ls toolkit/themes/"
+  - "ls personas/"
+result: partial
+pass_count: 10
+fail_count: 1
+partial_count: 0
+untested_count: 2
+artifacts:
+  - "artifacts/"
+notes: |
+  Support layer: 10 passed, 1 failed (no unit tests), 0 partial.
+  Core LLM layer: 2 untested (requires agent session + WeChat credentials).
+  Hybrid cap applied: core untested → verdict capped at usable.

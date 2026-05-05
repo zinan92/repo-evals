@@ -1,0 +1,77 @@
+claims:
+- id: claim-001
+  title: Python pipeline orchestrating RunningHub API for character/motion generation
+  source: README "in PNG + MP4 → out MP4 + JSON 日志"
+  source_ref: scripts/pipeline.py + scripts/runninghub_client.py
+  priority: critical
+  area: pipeline-implementation
+  statement: |
+    scripts/pipeline.py orchestrates the multi-stage pipeline (character →
+    outfit → motion transfer). scripts/runninghub_client.py is the API
+    client. Both non-trivial Python modules.
+  business_expectation: |
+    The "AI 虚拟人物换装 + 动作迁移" claim is real Python code calling
+    a real cloud API, not a roadmap.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: Two Python files in scripts/ — pipeline.py (orchestrator) + runninghub_client.py (API client).
+- id: claim-002
+  title: Workflow doc + config + assets + output
+  source: framework
+  source_ref: video-generation-workflow.md, config/, assets/, output/
+  priority: high
+  area: documentation
+  statement: |
+    video-generation-workflow.md describes the workflow. config/, assets/,
+    output/ directory structure expected by pipeline.py.
+  business_expectation: |
+    Operator can debug a run by reading workflow doc + checking
+    expected directory layout.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: video-generation-workflow.md exists + config/ + assets/ + output/ + scripts/ all present.
+- id: claim-003
+  title: Repository has a LICENSE file
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: |
+    LICENSE file at repo root.
+  business_expectation: |
+    Anyone forking can legally use / redistribute.
+  status: failed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: licenseInfo=null. README MIT badge but no LICENSE file. Same defect as videocut + autoresearch.'
+- id: claim-004
+  title: Live e2e — drive a real character + outfit + motion through to a finished video
+  source: README "in PNG + MP4 → out MP4 + JSON 日志"
+  source_ref: scripts/pipeline.py
+  priority: critical
+  area: end-to-end
+  statement: |
+    Run pipeline.py with a real character PNG + outfit PNG + motion MP4
+    against the RunningHub v2 API, verify output MP4 is produced + JSON
+    log captures the run.
+  business_expectation: |
+    The pipeline doesn't just structure a workflow — it actually
+    completes a virtual-character video on the cloud API.
+  evidence_needed: |
+    Needs a real RunningHub API key + credit + sample inputs. One happy-path
+    run + one error case (bad PNG, missing motion file) to validate
+    fail-loud behavior.
+  status: untested
+- id: claim-005
+  title: Single-author / single-commit visible history
+  source: framework
+  source_ref: git log
+  priority: medium
+  area: provenance
+  statement: |
+    Git log shows the full development history (multiple commits) so a
+    new contributor can audit what changed and when.
+  business_expectation: |
+    Contributors / reviewers can understand the project's evolution.
+  status: failed_partial
+  last_run: runs/2026-05-06/run-static-checks
+  note: Only 1 commit visible in `git log` for what's clearly a multi-iteration project. History likely force-pushed. Doesn't break function but blocks audit / review.

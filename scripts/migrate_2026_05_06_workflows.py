@@ -49,15 +49,8 @@ PLACEMENTS: dict[str, list[dict]] = {
             "zh": "更轻量的单目的下载器。抖音签名当前坏了 —— 只在 MediaCrawler 对你那一个平台太重 + 那个平台不是抖音时用。",
         },
     }],
-    "Usagi-org--ai-goofish-monitor": [{
-        "workflow_id": "park-content-v1",
-        "stage_id": "02_acquisition",
-        "role": "reference",
-        "reason": {
-            "en": "Goofish (XianYu) is marketplace listings, not content per se. Included as a reference for the same Playwright + cookie + multi-modal-LLM-filter pattern at single-platform depth.",
-            "zh": "闲鱼是商品挂牌,不是严格意义的内容。作为参考列出 —— 同样的 Playwright + cookie + 多模态 LLM 过滤模式,单平台深度。",
-        },
-    }],
+    # Removed (2026-05-06): ai-goofish-monitor not actually content workflow
+    # (it's marketplace listings monitoring). Per Wendy's review.
 
     # === 03 understanding ===
     "zarazhangrui--youtube-to-ebook": [{
@@ -130,36 +123,9 @@ PLACEMENTS: dict[str, list[dict]] = {
             "zh": "通过 Remotion best-practices skill 做程序化视频组装。媒介: 视频 —— 字幕 / 音频同步 / lottie / ffmpeg。",
         },
     }],
-    "zarazhangrui--personalized-podcast": [{
-        "workflow_id": "park-content-v1",
-        "stage_id": "06_assembly",
-        "role": "primary",
-        "medium": "audio",
-        "reason": {
-            "en": "Podcast episode assembly. Medium: audio — turn an idea / brief into a finished podcast episode.",
-            "zh": "播客 episode 组装。媒介: 音频 —— 把想法 / brief 变成成品 podcast。",
-        },
-    }],
-    "zarazhangrui--codebase-to-course": [{
-        "workflow_id": "park-content-v1",
-        "stage_id": "06_assembly",
-        "role": "primary",
-        "medium": "course",
-        "reason": {
-            "en": "Course / lesson assembly. Medium: structured educational content — multi-chapter markdown course.",
-            "zh": "课程 / 课时组装。媒介: 结构化教育内容 —— 多章节 markdown 课程。",
-        },
-    }],
-    "THU-MAIC--OpenMAIC": [{
-        "workflow_id": "park-content-v1",
-        "stage_id": "06_assembly",
-        "role": "primary",
-        "medium": "interactive-classroom",
-        "reason": {
-            "en": "Interactive AI classroom assembly. Medium: live multi-agent classroom (teacher + peer + whiteboard + TTS).",
-            "zh": "互动 AI 课堂组装。媒介: 实时多 agent 课堂(老师 + 同学 + 白板 + TTS)。",
-        },
-    }],
+    # Removed (2026-05-06): personalized-podcast / codebase-to-course / OpenMAIC
+    # are educational/long-form output, not Wendy's social-media content
+    # workflow (X / 抖音 / 小红书 / WeChat). Per Wendy's review.
 
     # === 07 distribution ===
     "dreammis--social-auto-upload": [{

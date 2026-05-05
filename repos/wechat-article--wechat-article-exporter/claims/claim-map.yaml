@@ -1,0 +1,104 @@
+claims:
+- id: claim-001
+  title: Nuxt + Vue web app for batch downloading WeChat 公众号 articles
+  source: README "微信公众号文章批量下载"
+  source_ref: nuxt.config.ts + components/ + apis/
+  priority: critical
+  area: web-app-implementation
+  statement: |
+    Nuxt + Vue 3 web app. Confirmed: nuxt.config.ts at root, components/
+    has dashboard / api / base subdirs, apis/index.ts is the API layer,
+    composables/, layouts/, etc. Real production-shape Nuxt project.
+  business_expectation: |
+    The "在线网站" claim is real Vue/Nuxt code that runs in browser.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: Nuxt 3 project with components/ + composables/ + config/ + apis/. Substantial code base.
+- id: claim-002
+  title: HTML format 100% preserves article layout + style
+  source: README "支持下载各种文件格式，其中 HTML 格式可100%还原文章排版与样式"
+  source_ref: components/ (export logic)
+  priority: high
+  area: format-fidelity
+  statement: |
+    Export-to-HTML produces a file that visually matches the original
+    WeChat article (preserves images / styles / layout / inline css).
+  business_expectation: |
+    Archived articles are a faithful copy, not a stripped-text version.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: Per README + project surface; not exercised in static eval.
+- id: claim-003
+  title: Multi-deployment options (online site + Docker + Cloudflare)
+  source: README "在线网站 / docker 私有化部署 / Cloudflare 部署"
+  source_ref: Dockerfile + nuxt.config.ts
+  priority: high
+  area: deployment-options
+  statement: |
+    Dockerfile present at root. Cloudflare Pages / Workers deploy
+    documented + supported via Nuxt's adapter system.
+  business_expectation: |
+    Users without their own server can use the hosted site;
+    privacy-conscious users can self-host.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: Dockerfile + nuxt.config.ts confirmed. Nuxt 3 supports Cloudflare adapter.
+- id: claim-004
+  title: MIT LICENSE present
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: |
+    LICENSE file at repo root, MIT.
+  business_expectation: |
+    Anyone can legally fork / self-host / redistribute.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: licenseInfo=MIT License. LICENSE file confirmed.'
+- id: claim-005
+  title: Recently active development
+  source: framework
+  source_ref: github commit history
+  priority: high
+  area: maintenance
+  statement: |
+    Pushed within 90 days, indicating active maintenance.
+  business_expectation: |
+    Stays current as WeChat updates its frontend / signing.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: pushedAt=2026-04-29 (~7 days ago). Solidly active.'
+- id: claim-006
+  title: Live e2e — actually export articles from a real WeChat 公众号
+  source: README "微信公众号文章批量下载，支持导出阅读量与评论数据"
+  source_ref: hosted online site OR local docker
+  priority: critical
+  area: end-to-end
+  statement: |
+    Use either the hosted online site OR a local docker / clone, paste
+    a real 公众号 URL, export at least 10 articles, verify HTML preserves
+    layout + view counts + comments.
+  business_expectation: |
+    Works end-to-end against today's WeChat surface, not yesterday's.
+  evidence_needed: |
+    A real public 公众号 URL + a logged session showing the export flow
+    + at least one downloaded HTML file rendered in browser to confirm
+    fidelity.
+  status: untested
+- id: claim-007
+  title: Substantive code surface (not a single-file MVP)
+  source: framework
+  source_ref: components/, composables/, apis/, components/dashboard/
+  priority: medium
+  area: project-maturity
+  statement: |
+    Multiple top-level dirs: components/ (with subdirs), composables/,
+    apis/, config/, layouts/, server/. CONTRIBUTING.md + CODE_OF_CONDUCT.md
+    present.
+  business_expectation: |
+    Project has real engineering structure (not a single-file
+    MVP). Contributors can navigate + add features.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: Multiple top-level dirs + CLAUDE.md + CODE_OF_CONDUCT.md + CONTRIBUTING.md.

@@ -71,34 +71,40 @@ stages:
     zh: 写或生成正式内容。AI 味要去掉。草稿要有"人味",不是泛 AI 输出。
 - id: '06_assembly'
   name:
-    en: Asset assembly
-    zh: 成品组装
+    en: Creative assembly
+    zh: 创意组装
   expected_artifact:
-    en: final deliverable (HTML deck / video file / podcast / WeChat HTML / ebook)
-    zh: 最终交付物(HTML deck / 视频文件 / 播客 / 公众号 HTML / 电子书)
+    en: platform-ready creative artifact (vertical video / image deck / WeChat
+      HTML / X-thread / YouTube short / etc.)
+    zh: 平台可用的创意产物(竖版视频 / 图文 / 公众号 HTML / X thread / YouTube short 等)
   description:
-    en: Wrap the content into the medium-specific format. Slide deck, video
-      cut, podcast episode, WeChat-formatted HTML, etc.
-    zh: 把内容包进对应媒介格式。幻灯片、视频剪辑、播客 episode、微信样式的 HTML 等等。
+    en: Wrap the content into the platform-specific creative format. Vertical
+      video for douyin / xhs / TikTok, image-deck for xhs, WeChat-styled HTML,
+      Twitter / X thread shape, etc.
+    zh: 把内容包进平台对应的创意格式。竖版视频(抖音 / 小红书 / TikTok)、图文(小红书)、公众号样式 HTML、X 推文等。
 - id: '07_distribution'
   name:
-    en: Distribution
-    zh: 分发
+    en: Distribution & feedback
+    zh: 分发反馈
   expected_artifact:
-    en: published artifact live on each target platform
-    zh: 在每个目标平台已上线的内容
+    en: published artifact live on platform + first-day engagement signal
+      (views / likes / saves / comments)
+    zh: 已发布的内容 + 首日互动信号(播放 / 点赞 / 收藏 / 评论)
   description:
-    en: Push to platforms — auto-upload to multiple channels, schedule for the
-      right times, handle per-platform metadata (titles / thumbnails / tags).
-    zh: 推送到平台 —— 多渠道自动上传 / 定时 / 各平台元数据(标题 / 缩略图 / 标签)。
-- id: '08_feedback'
+    en: Push to platforms — auto-upload, schedule, per-platform metadata —
+      AND collect the first-day engagement signal. Distribution and immediate
+      feedback are coupled in practice.
+    zh: 推送到平台 —— 自动上传 / 定时 / 各平台元数据 —— 同时收第一天的互动信号。分发和即时反馈在实操里是耦合的。
+- id: '08_learning'
   name:
-    en: Feedback learning
-    zh: 反馈学习
+    en: Learning
+    zh: 学习
   expected_artifact:
-    en: post-publish performance log + actionable next-cycle notes
-    zh: 发布后表现日志 + 下一轮可操作的 notes
+    en: pattern library — what shape of content lands, what doesn't, by
+      platform; feeds back into signal-scanning for the next cycle
+    zh: 模式库 —— 哪种形态的内容能起,哪种不行,按平台分;回流到下一轮 signal-scan
   description:
-    en: Track what landed (views / engagement / conversions), feed it back into
-      signal-scanning for the next round. This is the loop closer.
-    zh: 跟踪表现(播放 / 互动 / 转化),回流到下一轮 signal-scan。这是闭环。
+    en: Across many published artifacts, extract the patterns that worked.
+      This is the meta-step where individual feedback signals turn into a
+      library of "what works for me on this platform". The actual loop-closer.
+    zh: 跨多个已发布产物,提炼起作用的模式。这是 meta 步骤 —— 单个反馈信号汇成"这个平台上对我管用的形态"模式库。真正的闭环。

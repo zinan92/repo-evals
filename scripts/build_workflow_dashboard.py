@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
-"""Build dashboard/workflows/<workflow-id>.html — workflow-overlay view.
+"""Build dashboard/workflows/<workflow-id>.html — left-to-right column view.
 
-Where ``all-evals.html`` is the generic-eval index, this page is the
-workflow-specific map: which evaluated repos sit at which stage of a
-given workflow (Park content / Park trading / Park development). Empty
-stages are surfaced as "GAP" markers — those are roadmap signals.
+Layout:
+  - 8 stages laid out as 8 columns from left to right
+  - Inside each column: repos stacked vertically, sorted by score
+  - Stages 02 (acquisition) and 07 (distribution) further break out by
+    platform (X / 抖音 / 小红书 / 微信公众号 / etc.) — the per-platform
+    sub-headers carry their own logos and contain only the repos that
+    cover that platform
+
+Theme:
+  - Light / white theme (warm off-white surfaces, dark text)
+  - Bilingual EN/ZH toggle preserved
 
 Run:
     python3 scripts/build_workflow_dashboard.py park-content-v1
-    python3 scripts/build_workflow_dashboard.py --all
 """
 from __future__ import annotations
 
@@ -32,6 +38,29 @@ ROLE_LABELS: dict[str, tuple[str, str, str]] = {
 }
 
 
+# Per-platform display metadata (logo character + bilingual name).
+# Used for sub-headers in stages 02 + 07.
+PLATFORM_META: dict[str, tuple[str, str, str]] = {
+    "x":            ("𝕏",  "X (Twitter)",   "X"),
+    "twitter":      ("𝕏",  "X (Twitter)",   "X"),
+    "douyin":       ("🎵", "Douyin",        "抖音"),
+    "xiaohongshu":  ("📕", "Xiaohongshu",   "小红书"),
+    "wechat-mp":    ("💬", "WeChat 公众号", "微信公众号"),
+    "wechat-video": ("📹", "WeChat 视频号", "微信视频号"),
+    "bilibili":     ("📺", "Bilibili",      "B 站"),
+    "kuaishou":     ("🎬", "Kuaishou",      "快手"),
+    "tiktok":       ("🎵", "TikTok",        "TikTok"),
+    "youtube":      ("▶️", "YouTube",       "YouTube"),
+    "reddit":       ("👽", "Reddit",        "Reddit"),
+    "github":       ("🐙", "GitHub",        "GitHub"),
+    "weibo":        ("🌐", "Weibo",         "微博"),
+    "tieba":        ("📌", "Baidu Tieba",   "贴吧"),
+    "zhihu":        ("📖", "Zhihu",         "知乎"),
+    "other":        ("•",  "Other",         "其他"),
+    "multi":        ("∞",  "Multi-platform","多平台"),
+}
+
+
 def _load_workflow(wf_id: str) -> dict | None:
     path = ROOT / "workflows" / f"{wf_id}.yaml"
     if not path.exists():
@@ -48,8 +77,6 @@ def _bilingual_text(val) -> tuple[str, str]:
 
 
 def _load_repo_for_card(slug: str) -> dict | None:
-    """Pull the data needed to render one repo card on the workflow page."""
-
     repo_dir = ROOT / "repos" / slug
     repo_yaml = repo_dir / "repo.yaml"
     cm_yaml = repo_dir / "claims" / "claim-map.yaml"
@@ -89,10 +116,7 @@ def _load_repo_for_card(slug: str) -> dict | None:
     one_liner_en = (ol.get("en") if isinstance(ol, dict) else "") or ""
 
     dossiers = sorted(repo_dir.glob("verdicts/*-verdict.html"), reverse=True)
-    dossier_rel = (
-        dossiers[0].relative_to(ROOT).as_posix()
-        if dossiers else None
-    )
+    dossier_rel = dossiers[0].relative_to(ROOT).as_posix() if dossiers else None
 
     return {
         "slug": slug,
@@ -112,13 +136,8 @@ def _load_repo_for_card(slug: str) -> dict | None:
     }
 
 
-def collect_repos_in_workflow(wf_id: str) -> dict[str, list[dict]]:
-    """Return {stage_id: [card, ...]} for repos placed in this workflow.
-
-    Each card carries the repo summary plus the matching placement
-    (role + reason + medium) from this workflow's placements. Sorted
-    by score within each stage.
-    """
+def collect_for_workflow(wf_id: str) -> dict[str, list[dict]]:
+    """{stage_id: [card with placement attached, ...]} for a workflow."""
 
     by_stage: dict[str, list[dict]] = {}
     repos_dir = ROOT / "repos"
@@ -135,23 +154,21 @@ def collect_repos_in_workflow(wf_id: str) -> dict[str, list[dict]]:
             entry = dict(card)
             entry["placement"] = p
             by_stage.setdefault(stage_id, []).append(entry)
-    # Sort each bucket by score desc
-    for sid, entries in by_stage.items():
+    for entries in by_stage.values():
         entries.sort(key=lambda c: -c["score"])
     return by_stage
 
 
-def render_card(entry: dict) -> str:
+def render_repo_card(entry: dict) -> str:
     p = entry["placement"]
     role = str(p.get("role", "")).lower()
     role_en, role_zh, role_class = ROLE_LABELS.get(
         role, (role.capitalize(), role, "wp-primary"))
     medium = p.get("medium")
     medium_pill = (
-        f'<span class="wp-medium-pill">{html.escape(str(medium))}</span>'
+        f'<span class="wf-medium-pill">{html.escape(str(medium))}</span>'
         if medium else ''
     )
-    reason_en, reason_zh = _bilingual_text(p.get("reason") or {})
 
     dossier_link = (
         f'../../{html.escape(entry["dossier_rel"])}'
@@ -160,83 +177,110 @@ def render_card(entry: dict) -> str:
 
     return (
         f'<article class="wf-card {role_class}">'
+        f'<a class="wf-card-link" href="{dossier_link}">'
         f'<div class="wf-card-head">'
-        f'<a class="wf-card-name" href="{dossier_link}">'
-        f'<strong>{html.escape(entry["owner"])}/{html.escape(entry["display"])}</strong>'
-        f'</a>'
-        f'<div class="wf-card-meta">'
+        f'<div class="wf-card-name"><strong>{html.escape(entry["owner"])}/{html.escape(entry["display"])}</strong></div>'
         f'<span class="wf-score-pill cat-{entry["category_key"]}">'
         f'{entry["category_emoji"]} {entry["score"]}'
         f'</span>'
+        f'</div>'
+        f'<div class="wf-card-meta">'
         f'<span class="wf-layer-pill layer-{entry["layer"]}">{html.escape(entry["layer"])}</span>'
-        f'<span class="wf-role-pill">'
+        f'<span class="wf-role-pill {role_class}">'
         f'<span class="i18n-block en-block inline">{html.escape(role_en)}</span>'
         f'<span class="i18n-block zh-block inline">{html.escape(role_zh)}</span>'
         f'</span>'
         f'{medium_pill}'
         f'</div>'
-        f'</div>'
         f'<div class="wf-card-oneliner">'
-        f'<span class="i18n-block en-block">{html.escape(entry["one_liner_en"])}</span>'
-        f'<span class="i18n-block zh-block">{html.escape(entry["one_liner_zh"])}</span>'
+        f'<span class="i18n-block en-block">{html.escape(entry["one_liner_en"][:140])}</span>'
+        f'<span class="i18n-block zh-block">{html.escape(entry["one_liner_zh"][:140])}</span>'
         f'</div>'
-        f'<div class="wf-card-reason">'
-        f'<span class="i18n-block en-block">{html.escape(reason_en)}</span>'
-        f'<span class="i18n-block zh-block">{html.escape(reason_zh)}</span>'
-        f'</div>'
+        f'</a>'
         f'</article>'
     )
 
 
-def render_stage_block(stage: dict, entries: list[dict]) -> str:
+def render_platform_section(platform_key: str, entries: list[dict]) -> str:
+    logo, en, zh = PLATFORM_META.get(
+        platform_key,
+        ("•", platform_key.title(), platform_key)
+    )
+    cards = "".join(render_repo_card(e) for e in entries)
+    return (
+        f'<div class="wf-platform-section" data-platform="{platform_key}">'
+        f'<div class="wf-platform-header">'
+        f'<span class="wf-platform-logo">{logo}</span>'
+        f'<span class="wf-platform-name">'
+        f'<span class="i18n-block en-block inline">{html.escape(en)}</span>'
+        f'<span class="i18n-block zh-block inline">{html.escape(zh)}</span>'
+        f'</span>'
+        f'<span class="wf-platform-count">{len(entries)}</span>'
+        f'</div>'
+        f'<div class="wf-platform-cards">{cards}</div>'
+        f'</div>'
+    )
+
+
+def render_stage_column(stage: dict, entries: list[dict],
+                        per_platform: bool) -> str:
     name = stage.get("name") or {}
     name_en, name_zh = _bilingual_text(name)
-    desc = stage.get("description") or {}
-    desc_en, desc_zh = _bilingual_text(desc)
     artifact = stage.get("expected_artifact") or {}
     art_en, art_zh = _bilingual_text(artifact)
 
-    if entries:
-        cards_html = "".join(render_card(e) for e in entries)
-        body = f'<div class="wf-stage-cards">{cards_html}</div>'
-    else:
+    if not entries:
         body = (
             '<div class="wf-stage-gap">'
-            '<span class="wf-gap-icon">⚠</span> '
-            '<span class="i18n-block en-block">'
-            'No evaluated repo at this stage yet — this is a roadmap gap.'
-            '</span>'
-            '<span class="i18n-block zh-block">'
-            '这一阶段还没有评测过的 repo —— 这是路线图缺口。'
-            '</span>'
+            '<span class="wf-gap-icon">⚠</span>'
+            '<div class="i18n-block en-block">'
+            'No evaluated repo here yet — roadmap gap.'
+            '</div>'
+            '<div class="i18n-block zh-block">'
+            '这一阶段还没有评测过的 repo —— 路线图缺口。'
+            '</div>'
             '</div>'
         )
+    elif per_platform:
+        # Group by platform — entries can have multiple platforms in
+        # `placement.platforms` (list); add a card under each platform
+        # they cover. Repos without `platforms` go to "other".
+        by_platform: dict[str, list[dict]] = {}
+        for e in entries:
+            placement = e["placement"]
+            platforms = placement.get("platforms") or []
+            if not platforms:
+                platforms = ["other"]
+            for plat in platforms:
+                key = str(plat).strip().lower()
+                by_platform.setdefault(key, []).append(e)
+        # Stable ordering: known platforms first in PLATFORM_META order,
+        # then anything else alphabetically.
+        ordered_keys = [k for k in PLATFORM_META if k in by_platform]
+        ordered_keys += sorted(k for k in by_platform if k not in PLATFORM_META)
+        body = "".join(render_platform_section(k, by_platform[k]) for k in ordered_keys)
+    else:
+        body = "".join(render_repo_card(e) for e in entries)
+
+    stage_num = str(stage.get("id", "")).split("_", 1)[0]
 
     return (
-        f'<section class="wf-stage" id="{html.escape(str(stage.get("id","")))}">'
-        f'<div class="wf-stage-header">'
-        f'<div class="wf-stage-num">{html.escape(str(stage.get("id","")).split("_",1)[0])}</div>'
-        f'<div class="wf-stage-titles">'
+        f'<section class="wf-col" id="{html.escape(str(stage.get("id","")))}">'
+        f'<div class="wf-col-head">'
+        f'<div class="wf-col-num">{html.escape(stage_num)}</div>'
+        f'<div class="wf-col-titles">'
         f'<h2>'
         f'<span class="i18n-block en-block">{html.escape(name_en)}</span>'
         f'<span class="i18n-block zh-block">{html.escape(name_zh)}</span>'
         f'</h2>'
-        f'<p class="wf-stage-desc">'
-        f'<span class="i18n-block en-block">{html.escape(desc_en)}</span>'
-        f'<span class="i18n-block zh-block">{html.escape(desc_zh)}</span>'
-        f'</p>'
-        f'<p class="wf-stage-artifact">'
-        f'<span class="wf-artifact-label">'
-        f'<span class="i18n-block en-block">→ Expected artifact:</span>'
-        f'<span class="i18n-block zh-block">→ 预期产物:</span>'
-        f'</span> '
-        f'<span class="i18n-block en-block">{html.escape(art_en)}</span>'
-        f'<span class="i18n-block zh-block">{html.escape(art_zh)}</span>'
+        f'<p class="wf-col-artifact">'
+        f'<span class="i18n-block en-block">→ {html.escape(art_en)}</span>'
+        f'<span class="i18n-block zh-block">→ {html.escape(art_zh)}</span>'
         f'</p>'
         f'</div>'
-        f'<div class="wf-stage-count">{len(entries)}</div>'
+        f'<div class="wf-col-count">{len(entries)}</div>'
         f'</div>'
-        f'{body}'
+        f'<div class="wf-col-body">{body}</div>'
         f'</section>'
     )
 
@@ -244,22 +288,30 @@ def render_stage_block(stage: dict, entries: list[dict]) -> str:
 def build_one(wf_id: str) -> Path | None:
     wf = _load_workflow(wf_id)
     if not wf:
-        print(f"  SKIP {wf_id} — no workflow YAML", file=sys.stderr)
         return None
 
     name = wf.get("name") or {}
     name_en, name_zh = _bilingual_text(name)
 
     stages = wf.get("stages") or []
-    by_stage = collect_repos_in_workflow(wf_id)
+    by_stage = collect_for_workflow(wf_id)
 
-    stage_blocks = "\n".join(
-        render_stage_block(st, by_stage.get(str(st.get("id", "")), []))
+    # Stages 02 (acquisition) + 07 (distribution & feedback) get
+    # platform breakouts; other stages just stack cards.
+    PLATFORM_BREAKOUT_STAGES = {"02_acquisition", "07_distribution"}
+
+    columns = "".join(
+        render_stage_column(
+            st,
+            by_stage.get(str(st.get("id", "")), []),
+            per_platform=str(st.get("id", "")) in PLATFORM_BREAKOUT_STAGES,
+        )
         for st in stages
     )
 
     total_repos = sum(len(v) for v in by_stage.values())
-    filled_stages = sum(1 for st in stages if by_stage.get(str(st.get("id", ""))))
+    filled_stages = sum(1 for st in stages
+                        if by_stage.get(str(st.get("id", ""))))
     total_stages = len(stages)
 
     page = f"""<!DOCTYPE html>
@@ -270,38 +322,52 @@ def build_one(wf_id: str) -> Path | None:
 <title>{html.escape(name_en)} · repo-evals</title>
 <style>
 :root {{
-  --bg: #0b0b0d; --surface-1: #14141a; --surface-2: #1c1c24;
-  --border: #2a2a36; --border-strong: #3a3a4a;
-  --text: #f0f0f5; --text-2: #a0a0b0; --text-3: #6a6a78;
-  --accent: #60a5fa;
-  --layer-atom: #4ade80; --layer-molecule: #c084fc; --layer-compound: #f87171;
-  --cat-production: #4ade80;
-  --cat-available:  #60a5fa;
-  --cat-risky:      #f59e0b;
-  --cat-dont_use:   #f87171;
-  --ok: #4ade80; --warn: #f59e0b; --bad: #f87171;
+  /* Light theme */
+  --bg:        #fbf8f3;
+  --surface-1: #ffffff;
+  --surface-2: #f3eee5;
+  --surface-3: #ede5d4;
+  --border:    rgba(20, 18, 14, 0.10);
+  --border-strong: rgba(20, 18, 14, 0.18);
+  --text:   #1a1714;
+  --text-2: #5c5246;
+  --text-3: #8a7e6f;
+  --accent: #2563eb;
+  --layer-atom:     #2d7866;
+  --layer-molecule: #5a3aa1;
+  --layer-compound: #a13d30;
+  --cat-production: #16a34a;
+  --cat-available:  #2563eb;
+  --cat-risky:      #d97706;
+  --cat-dont_use:   #dc2626;
+  --ok: #16a34a; --warn: #d97706; --bad: #dc2626;
   --font-sans: ui-sans-serif, system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-serif: ui-serif, Georgia, serif;
 }}
 * {{ box-sizing: border-box; }}
 html, body {{ margin: 0; padding: 0; }}
-body {{ font-family: var(--font-sans); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.55; }}
-.page {{ max-width: 1400px; margin: 0 auto; padding: 28px 24px 80px; }}
+body {{
+  font-family: var(--font-sans); background: var(--bg); color: var(--text);
+  font-size: 13.5px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}}
+.page-header {{ max-width: 1400px; margin: 0 auto; padding: 28px 24px 18px; }}
 a {{ color: var(--accent); text-decoration: none; }}
 a:hover {{ text-decoration: underline; }}
 .crumb {{ font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); margin-bottom: 6px; }}
 .crumb a {{ color: var(--text-3); }}
 .crumb a:hover {{ color: var(--text-2); }}
-h1 {{ font-family: var(--font-serif); font-size: 36px; font-weight: 700; margin: 0 0 8px; line-height: 1.05; }}
-.lead {{ color: var(--text-2); max-width: 80ch; margin: 0 0 22px; font-size: 15px; }}
+h1 {{ font-family: var(--font-serif); font-size: 32px; font-weight: 700; margin: 0 0 10px; line-height: 1.1; }}
+.lead {{ color: var(--text-2); max-width: 90ch; margin: 0 0 18px; font-size: 14px; }}
 
-.lang-toggle {{ position: fixed; top: 16px; right: 18px; display: inline-flex; gap: 4px; padding: 4px;
+.lang-toggle {{ position: fixed; top: 14px; right: 16px; display: inline-flex; gap: 4px; padding: 4px;
   background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px;
-  font-family: var(--font-mono); font-size: 11px; z-index: 100; }}
-.lang-toggle button {{ font: inherit; background: transparent; color: var(--text-2);
+  font-family: var(--font-mono); font-size: 11px; z-index: 100;
+  box-shadow: 0 2px 8px rgba(20,18,14,0.06); }}
+.lang-toggle button {{ font: inherit; background: transparent; color: var(--text-3);
   border: 0; padding: 4px 10px; border-radius: 999px; cursor: pointer; }}
-.lang-toggle button.active {{ background: var(--surface-2); color: var(--text); }}
+.lang-toggle button.active {{ background: var(--text); color: var(--surface-1); }}
 
 .i18n-block {{ display: none; }}
 html[lang="en"] .en-block {{ display: block; }}
@@ -311,104 +377,148 @@ html[lang="zh"] .zh-block.inline {{ display: inline; }}
 html[lang="en"] span.en-block.i18n-block {{ display: inline; }}
 html[lang="zh"] span.zh-block.i18n-block {{ display: inline; }}
 
-.summary-tiles {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0 28px; }}
-@media (max-width: 720px) {{ .summary-tiles {{ grid-template-columns: 1fr; }} }}
-.tile {{ background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; }}
+.summary-tiles {{ display: flex; gap: 10px; margin: 12px 0 20px; flex-wrap: wrap; }}
+.tile {{ background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; min-width: 140px; }}
 .tile-label {{ font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); margin-bottom: 4px; }}
-.tile-value {{ font-family: var(--font-serif); font-size: 28px; font-weight: 700; line-height: 1.05; }}
+.tile-value {{ font-family: var(--font-serif); font-size: 22px; font-weight: 700; line-height: 1; color: var(--text); }}
 
-.wf-stage {{
+/* Main 8-column grid — horizontal scroll on narrow screens */
+.wf-scroll-wrap {{
+  overflow-x: auto;
+  padding: 0 24px 24px;
+  background: var(--bg);
+}}
+.wf-grid {{
+  display: grid;
+  grid-template-columns: repeat({total_stages}, minmax(280px, 1fr));
+  gap: 12px;
+  min-width: {total_stages * 290}px;
+  max-width: 1900px;
+  margin: 0 auto;
+}}
+
+/* Per-stage column */
+.wf-col {{
   background: var(--surface-1);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 22px 26px;
-  margin-bottom: 16px;
+  border-radius: 12px;
+  padding: 14px 14px 16px;
+  display: flex; flex-direction: column;
 }}
-.wf-stage-header {{
+.wf-col-head {{
   display: grid; grid-template-columns: auto 1fr auto;
-  gap: 18px; align-items: start; margin-bottom: 14px;
+  gap: 10px; align-items: start;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
 }}
-.wf-stage-num {{
-  font-family: var(--font-mono); font-size: 26px; font-weight: 700;
-  color: var(--accent); line-height: 1;
-  padding-top: 4px; min-width: 36px; text-align: center;
+.wf-col-num {{
+  font-family: var(--font-mono); font-size: 18px; font-weight: 700;
+  color: var(--accent); line-height: 1; padding-top: 2px;
+  background: var(--surface-2); padding: 4px 8px; border-radius: 4px;
+  min-width: 38px; text-align: center;
 }}
-.wf-stage-titles h2 {{ font-family: var(--font-serif); font-size: 22px; margin: 0 0 4px; line-height: 1.15; }}
-.wf-stage-desc {{ color: var(--text-2); font-size: 13.5px; margin: 0 0 6px; line-height: 1.5; }}
-.wf-stage-artifact {{
-  font-size: 12.5px; color: var(--text-3); margin: 0;
-  font-family: var(--font-mono);
+.wf-col-titles h2 {{
+  font-family: var(--font-serif); font-size: 16px; font-weight: 700;
+  margin: 0 0 3px; line-height: 1.15; color: var(--text);
 }}
-.wf-artifact-label {{ color: var(--text-2); font-weight: 700; letter-spacing: 0.04em; }}
-.wf-stage-count {{
-  font-family: var(--font-mono); font-size: 11px;
-  color: var(--text-3); padding: 4px 10px;
+.wf-col-artifact {{
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); margin: 0; line-height: 1.4;
+}}
+.wf-col-count {{
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); padding: 2px 8px;
   background: var(--surface-2); border-radius: 999px;
-  white-space: nowrap;
+  white-space: nowrap; align-self: start;
 }}
+.wf-col-body {{ display: flex; flex-direction: column; gap: 10px; }}
 
-.wf-stage-cards {{
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 12px;
-}}
+/* Repo card (used in both per-platform sections and direct stage stacks) */
 .wf-card {{
-  background: var(--surface-2);
   border: 1px solid var(--border);
+  background: var(--surface-2);
   border-left: 3px solid var(--text-3);
-  border-radius: 8px;
-  padding: 12px 14px;
-  display: flex; flex-direction: column; gap: 6px;
+  border-radius: 6px;
+  overflow: hidden;
 }}
 .wf-card.wp-primary     {{ border-left-color: var(--ok); }}
 .wf-card.wp-support     {{ border-left-color: var(--accent); }}
 .wf-card.wp-alternative {{ border-left-color: var(--warn); }}
 .wf-card.wp-reference   {{ border-left-color: var(--text-3); border-left-style: dashed; }}
-.wf-card-head {{ display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }}
-.wf-card-name {{ color: var(--text); font-size: 14px; }}
-.wf-card-name:hover strong {{ text-decoration: underline; }}
-.wf-card-meta {{ display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }}
+.wf-card-link {{ display: block; padding: 10px 12px; color: var(--text); }}
+.wf-card-link:hover {{ background: var(--surface-1); text-decoration: none; }}
+.wf-card-head {{ display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }}
+.wf-card-name {{ font-size: 12.5px; line-height: 1.3; }}
+.wf-card-name strong {{ color: var(--text); }}
+.wf-card-meta {{ display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-top: 6px; }}
 .wf-score-pill {{
-  font-family: var(--font-mono); font-size: 11px;
-  padding: 2px 7px; border-radius: 999px; background: var(--bg); color: var(--text-2);
-  white-space: nowrap;
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
+  padding: 2px 7px; border-radius: 999px; background: var(--surface-1);
+  white-space: nowrap; border: 1px solid var(--border);
 }}
 .wf-score-pill.cat-production {{ color: var(--cat-production); }}
 .wf-score-pill.cat-available  {{ color: var(--cat-available); }}
 .wf-score-pill.cat-risky      {{ color: var(--cat-risky); }}
 .wf-score-pill.cat-dont_use   {{ color: var(--cat-dont_use); }}
 .wf-layer-pill {{
-  font-family: var(--font-mono); font-size: 9.5px;
-  padding: 2px 6px; border-radius: 4px; background: var(--bg);
-  text-transform: uppercase; letter-spacing: 0.08em;
+  font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 6px; border-radius: 3px; background: var(--surface-1);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border: 1px solid var(--border);
 }}
 .wf-layer-pill.layer-atom     {{ color: var(--layer-atom); }}
 .wf-layer-pill.layer-molecule {{ color: var(--layer-molecule); }}
 .wf-layer-pill.layer-compound {{ color: var(--layer-compound); }}
 .wf-role-pill {{
-  font-family: var(--font-mono); font-size: 9.5px;
-  padding: 2px 6px; border-radius: 4px; background: var(--bg);
-  color: var(--text-2); text-transform: uppercase; letter-spacing: 0.08em;
+  font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 6px; border-radius: 3px; background: var(--surface-1);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border: 1px solid var(--border); color: var(--text-2);
 }}
-.wp-medium-pill {{
-  font-family: var(--font-mono); font-size: 9.5px;
-  padding: 2px 6px; border-radius: 4px; background: var(--bg); color: var(--text-3);
+.wf-role-pill.wp-primary     {{ color: var(--ok); border-color: rgba(22, 163, 74, 0.2); }}
+.wf-role-pill.wp-support     {{ color: var(--accent); border-color: rgba(37, 99, 235, 0.2); }}
+.wf-role-pill.wp-alternative {{ color: var(--warn); border-color: rgba(217, 119, 6, 0.2); }}
+.wf-medium-pill {{
+  font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 6px; border-radius: 3px; background: var(--surface-1);
+  color: var(--text-3); border: 1px solid var(--border);
 }}
-.wf-card-oneliner {{ font-size: 12.5px; color: var(--text); line-height: 1.5; }}
-.wf-card-reason {{
+.wf-card-oneliner {{
   font-size: 11.5px; color: var(--text-2); line-height: 1.45;
-  border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 2px;
+  margin-top: 6px;
 }}
+
+/* Per-platform sub-sections (inside 02 + 07) */
+.wf-platform-section {{ margin: 0; }}
+.wf-platform-section + .wf-platform-section {{ margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }}
+.wf-platform-header {{
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-2); font-weight: 700;
+  letter-spacing: 0.06em;
+}}
+.wf-platform-logo {{ font-size: 14px; }}
+.wf-platform-name {{ flex: 1; }}
+.wf-platform-count {{
+  font-size: 10px; padding: 1px 6px; border-radius: 999px;
+  background: var(--surface-3); color: var(--text-3);
+}}
+.wf-platform-cards {{ display: flex; flex-direction: column; gap: 8px; }}
 
 .wf-stage-gap {{
-  font-size: 13px; color: var(--text-3);
+  font-size: 11.5px; color: var(--text-3);
   padding: 14px; background: var(--surface-2);
-  border: 1px dashed var(--border-strong); border-radius: 8px;
+  border: 1px dashed var(--border-strong); border-radius: 6px;
   text-align: center;
 }}
-.wf-gap-icon {{ color: var(--warn); margin-right: 6px; }}
+.wf-gap-icon {{ color: var(--warn); margin-right: 4px; font-size: 13px; }}
 
-footer {{ margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--border);
-  font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }}
+footer {{
+  max-width: 1400px; margin: 24px auto 0; padding: 18px 24px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-3);
+}}
 </style>
 </head>
 <body>
@@ -417,7 +527,7 @@ footer {{ margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--borde
   <button data-lang="zh">中文</button>
 </div>
 
-<main class="page">
+<header class="page-header">
   <div class="crumb">
     <a href="../all-evals.html">repo-evals</a> ·
     <span class="i18n-block en-block">workflow overlay</span>
@@ -428,8 +538,8 @@ footer {{ margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--borde
     <span class="i18n-block zh-block">{html.escape(name_zh)}</span>
   </h1>
   <p class="lead">
-    <span class="i18n-block en-block">A workflow overlay maps every evaluated repo onto a stage of {html.escape(name_en)}. Empty stages are roadmap gaps — what to find / build next. The generic catalog (no workflow lens) is at <a href="../all-evals.html">all-evals.html</a>.</span>
-    <span class="i18n-block zh-block">workflow overlay 把每个评测过的 repo 映射到 {html.escape(name_zh)} 的某一个 stage。空 stage 就是路线图缺口 —— 下一个该找/造的东西。通用目录(不带 workflow 视角)在 <a href="../all-evals.html">all-evals.html</a>。</span>
+    <span class="i18n-block en-block">8-stage pipeline view. Stages 02 (acquisition) and 07 (distribution &amp; feedback) are broken out per-platform — X / 抖音 / 小红书 / 微信公众号 / etc. Empty stages are roadmap gaps. Click any card to open the per-repo dossier.</span>
+    <span class="i18n-block zh-block">8 阶段流水线视图。02(内容获取) 和 07(分发反馈) 按平台拆开 —— X / 抖音 / 小红书 / 微信公众号 等。空阶段是路线图缺口。点任意卡片进入 repo 详细 dossier。</span>
   </p>
 
   <div class="summary-tiles">
@@ -446,14 +556,18 @@ footer {{ margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--borde
       <div class="tile-value">{total_repos}</div>
     </div>
   </div>
+</header>
 
-  {stage_blocks}
+<div class="wf-scroll-wrap">
+  <div class="wf-grid">
+    {columns}
+  </div>
+</div>
 
-  <footer>
-    <span class="i18n-block en-block">Generated by scripts/build_workflow_dashboard.py from workflows/{wf_id}.yaml + repos/*/repo.yaml.workflow_placements. Re-run to refresh.</span>
-    <span class="i18n-block zh-block">由 scripts/build_workflow_dashboard.py 从 workflows/{wf_id}.yaml + repos/*/repo.yaml.workflow_placements 生成。重新跑脚本即可刷新。</span>
-  </footer>
-</main>
+<footer>
+  <span class="i18n-block en-block">Generated by scripts/build_workflow_dashboard.py from workflows/{wf_id}.yaml + repos/*/repo.yaml.workflow_placements.</span>
+  <span class="i18n-block zh-block">由 scripts/build_workflow_dashboard.py 从 workflows/{wf_id}.yaml + repos/*/repo.yaml.workflow_placements 生成。</span>
+</footer>
 
 <script>
 const buttons = document.querySelectorAll('.lang-toggle button');
@@ -485,12 +599,9 @@ setLang(_lang);
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("workflow_id", nargs="?",
-                        help="e.g. park-content-v1; omit + use --all to build all")
-    parser.add_argument("--all", action="store_true",
-                        help="Build every workflows/*.yaml")
+    parser.add_argument("workflow_id", nargs="?")
+    parser.add_argument("--all", action="store_true")
     args = parser.parse_args(argv)
-
     if args.all:
         for path in sorted((ROOT / "workflows").glob("*.yaml")):
             build_one(path.stem)

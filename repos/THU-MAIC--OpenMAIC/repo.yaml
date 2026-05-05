@@ -356,11 +356,3 @@ third_party_services:
 business_category: content
 use_case_tags:
 - educational-content
-workflow_placements:
-- workflow_id: park-content-v1
-  stage_id: 06_assembly
-  role: primary
-  medium: interactive-classroom
-  reason:
-    en: 'Interactive AI classroom assembly. Medium: live multi-agent classroom (teacher + peer + whiteboard + TTS).'
-    zh: '互动 AI 课堂组装。媒介: 实时多 agent 课堂(老师 + 同学 + 白板 + TTS)。'

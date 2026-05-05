@@ -1,0 +1,106 @@
+claims:
+- id: claim-001
+  title: Python pipeline + FastAPI backend for fully-automated short-video generation
+  source: README "AI Fully Automated Short Video Engine"
+  source_ref: pixelle_video/ + api/
+  priority: critical
+  area: pipeline-implementation
+  statement: |
+    pixelle_video/ has pipelines/, models/, llm_presets.py, config/.
+    api/ has app.py + routers/ + schemas/ + tasks/ — FastAPI service.
+    Real Python pipeline + service.
+  business_expectation: |
+    "AI 全自动短视频引擎" claim corresponds to a real pipeline + API,
+    not a demo notebook.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: pixelle_video/ + api/ both substantial. config.example.yaml + bgm/ + packaging/ + docker-compose.yml all present.
+- id: claim-002
+  title: Docker + Windows package distribution
+  source: README "Windows Package" badge
+  source_ref: docker-compose.yml + Dockerfile + docker-start.sh + packaging/
+  priority: high
+  area: distribution
+  statement: |
+    docker-compose.yml + Dockerfile + docker-start.sh present + packaging/
+    directory + GitHub releases ship Windows binaries.
+  business_expectation: |
+    Multiple deployment paths covered (Docker for any OS, Windows
+    binary for non-technical users).
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: All distribution files confirmed.
+- id: claim-003
+  title: Apache 2.0 LICENSE + NOTICE present
+  source: framework
+  source_ref: LICENSE + NOTICE
+  priority: critical
+  area: licensing
+  statement: |
+    Apache 2.0 LICENSE file at root + NOTICE for attributions
+    (standard Apache project hygiene).
+  business_expectation: |
+    Anyone can fork / redistribute under Apache.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: licenseInfo=Apache License 2.0. NOTICE file confirmed (Apache discipline).'
+- id: claim-004
+  title: Substantive documentation (mkdocs site + per-area docs/)
+  source: README + docs/ + mkdocs.yml
+  source_ref: docs/ + mkdocs.yml
+  priority: high
+  area: documentation
+  statement: |
+    mkdocs.yml at root + docs/ folder. README has explicit "📘 Documentation"
+    badge linking to aidc-ai.github.io/Pixelle-Video.
+  business_expectation: |
+    Project has hosted docs site + per-feature docs, not just README.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: mkdocs + docs/ + README docs link.
+- id: claim-005
+  title: LLM provider abstraction (multi-provider support)
+  source: pixelle_video/llm_presets.py
+  source_ref: pixelle_video/llm_presets.py
+  priority: high
+  area: provider-abstraction
+  statement: |
+    llm_presets.py defines multiple LLM provider configs so users can
+    swap between OpenAI / Anthropic / local / etc.
+  business_expectation: |
+    Users not locked into a single LLM vendor; can use whichever is
+    cheap/available.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: llm_presets.py confirmed in pixelle_video/.
+- id: claim-006
+  title: Live e2e — generate one short video from idea to finished MP4
+  source: README "AI Fully Automated Short Video Engine"
+  source_ref: docker-compose.yml
+  priority: critical
+  area: end-to-end
+  statement: |
+    Run docker-compose up, drive a real script-to-video flow (idea →
+    AI script → AI assets → assembled MP4), verify the output is a
+    real watchable short video file.
+  business_expectation: |
+    The "fully automated" claim works end-to-end on real LLM + asset
+    services, not just lab demos.
+  evidence_needed: |
+    Needs a real Docker host + LLM provider key + asset/video provider
+    keys + a starting idea. One happy path + one error case.
+  status: untested
+- id: claim-007
+  title: Bilingual README (EN + 中文)
+  source: README + README_EN.md
+  source_ref: README.md + README_EN.md
+  priority: medium
+  area: docs-i18n
+  statement: |
+    README.md (zh) + README_EN.md (en) — primary repo audience can
+    use it in either language.
+  business_expectation: |
+    International + CN creator audiences both served.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: Both README confirmed.

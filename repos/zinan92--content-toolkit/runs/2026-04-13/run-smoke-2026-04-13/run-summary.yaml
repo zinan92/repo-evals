@@ -1,0 +1,53 @@
+run_name: smoke-2026-04-13
+date: 2026-04-13
+area: core
+scenario: "Smoke test of orchestrator routing, smart hints, auto-install, videocut capabilities, health, tests"
+provenance:
+  provenance_source: "auto"
+  captured: true
+  partial: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: "claude-opus-4-6"
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: "ebde34d"
+  target_repo_path: "/Users/wendy/content-toolkit"
+  target_repo_ref: "main"
+  target_repo_commit: "6650692"
+  evaluated_at: "2026-04-13T13:48:27Z"
+  transcript_path: ""
+  command_log_path: ""
+  session_replay_notes: ""
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: true
+  manifest_path: "artifacts/manifest.yaml"
+fixtures:
+  - "3-second ffmpeg test video (sine wave + testsrc)"
+commands:
+  - "node cli.js"
+  - "node cli.js list"
+  - "node cli.js health"
+  - "node cli.js https://douyin.com/video/test123"
+  - "node cli.js test.mp4"
+  - "node cli.js foobar"
+  - "node cli.js intelligence"
+  - "node cli.js download"
+  - "node cli.js videocut"
+  - "node cli.js videocut transcribe /tmp/ctk-test-input.mp4 -o /tmp/ctk-test-out/"
+  - "node cli.js videocut autocut /tmp/ctk-test-input.mp4 -o /tmp/ctk-autocut-out/ --no-review"
+  - "node cli.js videocut subtitle /tmp/ctk-test-input.mp4 --lang zh -o /tmp/ctk-subtitle-out/"
+  - "node --test test/cli.test.js"
+result: partial
+pass_count: 11
+fail_count: 3
+partial_count: 1
+artifacts:
+  - "artifacts/"
+notes: |
+  11 claims passed, 3 failed, 1 partial.
+  Critical failures: test suite 100% broken (import errors), subtitle silent failure,
+  intelligence capability degraded on install.
+  All orchestrator routing/hints/help claims passed cleanly.

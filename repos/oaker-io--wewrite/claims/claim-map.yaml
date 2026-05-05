@@ -1,0 +1,216 @@
+# Curated claim map for oaker-io/wewrite
+# Evaluated: 2026-04-13
+# Archetype: hybrid-skill (Python skill for WeChat article generation)
+
+claims:
+  # === SUPPORT LAYER (deterministic code) ===
+
+  - id: claim-001
+    title: "pip install succeeds from requirements.txt"
+    source: README
+    source_ref: "Install section"
+    priority: critical
+    area: support-install
+    statement: |
+      requirements.txt lists 8 dependencies. pip install -r requirements.txt
+      succeeds in a fresh Python 3.13 venv with no errors.
+    business_expectation: "New users can install dependencies cleanly."
+    evidence_needed: "pip install output + exit code 0"
+    status: passed
+    evidence: |
+      pip install -r requirements.txt in fresh venv: exit 0. 8 deps installed.
+
+  - id: claim-002
+    title: "6 CLI commands all respond to --help"
+    source: SKILL.md
+    source_ref: "toolkit/cli.py"
+    priority: critical
+    area: support-cli
+    statement: |
+      The toolkit CLI provides 6 subcommands: preview, publish, themes,
+      image-post, gallery, learn-theme. All respond to --help.
+    business_expectation: "Users can discover and use all CLI tools."
+    evidence_needed: "Each command's --help output + exit code."
+    status: passed
+    evidence: |
+      All 6 commands return help text with exit 0:
+      preview, publish, themes, image-post, gallery, learn-theme.
+
+  - id: claim-003
+    title: "Markdown→WeChat HTML conversion works"
+    source: README
+    source_ref: "Core capability"
+    priority: critical
+    area: support-converter
+    statement: |
+      toolkit/converter.py converts Markdown to WeChat-compatible HTML with:
+      inline CSS only, link→footnote conversion, dark mode attributes, CJK formatting.
+    business_expectation: "Output HTML can be pasted into WeChat editor."
+    evidence_needed: "Convert a test .md file, verify output HTML features."
+    status: passed
+    evidence: |
+      `python3 toolkit/cli.py preview test.md -t professional-clean -o output.html --no-open`
+      produces HTML with: inline style= attributes, superscript footnotes for links,
+      data-darkmode-bgcolor/color attributes, no <style> in article body.
+
+  - id: claim-004
+    title: "Hotspot fetching returns live data from 3 sources"
+    source: SKILL.md
+    source_ref: "scripts/fetch_hotspots.py"
+    priority: critical
+    area: support-hotspots
+    statement: |
+      fetch_hotspots.py aggregates real-time trends from Weibo, Toutiao, and Baidu.
+    business_expectation: "Topic selection uses current trends, not stale data."
+    evidence_needed: "Run with --limit 5, verify 3 sources return data."
+    status: passed
+    evidence: |
+      `python3 scripts/fetch_hotspots.py --limit 5` returned structured JSON.
+      sources_failed: []. All 3 sources (Weibo, Toutiao, Baidu) returned live data
+      with title, source, hot_score, url, normalized_score.
+
+  - id: claim-005
+    title: "16 themes exist with full YAML config + dark mode"
+    source: README
+    source_ref: "themes section"
+    priority: high
+    area: support-themes
+    statement: |
+      16 themes in toolkit/themes/ with YAML config including colors,
+      dark mode colors, and base_css.
+    business_expectation: "Users have variety. Themes work in WeChat dark mode."
+    evidence_needed: "Count themes, check YAML structure."
+    status: passed
+    evidence: |
+      16 themes found: bauhaus, bold-green, bold-navy, bytedance, elegant-rose,
+      focus-red, github, ink, midnight, minimal, minimal-gold, newspaper,
+      professional-clean, sspai, tech-modern, warm-editorial.
+      Each has name, description, colors, darkmode_colors, base_css.
+
+  - id: claim-006
+    title: "9 image generation providers implemented"
+    source: SKILL.md
+    source_ref: "toolkit/image_gen.py"
+    priority: high
+    area: support-image-gen
+    statement: |
+      9 providers with generate() methods and auto-fallback chain:
+      Doubao, OpenAI, Gemini, DashScope, MiniMax, Replicate, Azure, OpenRouter, Jimeng.
+    business_expectation: "Image generation works even if one provider is down."
+    evidence_needed: "Code review of provider classes + fallback logic."
+    status: passed
+    evidence: |
+      All 9 provider classes exist with generate() methods in image_gen.py (754 lines).
+      Provider chain with auto-fallback implemented. Size presets for WeChat.
+      Cannot test actual generation without API keys (expected for this layer).
+
+  - id: claim-007
+    title: "5 writing personas with rich YAML config"
+    source: SKILL.md
+    source_ref: "personas/"
+    priority: high
+    area: support-personas
+    statement: |
+      5 persona files: cold-analyst, industry-observer, midnight-friend,
+      sharp-journalist, warm-editor.
+    business_expectation: "Generated articles have distinct voice styles."
+    evidence_needed: "File count + YAML structure check."
+    status: passed
+    evidence: |
+      5 personas found with detailed parameters: voice_density, uncertainty_rate,
+      data_reaction_style, paragraph_max_length, emotional_arc, opening_style,
+      closing_tendency. midnight-friend includes calibrated humanness scores.
+
+  - id: claim-008
+    title: "SEO keyword scoring works with live data"
+    source: SKILL.md
+    source_ref: "scripts/seo_keywords.py"
+    priority: medium
+    area: support-seo
+    statement: |
+      seo_keywords.py returns live search suggestions from Baidu and 360.
+    business_expectation: "SEO optimization uses real search demand data."
+    evidence_needed: "Run and verify structured output."
+    status: passed
+    evidence: |
+      Returns live Baidu + 360 search suggestions with scores.
+
+  - id: claim-009
+    title: "Humanness scoring provides multi-tier analysis"
+    source: SKILL.md
+    source_ref: "scripts/humanness_score.py"
+    priority: medium
+    area: support-quality
+    statement: |
+      humanness_score.py scores articles on: sentence variance, vocabulary,
+      emotion, banned words, broken sentences, etc.
+    business_expectation: "Quality self-check catches AI-sounding writing."
+    evidence_needed: "Run on sample text, verify scoring dimensions."
+    status: passed
+    evidence: |
+      Multi-tier scoring confirmed with quantitative analysis dimensions.
+
+  - id: claim-010
+    title: "Evals exist for 3 scenarios"
+    source: evals/evals.json
+    source_ref: "evals directory"
+    priority: medium
+    area: support-quality
+    statement: |
+      3 structured eval scenarios: first-time-onboard, topic-writing-anti-ai,
+      markdown-to-wechat. Each with assertions.
+    business_expectation: "Skill behavior can be regression-tested."
+    evidence_needed: "Read evals.json, verify structure."
+    status: passed
+    evidence: |
+      evals.json contains 3 evals with prompt, expected_output, and structured
+      assertions (file_exists, content_check, behavior_check, negative_check, range_check).
+
+  # === NEGATIVE FINDINGS ===
+
+  - id: claim-011
+    title: "Unit test suite exists"
+    source: implied
+    source_ref: "best practice"
+    priority: high
+    area: support-testing
+    statement: "The project should have pytest unit tests for core logic."
+    business_expectation: "Code changes don't silently break conversion/scoring."
+    evidence_needed: "Find test_*.py files."
+    status: failed
+    evidence: |
+      Zero test_*.py or *_test.py files found anywhere in the repo.
+      No pytest config. Only eval specs (agent-level, not unit-level).
+
+  # === CORE LAYER (LLM-driven) ===
+
+  - id: claim-101
+    title: "Full 8-step article generation workflow"
+    source: SKILL.md
+    source_ref: "8-step pipeline"
+    priority: critical
+    area: core-llm
+    statement: |
+      SKILL.md defines an 8-step pipeline: config → hotspots → scoring →
+      framework+material → writing → SEO → visuals → publishing.
+    business_expectation: "End-to-end article production in one session."
+    evidence_needed: "Full agent session transcript + output article."
+    status: untested
+    notes: |
+      Cannot test LLM-driven workflow without running a full Claude Code session
+      with WeChat API credentials. The support layer (converter, hotspots, themes,
+      personas) all work, which is the prerequisite for the core workflow.
+
+  - id: claim-102
+    title: "Anti-AI detection quality measures"
+    source: SKILL.md
+    source_ref: "quality contract"
+    priority: critical
+    area: core-llm
+    statement: |
+      Articles must pass: banned phrase exclusion, sentence variation checks,
+      specific detail density, humanness scoring.
+    business_expectation: "Articles read as human-written, not AI-generated."
+    evidence_needed: "Generated article scored by humanness_score.py."
+    status: untested
+    notes: "Requires full agent session to generate an article for testing."

@@ -1,0 +1,307 @@
+owner: AIDC-AI
+repo: Pixelle-Video
+display_name: Pixelle-Video
+repo_url: https://github.com/AIDC-AI/Pixelle-Video
+repo_type: framework
+archetype: orchestrator
+layer: compound
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-06'
+version_tested: main@HEAD
+stars: 11500
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 3
+eval_discipline_score: 1
+recently_active: true
+business_category: content
+use_case_tags:
+- video-generation
+notes: |
+  Apache 2.0 fully-automated short-video generation engine. 11.5K
+  stars, recently active. Architecture: FastAPI service (api/) +
+  Python pipelines (pixelle_video/pipelines/ + models/ + llm_presets.py).
+  Multi-LLM provider support. Docker + Windows binary + mkdocs site.
+
+  Compound layer: at runtime an LLM decides script direction +
+  voiceover lines + scene composition based on the input idea. The
+  pipeline structure is fixed but the *content of each step* is
+  LLM-driven, so re-running with same input produces different
+  videos. That's compound.
+
+  Live e2e never logged in this static eval — the pipeline is real
+  Python code but generating one full short video on a real LLM +
+  asset provider chain hasn't been verified here.
+
+  Owner is AIDC-AI (Alibaba International Digital Commerce AI lab),
+  so this is a research-org-backed project rather than personal.
+product_view:
+  one_liner:
+    en: |-
+      An Apache 2.0 fully-automated short-video engine — give it an idea, get back a finished MP4. Multi-LLM provider abstraction, Docker + Windows distribution, FastAPI backend, mkdocs site. 11.5K stars, AIDC-AI (Alibaba) lab.
+    zh: |-
+      Apache 2.0 全自动短视频引擎 —— 给个想法,拿到成品 MP4。多 LLM provider 抽象,Docker + Windows 分发,FastAPI 后端,mkdocs 站点。11.5K stars,AIDC-AI(阿里)实验室出品。
+  persona:
+    en: |-
+      A short-form video creator (or content automation team) who wants finished short videos at scale — without recording, scripting, voiceover, b-roll selection, editing being separate jobs. Typical: AI-content channel operator, 自媒体 matrix-account ops, social-marketing automation builder.
+    zh: |-
+      规模化产短视频的创作者(或内容自动化团队) —— 不想把录制 / 脚本 / 配音 / b-roll / 剪辑当成分开的活。典型: AI 内容频道操作员、自媒体矩阵运营、社交营销自动化构建者。
+  scenario:
+    en: |-
+      You have an idea (or 100 ideas in a queue). You want each idea turned into a 30-90 second short video — script, voiceover, scene composition, music, finished MP4. Manual production is 1-2 hours per clip; you want it down to 10 minutes mostly-unattended.
+    zh: |-
+      你有一个(或 100 个排队的)想法。你想每个想法变成 30-90 秒短视频 —— 脚本 / 配音 / 场景 / 音乐 / 成品 MP4。手工生产一条 1-2 小时;你想压到 10 分钟基本无人值守。
+  without_this:
+    en: |-
+      Three options. (1) Manual production for each clip — 1-2 hours per video. (2) Stitch together MoneyPrinter / similar single-purpose tools yourself — multi-day plumbing per platform-specific format. (3) Pay a SaaS short-video service — costs ¥/clip + your prompts go to a third party.
+    zh: |-
+      三条路。(1) 每条手工 —— 一条 1-2 小时。(2) 自己拼 MoneyPrinter 之类单功能工具 —— 每个平台格式自己接好几天。(3) 买 SaaS 短视频服务 —— 按条收费 + prompt 给第三方。
+  with_this:
+    en: |-
+      Drop a docker-compose up. Send an idea via API or UI. The compound pipeline orchestrates: LLM writes the script, picks scenes, generates voiceover, selects b-roll + music, assembles. Output is a finished MP4. Multi-LLM provider so you pick whichever is cheap. Self-hosted; your prompts + outputs stay on your infra.
+    zh: |-
+      docker-compose up。通过 API 或 UI 发想法。复合物 pipeline 编排: LLM 写脚本 / 选场景 / 配音 / 选 b-roll + 音乐 / 组装。输出成品 MP4。多 LLM provider 你挑便宜的用。自托管,prompt + 产物在你自己的基础设施。
+  cost_summary:
+    en: |-
+      Apache 2.0, free OSS. You bring LLM provider keys (OpenAI / Anthropic / local — your choice via llm_presets) + asset / video provider keys (depending on which scene/voiceover services configured). Per-video LLM + asset cost depends on quality settings — budget 0.5-3 USD per finished short clip.
+    zh: |-
+      Apache 2.0 免费开源。自带 LLM provider key(OpenAI / Anthropic / 本地 —— 通过 llm_presets 选)+ 资产 / 视频 provider key(看你配的场景 / 配音服务)。每条视频 LLM + 素材成本看质量设置 —— 一条成品预算 0.5-3 美元。
+  how:
+    en: |-
+      Clone + `cp config.example.yaml config.yaml` + edit your LLM + asset provider keys. `docker-compose up -d`. Open the dashboard at the configured port. Send an idea (text prompt). Pipeline runs: script generation → scene composition → voiceover → assembly. Watch the API logs / dashboard for status. Output MP4 lands in configured output dir.
+    zh: |-
+      Clone + `cp config.example.yaml config.yaml` + 改 LLM + 资产 provider keys。`docker-compose up -d`。访问 dashboard 端口。发个想法(文字 prompt)。Pipeline 跑: 脚本生成 → 场景 → 配音 → 组装。看 API 日志 / dashboard 状态。成品 MP4 落到配置的输出目录。
+  watch_out:
+    en: |-
+      Compound layer means LLM-runtime variability — same idea twice can produce noticeably different videos. Output quality strongly depends on which LLM + asset providers you configure. Live e2e never logged in this eval; treat your first runs as proof-of-concept. Per-video cost adds up — set a budget cap if running batches.
+    zh: |-
+      复合物层意味着 LLM 运行时变化 —— 同一想法两次跑可能出明显不同的视频。输出质量强依赖你配的 LLM + 素材 providers。本次评测没记录端到端跑通;把头几次当 PoC 看。每条视频成本累加 —— 跑批先设预算上限。
+  examples:
+  - context:
+      en: |-
+        A Bilibili creator with 50 idea-prompts queued for batch generation
+      zh: |-
+        排队 50 个想法准备批量生成的 B 站创作者
+    you_say:
+      en: |-
+        cat ideas.txt | xargs -I{} curl -X POST localhost:8000/api/generate -d '{"idea":"{}"}'
+      zh: |-
+        cat ideas.txt | xargs -I{} curl -X POST localhost:8000/api/generate -d '{"idea":"{}"}'
+    what_happens:
+      en: |-
+        Each idea spawns a pipeline task. FastAPI tracks job IDs. Pipeline orchestrator runs all 50 in parallel-up-to-quota, output MP4s land in output/ named by idea. Dashboard shows per-job progress + cost. ~30 minutes for 50 short videos.
+      zh: |-
+        每个想法起一个 pipeline 任务。FastAPI 跟 job ID。编排器并行(到配额上限) 50 个,成品 MP4 按 idea 命名落到 output/。Dashboard 显示每个 job 进度 + 成本。50 条短视频 ~30 分钟。
+  - context:
+      en: |-
+        A startup automating ad-creative variants for A/B testing
+      zh: |-
+        给 A/B 测试自动化生成广告创意变体的创业团队
+    you_say:
+      en: |-
+        Generate 5 variants of the same product idea — different tones (humorous / professional / edgy / wholesome / minimalist)
+      zh: |-
+        把同一产品想法生成 5 个变体 —— 不同调性(幽默 / 专业 / 锋利 / 温情 / 极简)
+    what_happens:
+      en: |-
+        5 pipeline runs with different prompt tone tags. Compound layer = LLM picks different scene + voiceover styles per tone. 5 distinct MP4s for A/B testing. Re-run if any tone misses; pipeline is idempotent per job.
+      zh: |-
+        5 次 pipeline 跑,不同 prompt tone tag。复合物层 = LLM 按 tone 选不同场景 + 配音风格。5 个不同 MP4 给 A/B 测。哪个 tone 不行重跑;pipeline 按 job 幂等。
+  - context:
+      en: |-
+        A non-technical creator using the Windows binary on their laptop
+      zh: |-
+        用 Windows 二进制本地跑的非技术创作者
+    you_say:
+      en: |-
+        Download the Windows installer from releases, configure LLM key in the GUI, type an idea, click generate
+      zh: |-
+        从 releases 下 Windows 安装包,GUI 里配 LLM key,输入想法,点生成
+    what_happens:
+      en: |-
+        Single-binary Windows install. Bundled FastAPI runs on localhost. GUI talks to the local API. Pipeline runs against your configured LLM. 5-15 minutes per video. No CLI, no Docker, no Python knowledge needed.
+      zh: |-
+        Windows 单二进制安装。内置 FastAPI 在 localhost 跑。GUI 跟本地 API 通信。Pipeline 用你配的 LLM 跑。每条 5-15 分钟。不要 CLI / 不要 Docker / 不需要 Python。
+  next_step:
+    en: |-
+      Run one logged end-to-end generation in the simplest path (Docker + a single LLM + a single asset provider, one short idea). Save the output MP4 + the FastAPI run log + the cost record. Closes claim-006 (live e2e). Plus add e2e tests in tests/ that mock the LLM + asset provider so future regressions get caught — would lift eval_discipline.
+    zh: |-
+      在最简路径(Docker + 单 LLM + 单资产 provider + 一个简短想法)上跑一次有日志的端到端生成。保存成品 MP4 + FastAPI 运行日志 + 成本记录。关掉 claim-006(端到端)。再给 tests/ 加 mock LLM + 资产 provider 的端到端测试 —— 能提升 eval_discipline。
+similar_repos:
+- slug: zinan92--videocut
+  shared_purpose:
+    en: |-
+      Both produce short videos via AI orchestration. Both bet creators want auto-generation rather than manual editing.
+    zh: |-
+      都通过 AI 编排做短视频。都押注创作者要自动生成而不是手工剪辑。
+  this_better_at:
+    en: |-
+      End-to-end automation surface (idea → finished video). Multi-LLM provider abstraction. Apache 2.0. 11.5K-star validated. Backed by AIDC-AI (Alibaba lab) — institutional resources for maintenance.
+    zh: |-
+      端到端自动化(想法 → 成品)。多 LLM provider 抽象。Apache 2.0。11.5K stars 验证。AIDC-AI(阿里)实验室背后,有机构资源维护。
+  other_better_at:
+    en: |-
+      Lighter weight + modular CLI per capability. videocut takes existing recordings as input + acts as a post-production toolkit; Pixelle takes ideas as input + generates videos. Different problems despite both being "AI video".
+    zh: |-
+      更轻量 + 每能力独立 CLI。videocut 输入是已录视频 + 后期工具箱;Pixelle 输入是想法 + 生成视频。即使都是"AI 视频",问题不同。
+- slug: zinan92--AI-videos
+  shared_purpose:
+    en: |-
+      Both use AI for video generation, both produce MP4 + run logs. Both wrap LLM / model APIs.
+    zh: |-
+      都用 AI 做视频生成,都产 MP4 + 运行日志。都包 LLM / 模型 API。
+  this_better_at:
+    en: |-
+      End-to-end short-video pipeline with multi-LLM abstraction + 11.5K-star adoption proof. Production-grade Docker + Windows distribution.
+    zh: |-
+      端到端短视频 pipeline + 多 LLM 抽象 + 11.5K stars 采用证明。生产级 Docker + Windows 分发。
+  other_better_at:
+    en: |-
+      Virtual-character specialty (PNG character + outfit-transfer + motion-transfer). Pixelle is generic short-video; AI-videos is specifically character-driven. Different niches.
+    zh: |-
+      虚拟人物专门(PNG 人物 + 服装 / 动作迁移)。Pixelle 是通用短视频;AI-videos 专做角色驱动。不同细分。
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: |
+      Compound — at multiple stages the LLM decides at runtime: which scene types to use for this idea, which voiceover style fits, which b-roll to pick, what music. The pipeline structure is fixed but the LLM-runtime choices make every run different. A molecule would be deterministic; this is a compound.
+    zh: |
+      复合物 —— 多个 stage 里 LLM 运行时决定: 这个想法用哪些场景类型 / 适合什么配音风格 / 挑哪些 b-roll / 用什么音乐。Pipeline 结构固定,但 LLM 运行时选择让每次跑都不同。分子会是确定性的;这个是复合物。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 1
+    label:
+      en: |-
+        Idea (text prompt)
+      zh: |-
+        想法 (文字 prompt)
+  - id: dec_script
+    type: decision
+    rank: 1
+    lane: 1
+    label:
+      en: |-
+        LLM decides:
+        script structure
+      zh: |-
+        LLM 决定:
+        脚本结构
+  - id: script_short
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Short narrative
+        (30-60s)
+      zh: |-
+        短叙事
+        (30-60 秒)
+  - id: script_long
+    type: atom
+    rank: 2
+    lane: 2
+    label:
+      en: |-
+        Long-form
+        (60-90s)
+      zh: |-
+        长格式
+        (60-90 秒)
+  - id: dec_scene
+    type: decision
+    rank: 3
+    lane: 1
+    label:
+      en: |-
+        LLM decides:
+        scene composition
+      zh: |-
+        LLM 决定:
+        场景组成
+  - id: voiceover
+    type: atom
+    rank: 4
+    lane: 1
+    label:
+      en: |-
+        Voiceover gen
+        (TTS / cloned voice)
+      zh: |-
+        配音生成
+        (TTS / 克隆音)
+  - id: assembly
+    type: atom
+    rank: 5
+    lane: 1
+    label:
+      en: |-
+        Scene + audio
+        + music assembly
+      zh: |-
+        场景 + 音频
+        + 音乐组装
+  - id: out
+    type: end
+    rank: 6
+    lane: 1
+    label:
+      en: |-
+        Finished MP4
+      zh: |-
+        成品 MP4
+  edges:
+  - {from: input, to: dec_script}
+  - {from: dec_script, to: script_short, label: {en: short, zh: 短}}
+  - {from: dec_script, to: script_long, label: {en: long, zh: 长}}
+  - {from: script_short, to: dec_scene}
+  - {from: script_long, to: dec_scene}
+  - {from: dec_scene, to: voiceover}
+  - {from: voiceover, to: assembly}
+  - {from: assembly, to: out}
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: '06_assembly'
+  role: primary
+  medium: video
+  platforms:
+  - douyin
+  - xiaohongshu
+  - tiktok
+  - bilibili
+  - youtube
+  reason:
+    en: Full short-video assembly engine (idea → MP4). Direct competitor / alternative to videocut + AI-videos at 06. Production-grade institutional backing differentiates it.
+    zh: 完整短视频组装引擎(想法 → MP4)。06 阶段 videocut + AI-videos 的直接竞品 / 替代品。机构背景的生产级身份是差异点。
+deployment:
+  installable: true
+  install_methods:
+  - method: docker-compose up
+    platform: any (Docker)
+    complexity: easy
+  - method: Windows installer (binary)
+    platform: Windows
+    complexity: easy
+    no_install: false
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: LLM provider (OpenAI / Anthropic / local — pick via llm_presets)
+  purpose: Script + scene + voiceover decision-making
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: BYOK; per-video cost depends on choice + complexity
+- name: Asset / video gen provider (configurable)
+  purpose: Scene visuals + voiceover audio
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Per-asset cost

@@ -1,0 +1,95 @@
+claims:
+- id: claim-001
+  title: 7 independent CLI tools — each runnable standalone, also chainable
+  source: README "7 个独立 CLI 工具"
+  source_ref: cli.js + pipeline.js
+  priority: critical
+  area: cli-tooling
+  statement: |
+    cli.js + pipeline.js exist at repo root. 7 capability scripts
+    documented (剪辑 / 字幕 / 金句 / 拆条 / 封面 / 变速 + pipeline)
+    and each can be invoked independently OR chained via pipeline.js.
+  business_expectation: |
+    User can pick one capability for a one-off need OR run the full
+    pipeline; they don't have to commit to "all or nothing".
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: cli.js + pipeline.js + lib/ (claude.js / ffmpeg.js / srt.js, 645 LoC total). 7 capabilities per README.
+- id: claim-002
+  title: lib/ contains real ffmpeg + Claude + SRT integration
+  source: README "FFmpeg + Claude CLI + Whisper"
+  source_ref: lib/
+  priority: critical
+  area: integrations
+  statement: |
+    lib/ffmpeg.js (90 LoC), lib/claude.js (109 LoC), lib/srt.js (188 LoC)
+    are real implementations — not stubs. Each handles its specific
+    integration (FFmpeg subprocess invocation, Claude CLI invocation
+    for AI-driven editing decisions, SRT subtitle parsing).
+  business_expectation: |
+    The "AI 口播视频编辑" claim has working code behind it, not just
+    a workflow diagram.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 3 lib files totalling 387 LoC. SRT helper is the largest (188 LoC).
+- id: claim-003
+  title: PIPELINE_SPEC.md documents the chain
+  source: README + PIPELINE_SPEC.md
+  source_ref: PIPELINE_SPEC.md
+  priority: high
+  area: documentation
+  statement: |
+    PIPELINE_SPEC.md exists at repo root and describes how the 7
+    capabilities chain into a full video-editing pipeline.
+  business_expectation: |
+    Operator can debug a pipeline run by reading the spec, not by
+    grepping cli.js.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: PIPELINE_SPEC.md present + docs/ + examples/.
+- id: claim-004
+  title: Repository has a LICENSE file
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: |
+    LICENSE file exists at repo root. README claims MIT (badge), but
+    no LICENSE file means the framework cannot legally be redistributed.
+  business_expectation: |
+    Anyone forking videocut can legally redistribute or build on it.
+  status: failed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: licenseInfo=null. README has [![License: MIT] badge but no LICENSE file at root. Same defect as autoresearch + earlier repo-evals + doc-driven-dev-workflow.'
+- id: claim-005
+  title: Live e2e — drive a real video through the full pipeline
+  source: README "in 视频文件/目录 → out 去废话+字幕+金句+拆条+封面+变速"
+  source_ref: examples/
+  priority: critical
+  area: end-to-end
+  statement: |
+    Run pipeline.js against a real .mp4 (e.g., a 5-minute talking-head
+    clip), verify all 7 outputs are produced (cleaned cut + SRT subs +
+    quote clips + chapter splits + cover cards + speed-adjusted version)
+    and the pipeline exits 0.
+  business_expectation: |
+    "AI 口播视频编辑" works end-to-end on a real input, not just
+    in a lab demo.
+  evidence_needed: |
+    Needs a real video + Claude CLI access + ffmpeg installed. Suggest
+    one happy-path run on a 5-min talking-head clip + one error-path
+    (corrupt mp4, missing audio track) to validate fail-loud behavior.
+  status: untested
+- id: claim-006
+  title: Standard distribution metadata (package.json + Node engines)
+  source: framework
+  source_ref: package.json
+  priority: medium
+  area: distribution
+  statement: |
+    package.json exists with proper metadata + Node 18+ engine declaration.
+  business_expectation: |
+    Reproducible install via npm.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: package.json present at root. Repo has examples/ folder + content-repurpose.sh + generate-cards.sh helper scripts.

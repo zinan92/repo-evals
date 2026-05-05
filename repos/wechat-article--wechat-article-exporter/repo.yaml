@@ -1,0 +1,283 @@
+owner: wechat-article
+repo: wechat-article-exporter
+display_name: wechat-article-exporter
+repo_url: https://github.com/wechat-article/wechat-article-exporter
+repo_type: tool
+archetype: api-service
+layer: molecule
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-06'
+version_tested: main@HEAD
+stars: 8930
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 2
+eval_discipline_score: 1
+recently_active: true
+business_category: content
+use_case_tags:
+- content-scraping
+notes: |
+  Online + self-hostable Nuxt + Vue web app for batch downloading
+  WeChat 公众号 articles. 9K stars, MIT, recently active (pushed
+  2026-04-29). Outputs include HTML format that "100% restores article
+  layout + style" + view-count and comment data export.
+
+  Architecture: Nuxt 3 app. Root has nuxt.config.ts + Dockerfile.
+  components/ subdivided into api / base / dashboard / global / grid
+  + standalone .vue. apis/index.ts is the API layer. Composables/
+  configs/ layouts/ server/ all standard Nuxt project structure.
+  CLAUDE.md, CODE_OF_CONDUCT.md, CONTRIBUTING.md indicate community
+  expectations.
+
+  Three deployment options: hosted online site (zero setup), private
+  Docker, or Cloudflare Pages.
+
+  Live e2e (real 公众号 export) untested in this static eval.
+
+  Molecule layer: fixed Nuxt request pipeline (URL parse → WeChat API
+  call → article fetch → format conversion → download). No LLM-runtime
+  routing.
+product_view:
+  one_liner:
+    en: |-
+      An online + self-hostable Nuxt + Vue web app for batch downloading WeChat 公众号 articles — HTML format preserves layout 100%, exports view counts + comment data, three deployment paths (hosted / Docker / Cloudflare).
+    zh: |-
+      一个在线 + 可自托管的 Nuxt + Vue Web app,批量下载微信公众号文章 —— HTML 格式 100% 还原排版,导出阅读量 + 评论数据,三种部署(托管 / Docker / Cloudflare)。
+  persona:
+    en: |-
+      A creator / researcher / archivist who needs to bulk-archive WeChat 公众号 content — for personal reference, content study, competitor analysis, or backup before WeChat decides to delete something. Doesn't want to write scrape code.
+    zh: |-
+      要批量归档公众号内容的创作者 / 研究者 / 归档者 —— 个人参考 / 内容研究 / 竞品分析 / 防 WeChat 删稿。不想写爬虫。
+  scenario:
+    en: |-
+      You follow some WeChat 公众号 you want to archive — either to study writing style, to back up your own posts, or to research competitor content. WeChat doesn't offer bulk export. You want one-click "download all this account's articles to local HTML / markdown".
+    zh: |-
+      你关注的某些公众号要归档 —— 研究写作风格 / 备份自己的稿子 / 调研竞品。微信不给批量导出。你要一键"把这个号所有文章下到本地 HTML / markdown"。
+  without_this:
+    en: |-
+      Three options. (1) Manually open each article + save → multi-hour grind for any account with 50+ articles. (2) Pay a SaaS archival service (¥¥¥) + give them your reading-account credentials. (3) Hand-write a scraper — WeChat anti-bot + signing makes this a multi-week project.
+    zh: |-
+      三条路。(1) 一篇一篇打开 + 另存 —— 任何 50+ 篇的号都要好几小时。(2) 买 SaaS 归档服务(¥¥¥) + 把你的阅读账号给他们。(3) 自己写爬虫 —— 微信反爬 + 签名让单平台爬虫成为几周项目。
+  with_this:
+    en: |-
+      Use the hosted site (zero setup) or self-host Docker / Cloudflare. Paste 公众号 URL, get bulk download. HTML format preserves the original article 100% — images, layout, embedded video. View counts and comments included. MIT-licensed for legal redistribution of the tool.
+    zh: |-
+      用托管站点(零安装),或自托管 Docker / Cloudflare。贴公众号 URL,批量下载。HTML 格式 100% 还原原文 —— 图、排版、嵌入视频都在。带阅读量 + 评论数据。MIT 协议工具可合法再分发。
+  cost_summary:
+    en: |-
+      MIT, free. Hosted site is free; self-hosting needs Docker or Cloudflare Pages (free tier sufficient). No API keys to bring. 公众号 access does require login (cookie / WeChat-token); see project docs for current auth flow.
+    zh: |-
+      MIT 免费。托管站点免费;自托管要 Docker 或 Cloudflare Pages(免费档够用)。不需要带 API key。访问公众号需要登录(cookie / WeChat token);最新鉴权流程看项目文档。
+  how:
+    en: |-
+      Easiest: visit the hosted online site (URL in README), paste 公众号 URL, follow the auth flow, click bulk-export, get HTML files. For self-host: clone + `docker build && docker run`, OR deploy to Cloudflare Pages via Nuxt's CF adapter. Configure your 公众号 reading-account credentials in the UI.
+    zh: |-
+      最容易: 用 README 里的托管站点,贴公众号 URL,过鉴权,点批量导出,拿 HTML。自托管: clone + `docker build && docker run`,或通过 Nuxt 的 CF adapter 部署到 Cloudflare Pages。在 UI 里配你的公众号阅读账号凭证。
+  watch_out:
+    en: |-
+      WeChat changes its API + signing without notice. The 9K-star project + recent activity + 3 deployment paths means it's well-maintained, but spot-check a small export before relying on it for archive work. Comments + view counts depend on WeChat's API surface; if WeChat hides those, the feature degrades.
+    zh: |-
+      微信不打招呼就改 API + 签名。9K stars + 持续维护 + 3 种部署方式说明项目状态健康,但归档前先小批量试一次。评论 + 阅读数依赖微信 API 表面;微信隐藏的话这个功能会降级。
+  examples:
+  - context:
+      en: |-
+        A content-style researcher analysing how a top tech 公众号 structures their articles
+      zh: |-
+        分析某 tech 公众号文章结构的内容风格研究者
+    you_say:
+      en: |-
+        Open the hosted exporter, paste the 公众号 URL, log in, bulk export the last 100 articles as HTML
+      zh: |-
+        打开托管导出器,贴公众号 URL,登录,批量导出最近 100 篇文章成 HTML
+    what_happens:
+      en: |-
+        Web app fetches the article list, downloads each, converts to layout-preserving HTML. You get 100 .html files locally — open in browser, study patterns, no further dependency on WeChat's site.
+      zh: |-
+        Web app 拉文章列表,逐篇下载,转成保留排版的 HTML。你本地拿到 100 个 .html 文件 —— 浏览器打开研究规律,不再依赖微信。
+  - context:
+      en: |-
+        A 公众号 owner wanting to back up their own articles before sensitive editorial changes
+      zh: |-
+        敏感编辑变更前想备份自己稿子的公众号主
+    you_say:
+      en: |-
+        Self-host via docker compose up, configure with your own reading-account, export your account's full archive
+      zh: |-
+        自托管 docker compose up,配自己的阅读账号,导出你账号全档
+    what_happens:
+      en: |-
+        Local Docker container runs the Nuxt app on a port. You access at localhost, follow auth, export. Your articles + view counts + comments stay on your own disk; nothing transits a third party.
+      zh: |-
+        Docker 容器本地跑 Nuxt 在某端口。你 localhost 打开过鉴权,导出。文章 + 阅读量 + 评论留你自己磁盘;不过第三方。
+  - context:
+      en: |-
+        A non-technical journalist with no Docker setup, archiving public 公众号 content for a story
+      zh: |-
+        做选题归档公开公众号、不会装 Docker 的非技术记者
+    you_say:
+      en: |-
+        Just use the hosted site directly
+      zh: |-
+        直接用托管站点
+    what_happens:
+      en: |-
+        Zero install. Hosted site handles auth + scraping + format conversion. Output downloads as zip; journalist gets HTML files for citation + screenshots.
+      zh: |-
+        零安装。托管站点处理鉴权 + 抓取 + 格式转换。输出 zip 下载;记者拿 HTML 用来引用 + 截图。
+  next_step:
+    en: |-
+      Run one logged real 公众号 export against the hosted site (or self-hosted), save 10-20 archived HTML files + the run notes (auth flow, any rate-limit behaviour). Closes claim-006 (live e2e). Plus consider adding a small smoke-test suite to tests/ that mocks the WeChat fetch — would lift eval_discipline.
+    zh: |-
+      在托管站点(或自托管)上跑一次真实公众号导出有日志记录,保存 10-20 篇归档 HTML + run notes(鉴权流程 / rate limit 行为)。关掉 claim-006(端到端)。再考虑给 tests/ 加 mock WeChat fetch 的烟雾测试 —— 能提升 eval_discipline。
+similar_repos:
+- slug: NanmiCoder--MediaCrawler
+  shared_purpose:
+    en: |-
+      Both archive Chinese-platform content. Both face platform anti-bot. Both export to multiple formats.
+    zh: |-
+      都归档中国平台内容。都面对平台反爬。都支持多种导出格式。
+  this_better_at:
+    en: |-
+      WeChat 公众号 specifically — single-platform depth + 100% layout-preserving HTML + view counts + comments + zero-install hosted site option. MediaCrawler doesn't do 公众号 articles.
+    zh: |-
+      专门做公众号 —— 单平台深度 + 100% 保留排版的 HTML + 阅读量 + 评论 + 零安装托管站点。MediaCrawler 不做公众号文章。
+  other_better_at:
+    en: |-
+      7-platform breadth (xhs / douyin / kuaishou / bilibili / weibo / tieba / zhihu) + programmatic Python API + multiple storage backends. When you need cross-platform data analysis, MediaCrawler is the right tool. WeChat just isn't its target.
+    zh: |-
+      7 平台覆盖广(小红书 / 抖音 / 快手 / B 站 / 微博 / 贴吧 / 知乎) + 程序化 Python API + 多种存储后端。需要跨平台数据分析,MediaCrawler 是对的工具。WeChat 不是它的目标。
+- slug: putyy--res-downloader
+  shared_purpose:
+    en: |-
+      Both target CN-content acquisition with broad multi-format coverage. Both ship as a desktop / hosted experience rather than CLI-first.
+    zh: |-
+      都做中文内容获取,覆盖多种格式。都做成桌面 / 托管体验,不是 CLI 优先。
+  this_better_at:
+    en: |-
+      WeChat-specific depth — 100% layout-preserving HTML output is the differentiator. res-downloader handles videos / audio / m3u8 but not 公众号 articles.
+    zh: |-
+      WeChat 专门深度 —— 100% 保留排版的 HTML 输出是差异点。res-downloader 处理视频 / 音频 / m3u8,但不处理公众号文章。
+  other_better_at:
+    en: |-
+      Wider format coverage (livestream / m3u8 / audio + 9 platforms). Better for "I need a video / audio file from any of these sources".
+    zh: |-
+      格式覆盖更广(直播流 / m3u8 / 音频 + 9 平台)。"想从这些里任意一个拿视频 / 音频"时更合适。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — fixed Nuxt request pipeline (URL parse → WeChat API call → article-list fetch → per-article download → format conversion → bulk export). No LLM-runtime routing.
+    zh: |
+      分子 —— 固定的 Nuxt 请求流水线(URL 解析 → WeChat API 调用 → 文章列表抓取 → 逐篇下载 → 格式转换 → 批量导出)。运行时无 LLM 路由。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        公众号 URL paste
+      zh: |-
+        贴公众号 URL
+  - id: auth
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Auth flow
+        (cookie / WeChat token)
+      zh: |-
+        鉴权
+        (cookie / WeChat token)
+  - id: list
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Article list fetch
+      zh: |-
+        文章列表抓取
+  - id: fetch
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Per-article download
+        (incl. images)
+      zh: |-
+        逐篇下载
+        (含图片)
+  - id: format
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Format convert
+        (HTML / md / etc.)
+      zh: |-
+        格式转换
+        (HTML / md 等)
+  - id: out
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        Local zip / dir
+        of archived articles
+      zh: |-
+        本地 zip / 目录
+        归档文章
+  edges:
+  - {from: input, to: auth}
+  - {from: auth, to: list}
+  - {from: list, to: fetch}
+  - {from: fetch, to: format}
+  - {from: format, to: out}
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: '02_acquisition'
+  role: primary
+  platforms:
+  - wechat-mp
+  reason:
+    en: WeChat 公众号 (mp) is the platform MediaCrawler doesn't cover. This fills the WeChat-source gap at 02 specifically. Hosted site + Docker + Cloudflare = three deployment paths.
+    zh: 微信公众号(mp) 是 MediaCrawler 不覆盖的平台。这条专门填 02 的公众号源缺口。托管站点 + Docker + Cloudflare 三种部署路径。
+deployment:
+  installable: true
+  install_methods:
+  - method: Use the hosted online site (zero install)
+    platform: any browser
+    complexity: easy
+    no_install: true
+  - method: docker compose up
+    platform: any (Docker)
+    complexity: easy
+  - method: Deploy to Cloudflare Pages
+    platform: Cloudflare
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: WeChat 公众号 reading credentials
+  purpose: Auth for accessing 公众号 content
+  required: true
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: Use a real WeChat reading account; no API key from WeChat
+- name: Cloudflare Pages (optional self-host)
+  purpose: Free serverless hosting
+  required: false
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: Free tier sufficient for personal use

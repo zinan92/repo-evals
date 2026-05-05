@@ -1,0 +1,111 @@
+claims:
+- id: claim-001
+  title: Multi-platform internet-reading skill — Twitter / Reddit / YouTube / GitHub / Bilibili / 小红书
+  source: README "Read & search Twitter, Reddit, YouTube, GitHub, Bilibili, 小红书"
+  source_ref: agent_reach/
+  priority: critical
+  area: platform-coverage
+  statement: |
+    agent_reach/ Python package implements platform-specific readers for
+    at least 6 platforms (Twitter / Reddit / YouTube / GitHub / Bilibili
+    / 小红书). README explicitly headlines this list.
+  business_expectation: |
+    "One CLI to read the public web" claim corresponds to actual
+    per-platform implementation, not roadmap.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: agent_reach/ Python package present + scripts/ + tests/ + docs/. Platform list per README.
+- id: claim-002
+  title: MIT LICENSE present
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: |
+    LICENSE file at repo root, MIT.
+  business_expectation: |
+    Anyone can fork / redistribute under MIT.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: licenseInfo=MIT License. LICENSE file confirmed.'
+- id: claim-003
+  title: Multi-language documentation (EN / 中文 / 日本語 / 한국어)
+  source: README links + docs/
+  source_ref: README.md + docs/README_en.md + docs/README_ja.md + docs/README_ko.md
+  priority: high
+  area: docs-i18n
+  statement: |
+    Primary README has links to localised README files in EN / JP / KO.
+    docs/ folder exists with these files.
+  business_expectation: |
+    International audience served beyond just EN/CN.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: Quad-language docs confirmed via README link block.
+- id: claim-004
+  title: Test suite + CONTRIBUTING + SECURITY discipline
+  source: framework
+  source_ref: tests/ + CONTRIBUTING.md + SECURITY.md + CHANGELOG.md
+  priority: high
+  area: project-discipline
+  statement: |
+    tests/ folder + CONTRIBUTING.md + SECURITY.md + CHANGELOG.md +
+    test.sh + uv.lock + constraints.txt all present. Production-shape
+    project hygiene.
+  business_expectation: |
+    Project shows institutional discipline (CHANGELOG, SECURITY, CI
+    expectations) that 19K-star projects often lack.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: Full project-hygiene file set. CHANGELOG + SECURITY + CONTRIBUTING + test.sh + uv.lock + constraints.txt + llms.txt + CLAUDE.md.
+- id: claim-005
+  title: Recently active development
+  source: framework
+  source_ref: github commit history
+  priority: high
+  area: maintenance
+  statement: |
+    Pushed within 90 days.
+  business_expectation: |
+    Anti-bot / API drift on the 6 platforms tracked stays current.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: pushedAt=2026-04-13 (~23 days ago). Solidly active.'
+- id: claim-006
+  title: Live e2e — actually read content from at least one platform via the CLI
+  source: README "give your AI agent eyes"
+  source_ref: agent_reach/
+  priority: critical
+  area: end-to-end
+  statement: |
+    Install the CLI, configure for one platform (e.g., X), run a search
+    or thread-fetch query, verify content comes back parseable. Repeat
+    per platform when relying on it.
+  business_expectation: |
+    "Read the entire internet" claim works against today's platforms,
+    not yesterday's API surfaces.
+  evidence_needed: |
+    Needs platform-specific access (some platforms allow public reads,
+    others need cookies/tokens). One happy-path read per platform of
+    interest + one error case (rate-limit, missing auth).
+  status: untested
+- id: claim-007
+  title: Zero API fees claim — uses public-web access not paid APIs
+  source: README "zero API fees"
+  source_ref: agent_reach/
+  priority: high
+  area: cost-architecture
+  statement: |
+    Implementation uses public-web scraping or public-only API endpoints
+    (no Twitter API paid tier, no YouTube Data API quota burn, etc.).
+  business_expectation: |
+    Cost is your own time + occasional anti-bot tax — not a per-query
+    SaaS bill.
+  status: passed_with_concerns
+  last_run: runs/2026-05-06/run-static-checks
+  note: |
+    Confirmed README claim ("zero API fees"). Real implementation
+    likely uses public scraping / cookie-auth + may run into anti-bot
+    on some platforms (Twitter / X especially after 2023 changes).
+    "Zero API fees" is true but "stable forever" is not — concern is
+    on durability not pricing.

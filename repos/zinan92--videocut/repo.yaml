@@ -1,0 +1,305 @@
+owner: zinan92
+repo: videocut
+display_name: videocut
+repo_url: https://github.com/zinan92/videocut
+repo_type: framework
+archetype: pure-cli
+layer: molecule
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-06'
+version_tested: main@HEAD
+stars: 14
+archived: false
+has_license: false
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 1
+recently_active: true
+business_category: content
+use_case_tags:
+- video-generation
+notes: |
+  Wendy's own AI-driven 口播 (talking-head) video editing pipeline. 7
+  independent CLI tools (剪辑 / 字幕 / 金句 / 拆条 / 封面 / 变速 + pipeline
+  orchestrator) — each runnable standalone, chainable via pipeline.js.
+
+  Architecture: pipeline.js (84 LoC) wires capabilities; lib/ has the
+  3 real integrations (ffmpeg.js 90 LoC, claude.js 109 LoC, srt.js 188 LoC).
+  Total ~645 LoC of JavaScript. Plus content-repurpose.sh + generate-cards.sh
+  helper shell scripts. Has examples/ + docs/ + PIPELINE_SPEC.md.
+
+  Two real defects: (1) no LICENSE file at root despite MIT badge in README;
+  (2) live e2e never logged — the pipeline structure is real but no
+  recorded "we ran it on a real 5-minute video and got all 7 outputs"
+  evidence yet.
+
+  Molecule layer: 7 atoms wired by predefined orchestration (pipeline.js).
+  No LLM-runtime decisions about what step fires next; the pipeline runs
+  deterministically.
+product_view:
+  one_liner:
+    en: |-
+      A 7-step CLI pipeline for AI-driven 口播 (talking-head) video editing — cuts filler words, generates SRT captions, extracts quote clips + chapter splits + cover cards, applies speed adjustment. Each step usable standalone; pipeline.js chains them.
+    zh: |-
+      AI 口播视频编辑 7 步 CLI 流水线 —— 去废话、出字幕、提金句、拆条、做封面、变速。每一步可单独用,pipeline.js 串联起来跑。
+  persona:
+    en: |-
+      A solo content creator who shoots 口播 (talking-head) videos and spends 2-3 hours editing each one — cutting "嗯嗯啊啊", aligning subtitles, picking quote clips for short-video cross-platform repost, designing thumbnail cards. You want the editing-floor work to drop to under 10 minutes so you can ship more.
+    zh: |-
+      自己拍口播视频的独立创作者,每条视频后期 2-3 小时 —— 剪"嗯嗯啊啊"、对字幕、挑金句给短视频平台复用、做封面卡片。你想把后期降到 10 分钟以内,好多发几条。
+  scenario:
+    en: |-
+      You finished recording a 5-15 minute talking-head video. Now you need: cleaned cut without filler words, SRT subtitles, 3-5 quote clips for TikTok / Douyin / Xiaohongshu cross-post, cover cards for thumbnails, and a speed-adjusted version for "fast watch" channels. Currently this is a multi-tool 2-hour grind.
+    zh: |-
+      你刚录完一个 5-15 分钟的口播视频。现在要: 去废话的剪辑版、SRT 字幕、3-5 个金句剪辑(给抖音 / 小红书复用)、封面卡片、变速版给"倍速观看"频道。当前是多工具 2 小时手工。
+  without_this:
+    en: |-
+      Multi-tool grind. Premiere / Final Cut for cuts + manual filler-word search; AutoSub or Whisper-CLI separately for subtitles; Photoshop / Canva for cover cards; FFmpeg one-liners for speed. Each tool has its own UI; switching costs add up. 2-3 hours per 10-min video.
+    zh: |-
+      多工具拼接。Premiere / Final Cut 剪 + 手工找废话;AutoSub 或 Whisper CLI 单独跑字幕;Photoshop / Canva 做封面;FFmpeg 一行命令变速。每个工具自己的 UI,切换成本累加。一个 10 分钟视频后期 2-3 小时。
+  with_this:
+    en: |-
+      One CLI command per capability OR the full pipeline. AI (Claude CLI) drives the editing decisions — picks where to cut, which sentences are quote-worthy, which frames to use as covers. FFmpeg + Whisper integrations handle the deterministic work. End-to-end ~10 minutes for a 10-minute video.
+    zh: |-
+      一个 CLI 命令对一个能力,或全 pipeline 跑。AI(Claude CLI) 驱动剪辑决策 —— 选剪点、挑金句、选封面帧。FFmpeg + Whisper 处理确定性工作。10 分钟视频端到端 ~10 分钟搞定。
+  cost_summary:
+    en: |-
+      No LICENSE file (treat as personal-use until upstream commits one). Free OSS otherwise. Need Node 18+ + FFmpeg + Whisper installed locally + Claude CLI subscription (drives the AI decisions). All processing local — no cloud uploads.
+    zh: |-
+      无 LICENSE 文件(在上游补之前当个人用看待)。其他免费开源。需要 Node 18+ + FFmpeg + Whisper 本地安装 + Claude CLI 订阅(驱动 AI 决策)。处理全部本地,不上云。
+  how:
+    en: |-
+      Clone + `npm install`. Make sure FFmpeg + Whisper are on PATH and Claude CLI is configured. For one capability: `node cli.js cut input.mp4 --output cleaned.mp4`. For the full pipeline: `node pipeline.js input.mp4 --output-dir ./out` — produces all 7 artifacts. Helper shell scripts content-repurpose.sh + generate-cards.sh wrap common multi-step flows.
+    zh: |-
+      Clone + `npm install`。确保 FFmpeg + Whisper 在 PATH 上,Claude CLI 配好。单一能力: `node cli.js cut input.mp4 --output cleaned.mp4`。完整 pipeline: `node pipeline.js input.mp4 --output-dir ./out` —— 产出全 7 个产物。content-repurpose.sh + generate-cards.sh 是包装好的常用多步流程。
+  watch_out:
+    en: |-
+      v0.x personal-toolkit territory — only 14 stars, single-author. The README badge says "MIT" but no LICENSE file exists; if you fork commercially get the maintainer to commit a LICENSE first. Live e2e never logged — claims work but no recorded full-pipeline run on a real video. Treat as "production-of-one" until you log your own first run.
+    zh: |-
+      v0.x 个人工具箱 —— 只有 14 stars,单作者。README badge 写 MIT 但没 LICENSE 文件;商业 fork 前先让作者补 LICENSE。Live e2e 没留痕 —— claim 看起来对但没记录真实视频的完整跑通。当 "production-of-one" 看,先自己跑一次留日志再说。
+  examples:
+  - context:
+      en: |-
+        A weekly podcast host who films a talking-head version + cuts shorts for cross-platform reposting
+      zh: |-
+        每周拍口播版播客 + 拆条到各平台复用的主播
+    you_say:
+      en: |-
+        node pipeline.js episode-23.mp4 --output-dir ./episode-23-cuts
+      zh: |-
+        node pipeline.js episode-23.mp4 --output-dir ./episode-23-cuts
+    what_happens:
+      en: |-
+        Pipeline runs all 7 capabilities sequentially. Output dir gets cleaned-cut.mp4 + subs.srt + 3-5 quote-clips/ + chapter-splits/ + cover-cards/ + speed-adjusted.mp4. Total time roughly 1× the input duration on Apple Silicon.
+      zh: |-
+        Pipeline 顺序跑 7 个能力。输出目录得到去废话的剪辑.mp4 + 字幕.srt + 3-5 个金句剪辑/ + 章节切片/ + 封面卡片/ + 变速版.mp4。总时间大约是输入视频时长的 1 倍(Apple Silicon)。
+  - context:
+      en: |-
+        A creator who already has the cleaned cut + just needs subtitles + cover cards
+      zh: |-
+        已经有去废话剪辑、只需要字幕 + 封面的创作者
+    you_say:
+      en: |-
+        node cli.js subtitle cleaned-video.mp4 && node cli.js cover cleaned-video.mp4
+      zh: |-
+        node cli.js subtitle cleaned-video.mp4 && node cli.js cover cleaned-video.mp4
+    what_happens:
+      en: |-
+        Each CLI runs standalone; subtitle generates SRT via Whisper, cover picks 3-6 candidate frames + lays out title text. No need to invoke the full pipeline.
+      zh: |-
+        每个 CLI 独立跑;subtitle 用 Whisper 出 SRT,cover 挑 3-6 帧 + 加标题。不用跑完整 pipeline。
+  - context:
+      en: |-
+        A creator running content-repurpose for a Douyin → 小红书 cross-post
+      zh: |-
+        要把抖音内容复用到小红书的创作者
+    you_say:
+      en: |-
+        ./content-repurpose.sh source-douyin-export.mp4
+      zh: |-
+        ./content-repurpose.sh source-douyin-export.mp4
+    what_happens:
+      en: |-
+        Helper script wraps the common cross-platform repost flow — extract quote clips + cover cards sized for 小红书 + speed-adjusted version. End artifact is upload-ready for 小红书 image-deck or short-video format.
+      zh: |-
+        Helper 脚本包装跨平台复用流程 —— 提金句剪辑 + 小红书规格封面 + 变速版。产物对小红书图文 / 短视频格式即开即传。
+  next_step:
+    en: |-
+      Two highest-leverage actions. (1) Add a LICENSE file (one commit) — closes claim-004 and lifts the score by ~+15. (2) Log one full pipeline run on a real 5-10 minute video and save the full output dir. Closes claim-005 (live e2e). Together those move the score by ~+20.
+    zh: |-
+      两个最高 ROI 动作。(1) 加 LICENSE 文件(一个 commit) —— 关掉 claim-004,分数 +15 左右。(2) 在真实 5-10 分钟视频上跑一次完整 pipeline,保存输出目录。关掉 claim-005(端到端)。两件加起来分数 +20 左右。
+similar_repos:
+- slug: AIDC-AI--Pixelle-Video
+  shared_purpose:
+    en: |-
+      Both target AI-automated short-video production. Both wrap LLM-driven editing decisions over FFmpeg primitives. Both produce platform-ready video output.
+    zh: |-
+      都瞄准 AI 自动化短视频生产。都用 LLM 驱动剪辑决策 + FFmpeg 干活。都产出平台可用视频。
+  this_better_at:
+    en: |-
+      Modular CLI design — 7 separate capabilities, you can use any one alone. Lighter weight (~645 LoC). Better fit for "I just need quotes + covers" kinds of one-off tasks.
+    zh: |-
+      模块化 CLI 设计 —— 7 个能力分开,任何一个能单独用。更轻量(~645 LoC)。一次性"只要金句 + 封面"这种活更合适。
+  other_better_at:
+    en: |-
+      End-to-end automation surface (idea → video). Pixelle-Video focuses on the full creative-to-finished-video loop, where videocut is the editing-floor only.
+    zh: |-
+      端到端自动化(从想法到视频)。Pixelle-Video 关注从创意到成品全流程,videocut 只管后期剪辑。
+- slug: zinan92--AI-videos
+  shared_purpose:
+    en: |-
+      Both are author's own video pipelines, both produce MP4 + JSON log. Both use external AI APIs (Claude CLI for videocut, RunningHub for AI-videos).
+    zh: |-
+      都是作者自己的视频 pipeline,都产出 MP4 + JSON 日志。都用外部 AI API(videocut 用 Claude CLI,AI-videos 用 RunningHub)。
+  this_better_at:
+    en: |-
+      口播 (talking-head) editing — cuts filler words, captions, quotes. The "post-production" of an existing recorded video.
+    zh: |-
+      口播视频后期 —— 去废话 / 字幕 / 金句。已录视频的"后期"。
+  other_better_at:
+    en: |-
+      Virtual-character generation — the "creation" side, not the "editing" side. PNG character + PNG outfit + MP4 motion-ref → AI-generated video. Different problem.
+    zh: |-
+      虚拟人物生成 —— "创作"侧,不是"后期"侧。PNG 人物 + PNG 服装 + MP4 动作参考 → AI 生成视频。不同问题。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — 7 atoms (cut / subtitle / quote / split / cover / speed / pipeline-orchestrator) wired by pipeline.js. No LLM decides which step fires next at runtime; the pipeline.js order is fixed. Claude is the AI primitive *inside* steps, not the routing decision.
+    zh: |
+      分子 —— 7 个原子(剪 / 字幕 / 金句 / 拆条 / 封面 / 变速 / pipeline 编排) 由 pipeline.js 串起。运行时没有 LLM 决定下一步走哪;pipeline.js 顺序固定。Claude 是 step 内部的 AI primitive,不做路由决策。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Talking-head .mp4
+        (5-15 min)
+      zh: |-
+        口播 .mp4
+        (5-15 分钟)
+  - id: cut
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Cut filler words
+        (Claude + ffmpeg)
+      zh: |-
+        去废话
+        (Claude + ffmpeg)
+  - id: subtitle
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Subtitle (Whisper)
+        → .srt
+      zh: |-
+        字幕 (Whisper)
+        → .srt
+  - id: quote
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Quote extraction
+        (Claude picks)
+      zh: |-
+        金句提取
+        (Claude 选)
+  - id: split
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Chapter split
+        (semantic boundary)
+      zh: |-
+        拆条
+        (语义切分)
+  - id: cover
+    type: atom
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        Cover cards
+        (frame pick + text)
+      zh: |-
+        封面卡片
+        (选帧 + 文字)
+  - id: speed
+    type: atom
+    rank: 6
+    lane: 0
+    label:
+      en: |-
+        Speed-adjusted
+        (ffmpeg pts)
+      zh: |-
+        变速版
+        (ffmpeg pts)
+  - id: out
+    type: end
+    rank: 7
+    lane: 0
+    label:
+      en: |-
+        7 artifacts
+        (mp4 + srt + dirs)
+      zh: |-
+        7 个产物
+        (mp4 + srt + 目录)
+  edges:
+  - {from: input, to: cut}
+  - {from: cut, to: subtitle}
+  - {from: subtitle, to: quote}
+  - {from: quote, to: split}
+  - {from: split, to: cover}
+  - {from: cover, to: speed}
+  - {from: speed, to: out}
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: '06_assembly'
+  role: primary
+  medium: video
+  platforms:
+  - douyin
+  - xiaohongshu
+  - youtube
+  - bilibili
+  reason:
+    en: Talking-head video assembly — the "after recording" creative-assembly step. Strong own-corpus 06 anchor for video medium.
+    zh: 口播视频组装 —— "录完之后"的创意组装步骤。视频媒介上的 own-corpus 06 强锚点。
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + npm install
+    platform: any (Node 18+)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: Claude CLI
+  purpose: LLM that drives editing decisions (cut points, quote selection, cover frames)
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Standard Claude CLI subscription
+- name: FFmpeg + Whisper
+  purpose: Local video / audio processing primitives
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Free OSS, install via brew / apt

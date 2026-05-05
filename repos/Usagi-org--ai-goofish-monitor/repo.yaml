@@ -256,10 +256,3 @@ business_category: content
 use_case_tags:
 - marketplace-monitoring
 - content-scraping
-workflow_placements:
-- workflow_id: park-content-v1
-  stage_id: 02_acquisition
-  role: reference
-  reason:
-    en: Goofish (XianYu) is marketplace listings, not content per se. Included as a reference for the same Playwright + cookie + multi-modal-LLM-filter pattern at single-platform depth.
-    zh: 闲鱼是商品挂牌,不是严格意义的内容。作为参考列出 —— 同样的 Playwright + cookie + 多模态 LLM 过滤模式,单平台深度。

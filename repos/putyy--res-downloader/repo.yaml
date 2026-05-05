@@ -1,0 +1,260 @@
+owner: putyy
+repo: res-downloader
+display_name: res-downloader
+repo_url: https://github.com/putyy/res-downloader
+repo_type: tool
+archetype: pure-cli
+layer: molecule
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-06'
+version_tested: main@HEAD (release builds shipped via GitHub releases)
+stars: 17204
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 3
+eval_discipline_score: 1
+recently_active: false
+business_category: content
+use_case_tags:
+- content-scraping
+notes: |
+  Apache 2.0 cross-platform desktop resource downloader (Go + Wails).
+  17K stars. Covers 9 CN-content platforms: 视频号 / 小程序 / 抖音 /
+  快手 / 小红书 / 直播流 / m3u8 / 酷狗 / QQ音乐.
+
+  Architecture: Go backend (core/ with app.go / downloader.go / plugins/
+  per-platform handlers / resource.go / storage.go / per-OS system_*.go)
+  + Vue/Vite frontend in frontend/. Wails packages both into one cross-
+  platform desktop binary. Release pipeline ships pre-built binaries per
+  GitHub releases.
+
+  One concern: pushed 2025-12-31, 4 months / ~127 days ago — outside
+  the framework's 90-day "recently active" window. The platform anti-bot
+  / signing landscape iterates fast (especially Douyin), so the 4-month
+  gap is a real risk for anyone depending on it today.
+
+  Molecule: per-platform plugin pipeline (URL parse → platform-specific
+  signing → download → storage). No LLM-runtime routing.
+product_view:
+  one_liner:
+    en: |-
+      A cross-platform desktop downloader (macOS / Linux / Windows) for 9 CN-content sources — 视频号 / 小程序 / 抖音 / 快手 / 小红书 / 直播流 / m3u8 / 酷狗 / QQ音乐. Go + Wails, Apache 2.0, 17K stars.
+    zh: |-
+      跨平台桌面下载器(Mac / Linux / Win),支持 9 类中文内容源 —— 视频号 / 小程序 / 抖音 / 快手 / 小红书 / 直播流 / m3u8 / 酷狗 / QQ 音乐。Go + Wails,Apache 2.0,17K stars。
+  persona:
+    en: |-
+      A casual CN content consumer or creator who wants a desktop GUI tool to grab a video / audio / live stream from one of the 9 supported platforms — without writing scrape code or fighting Playwright. Typical: a freelancer archiving reference material, a creator collecting source clips for editing.
+    zh: |-
+      想用桌面 GUI 工具从 9 类平台抓视频 / 音频 / 直播流的中文内容消费者 / 创作者 —— 不想写爬虫或调 Playwright。典型: 归档参考素材的自由职业者、收剪辑素材的创作者。
+  scenario:
+    en: |-
+      You found a video on Douyin / 视频号 / Bilibili / etc., or you want to archive a 直播 stream, or download a 小红书 image-deck. You want a desktop app where you paste a URL and get the file. No CLI, no browser-extension fiddling, no token-auth dance.
+    zh: |-
+      你在抖音 / 视频号 / B 站等找到一个视频,或想归档直播流,或下小红书图文。你要一个桌面 app,贴 URL 拿文件。不要 CLI,不要浏览器扩展折腾,不要 token 鉴权。
+  without_this:
+    en: |-
+      Three options, each clunky. (1) Per-platform downloader websites — different URL each time, ad-heavy, no batch. (2) Browser extensions — security/permissions concern, often broken when platforms update. (3) MediaCrawler / similar Python — overkill for "I just want one file" + needs Python setup.
+    zh: |-
+      三条路,各有别扭。(1) 各平台下载网站 —— 每个 URL 不同 / 广告多 / 无批量。(2) 浏览器扩展 —— 安全顾虑 / 平台更新后经常坏。(3) MediaCrawler 之类 Python —— 单文件用太重 + 要装 Python。
+  with_this:
+    en: |-
+      One desktop app installed once. Paste URL, click download. The Go backend handles per-platform signing + plugin pipeline. Cross-platform (macOS / Linux / Windows) with pre-built binaries from releases. Apache-licensed for legal redistribution.
+    zh: |-
+      一个桌面 app 装一次。贴 URL 点下载。Go 后端处理各平台签名 + 插件流水线。跨平台(Mac / Linux / Win),release 页有预编译二进制。Apache 协议可合法分发。
+  cost_summary:
+    en: |-
+      Apache 2.0, free. No API keys needed (it consumes public share URLs). Anti-bot risk: pushed 2025-12-31 (~4 months stale); signing for fast-iterating platforms like Douyin may have drifted. Local-only — no cloud.
+    zh: |-
+      Apache 2.0,免费。不需要 API key(消费的是公开分享 URL)。反爬风险: 2025-12-31 推送(~4 个月没更新);抖音这种快速迭代平台的签名可能已经漂移。纯本地,不上云。
+  how:
+    en: |-
+      Download the pre-built binary for your OS from GitHub releases. Open the desktop app. Paste a share URL from any of the 9 supported platforms. Click download. File lands in your configured output directory. For batch: queue multiple URLs.
+    zh: |-
+      在 GitHub releases 下载对应 OS 的预编译二进制。打开桌面 app。贴 9 类平台之一的分享 URL。点下载。文件落到你配的输出目录。批量: 排队多个 URL。
+  watch_out:
+    en: |-
+      4 months without a push (last 2025-12-31). Platform anti-bot iterates quickly — especially Douyin. Spot-check that downloads from your specific platform of interest still work today before depending on it for a real workflow. The 9-platform breadth is the headline strength but also the maintenance surface — one platform broken doesn't break others.
+    zh: |-
+      4 个月没推送了(最后 2025-12-31)。平台反爬迭代快 —— 尤其抖音。依赖到工作流之前,先抽测你那个具体平台今天还能不能下。9 平台覆盖广是亮点也是维护面 —— 一家挂掉不影响其他。
+  examples:
+  - context:
+      en: |-
+        A short-video creator archiving reference clips from Douyin to study competitor formats
+      zh: |-
+        归档抖音参考剪辑、研究竞品格式的短视频创作者
+    you_say:
+      en: |-
+        Open the desktop app, paste the 抖音 share URL, click download
+      zh: |-
+        打开桌面 app,贴抖音分享 URL,点下载
+    what_happens:
+      en: |-
+        App parses the URL, identifies it as Douyin, hits the douyin plugin, pulls the no-watermark MP4, lands in output dir.
+      zh: |-
+        App 解析 URL,识别成抖音,走 douyin 插件,拉无水印 MP4,落到输出目录。
+  - context:
+      en: |-
+        A musician collecting reference tracks from QQ Music and Kugou for an inspiration mood-board
+      zh: |-
+        在 QQ 音乐和酷狗收参考曲做灵感板的音乐人
+    you_say:
+      en: |-
+        Paste the QQ Music / Kugou share URLs, queue 5-10, batch download
+      zh: |-
+        贴 QQ 音乐 / 酷狗分享 URL,排队 5-10 个,批量下载
+    what_happens:
+      en: |-
+        Each URL routes to its platform plugin; audio files land in the configured directory with metadata. Convenience over per-site UIs.
+      zh: |-
+        每个 URL 走对应平台插件;音频文件 + 元数据落到配置目录。比逐个网站 UI 方便。
+  - context:
+      en: |-
+        A streamer archiving a livestream after the fact
+      zh: |-
+        事后归档直播流的主播
+    you_say:
+      en: |-
+        Paste the 直播流 / m3u8 URL, hit download
+      zh: |-
+        贴直播流 / m3u8 URL,点下载
+    what_happens:
+      en: |-
+        m3u8 plugin handles segment re-assembly, hands you a complete MP4 of the archived stream. No FFmpeg one-liners required.
+      zh: |-
+        m3u8 插件处理分片重组,给你一份完整的 MP4。不用手写 FFmpeg 一行命令。
+  next_step:
+    en: |-
+      Two highest-leverage actions for the maintainer (not adopter). (1) Push a maintenance release that refreshes signing for fast-iterating platforms (Douyin, 视频号) — pushes the recency gauge back to "fresh" and unblocks the +5 from `recently_active`. (2) Add tests in tests/ that mock-call each platform plugin so future regressions get caught — would lift eval_discipline_score from 1 toward 2.
+    zh: |-
+      给维护者(非采用者)的两个最高 ROI 动作。(1) 推一次维护 release 刷新快速迭代平台(抖音 / 视频号)的签名 —— 把更新度推回"新鲜",解锁 `recently_active` 的 +5。(2) 在 tests/ 加各平台插件 mock 测试,以后回归能被抓住 —— 把 eval_discipline_score 从 1 推到 2。
+similar_repos:
+- slug: NanmiCoder--MediaCrawler
+  shared_purpose:
+    en: |-
+      Both target multi-platform CN content acquisition. Both face the same anti-bot landscape and per-platform signing complexity.
+    zh: |-
+      都瞄准多平台中文内容获取。都面对同样的反爬环境和各平台签名复杂度。
+  this_better_at:
+    en: |-
+      Desktop GUI experience — single binary, no Python setup, no CLI. Broader resource type coverage (audio + livestream + m3u8, not just video posts). Apache 2.0 (vs MediaCrawler's custom non-commercial).
+    zh: |-
+      桌面 GUI 体验 —— 单二进制 / 不要 Python / 不要 CLI。资源类型覆盖更广(音频 + 直播 + m3u8,不止视频帖子)。Apache 2.0(MediaCrawler 是自定义非商用)。
+  other_better_at:
+    en: |-
+      Programmatic use case (scrape + analyse + persist to DB) + much richer per-platform crawl modes (search / detail / creator / comments). When you need data extraction at scale, MediaCrawler wins. Also more recently active (~weeks vs ~4 months).
+    zh: |-
+      程序化用法(抓 + 分析 + 入库) + 各平台抓取模式更丰富(搜索 / 详情 / 创作者 / 评论)。需要规模化数据采集,MediaCrawler 更合适。更新也更近(几周 vs ~4 个月)。
+- slug: dreammis--social-auto-upload
+  shared_purpose:
+    en: |-
+      Both are CN-content-platform multi-target tools. Both face the same anti-bot landscape and ship across CN platforms.
+    zh: |-
+      都是中国内容平台多目标工具。都面对同样反爬环境,都覆盖中国平台。
+  this_better_at:
+    en: |-
+      Inbound (download FROM platforms). Apache LICENSE present. Cross-platform desktop binary.
+    zh: |-
+      入向(从平台下载)。有 Apache LICENSE。跨平台桌面二进制。
+  other_better_at:
+    en: |-
+      Outbound (upload TO platforms). 7 publish targets via Playwright with cookie auth. Different direction, same family.
+    zh: |-
+      出向(上传到平台)。Playwright + cookie 鉴权的 7 个发布目标。方向不同,同族。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — fixed pipeline (URL parse → platform plugin → signing → download → storage). User picks a URL; routing is deterministic by URL pattern matching, not by LLM at runtime.
+    zh: |
+      分子 —— 固定流水线(URL 解析 → 平台插件 → 签名 → 下载 → 存储)。用户给 URL;路由按 URL 模式匹配确定,运行时无 LLM。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Share URL paste
+        (any of 9 platforms)
+      zh: |-
+        贴分享 URL
+        (9 类平台之一)
+  - id: parse
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        URL parse + platform identify
+      zh: |-
+        URL 解析 + 平台识别
+  - id: plugin
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Per-platform plugin
+        (signing / API)
+      zh: |-
+        各平台插件
+        (签名 / API)
+  - id: download
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Resource download
+      zh: |-
+        资源下载
+  - id: out
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        File on disk
+      zh: |-
+        文件落盘
+  edges:
+  - {from: input, to: parse}
+  - {from: parse, to: plugin}
+  - {from: plugin, to: download}
+  - {from: download, to: out}
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: '02_acquisition'
+  role: alternative
+  platforms:
+  - douyin
+  - kuaishou
+  - xiaohongshu
+  - bilibili
+  - wechat-video
+  - other
+  reason:
+    en: Desktop-GUI alternative to MediaCrawler at 02. Use when you want a casual paste-URL-and-download flow rather than programmatic crawling. 4-month stale gap is a real concern for fast-iterating platforms like Douyin.
+    zh: 02 阶段 MediaCrawler 的桌面 GUI 替代品。当你只想"贴 URL 下文件"的随意操作而不是程序化抓取时用。4 个月没更新对抖音这种快速迭代平台是真实顾虑。
+deployment:
+  installable: true
+  install_methods:
+  - method: Download release binary (macOS / Linux / Windows)
+    platform: any
+    complexity: easy
+  - method: go build (from source via Wails)
+    platform: any (Go + Wails toolchain)
+    complexity: hard
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: Each supported platform's public-share endpoint
+  purpose: Source of the resource being downloaded
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Public-share URLs only; no auth needed but anti-bot drift is the maintenance risk

@@ -95,11 +95,3 @@ third_party_services:
   signup_needed: false
   free_tier: true
   cost_note: Optional; course works offline if fonts are cached
-workflow_placements:
-- workflow_id: park-content-v1
-  stage_id: 06_assembly
-  role: primary
-  medium: course
-  reason:
-    en: 'Course / lesson assembly. Medium: structured educational content — multi-chapter markdown course.'
-    zh: '课程 / 课时组装。媒介: 结构化教育内容 —— 多章节 markdown 课程。'
