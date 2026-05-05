@@ -104,6 +104,9 @@ product_view:
   how:
     en: 'Install with `npx qiushi-skill install <platform>` for one of 7 supported agent platforms (Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode). Pick 2-3 skills matching your real workflow (don''t install all 10). Then invoke explicitly: "用调查研究 skill 分析这个问题" or "用矛盾分析法找主要矛盾". Each invocation forces the agent to follow that methodology''s framework.'
     zh: 用 `npx qiushi-skill install <平台>` 装到 7 家支持的 agent 平台之一(Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode)。挑 2-3 条匹配你工作流的(不要 10 条都装)。然后明确调用:"用调查研究 skill 分析这个问题" 或 "用矛盾分析法找主要矛盾"。每次调用让 agent 按那条方法论的框架走。
+  next_step:
+    en: Install the contradiction-analysis skill in Claude Code. Give the agent a complex business decision ("should we expand to a new market"), explicitly invoke the skill. Save transcript. Verify the agent uses the methodology framework (identify principal contradiction → compare against secondary) instead of giving a flat answer.
+    zh: 在 Claude Code 里装 contradiction-analysis skill。给 agent 一个复杂商业决策("该不该拓展新市场"),明确调用 skill。保存 transcript。验证 agent 是否用方法论框架(找主要矛盾 → 对比次要)而不是给平铺答案。
 similar_repos:
 - slug: obra--superpowers
   shared_purpose:
@@ -225,3 +228,6 @@ third_party_services:
   free_tier: false
   cost_note: Standard agent-side cost; the skill itself is pure markdown (no extra API calls)
 business_category: development
+use_case_tags:
+- agent-methodology
+- reasoning-discipline

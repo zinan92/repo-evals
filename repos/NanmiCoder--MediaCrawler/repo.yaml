@@ -108,6 +108,9 @@ product_view:
   how:
     en: git clone, uv pip install. Run `python main.py --platform <name> --type <mode> --keyword/--note_id/--creator_id ...`. First run pops a QR code or asks for cookie to log in to the platform. Playwright opens a real browser, scrapes per your flags, writes results to `data/<platform>/<file>` in your chosen format (CSV / JSON / SQLite / Postgres / Mongo / etc.).
     zh: git clone + uv pip install。`python main.py --platform <平台> --type <类型> --keyword/--note_id/--creator_id ...` 跑起来。第一次会弹二维码或问你 cookie 登录平台。Playwright 开真实浏览器按你的参数抓,把结果写到 `data/<平台>/<文件>`,格式按你挑(CSV / JSON / SQLite / Postgres / Mongo 等)。
+  next_step:
+    en: Pick one of the 7 platforms (Xiaohongshu is easiest), log in with a real account, run a logged 100-listing scrape, save the resulting CSV. Then a second platform a week later. Validates the per-platform crawler works against today's anti-bot. Without this, score stays around 75.
+    zh: 挑 7 个平台中的一个(小红书最容易),用真实账号登,跑一次 100 条挂牌的有日志抓取,存下 CSV。一周后换第二个平台再跑一次。验证当前反爬环境下各平台爬虫能跑通。没这个分数停在 75 左右。
 similar_repos:
 - slug: zinan92--content-downloader
   shared_purpose:
@@ -254,3 +257,5 @@ third_party_services:
   free_tier: false
   cost_note: Commercial upgrade — separate from this OSS repo
 business_category: content
+use_case_tags:
+- content-scraping

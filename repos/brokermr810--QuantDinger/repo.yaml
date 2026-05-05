@@ -93,6 +93,9 @@ product_view:
   how:
     en: '`docker compose up -d --build` (or AWS Marketplace AMI for paid one-click). Configure broker keys (IBKR for US stocks, MT5 for forex on a Windows host, crypto exchange) + at least one LLM provider (OpenAI / DeepSeek / Grok). Open the React dashboard, connect your AI agent via MCP. Workflow: "design indicator" → AI writes Python code → "run backtest on this strategy" → AI evaluates → optional "go live" with manual-approval gate forced ON.'
     zh: '`docker compose up -d --build`(或买 AWS Marketplace AMI 一键)。配 broker key(IBKR 美股 / MT5 外汇要 Windows / 加密所) + 至少一家 LLM(OpenAI / DeepSeek / Grok)。开 React dashboard,通过 MCP 接 AI agent。工作流:"设计 indicator" → AI 写 Python → "跑这个策略回测" → AI 评估 → 可选"上实盘"必须开人工审批闸门。'
+  next_step:
+    en: Run a backtest on a known-good strategy (RSI dip + MA20 cross on SPY 2020-2025). Verify Sharpe / drawdown match a hand-calculated baseline within ±5%. Then a paper-account live test on IBKR for 2 weeks with manual-approval gate ON. Validates backtest + execution layer + the safety gate.
+    zh: 在一个已知策略上跑回测(SPY 2020-2025 上的 RSI 回调 + MA20 上穿)。验证 Sharpe / 回撤跟手算基线差距 ±5% 以内。然后在 IBKR 的 paper 账号上跑 2 周实盘,人工审批闸门必须开。验证回测 + 执行层 + 安全闸门。
 similar_repos:
 - slug: tukuaiai--tradecat
   shared_purpose:
@@ -338,3 +341,5 @@ third_party_services:
   free_tier: true
   cost_note: ccxt supports many exchanges; trading fees apply
 business_category: finance
+use_case_tags:
+- quant-trading

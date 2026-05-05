@@ -99,6 +99,22 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
 /* --- Layer strip (atom · molecule · compound) ---------------------- */
 .layer-strip-section { margin-bottom: 40px; }
 .layer-strip-biz-row { margin: -8px 0 14px; }
+.use-case-row {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  margin: 0 0 14px;
+}
+.use-case-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-right: 4px;
+}
+.use-case-pill {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}
 .layer-strip {
   display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
   align-items: stretch; gap: 0;
@@ -196,6 +212,79 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
 .cat-summary-available  { --bucket: #60a5fa; }
 .cat-summary-risky      { --bucket: #f59e0b; }
 .cat-summary-dont_use   { --bucket: #f87171; }
+
+/* "Why not at the next tier yet" — auto-derived one-liner under category strip */
+.why-not-next {
+  margin-top: 14px;
+  padding: 12px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}
+.why-not-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}
+.why-not-body { font-size: 14px; line-height: 1.55; color: var(--text); }
+
+/* "Next step to upgrade the score" — manually authored per repo */
+.next-step {
+  margin-top: 10px;
+  padding: 12px 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: var(--radius-md);
+}
+.next-step-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--bucket); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px; font-weight: 700;
+}
+.next-step-body { font-size: 14px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }
+
+/* Trust strip — what we did vs didn't check */
+.trust-strip {
+  margin-top: 14px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.trust-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}
+.trust-list { list-style: none; padding: 0; margin: 0; }
+.trust-row {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  gap: 12px; align-items: baseline;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px; line-height: 1.5;
+}
+.trust-row:first-child { border-top: 0; }
+.trust-mark {
+  font-family: var(--font-mono); font-size: 14px;
+  text-align: center; line-height: 1;
+}
+.tr-yes  .trust-mark { color: var(--ok); }
+.tr-no   .trust-mark { color: var(--bad); }
+.tr-warn .trust-mark { color: var(--warn); }
+.tr-half .trust-mark { color: var(--warn); }
+.tr-pending .trust-mark { color: var(--text-3); }
+.trust-label { color: var(--text); }
+.trust-detail {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3);
+}
+@media (max-width: 720px) {
+  .trust-row { grid-template-columns: 26px 1fr; }
+  .trust-detail { display: none; }
+}
 
 /* --- Similar repos comparison ------------------------------------- */
 .similar-section { margin-bottom: 80px; }
@@ -1297,9 +1386,9 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
   </header>
 
-  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip-biz-row"><span class="biz-cat-pill biz-content"><span>📝</span><span class="i18n" data-en="Content" data-zh="内容类"></span></span></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip-biz-row"><span class="biz-cat-pill biz-content"><span>📝</span><span class="i18n" data-en="Content" data-zh="内容类"></span></span></div><div class="use-case-row"><span class="use-case-eyebrow"><span class="i18n" data-en="I want to&nbsp;…" data-zh="想干嘛?"></span></span><span class="use-case-pill use-case-content-scraping"><span class="i18n" data-en="Content scraping" data-zh="内容抓取"></span></span></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
 
-  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:75%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">75</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 75 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div></section>
+  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:75%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">75</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 75 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div><div class="why-not-next"><div class="why-not-eyebrow"><span class="i18n" data-en="Why not at the next tier yet" data-zh="为什么还没到下一档"></span></div><div class="why-not-body"><span class="i18n" data-en="1 critical claim(s) are still untested — they likely need a logged live run to close out, the next step toward Production-ready." data-zh="1 条关键 claim 还没验证 —— 通常需要跑一次有日志记录的实际场景来收尾,这是到 可用于生产 的下一步。"></span></div></div><div class="next-step"><div class="next-step-eyebrow"><span class="i18n" data-en="Next step to upgrade the score" data-zh="提升评分的下一步"></span></div><div class="next-step-body"><span class="i18n" data-en="Pick one of the 7 platforms (Xiaohongshu is easiest), log in with a real account, run a logged 100-listing scrape, save the resulting CSV. Then a second platform a week later. Validates the per-platform crawler works against today&#x27;s anti-bot. Without this, score stays around 75." data-zh="挑 7 个平台中的一个(小红书最容易),用真实账号登,跑一次 100 条挂牌的有日志抓取,存下 CSV。一周后换第二个平台再跑一次。验证当前反爬环境下各平台爬虫能跑通。没这个分数停在 75 左右。"></span></div></div><div class="trust-strip"><div class="trust-eyebrow"><span class="i18n" data-en="What we checked vs still missing" data-zh="检查过的 vs 还差哪些"></span></div><ul class="trust-list"><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="Static structure verified" data-zh="结构静态验证通过"></span></span><span class="trust-detail">4 claims passed, no critical failures</span></li><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="License present + install path documented" data-zh="License 存在 + 安装路径已文档化"></span></span><span class="trust-detail">MIT / Apache / etc., installable per deployment.install_methods</span></li><li class="trust-row tr-half"><span class="trust-mark">◐</span><span class="trust-label"><span class="i18n" data-en="Maintainer signals partial" data-zh="维护信号有一半"></span></span><span class="trust-detail">release_pipeline=1, recently_active=True</span></li><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="Docs available in EN + ZH" data-zh="文档支持中英双语"></span></span><span class="trust-detail">multilingual_readme=true</span></li><li class="trust-row tr-pending"><span class="trust-mark">⚪</span><span class="trust-label"><span class="i18n" data-en="Live end-to-end run not yet logged" data-zh="实际端到端 run 尚未记录"></span></span><span class="trust-detail">static-only eval; live e2e pending</span></li></ul></div></section>
 
   <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-num">#1</span><span class="benefit-icon">👤</span><span class="i18n" data-en="Who" data-zh="谁用"></span></div><div class="benefit-body"><span class="i18n" data-en="A Python-comfortable researcher, content analyst, or trend tracker who needs raw post / comment / creator data from one or more Chinese platforms for non-commercial analysis. NOT for production scraping." data-zh="懂 Python 的研究者 / 内容分析师 / 趋势追踪人 —— 需要从某个或多个中文平台拿到原始的帖子 / 评论 / 创作者数据,用于非商用分析。不是给生产抓取用。"></span></div></article>
 <article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-num">#2</span><span class="benefit-icon">🎯</span><span class="i18n" data-en="When" data-zh="什么时候用"></span></div><div class="benefit-body"><span class="i18n" data-en="You want this week&#x27;s top Xiaohongshu posts under a tag, or all comments on a Douyin video, or a creator&#x27;s last 200 Weibo posts. You&#x27;ll log in with your real account once (QR / phone / cookie), let it run on your laptop, and dump to CSV / SQLite for downstream analysis." data-zh="你想要本周小红书某个 tag 下的爆款,或者某个抖音视频的全量评论,或者某创作者在微博的最近 200 条帖子。准备真实账号登一次(扫码 / 短信 / cookie),挂在自己电脑上跑,导出 CSV / SQLite 给下游分析用。"></span></div></article>

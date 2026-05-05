@@ -77,6 +77,9 @@ product_view:
   how:
     en: Download the Tauri DMG / installer (one-time `xattr` workaround on macOS for unsigned v0.9.1 build). Open the GUI, register a skill (or import a bundle). Pick which of the 28 supported tools (Claude Code / Cursor / Codex / Gemini CLI / Trae / ...) should see this skill — the app symlinks `~/.agents/skills/<name>/` into each tool's expected directory. Edit the source once, every selected tool sees the change immediately.
     zh: 下 Tauri DMG / 安装包(macOS 上 v0.9.1 未签名,首次启动跑一次 `xattr`)。开 GUI,注册 skill(或导入合集)。选 28 家支持的工具里哪些应该看到这个 skill(Claude Code / Cursor / Codex / Gemini CLI / Trae / ...) —— app 把 `~/.agents/skills/<name>/` 软链到每家工具的期待目录。改一次源,所有选中的工具立刻看到。
+  next_step:
+    en: On a clean macOS install (or VM), download the v0.9.1 DMG, run the xattr workaround, register a skill, sync to Claude Code + Cursor + Codex. Verify symlinks point correctly + the same source SKILL.md edit appears in all three. Validates the central-storage + symlink design end-to-end.
+    zh: 在一台干净 macOS(或虚拟机)上,下 v0.9.1 DMG,跑 xattr 解锁,注册一个 skill,同步到 Claude Code + Cursor + Codex。验证软链指对位置 + 改一份源 SKILL.md 三家工具都看到。验证中心存储 + 软链架构端到端。
 similar_repos:
 - slug: anthropics--skill-creator
   shared_purpose:
@@ -201,3 +204,5 @@ third_party_services:
   free_tier: true
   cost_note: Manages local skill folders; doesn't talk to upstream APIs itself
 business_category: development
+use_case_tags:
+- skill-distribution

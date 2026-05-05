@@ -102,6 +102,9 @@ product_view:
   how:
     en: 'Install means: clone the Remotion monorepo, copy `skills/remotion/SKILL.md` + `rules/` into your AI agent''s skills directory (`~/.claude/skills/`, `~/.cursor/skills/`, etc.). The skill is `private: true` on npm — you cannot `npm install`. Once installed, your agent recognises Remotion tasks and auto-loads the relevant rule(s) from rules/ — captions, audio, ffmpeg, lottie, fonts, etc.'
     zh: '安装方式: clone Remotion monorepo,把 `skills/remotion/SKILL.md` + `rules/` 复制到 AI agent 的 skills 目录(`~/.claude/skills/`、`~/.cursor/skills/` 等)。包是 `private: true`,不能 `npm install`。装好后 agent 识别到 Remotion 任务,自动加载 rules/ 里相关的子规则(captions / audio / ffmpeg / lottie / fonts 等)。'
+  next_step:
+    en: Clone the Remotion monorepo, copy SKILL.md + rules/ into your Claude Code skills dir, ask the agent for a Remotion captions task. Verify it loads rules/captions.md and renders working code first try. Validates claim-005 (end-to-end). Then publish a thinner public-friendly install path.
+    zh: Clone Remotion monorepo,把 SKILL.md + rules/ 拷到 Claude Code skills 目录,让 agent 做一个 Remotion 字幕任务。验证它是否加载 rules/captions.md 并第一次 render 出可用代码。验证 claim-005(端到端)。然后发一个更对外友好的安装路径。
 similar_repos:
 - slug: anthropics--skill-creator
   shared_purpose:
@@ -209,3 +212,5 @@ third_party_services:
   free_tier: true
   cost_note: Optional — only used if rendered course imports fonts
 business_category: content
+use_case_tags:
+- video-generation

@@ -12,6 +12,8 @@
 [![Tests](https://img.shields.io/badge/tests-142_passing-4ade80.svg)](tests/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
+### 👉 [Browse the live evaluated-repo catalog](https://zinan92.github.io/repo-evals/) · [浏览已评测仓库目录](https://zinan92.github.io/repo-evals/)
+
 </div>
 
 ---

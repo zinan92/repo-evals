@@ -91,6 +91,9 @@ product_view:
   how:
     en: Install via Claude Code plugin marketplace. Tell your agent the topic and any constraints (e.g., "Make me a 15-slide deck about X, Stripe-style"). Phase 1 outlines the deck, Phase 2 generates the HTML, optional Phase 3 deploys to Vercel. You get back an HTML directory you can host, hand-edit, or re-prompt the agent to revise.
     zh: Claude Code 插件市场安装。告诉 agent 主题和约束(比如 "做一份 15 页的 X 主题 deck,Stripe 调性")。Phase 1 列大纲,Phase 2 生成 HTML,可选 Phase 3 部署到 Vercel。出来一个 HTML 目录,可以托管 / 手改 / 再让 agent 改。
+  next_step:
+    en: 'Run a logged Claude Code session generating one real deck end-to-end: pick a topic, watch Phase 1 (outline) → Phase 2 (HTML) → Phase 3 (Vercel deploy). Save the resulting HTML directory + the deploy URL. Validates Phase 1-3 quality + the optional deploy path.'
+    zh: '跑一次有日志的 Claude Code session,完整生成一份真实 deck: 选主题,看 Phase 1(大纲) → Phase 2(HTML) → Phase 3(Vercel 部署)。保存 HTML 目录 + 部署链接。验证 Phase 1-3 质量 + 可选的部署路径。'
 similar_repos:
 - slug: geekjourneyx--md2wechat-skill
   shared_purpose:
@@ -183,3 +186,5 @@ third_party_services:
   free_tier: true
   cost_note: Separate skill; Vercel free tier sufficient
 business_category: content
+use_case_tags:
+- presentation-content

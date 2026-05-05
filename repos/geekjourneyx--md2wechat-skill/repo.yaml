@@ -103,6 +103,9 @@ product_view:
   how:
     en: 'Install via Homebrew / npm / install script (or `go build` from source). Run `md2wechat inspect article.md` first to see metadata + readiness issues. Fix any flagged problems in your markdown. Then `md2wechat convert article.md --theme dark --output draft.html` produces editor-ready HTML. Optional: `--upload-images --create-draft` pushes images to WeChat material library and creates a draft directly.'
     zh: Homebrew / npm / 安装脚本(或源码 `go build`)。先跑 `md2wechat inspect article.md` 看元数据 + 可修问题,在 markdown 里修。然后 `md2wechat convert article.md --theme dark --output draft.html` 出公众号编辑器可贴的 HTML。可选 `--upload-images --create-draft` 把图片传到素材库 + 直接创建草稿。
+  next_step:
+    en: 'Already at 91 / Production-ready. Two paths to 95+: (1) Get a second evaluator to run the install + convert flow on their own machine, log the session — confirms reproducibility. (2) Run the LLM modes (humanize / write-from-idea) on a real article + log the output quality.'
+    zh: '已在 91 / 可用于生产。两条路升到 95+: (1) 找第二位评测者在自己机器上跑一遍 install + convert 流程留日志 —— 验证可复现。(2) 在真实文章上跑 LLM 模式(humanize / 从想法直接写) + 记录输出质量。'
 similar_repos:
 - slug: op7418--Humanizer-zh
   shared_purpose:
@@ -218,3 +221,5 @@ third_party_services:
   free_tier: false
   cost_note: BYOK for whichever provider you pick; per-request pricing
 business_category: content
+use_case_tags:
+- content-publishing

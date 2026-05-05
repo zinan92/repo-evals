@@ -78,6 +78,9 @@ product_view:
   how:
     en: 'Install via `npx skills add op7418/Humanizer-zh` (or git clone into ~/.claude/skills/humanizer-zh). Then in Claude Code, paste your Chinese AI-suspect text and ask: "帮我把这段去掉 AI 味". The skill auto-fires, identifies which of 24 tells appear, rewrites them in-place, and returns a 50-point rubric score. One pass takes ~30 seconds.'
     zh: 用 `npx skills add op7418/Humanizer-zh` 安装(或 git clone 到 ~/.claude/skills/humanizer-zh)。然后在 Claude Code 里贴上中文 AI 嫌疑文本,说:"帮我把这段去掉 AI 味"。skill 自动起,识别中了 24 痕迹里哪些,原地改写,给一份 50 分量化打分。一遍大约 30 秒。
+  next_step:
+    en: Run on a real 1500-char AI-suspect Chinese article in a logged Claude Code session. Save before/after rubric scores + the rewritten output. Validates the 24-tell rewrite + 50-point rubric work end-to-end. Updates claim-005 to passed.
+    zh: 在一篇真实的 1500 字中文 AI 嫌疑文本上跑一次 Claude Code session 留日志。保存改前/改后的量表分 + 改后版本。验证 24 痕迹改写 + 50 分量表能端到端工作。把 claim-005 转为通过。
 similar_repos:
 - slug: geekjourneyx--md2wechat-skill
   shared_purpose:
@@ -164,3 +167,5 @@ third_party_services:
   free_tier: false
   cost_note: Standard agent-side cost; pure prompt-skill, no external services
 business_category: content
+use_case_tags:
+- content-rewriting

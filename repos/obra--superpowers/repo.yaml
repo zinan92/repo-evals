@@ -118,6 +118,9 @@ product_view:
   how:
     en: Install the plugin into your agent platform (one command for Claude Code; per-platform configs for Codex / Cursor / Gemini / OpenCode / Factory Droid / GH Copilot). Then just give your agent a non-trivial coding task — superpowers' 14 skills auto-trigger at the right moment. You don't invoke skills by name; you describe what you want done and the agent picks the methodology.
     zh: 把插件装到 agent 平台(Claude Code 一行命令;Codex / Cursor / Gemini / OpenCode / Factory Droid / GH Copilot 用各自配置)。然后只管给 agent 一个不平凡的编程任务 —— superpowers 的 14 个 skill 会在合适时机自动触发。你不用按名字调 skill;你描述要做的事,agent 自己挑方法论。
+  next_step:
+    en: 'Run one logged Claude Code session: ask the agent for a real feature, watch the methodology fire (brainstorming → writing-plans → TDD → subagent-driven-development → verification-before-completion). Save the transcript. Updates claim-007 from untested to passed; moves the score toward 80+.'
+    zh: '跑一次有日志记录的 Claude Code session: 让 agent 做一个真实功能,观察方法论是否触发(brainstorming → 写计划 → TDD → 子 agent 拆活 → 完成前自检)。保存 transcript。把 claim-007 从未验证转为通过;分数向 80+ 推进。'
 similar_repos_pending:
 - slug_note: 'Pending evaluation: G-Stack — same problem space (guide a non-developer or
 
@@ -270,3 +273,6 @@ third_party_services:
   free_tier: false
   cost_note: Standard agent-side cost; auto-triggering 14 skills means more tokens consumed per task before any actual work happens
 business_category: development
+use_case_tags:
+- agent-methodology
+- coding-workflow

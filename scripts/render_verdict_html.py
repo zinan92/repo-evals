@@ -1383,6 +1383,62 @@ def render_cost_summary(vd: VerdictData) -> str:
     )
 
 
+USE_CASE_TAGS: dict[str, tuple[str, str]] = {
+    # Tag key → (en label, zh label).
+    # Controlled vocabulary so dashboard filter is meaningful.
+    # Add new tags only when at least 2 repos in the corpus would use them.
+    "content-rewriting":      ("Content rewriting",      "内容重写"),
+    "content-publishing":     ("Content publishing",     "内容发布"),
+    "content-scraping":       ("Content scraping",       "内容抓取"),
+    "presentation-content":   ("Presentation content",   "演示文稿"),
+    "educational-content":    ("Educational content",    "教育内容"),
+    "video-generation":       ("Video generation",       "视频生成"),
+    "agent-methodology":      ("Agent methodology",      "Agent 方法论"),
+    "coding-workflow":        ("Coding workflow",        "编程工作流"),
+    "skill-authoring":        ("Skill authoring",        "Skill 写作"),
+    "skill-distribution":     ("Skill distribution",     "Skill 分发"),
+    "llm-routing":            ("LLM routing",            "LLM 路由"),
+    "quant-trading":          ("Quant trading",          "量化交易"),
+    "marketplace-monitoring": ("Marketplace monitoring", "市场监控"),
+    "repo-evaluation":        ("Repo evaluation",        "Repo 评测"),
+    "reasoning-discipline":   ("Reasoning discipline",   "推理纪律"),
+}
+
+
+def render_use_case_tags(vd: VerdictData) -> str:
+    """Pills showing the user-facing tasks this repo addresses.
+
+    Reads ``repo.yaml.use_case_tags`` (list of tag keys from
+    USE_CASE_TAGS). Renders as horizontal pills near the business
+    category. Skipped silently when no tags are set."""
+
+    tags = vd.repo.get("use_case_tags") or []
+    if not tags:
+        return ""
+    pills: list[str] = []
+    for t in tags:
+        key = str(t).strip().lower()
+        if key not in USE_CASE_TAGS:
+            continue
+        en, zh = USE_CASE_TAGS[key]
+        pills.append(
+            f'<span class="use-case-pill use-case-{key}">'
+            f'<span class="i18n" data-en="{_esc(en)}" data-zh="{_esc(zh)}"></span>'
+            '</span>'
+        )
+    if not pills:
+        return ""
+    return (
+        '<div class="use-case-row">'
+        '<span class="use-case-eyebrow">'
+        '<span class="i18n" data-en="I want to&nbsp;…" '
+        'data-zh="想干嘛?"></span>'
+        '</span>'
+        f'{"".join(pills)}'
+        '</div>'
+    )
+
+
 def render_business_category(vd: VerdictData) -> str:
     """Pill showing the business domain (content / finance / development).
 
@@ -1448,6 +1504,7 @@ def render_layer_strip(vd: VerdictData) -> str:
         )
 
     biz_pill = render_business_category(vd)
+    use_case_row = render_use_case_tags(vd)
     biz_row = (
         '<div class="layer-strip-biz-row">'
         f'{biz_pill}'
@@ -1460,10 +1517,280 @@ def render_layer_strip(vd: VerdictData) -> str:
         '<h2><span class="i18n" data-en="What kind of skill is this?" '
         'data-zh="它是哪一类?"></span></h2></div>'
         f'{biz_row}'
+        f'{use_case_row}'
         '<div class="layer-strip">'
         + '<div class="layer-strip-arrow">→</div>'.join(cards)
         + '</div>'
         '</section>'
+    )
+
+
+def render_trust_strip(vd: VerdictData) -> str:
+    """Trust strip — 5 ✓/⚪ rows showing which evidence we did and didn't gather.
+
+    Wendy's reading of Codex's review (2026-05-05): readers want a fast
+    answer to "how should I trust this score?" — better than a vague
+    "confidence: medium" string. The data is already in the claim list
+    + repo.yaml; this function just surfaces it in user language.
+
+    Each row maps to one evidence axis:
+      * Static structure (claims passed)
+      * License + install path
+      * Maintainer activity (release pipeline + recent activity)
+      * Multilingual docs (lower-stakes signal)
+      * Live end-to-end run (the critical one — usually ⚪)
+    """
+
+    repo = vd.repo
+    layer = str(repo.get("layer", "") or "").strip().lower()
+    inputs = vd.verdict_input.get("inputs_summary") or {}
+    claims_passed = inputs.get("claims_passed", 0) or 0
+    critical_failed = inputs.get("critical_failed", 0) or 0
+    evidence = str(vd.verdict_input.get("inputs_summary", {}).get(
+        "evidence_completeness", "")) or "partial"
+    # `evidence_completeness` actually lives at the top of inputs_summary
+    # in some verdict-input files but is also exposed at root in newer
+    # verdict_calculator output. Read both safely.
+    if not evidence:
+        evidence = str(vd.verdict_input.get("evidence_completeness", "")) or "partial"
+
+    has_license = bool(repo.get("has_license", False))
+    deployment = repo.get("deployment") or {}
+    installable = bool(deployment.get("installable", False))
+    rps = int(repo.get("release_pipeline_score", 0) or 0)
+    recently_active = bool(repo.get("recently_active", False))
+    multilingual = bool(repo.get("multilingual_readme", False))
+
+    rows: list[tuple[str, str, str, str]] = []  # (mark, label_en, label_zh, detail)
+
+    # 1. Static structure — derived from claim outcomes
+    if claims_passed > 0 and critical_failed == 0:
+        rows.append((
+            "✓",
+            "Static structure verified",
+            "结构静态验证通过",
+            f"{claims_passed} claims passed, no critical failures"
+        ))
+    elif critical_failed > 0:
+        rows.append((
+            "✗",
+            "Static structure has critical failures",
+            "结构静态验证有 critical 失败",
+            f"{critical_failed} critical claim(s) failed"
+        ))
+    else:
+        rows.append((
+            "⚪",
+            "Static structure not yet verified",
+            "结构静态尚未验证",
+            "no claims passed yet"
+        ))
+
+    # 2. License + install path
+    if has_license and installable:
+        rows.append((
+            "✓",
+            "License present + install path documented",
+            "License 存在 + 安装路径已文档化",
+            "MIT / Apache / etc., installable per deployment.install_methods"
+        ))
+    elif has_license:
+        rows.append((
+            "⚪",
+            "License present, install path not verified",
+            "License 存在,安装路径未验证",
+            "license OK, no installable=true confirmed"
+        ))
+    elif installable:
+        rows.append((
+            "⚠",
+            "Install path documented but LICENSE file missing",
+            "安装路径已记录但缺 LICENSE 文件",
+            "README may claim a license but no LICENSE file exists"
+        ))
+    else:
+        rows.append((
+            "⚪",
+            "License + install path unverified",
+            "License + 安装路径未验证",
+            "neither has_license=true nor deployment.installable=true"
+        ))
+
+    # 3. Maintainer activity
+    if rps >= 2 and recently_active:
+        rows.append((
+            "✓",
+            "Maintainer signals strong (release pipeline + recent activity)",
+            "维护信号强(发布流水线 + 近期活跃)",
+            f"release_pipeline_score={rps} + pushed in 90-day window"
+        ))
+    elif rps >= 2 or recently_active:
+        rows.append((
+            "◐",
+            "Maintainer signals partial",
+            "维护信号有一半",
+            f"release_pipeline={rps}, recently_active={recently_active}"
+        ))
+    else:
+        rows.append((
+            "⚪",
+            "Maintainer signals weak",
+            "维护信号弱",
+            "no recent release pipeline + not recently active"
+        ))
+
+    # 4. Multilingual docs (lower-stakes)
+    if multilingual:
+        rows.append((
+            "✓",
+            "Docs available in EN + ZH",
+            "文档支持中英双语",
+            "multilingual_readme=true"
+        ))
+    else:
+        rows.append((
+            "⚪",
+            "Docs single-language",
+            "文档单语",
+            "EN-only or ZH-only README"
+        ))
+
+    # 5. Live end-to-end run — the headline one
+    if evidence == "full":
+        rows.append((
+            "✓",
+            "Live end-to-end run logged",
+            "实际端到端 run 已留痕",
+            "evidence_completeness=full"
+        ))
+    elif evidence == "portable":
+        rows.append((
+            "◐",
+            "Partial live evidence (portable, not full)",
+            "实际证据部分(可迁移,不完整)",
+            "evidence_completeness=portable"
+        ))
+    else:
+        # Layer-specific phrasing — compound is where this matters most
+        if layer == "compound":
+            rows.append((
+                "⚪",
+                "Live agent runtime behaviour not yet observed",
+                "实际 agent 运行时行为尚未观测",
+                "compound layer needs a logged scenario run"
+            ))
+        else:
+            rows.append((
+                "⚪",
+                "Live end-to-end run not yet logged",
+                "实际端到端 run 尚未记录",
+                "static-only eval; live e2e pending"
+            ))
+
+    rendered_rows: list[str] = []
+    for mark, label_en, label_zh, detail in rows:
+        mark_class = {"✓": "tr-yes", "✗": "tr-no", "⚠": "tr-warn",
+                      "◐": "tr-half", "⚪": "tr-pending"}.get(mark, "tr-pending")
+        rendered_rows.append(
+            f'<li class="trust-row {mark_class}">'
+            f'<span class="trust-mark">{mark}</span>'
+            f'<span class="trust-label">'
+            f'<span class="i18n" data-en="{_esc(label_en)}" data-zh="{_esc(label_zh)}"></span>'
+            f'</span>'
+            f'<span class="trust-detail">{_esc(detail)}</span>'
+            f'</li>'
+        )
+
+    return (
+        '<div class="trust-strip">'
+        '<div class="trust-eyebrow">'
+        '<span class="i18n" data-en="What we checked vs still missing" '
+        'data-zh="检查过的 vs 还差哪些"></span>'
+        '</div>'
+        f'<ul class="trust-list">{"".join(rendered_rows)}</ul>'
+        '</div>'
+    )
+
+
+def render_next_step(vd: VerdictData) -> str:
+    """Concrete next action — manually authored per repo.
+
+    Reads ``product_view.next_step`` (en/zh dict) and renders a small
+    callout right after the auto-derived why-not block. Where why-not
+    explains *why* the score is where it is, next_step says *what
+    specifically to do next* — the kind of sentence the maintainer or
+    evaluator could act on this week.
+    """
+
+    pv = vd.repo.get("product_view") or {}
+    ns = pv.get("next_step")
+    if not ns:
+        return ""
+    return (
+        '<div class="next-step">'
+        '<div class="next-step-eyebrow">'
+        '<span class="i18n" data-en="Next step to upgrade the score" '
+        'data-zh="提升评分的下一步"></span>'
+        '</div>'
+        f'<div class="next-step-body">{dual_lang(ns)}</div>'
+        '</div>'
+    )
+
+
+def render_why_not_next_tier(vd: VerdictData) -> str:
+    """One-sentence "why not Production" — auto-derived.
+
+    Picks the single highest-leverage missing piece and emits one
+    sentence. Mirrors the verdict.md "Path to higher score" content
+    but inline at first-screen position. Hidden when score >= 80
+    (already at Production-ready) or when there's no useful gap to
+    surface."""
+
+    score = int(vd.verdict_input.get("score", 0) or 0)
+    cat_key = vd.verdict_input.get("category_key", "available")
+    if cat_key == "production":
+        return ""  # already there
+    if cat_key == "dont_use":
+        # Don't shout "you could be Production!" at a broken repo
+        return ""
+
+    repo = vd.repo
+    layer = str(repo.get("layer", "") or "").lower()
+    inputs = vd.verdict_input.get("inputs_summary") or {}
+    has_license = bool(repo.get("has_license", False))
+    crit_failed = inputs.get("critical_failed", 0) or 0
+    crit_untested = (inputs.get("critical_total", 0) or 0) - (inputs.get("critical_covered", 0) or 0)
+
+    target_label_en = "Production-ready" if cat_key == "available" else "Available"
+    target_label_zh = "可用于生产" if cat_key == "available" else "可使用"
+
+    # Pick the most informative blocker
+    if crit_failed > 0:
+        en = f"Cannot reach {target_label_en} until the {crit_failed} failed critical claim(s) are fixed."
+        zh = f"在 {crit_failed} 条失败的关键 claim 修好之前,到不了 {target_label_zh}。"
+    elif not has_license:
+        en = f"Add a LICENSE file at the repo root → recovers the small-repo penalty + clears the critical-claim gap toward {target_label_en}."
+        zh = f"在仓库根目录加 LICENSE 文件 —— 找回小仓罚分 + 清掉到 {target_label_zh} 路径上的 critical claim 缺口。"
+    elif layer == "compound":
+        en = f"Static evidence is strong; live agent runtime behaviour has not been observed. Run one logged end-to-end scenario to move toward {target_label_en}."
+        zh = f"静态证据强;但实际 agent 运行时行为还没观测过。跑一次有日志记录的端到端场景就能向 {target_label_zh} 推进。"
+    elif crit_untested > 0:
+        en = f"{crit_untested} critical claim(s) are still untested — they likely need a logged live run to close out, the next step toward {target_label_en}."
+        zh = f"{crit_untested} 条关键 claim 还没验证 —— 通常需要跑一次有日志记录的实际场景来收尾,这是到 {target_label_zh} 的下一步。"
+    else:
+        en = f"Static evidence covers the structure; a logged live end-to-end run is the next step toward {target_label_en}."
+        zh = f"静态证据覆盖了结构层;一次有日志记录的端到端实际跑是到 {target_label_zh} 的下一步。"
+
+    return (
+        '<div class="why-not-next">'
+        '<div class="why-not-eyebrow">'
+        '<span class="i18n" data-en="Why not at the next tier yet" '
+        'data-zh="为什么还没到下一档"></span>'
+        '</div>'
+        '<div class="why-not-body">'
+        f'<span class="i18n" data-en="{_esc(en)}" data-zh="{_esc(zh)}"></span>'
+        '</div>'
+        '</div>'
     )
 
 
@@ -1508,6 +1835,10 @@ def render_category_strip(vd: VerdictData) -> str:
 
     score_pct = max(0, min(100, int(score)))
 
+    trust_html = render_trust_strip(vd)
+    why_not_html = render_why_not_next_tier(vd)
+    next_step_html = render_next_step(vd)
+
     return (
         '<section class="category-strip-section">'
         '<div class="section-head">'
@@ -1534,6 +1865,9 @@ def render_category_strip(vd: VerdictData) -> str:
         f'<span class="i18n" data-en="{blurb_en}" data-zh="{blurb_zh}"></span>'
         f'</div>'
         f'</div>'
+        f'{why_not_html}'
+        f'{next_step_html}'
+        f'{trust_html}'
         '</section>'
     )
 
@@ -2387,6 +2721,22 @@ html[data-category="dont_use"]   {{ --bucket:#f87171; --bucket-bg:rgba(248,113,1
 /* --- Layer strip (atom · molecule · compound) ---------------------- */
 .layer-strip-section {{ margin-bottom: 40px; }}
 .layer-strip-biz-row {{ margin: -8px 0 14px; }}
+.use-case-row {{
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  margin: 0 0 14px;
+}}
+.use-case-eyebrow {{
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-right: 4px;
+}}
+.use-case-pill {{
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}}
 .layer-strip {{
   display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
   align-items: stretch; gap: 0;
@@ -2484,6 +2834,79 @@ html[data-category="dont_use"]   {{ --bucket:#f87171; --bucket-bg:rgba(248,113,1
 .cat-summary-available  {{ --bucket: #60a5fa; }}
 .cat-summary-risky      {{ --bucket: #f59e0b; }}
 .cat-summary-dont_use   {{ --bucket: #f87171; }}
+
+/* "Why not at the next tier yet" — auto-derived one-liner under category strip */
+.why-not-next {{
+  margin-top: 14px;
+  padding: 12px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}}
+.why-not-eyebrow {{
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}}
+.why-not-body {{ font-size: 14px; line-height: 1.55; color: var(--text); }}
+
+/* "Next step to upgrade the score" — manually authored per repo */
+.next-step {{
+  margin-top: 10px;
+  padding: 12px 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: var(--radius-md);
+}}
+.next-step-eyebrow {{
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--bucket); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px; font-weight: 700;
+}}
+.next-step-body {{ font-size: 14px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }}
+
+/* Trust strip — what we did vs didn't check */
+.trust-strip {{
+  margin-top: 14px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}}
+.trust-eyebrow {{
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}}
+.trust-list {{ list-style: none; padding: 0; margin: 0; }}
+.trust-row {{
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  gap: 12px; align-items: baseline;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px; line-height: 1.5;
+}}
+.trust-row:first-child {{ border-top: 0; }}
+.trust-mark {{
+  font-family: var(--font-mono); font-size: 14px;
+  text-align: center; line-height: 1;
+}}
+.tr-yes  .trust-mark {{ color: var(--ok); }}
+.tr-no   .trust-mark {{ color: var(--bad); }}
+.tr-warn .trust-mark {{ color: var(--warn); }}
+.tr-half .trust-mark {{ color: var(--warn); }}
+.tr-pending .trust-mark {{ color: var(--text-3); }}
+.trust-label {{ color: var(--text); }}
+.trust-detail {{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3);
+}}
+@media (max-width: 720px) {{
+  .trust-row {{ grid-template-columns: 26px 1fr; }}
+  .trust-detail {{ display: none; }}
+}}
 
 /* --- Similar repos comparison ------------------------------------- */
 .similar-section {{ margin-bottom: 80px; }}

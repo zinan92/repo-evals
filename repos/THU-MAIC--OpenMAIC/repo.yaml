@@ -102,6 +102,9 @@ product_view:
   how:
     en: 'Either use the hosted demo at `open.maic.chat` (zero setup, you bring an LLM key) or one-click Vercel deploy your own / `docker compose up` self-host. Drop a topic or upload a paper / chapter. LangGraph multi-agent stack generates a 20-30 minute classroom: AI teacher walks the whiteboard, AI peer asks questions, slides + quizzes + interactive simulations get auto-generated, TTS streams real voice.'
     zh: '用 `open.maic.chat` 托管 demo(零安装,自带 LLM key)或一键 Vercel 部署自己的版本 / `docker compose up` 自托管。贴主题或上传论文 / 章节。LangGraph 多 agent stack 生成 20-30 分钟课堂: AI 老师讲白板,AI 同学提问,幻灯片 + quiz + 互动模拟自动生成,TTS 流式真人声音。'
+  next_step:
+    en: Use open.maic.chat hosted demo on a real paper (one you actually need to understand). Verify LangGraph multi-agent dispatch reaches a useful 20-min classroom — outline-agent picks a sensible structure, whiteboard / simulation choice matches the topic, quizzes are at right checkpoints, TTS streams without breaking. Then a self-host run.
+    zh: 用 open.maic.chat 托管 demo 跑一篇真实论文(你真心要搞懂的那种)。验证 LangGraph 多 agent 调度能给到一节有用的 20 分钟课堂 —— outline-agent 排合理结构,白板 / 模拟选择跟主题对得上,quiz 在合适检查点,TTS 流式不断流。然后再跑一次自托管。
 similar_repos:
 - slug: zarazhangrui--codebase-to-course
   shared_purpose:
@@ -351,3 +354,5 @@ third_party_services:
   free_tier: true
   cost_note: Optional — disable TTS for text-only mode; self-hosted VoxCPM2 is free
 business_category: content
+use_case_tags:
+- educational-content

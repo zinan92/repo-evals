@@ -96,6 +96,9 @@ product_view:
   how:
     en: Run `docker compose up -d`. Open the Vue dashboard at `localhost:8000` (change `WEB_PASSWORD` from default `admin123`). Use the companion Chrome extension to export your XianYu cookie, paste it into the dashboard. Add tasks in natural language ("Sony A7R III, less than 5000 shutter actuations, under ¥8000"). The scheduler runs Playwright + multi-modal LLM filtering; matches push to ntfy / Bark / WeChat Work / Telegram / Gotify / Webhook.
     zh: '`docker compose up -d`。打开 `localhost:8000` 的 Vue dashboard(改默认密码 `admin123`)。用配套 Chrome 扩展导出你的闲鱼 cookie 贴到 dashboard。自然语言加任务("Sony A7R III,快门 5000 以下,8000 以内")。调度器跑 Playwright + 多模态 LLM 过滤,命中推到 ntfy / Bark / 企微 / Telegram / Gotify / Webhook。'
+  next_step:
+    en: Run docker compose up on your own host, configure with a real XianYu cookie + one realistic criterion (e.g., Sony A7R III < ¥8000). Watch a 24h cycle. Verify true matches push correctly to your phone + false positives < 5% after a day of LLM-rule tuning. Validates the multi-modal LLM filter quality.
+    zh: 在自己机器上 docker compose up,配真实闲鱼 cookie + 一个真实条件(比如 Sony A7R III < 8000)。看一个 24 小时周期。验证真命中正确推到手机 + 一天 LLM 规则调优后误报 < 5%。验证多模态 LLM 过滤质量。
 similar_repos:
 - slug: NanmiCoder--MediaCrawler
   shared_purpose:
@@ -250,3 +253,6 @@ third_party_services:
   free_tier: true
   cost_note: Pick at least one channel; ntfy.sh is fully free
 business_category: content
+use_case_tags:
+- marketplace-monitoring
+- content-scraping

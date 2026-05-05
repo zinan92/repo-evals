@@ -101,6 +101,9 @@ product_view:
   how:
     en: 'Clone anthropics/skills repo, copy the `skills/skill-creator/` subdirectory into your `~/.claude/skills/`. Then in Claude Code: "Use skill-creator to design a new skill for X" or "Run blind-compare on my skill v1 vs v2 against this benchmark". The harness drafts SKILL.md, runs analyzer / grader / comparator sub-agents, generates an HTML eval-viewer report. Iterative loop: each round multiplies LLM calls — set a token budget.'
     zh: Clone anthropics/skills 仓库,把 `skills/skill-creator/` 子目录拷到 `~/.claude/skills/`。然后在 Claude Code 里说:"用 skill-creator 设计一个 X skill" 或者 "在这个 benchmark 上对比我 skill 的 v1 vs v2"。流水线起草 SKILL.md,跑 analyzer / grader / comparator 子 agent,出 HTML eval-viewer 报告。迭代循环每轮翻倍 LLM 调用 —— 设 token 预算。
+  next_step:
+    en: 'Run the full skill-authoring loop in Claude Code: design a new skill from scratch, run analyzer / grader / comparator on it against a 20-prompt benchmark, save the eval-viewer HTML report. Validates the live A/B + the iterative-improvement loop end-to-end. Pushes 81 → 85+.'
+    zh: '在 Claude Code 里跑一次完整的 skill 写作循环: 从零设计一个新 skill,跑 analyzer / grader / comparator 在 20 条 prompt 的 benchmark 上对比,保存 eval-viewer HTML 报告。验证活的 A/B + 迭代改进循环能端到端跑。把 81 推到 85+。'
 similar_repos:
 - slug: obra--superpowers
   shared_purpose:
@@ -243,3 +246,5 @@ third_party_services:
   free_tier: true
   cost_note: Standard local Python — no extra cost
 business_category: development
+use_case_tags:
+- skill-authoring

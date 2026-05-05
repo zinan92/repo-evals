@@ -108,6 +108,11 @@ def load_repo(slug_dir: Path) -> dict | None:
         dossier.relative_to(ROOT).as_posix() if dossier else None
     )
 
+    use_case_tags = repo.get("use_case_tags") or []
+    if not isinstance(use_case_tags, list):
+        use_case_tags = []
+    use_case_tags = [str(t).strip().lower() for t in use_case_tags if t]
+
     return {
         "slug": slug_dir.name,
         "owner": repo.get("owner", ""),
@@ -117,6 +122,7 @@ def load_repo(slug_dir: Path) -> dict | None:
         "archetype": repo.get("archetype", "unknown"),
         "layer": repo.get("layer", "unknown"),
         "business_category": str(repo.get("business_category", "") or "").lower(),
+        "use_case_tags": use_case_tags,
         "score": result.get("score", 0),
         "tier_key": result.get("tier_key", "unknown"),
         "tier_emoji": result.get("tier_emoji", ""),
@@ -200,10 +206,12 @@ def build():
                 f'</span>'
             )
 
+        tag_attr = " ".join(r["use_case_tags"])
         table_rows.append(
             f'<tr data-score="{r["score"]}" data-stars="{r["stars"]}" '
             f'data-category="{r["category_key"]}" data-tier="{r["tier_key"]}" '
-            f'data-layer="{r["layer"]}" data-biz="{biz}">'
+            f'data-layer="{r["layer"]}" data-biz="{biz}" '
+            f'data-tags="{html.escape(tag_attr)}">'
             f'<td class="num">{i}</td>'
             f'<td class="repo-cell">'
             f'<div class="repo-name"><strong>{html.escape(r["owner"])}/{html.escape(r["display"])}</strong> {repo_link}</div>'
@@ -379,6 +387,25 @@ footer {{ margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--borde
     <button class="filter-pill biz-pill" data-biz="finance">💹 <span class="i18n-block en-block">Finance</span><span class="i18n-block zh-block">金融</span></button>
     <button class="filter-pill biz-pill" data-biz="development">🛠 <span class="i18n-block en-block">Development</span><span class="i18n-block zh-block">开发</span></button>
   </div>
+  <div class="controls">
+    <span class="filter-label"><span class="i18n-block en-block">I want to&nbsp;…:</span><span class="i18n-block zh-block">我想干嘛?</span></span>
+    <button class="filter-pill tag-pill active" data-tag="">All</button>
+    <button class="filter-pill tag-pill" data-tag="content-rewriting"><span class="i18n-block en-block">Rewrite content</span><span class="i18n-block zh-block">重写内容</span></button>
+    <button class="filter-pill tag-pill" data-tag="content-publishing"><span class="i18n-block en-block">Publish content</span><span class="i18n-block zh-block">发布内容</span></button>
+    <button class="filter-pill tag-pill" data-tag="content-scraping"><span class="i18n-block en-block">Scrape content</span><span class="i18n-block zh-block">抓取内容</span></button>
+    <button class="filter-pill tag-pill" data-tag="presentation-content"><span class="i18n-block en-block">Make a deck</span><span class="i18n-block zh-block">做演示稿</span></button>
+    <button class="filter-pill tag-pill" data-tag="educational-content"><span class="i18n-block en-block">Build a course</span><span class="i18n-block zh-block">做课程</span></button>
+    <button class="filter-pill tag-pill" data-tag="video-generation"><span class="i18n-block en-block">Generate video</span><span class="i18n-block zh-block">生成视频</span></button>
+    <button class="filter-pill tag-pill" data-tag="agent-methodology"><span class="i18n-block en-block">Agent methodology</span><span class="i18n-block zh-block">Agent 方法论</span></button>
+    <button class="filter-pill tag-pill" data-tag="coding-workflow"><span class="i18n-block en-block">Coding workflow</span><span class="i18n-block zh-block">编程工作流</span></button>
+    <button class="filter-pill tag-pill" data-tag="skill-authoring"><span class="i18n-block en-block">Author skills</span><span class="i18n-block zh-block">写 skill</span></button>
+    <button class="filter-pill tag-pill" data-tag="skill-distribution"><span class="i18n-block en-block">Manage skills</span><span class="i18n-block zh-block">管理 skill</span></button>
+    <button class="filter-pill tag-pill" data-tag="llm-routing"><span class="i18n-block en-block">Route LLMs</span><span class="i18n-block zh-block">路由 LLM</span></button>
+    <button class="filter-pill tag-pill" data-tag="quant-trading"><span class="i18n-block en-block">Quant trading</span><span class="i18n-block zh-block">量化交易</span></button>
+    <button class="filter-pill tag-pill" data-tag="marketplace-monitoring"><span class="i18n-block en-block">Monitor marketplace</span><span class="i18n-block zh-block">监控市场</span></button>
+    <button class="filter-pill tag-pill" data-tag="repo-evaluation"><span class="i18n-block en-block">Evaluate repos</span><span class="i18n-block zh-block">评测 repo</span></button>
+    <button class="filter-pill tag-pill" data-tag="reasoning-discipline"><span class="i18n-block en-block">Reasoning discipline</span><span class="i18n-block zh-block">推理纪律</span></button>
+  </div>
 
   <table id="all-evals-table">
     <thead>
@@ -425,17 +452,20 @@ const tbody = document.querySelector('#all-evals-table tbody');
 const allRows = Array.from(tbody.querySelectorAll('tr'));
 let activeCategory = '';
 let activeBiz = '';
+let activeTag = '';
 let activeQuery = '';
 
 function applyFilters() {{
   for (const row of allRows) {{
     const cat = row.dataset.category || '';
     const biz = row.dataset.biz || '';
+    const tags = (row.dataset.tags || '').split(/\\s+/).filter(Boolean);
     const matchesCat = !activeCategory || cat === activeCategory;
     const matchesBiz = !activeBiz || biz === activeBiz;
+    const matchesTag = !activeTag || tags.includes(activeTag);
     const text = row.textContent.toLowerCase();
     const matchesSearch = !activeQuery || text.includes(activeQuery);
-    row.style.display = (matchesCat && matchesBiz && matchesSearch) ? '' : 'none';
+    row.style.display = (matchesCat && matchesBiz && matchesTag && matchesSearch) ? '' : 'none';
   }}
 }}
 
@@ -455,6 +485,16 @@ document.querySelectorAll('.filter-pill.biz-pill').forEach(pill => {{
     document.querySelectorAll('.filter-pill.biz-pill').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
     activeBiz = pill.dataset.biz || '';
+    applyFilters();
+  }});
+}});
+
+// Use-case filter pills ("I want to ...")
+document.querySelectorAll('.filter-pill.tag-pill').forEach(pill => {{
+  pill.addEventListener('click', () => {{
+    document.querySelectorAll('.filter-pill.tag-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeTag = pill.dataset.tag || '';
     applyFilters();
   }});
 }});

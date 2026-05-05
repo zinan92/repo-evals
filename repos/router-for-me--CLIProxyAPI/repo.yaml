@@ -95,6 +95,9 @@ product_view:
   how:
     en: Download the binary for your OS/arch (8 builds available), or `go install` from source. Configure your CLI sessions (Claude Code / Codex / Gemini CLI / Antigravity OAuth) and accounts in the YAML config. Run the binary; it listens on `localhost:8317` (or your chosen port). Point your other tools' `OPENAI_BASE_URL` at that address — they think they're talking to OpenAI; cliproxy translates protocols and forwards via your CLI auth.
     zh: 下载对应 OS/arch 的二进制(8 个版本可选),或源码 `go install`。在 YAML 配置里配置 CLI session(Claude Code / Codex / Gemini CLI / Antigravity OAuth) 和账号。跑起来,默认监听 `localhost:8317`。把其他工具的 `OPENAI_BASE_URL` 指过去 —— 它们以为自己在跟 OpenAI 说话,cliproxy 翻译协议然后用你的 CLI 鉴权转发。
+  next_step:
+    en: Run with 2+ provider OAuth sessions configured. Send 100 OpenAI-compatible requests, verify round-robin works + the token-refresh fires when one session expires. Save the proxy logs. Validates the multi-account behavior + token lifecycle.
+    zh: 配置 2 家以上 provider OAuth session 后跑起来。发 100 个 OpenAI 兼容请求,验证 round-robin 工作 + 一家 session 过期时 token 刷新触发。保存代理日志。验证多账号行为 + token 生命周期。
 similar_repos:
 - slug: zinan92--repo-evals
   shared_purpose:
@@ -246,3 +249,5 @@ third_party_services:
   free_tier: true
   cost_note: Optional providers
 business_category: development
+use_case_tags:
+- llm-routing

@@ -105,6 +105,9 @@ product_view:
   how:
     en: Clone + `pip install pyyaml`. Run `scripts/new-repo-eval.sh owner/repo` to scaffold a directory under `repos/`. Hand-author 6-10 claims in `claims/claim-map.yaml`, fill `repo.yaml` (product_view + workflow_diagram + similar_repos). Run `scripts/render_verdict_html.py owner--repo` for the bilingual dossier. Run `scripts/build_master_dashboard.py` to refresh the corpus index.
     zh: Clone + `pip install pyyaml`。`scripts/new-repo-eval.sh owner/repo` 在 `repos/` 下生成目录。手写 6-10 条 claim 到 `claims/claim-map.yaml`,填 `repo.yaml`(product_view + workflow_diagram + similar_repos)。`scripts/render_verdict_html.py owner--repo` 出双语 dossier。`scripts/build_master_dashboard.py` 刷新总目录。
+  next_step:
+    en: Log a fresh-clone-to-rendered-dossier session for a never-seen repo. Stopwatch the steps; save the resulting dossier. Updates claim-010 (live e2e) from untested to passed. With LICENSE + README already fixed, this single live run pushes 78 → 80+.
+    zh: 给一个从没见过的 repo 跑一次从 clone 到 dossier 出炉的有日志 session。计时每步;保存最终 dossier。把 claim-010(端到端)从未验证转为通过。LICENSE + README 已经修了,加上这一次实际运行,把 78 推过 80。
 similar_repos: []
 similar_repos_pending:
 - slug_note: 'Pending evaluation: an evaluation framework comparable to repo-evals
@@ -239,3 +242,5 @@ third_party_services:
   free_tier: true
   cost_note: pip install pyyaml — single dependency
 business_category: development
+use_case_tags:
+- repo-evaluation
