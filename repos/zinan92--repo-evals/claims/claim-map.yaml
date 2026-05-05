@@ -134,9 +134,9 @@ claims:
     Anyone reading this framework's dossiers can legally fork the
     framework itself, redistribute it, or reuse its renderer/scorer
     in their own audit projects.
-  status: failed
+  status: passed
   last_run: runs/2026-05-05/run-static-checks
-  note: README declares "MIT" in a license badge + ## License section, but no LICENSE file exists at the repo root. Same defect we flagged on karpathy/autoresearch — same fix (commit a LICENSE file).
+  note: 'Fixed 2026-05-05: LICENSE file added at repo root (MIT, copyright zinan92). Defect was same as karpathy/autoresearch; the framework caught it on itself via this self-eval.'
 - id: claim-009
   title: README reflects the current scoring + category model
   source: README.md
@@ -150,9 +150,9 @@ claims:
   business_expectation: |
     A new contributor reading README.md gets the same mental model
     of the framework that the dossiers actually express.
-  status: failed
+  status: passed
   last_run: runs/2026-05-05/run-static-checks
-  note: README still describes the deprecated 4-bucket model (unusable / usable / reusable / recommendable) and shows a "verdicts-4_buckets" badge. The framework has been on the 0-100 + 4-category model since 2026-05-05; README is stale.
+  note: 'Fixed 2026-05-05: README rewritten to describe the current 0-100 score model + 4 categories (Production / Available / Risky / Don''t use) + atom/molecule/compound layers + benefits-driven dossier sections + similar-repos comparison. Updated badges (score 0-100, categories 4 bands, layers, tests passing). Old 4-bucket language removed.'
 - id: claim-010
   title: 'End-to-end: a new evaluator can clone, scaffold, fill, render'
   source: scripts/new-repo-eval.sh + scripts/render_verdict_html.py

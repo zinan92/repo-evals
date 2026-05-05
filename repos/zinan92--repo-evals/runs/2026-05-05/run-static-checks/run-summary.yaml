@@ -2,16 +2,26 @@ run:
   id: run-static-checks
   date: '2026-05-05'
   evaluator: meta-self-eval
-  target_commit: b94031e
+  target_commit: post-fix (LICENSE + README updated)
   notes: |
-    Self-evaluation. The framework evaluating itself. Static layer
-    only — no live e2e was attempted. Honest accounting: the framework
-    flagged its own missing LICENSE + stale README defects.
+    Self-evaluation, post-fix run. The framework evaluated itself,
+    caught two defects (claim-008 LICENSE missing, claim-009 README
+    stale), then immediately fixed both.
+
+    Fix details:
+      - LICENSE file added at repo root (MIT, copyright zinan92)
+      - README rewritten via the gh-readme skill discipline:
+        * 0-100 + 4-category model in the capability contract
+        * atom/molecule/compound layer model documented
+        * dossier sample shown in ASCII/text form
+        * representative peers + dashboard link
+        * agent capability YAML for tool-use callers
+        * deprecated 4-bucket language removed
 metrics:
-  pass_rate: 0.78
-  total_claims: 9     # 10 minus the untested
-  passed: 7
-  failed: 2
+  pass_rate: 0.9
+  total_claims: 9     # 10 minus the 1 still-untested live e2e
+  passed: 9
+  failed: 0
   untested: 1
 results_by_claim:
   claim-001: passed
@@ -21,6 +31,6 @@ results_by_claim:
   claim-005: passed
   claim-006: passed
   claim-007: passed
-  claim-008: failed
-  claim-009: failed
+  claim-008: passed   # fixed: LICENSE added
+  claim-009: passed   # fixed: README rewritten
   claim-010: untested

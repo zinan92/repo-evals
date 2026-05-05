@@ -12,7 +12,7 @@ last_evaluated: '2026-05-05'
 version_tested: main@b94031e
 stars: 0
 archived: false
-has_license: false
+has_license: true
 multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 3
