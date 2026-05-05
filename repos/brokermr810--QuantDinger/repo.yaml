@@ -42,233 +42,197 @@ notes: 'Self-hosted full-stack AI quant trading platform. 4-service Docker
   '
 product_view:
   one_liner:
-    en: 'A self-hosted Docker Compose stack for AI-assisted quantitative trading:
-      charting, indicator and strategy generation, backtesting, and live execution
-      across crypto / IBKR stocks / MT5 forex — talks to your AI agent through an
-      MCP server, brings its own Postgres + Redis + Flask backend + React frontend.'
-    zh: 一个自托管的 AI 量化交易 Docker Compose 平台：行情图表、AI 辅助生成指标和策略、回测、加密货币 / IBKR 美股 / MT5
-      外汇实盘下单都在一套 stack 里。通过 MCP server 接你的 AI Agent，自带 Postgres + Redis + Flask 后端
-      + React 前端。
+    en: 'A self-hosted Docker Compose stack for AI-assisted quantitative trading: charting, indicator and strategy generation, backtesting, and live execution across crypto / IBKR stocks / MT5 forex — talks to your AI agent through an MCP server, brings its own Postgres + Redis + Flask backend + React frontend.'
+    zh: 一个自托管的 AI 量化交易 Docker Compose 平台：行情图表、AI 辅助生成指标和策略、回测、加密货币 / IBKR 美股 / MT5 外汇实盘下单都在一套 stack 里。通过 MCP server 接你的 AI Agent，自带 Postgres + Redis + Flask 后端 + React 前端。
   persona:
-    en: |-
-      A solo quant or small trading-team founder who wants their own AI-assisted backtesting + live execution stack — without giving an external SaaS their broker keys, strategies, or trade history. Comfortable running Docker Compose and connecting at least one broker (IBKR for US stocks, MT5 for forex, or a crypto exchange).
-    zh: |-
-      独立量化或小团队创始人,想要自己的 AI 辅助回测 + 实盘执行 stack —— 不想把 broker key / 策略 / 交易记录给外部 SaaS。能跑 Docker Compose,能接至少一家 broker(IBKR 美股 / MT5 外汇 / 加密所)。
+    en: A solo quant or small trading-team founder who wants their own AI-assisted backtesting + live execution stack — without giving an external SaaS their broker keys, strategies, or trade history. Comfortable running Docker Compose and connecting at least one broker (IBKR for US stocks, MT5 for forex, or a crypto exchange).
+    zh: 独立量化或小团队创始人,想要自己的 AI 辅助回测 + 实盘执行 stack —— 不想把 broker key / 策略 / 交易记录给外部 SaaS。能跑 Docker Compose,能接至少一家 broker(IBKR 美股 / MT5 外汇 / 加密所)。
   scenario:
-    en: |-
-      You have an idea ("buy on RSI dips, exit on MA20 cross"), want to test it on 3 years of data, iterate the rules, then put a small live position. You want the AI to write the indicator code + the strategy code so you don't hand-code each variation, but you want the keys + the server in your control.
-    zh: |-
-      你有想法("RSI 回调买入,MA20 上穿离场"),想用 3 年数据回测,迭代规则,然后挂一个小仓位实盘。你希望 AI 替你写 indicator 代码 + 策略代码省得每次手写,但 key + 服务器在你自己手里。
+    en: You have an idea ("buy on RSI dips, exit on MA20 cross"), want to test it on 3 years of data, iterate the rules, then put a small live position. You want the AI to write the indicator code + the strategy code so you don't hand-code each variation, but you want the keys + the server in your control.
+    zh: 你有想法("RSI 回调买入,MA20 上穿离场"),想用 3 年数据回测,迭代规则,然后挂一个小仓位实盘。你希望 AI 替你写 indicator 代码 + 策略代码省得每次手写,但 key + 服务器在你自己手里。
   without_this:
-    en: |-
-      Three options, each costly. (1) Use a SaaS quant platform (QuantConnect, Backtest.io) — gives them your strategies + history; data leaks risk. (2) Hand-stitch QuantLib + a charting lib + your broker's SDK + a Postgres + a Redis — weeks of plumbing before any backtest. (3) Pay an Interactive Brokers prop firm to do it — gives away your edge.
-    zh: |-
-      三条路,代价都高。(1) 用 SaaS 量化平台(QuantConnect / Backtest.io)—— 把策略 + 历史给他们,有数据泄漏风险。(2) 自己拼 QuantLib + 图表库 + broker SDK + Postgres + Redis —— 几周接管道才能开始第一次回测。(3) 找 prop firm 替你做 —— 把 edge 拱手让人。
+    en: Three options, each costly. (1) Use a SaaS quant platform (QuantConnect, Backtest.io) — gives them your strategies + history; data leaks risk. (2) Hand-stitch QuantLib + a charting lib + your broker's SDK + a Postgres + a Redis — weeks of plumbing before any backtest. (3) Pay an Interactive Brokers prop firm to do it — gives away your edge.
+    zh: 三条路,代价都高。(1) 用 SaaS 量化平台(QuantConnect / Backtest.io)—— 把策略 + 历史给他们,有数据泄漏风险。(2) 自己拼 QuantLib + 图表库 + broker SDK + Postgres + Redis —— 几周接管道才能开始第一次回测。(3) 找 prop firm 替你做 —— 把 edge 拱手让人。
   with_this:
-    en: |-
-      One docker-compose. AI agent talks via MCP to a 4-service stack (Flask backend + React frontend + Postgres + Redis). Workflow: "design indicator" → AI writes code, runs it on your data → "run backtest" → AI evaluates results, adjusts → optional "go live" with manual-approval gate. IBKR for US stocks, MT5 for forex (Windows-only), Coinbase / Binance for crypto.
-    zh: |-
-      一个 docker-compose。AI agent 通过 MCP 对接 4 服务 stack(Flask 后端 + React 前端 + Postgres + Redis)。工作流: "设计 indicator"→ AI 写代码 + 跑你的数据 → "回测"→ AI 评估结果调整 → 可选"上实盘"带人工审批闸门。IBKR 美股 / MT5 外汇(Windows-only)/ Coinbase / Binance 加密。
+    en: 'One docker-compose. AI agent talks via MCP to a 4-service stack (Flask backend + React frontend + Postgres + Redis). Workflow: "design indicator" → AI writes code, runs it on your data → "run backtest" → AI evaluates results, adjusts → optional "go live" with manual-approval gate. IBKR for US stocks, MT5 for forex (Windows-only), Coinbase / Binance for crypto.'
+    zh: '一个 docker-compose。AI agent 通过 MCP 对接 4 服务 stack(Flask 后端 + React 前端 + Postgres + Redis)。工作流: "设计 indicator"→ AI 写代码 + 跑你的数据 → "回测"→ AI 评估结果调整 → 可选"上实盘"带人工审批闸门。IBKR 美股 / MT5 外汇(Windows-only)/ Coinbase / Binance 加密。'
   cost_summary:
-    en: |-
-      MIT, free OSS. You pay for: (1) one of LLM providers (OpenAI / DeepSeek / Grok) for code generation; (2) broker accounts (IBKR / MT5 / crypto) you'd already have. AWS Marketplace AMI exists if you don't want to manage Docker yourself (paid).
-    zh: |-
-      MIT 免费开源。你付: (1) LLM provider(OpenAI / DeepSeek / Grok)三选一,用于代码生成;(2) 已有的 broker 账号(IBKR / MT5 / 加密所)。不想自己管 Docker 可买 AWS Marketplace AMI(付费)。
+    en: 'MIT, free OSS. You pay for: (1) one of LLM providers (OpenAI / DeepSeek / Grok) for code generation; (2) broker accounts (IBKR / MT5 / crypto) you''d already have. AWS Marketplace AMI exists if you don''t want to manage Docker yourself (paid).'
+    zh: 'MIT 免费开源。你付: (1) LLM provider(OpenAI / DeepSeek / Grok)三选一,用于代码生成;(2) 已有的 broker 账号(IBKR / MT5 / 加密所)。不想自己管 Docker 可买 AWS Marketplace AMI(付费)。'
   watch_out:
-    en: |-
-      OSS repo and commercial product (ai.quantdinger.com SaaS / AMI / paid tier) overlap; check which features are open-source vs gated. MetaTrader5 is Windows-only by design — Linux server can't do forex without a separate Windows MT5 host. Default `postgres123` password + 127.0.0.1 binding are dev-only — never public-VPS without reverse proxy + secret rotation. Real-money execution: don't enable `AGENT_LIVE_TRADING_ENABLED` until you've verified the manual-approval gate yourself on paper trades.
-    zh: |-
-      开源仓库和商业产品(ai.quantdinger.com SaaS / AMI / 付费层)有重叠,看清哪些是开源、哪些是付费。MetaTrader5 设计上 Windows-only —— Linux 服务器跑不了外汇,得单起一台 Windows。默认 `postgres123` + 127.0.0.1 绑定只够开发,不加反代 + 不轮换密钥别公网。实盘: 没在 paper 账号验证过人工审批闸门前,别开 `AGENT_LIVE_TRADING_ENABLED`。
+    en: 'OSS repo and commercial product (ai.quantdinger.com SaaS / AMI / paid tier) overlap; check which features are open-source vs gated. MetaTrader5 is Windows-only by design — Linux server can''t do forex without a separate Windows MT5 host. Default `postgres123` password + 127.0.0.1 binding are dev-only — never public-VPS without reverse proxy + secret rotation. Real-money execution: don''t enable `AGENT_LIVE_TRADING_ENABLED` until you''ve verified the manual-approval gate yourself on paper trades.'
+    zh: '开源仓库和商业产品(ai.quantdinger.com SaaS / AMI / 付费层)有重叠,看清哪些是开源、哪些是付费。MetaTrader5 设计上 Windows-only —— Linux 服务器跑不了外汇,得单起一台 Windows。默认 `postgres123` + 127.0.0.1 绑定只够开发,不加反代 + 不轮换密钥别公网。实盘: 没在 paper 账号验证过人工审批闸门前,别开 `AGENT_LIVE_TRADING_ENABLED`。'
   examples:
   - context:
-      en: |-
-        A solo quant testing a "buy on RSI<30, sell on MA20 cross" strategy on SPY data
-      zh: |-
-        独立量化测试"RSI<30 买入 / MA20 上穿卖出"策略,用 SPY 数据
+      en: A solo quant testing a "buy on RSI<30, sell on MA20 cross" strategy on SPY data
+      zh: 独立量化测试"RSI<30 买入 / MA20 上穿卖出"策略,用 SPY 数据
     you_say:
-      en: |-
-        Design an indicator: RSI(14) on SPY daily. Then write a strategy that buys when RSI<30 and sells when price crosses above MA20. Backtest 2020-2025.
-      zh: |-
-        设计 indicator: SPY 日线 RSI(14)。然后写一个策略,RSI<30 买入,价格上穿 MA20 卖出。回测 2020-2025。
+      en: 'Design an indicator: RSI(14) on SPY daily. Then write a strategy that buys when RSI<30 and sells when price crosses above MA20. Backtest 2020-2025.'
+      zh: '设计 indicator: SPY 日线 RSI(14)。然后写一个策略,RSI<30 买入,价格上穿 MA20 卖出。回测 2020-2025。'
     what_happens:
-      en: |-
-        AI agent generates the RSI calculation in Python, registers it, runs it on your loaded SPY data. Then writes the strategy code, runs backtest engine, returns Sharpe / drawdown / trade count / equity curve. You see it: 47 trades, Sharpe 0.6, max drawdown 18%. You ask AI to add a stop-loss; it iterates.
-      zh: |-
-        AI agent 生成 RSI 计算的 Python 代码,注册进去,在你已加载的 SPY 数据上跑。然后写策略代码,跑回测引擎,返回 Sharpe / 回撤 / 交易笔数 / 权益曲线。你看到: 47 笔交易,Sharpe 0.6,最大回撤 18%。你让 AI 加止损,迭代。
+      en: 'AI agent generates the RSI calculation in Python, registers it, runs it on your loaded SPY data. Then writes the strategy code, runs backtest engine, returns Sharpe / drawdown / trade count / equity curve. You see it: 47 trades, Sharpe 0.6, max drawdown 18%. You ask AI to add a stop-loss; it iterates.'
+      zh: 'AI agent 生成 RSI 计算的 Python 代码,注册进去,在你已加载的 SPY 数据上跑。然后写策略代码,跑回测引擎,返回 Sharpe / 回撤 / 交易笔数 / 权益曲线。你看到: 47 笔交易,Sharpe 0.6,最大回撤 18%。你让 AI 加止损,迭代。'
   - context:
-      en: |-
-        A small trading team comparing a basket of 5 strategies for crypto perp futures
-      zh: |-
-        小团队比较一组 5 个加密永续合约策略
+      en: A small trading team comparing a basket of 5 strategies for crypto perp futures
+      zh: 小团队比较一组 5 个加密永续合约策略
     you_say:
-      en: |-
-        Run all 5 strategies in our /strategies folder against BTC/USD perp last 6 months, give me a comparison table
-      zh: |-
-        把 /strategies 文件夹里 5 个策略全部在 BTC/USD 永续合约近 6 个月数据上跑一遍,给我对比表
+      en: Run all 5 strategies in our /strategies folder against BTC/USD perp last 6 months, give me a comparison table
+      zh: 把 /strategies 文件夹里 5 个策略全部在 BTC/USD 永续合约近 6 个月数据上跑一遍,给我对比表
     what_happens:
-      en: |-
-        Backtest engine runs all 5 in parallel containers, aggregates results into a comparison view (Sharpe / Calmar / max DD / win rate / avg trade duration). You see 2 strategies have similar Sharpe but very different max DD; you discard the higher-DD one.
-      zh: |-
-        回测引擎并行跑 5 个,把结果聚合成对比视图(Sharpe / Calmar / 最大回撤 / 胜率 / 平均持仓时长)。你看到 2 个策略 Sharpe 相近但最大回撤差异大;舍弃高回撤那个。
+      en: Backtest engine runs all 5 in parallel containers, aggregates results into a comparison view (Sharpe / Calmar / max DD / win rate / avg trade duration). You see 2 strategies have similar Sharpe but very different max DD; you discard the higher-DD one.
+      zh: 回测引擎并行跑 5 个,把结果聚合成对比视图(Sharpe / Calmar / 最大回撤 / 胜率 / 平均持仓时长)。你看到 2 个策略 Sharpe 相近但最大回撤差异大;舍弃高回撤那个。
   - context:
-      en: |-
-        A founder who validated a strategy on paper trading and wants to go live with $1000 real on IBKR
-      zh: |-
-        创始人在 paper 账号验证完一个策略,想在 IBKR 上拿 1000 美元真钱实盘
+      en: A founder who validated a strategy on paper trading and wants to go live with $1000 real on IBKR
+      zh: 创始人在 paper 账号验证完一个策略,想在 IBKR 上拿 1000 美元真钱实盘
     you_say:
-      en: |-
-        Set this strategy live on my IBKR paper account first; manual-approval gate must be ON. Show me each entry signal before I confirm.
-      zh: |-
-        把这个策略上 IBKR paper 账号实盘,人工审批闸门必须开。每个入场信号先给我看,我确认才下单。
+      en: Set this strategy live on my IBKR paper account first; manual-approval gate must be ON. Show me each entry signal before I confirm.
+      zh: 把这个策略上 IBKR paper 账号实盘,人工审批闸门必须开。每个入场信号先给我看,我确认才下单。
     what_happens:
-      en: |-
-        AI generates entry / exit signals based on live data; queues each in the dashboard with a "approve / reject" button. You see what's about to happen + you click. After 2 weeks of paper-account approval rounds, you flip to real account, $1000 cap. Manual gate stays on for safety.
-      zh: |-
-        AI 根据实时数据出入场 / 离场信号,在 dashboard 排队,每个带"批准 / 拒绝"按钮。你看清楚要发生什么再点。paper 账号上跑两周审批后,切真账号,1000 美元上限。人工闸门继续开,以防万一。
+      en: AI generates entry / exit signals based on live data; queues each in the dashboard with a "approve / reject" button. You see what's about to happen + you click. After 2 weeks of paper-account approval rounds, you flip to real account, $1000 cap. Manual gate stays on for safety.
+      zh: AI 根据实时数据出入场 / 离场信号,在 dashboard 排队,每个带"批准 / 拒绝"按钮。你看清楚要发生什么再点。paper 账号上跑两周审批后,切真账号,1000 美元上限。人工闸门继续开,以防万一。
+  how:
+    en: '`docker compose up -d --build` (or AWS Marketplace AMI for paid one-click). Configure broker keys (IBKR for US stocks, MT5 for forex on a Windows host, crypto exchange) + at least one LLM provider (OpenAI / DeepSeek / Grok). Open the React dashboard, connect your AI agent via MCP. Workflow: "design indicator" → AI writes Python code → "run backtest on this strategy" → AI evaluates → optional "go live" with manual-approval gate forced ON.'
+    zh: '`docker compose up -d --build`(或买 AWS Marketplace AMI 一键)。配 broker key(IBKR 美股 / MT5 外汇要 Windows / 加密所) + 至少一家 LLM(OpenAI / DeepSeek / Grok)。开 React dashboard,通过 MCP 接 AI agent。工作流:"设计 indicator" → AI 写 Python → "跑这个策略回测" → AI 评估 → 可选"上实盘"必须开人工审批闸门。'
 similar_repos:
 - slug: tukuaiai--tradecat
   shared_purpose:
-    en: |-
-      Both are self-hosted AI-assisted trading platforms. Both bet on "your keys, your server, your data" instead of SaaS. Both use AI for strategy generation; both connect to multiple broker types.
-    zh: |-
-      都是自托管 AI 辅助交易平台。都押"自己 key / 自己服务器 / 自己数据",不是 SaaS。都用 AI 生成策略;都连多家 broker。
+    en: Both are self-hosted AI-assisted trading platforms. Both bet on "your keys, your server, your data" instead of SaaS. Both use AI for strategy generation; both connect to multiple broker types.
+    zh: 都是自托管 AI 辅助交易平台。都押"自己 key / 自己服务器 / 自己数据",不是 SaaS。都用 AI 生成策略;都连多家 broker。
   this_better_at:
-    en: |-
-      Multi-broker breadth (IBKR + MT5 + crypto exchanges in one stack), manual-approval gate for live trading, AWS Marketplace AMI option, mature 4-service Docker stack.
-    zh: |-
-      多 broker 覆盖广(IBKR + MT5 + 加密所一站式),实盘人工审批闸门,可选 AWS Marketplace AMI,成熟 4 服务 Docker stack。
+    en: Multi-broker breadth (IBKR + MT5 + crypto exchanges in one stack), manual-approval gate for live trading, AWS Marketplace AMI option, mature 4-service Docker stack.
+    zh: 多 broker 覆盖广(IBKR + MT5 + 加密所一站式),实盘人工审批闸门,可选 AWS Marketplace AMI,成熟 4 服务 Docker stack。
   other_better_at:
-    en: |-
-      Lighter weight; smaller surface to learn. If you only do one asset class (e.g., just crypto), tradecat is leaner.
-    zh: |-
-      更轻量;学习曲线更短。如果你只做一类资产(比如只做加密),tradecat 更精简。
+    en: Lighter weight; smaller surface to learn. If you only do one asset class (e.g., just crypto), tradecat is leaner.
+    zh: 更轻量;学习曲线更短。如果你只做一类资产(比如只做加密),tradecat 更精简。
 - slug: zinan92--repo-evals
   shared_purpose:
-    en: |-
-      Both are personal-tool framework code: well-structured Docker / Python stacks for the author's own daily use, MIT-licensed, kept up because the author depends on them.
-    zh: |-
-      都是个人工具框架代码: 作者自己日常用的 Docker / Python stack,结构良好,MIT,因为作者自己依赖所以持续维护。
+    en: 'Both are personal-tool framework code: well-structured Docker / Python stacks for the author''s own daily use, MIT-licensed, kept up because the author depends on them.'
+    zh: '都是个人工具框架代码: 作者自己日常用的 Docker / Python stack,结构良好,MIT,因为作者自己依赖所以持续维护。'
   this_better_at:
-    en: |-
-      Domain depth — full quant trading workflow with broker integrations + live execution gating. Real money at stake makes the engineering quality higher.
-    zh: |-
-      领域深度 —— 完整量化工作流 + broker 集成 + 实盘闸门。真金白银,工程质量更高。
+    en: Domain depth — full quant trading workflow with broker integrations + live execution gating. Real money at stake makes the engineering quality higher.
+    zh: 领域深度 —— 完整量化工作流 + broker 集成 + 实盘闸门。真金白银,工程质量更高。
   other_better_at:
-    en: |-
-      Different problem domain — repo-evals is about evaluating *what to install*, QuantDinger is one of those "what to install" candidates. Use repo-evals to decide if QuantDinger fits your needs.
-    zh: |-
-      不同问题域 —— repo-evals 评测"装什么",QuantDinger 是被评测的候选之一。用 repo-evals 判断 QuantDinger 是否适合你。
+    en: Different problem domain — repo-evals is about evaluating *what to install*, QuantDinger is one of those "what to install" candidates. Use repo-evals to decide if QuantDinger fits your needs.
+    zh: 不同问题域 —— repo-evals 评测"装什么",QuantDinger 是被评测的候选之一。用 repo-evals 判断 QuantDinger 是否适合你。
 workflow_diagram:
   layout: tree
-  why_layer: |
-    Compound — at three diamond decision nodes, the LLM (or AI agent
-    via MCP) decides at runtime which path to take based on your
-    request and the data it sees. (1) "Design indicator or use existing?"
-    — branches to AI codegen vs library. (2) "Backtest looks promising
-    or needs adjustment?" — branches to live-prep vs iterate. (3)
-    "Live-trade approval — who decides?" — branches to AI-pre-flight
-    vs human-veto. A molecule would have a fixed pipeline; a compound
-    has runtime LLM-driven branches.
+  why_layer:
+    en: 'Compound — at three diamond decision nodes, the LLM (or AI agent
+
+      via MCP) decides at runtime which path to take based on your
+
+      request and the data it sees. (1) "Design indicator or use existing?"
+
+      — branches to AI codegen vs library. (2) "Backtest looks promising
+
+      or needs adjustment?" — branches to live-prep vs iterate. (3)
+
+      "Live-trade approval — who decides?" — branches to AI-pre-flight
+
+      vs human-veto. A molecule would have a fixed pipeline; a compound
+
+      has runtime LLM-driven branches.'
+    zh: 复合物 —— 在 3 个菱形决策节点上,LLM(或通过 MCP 的 AI agent)运行时根据请求和数据决定走哪条路。(1)"需要新 indicator?" 分到 AI 代码生成 vs 现成库;(2)"回测够好了 or 继续迭代?" 分到上实盘准备 vs 调整;(3)"实盘审批 —— 谁决定?" 分到 AI 预审 vs 人工否决。分子是固定流水线;复合物是运行时 LLM 决定的分支。
   nodes:
   - id: ask
     type: start
     rank: 0
     lane: 1
     label:
-      en: |-
-        Trading idea
-        (e.g., "RSI dip + MA cross")
-      zh: |-
-        交易想法
-        (比如"RSI 回调 + MA 上穿")
+      en: 'Trading idea
+
+        (e.g., "RSI dip + MA cross")'
+      zh: '交易想法
+
+        (比如"RSI 回调 + MA 上穿")'
   - id: dec_indicator
     type: decision
     rank: 1
     lane: 1
     label:
-      en: |-
-        Need new indicator?
-        (LLM decides)
-      zh: |-
-        需要新 indicator?
-        (LLM 决定)
+      en: 'Need new indicator?
+
+        (LLM decides)'
+      zh: '需要新 indicator?
+
+        (LLM 决定)'
   - id: ai_codegen
     type: atom
     rank: 2
     lane: 0
     label:
-      en: |-
-        AI generates indicator code
-        (Python, registered)
-      zh: |-
-        AI 生成 indicator 代码
-        (Python,注册)
+      en: 'AI generates indicator code
+
+        (Python, registered)'
+      zh: 'AI 生成 indicator 代码
+
+        (Python,注册)'
   - id: backtest
     type: atom
     rank: 3
     lane: 1
     label:
-      en: |-
-        Backtest engine
-        (your data, your params)
-      zh: |-
-        回测引擎
-        (你的数据 / 参数)
+      en: 'Backtest engine
+
+        (your data, your params)'
+      zh: '回测引擎
+
+        (你的数据 / 参数)'
   - id: dec_iterate
     type: decision
     rank: 4
     lane: 1
     label:
-      en: |-
-        Promising or iterate?
-        (LLM evaluates results)
-      zh: |-
-        够好 或 迭代?
-        (LLM 评估结果)
+      en: 'Promising or iterate?
+
+        (LLM evaluates results)'
+      zh: '够好 或 迭代?
+
+        (LLM 评估结果)'
   - id: iterate
     type: atom
     rank: 5
     lane: 0
     label:
-      en: |-
-        AI adjusts strategy
-        (re-run backtest)
-      zh: |-
-        AI 调整策略
-        (重跑回测)
+      en: 'AI adjusts strategy
+
+        (re-run backtest)'
+      zh: 'AI 调整策略
+
+        (重跑回测)'
   - id: dec_live
     type: decision
     rank: 6
     lane: 1
     label:
-      en: |-
-        Live or paper?
-        (manual-approval gate)
-      zh: |-
-        实盘 或 paper?
-        (人工审批闸门)
+      en: 'Live or paper?
+
+        (manual-approval gate)'
+      zh: '实盘 或 paper?
+
+        (人工审批闸门)'
   - id: paper
     type: atom
     rank: 7
     lane: 2
     label:
-      en: |-
-        Paper account
-        (validate gate)
-      zh: |-
-        paper 账号
-        (验证审批闸门)
+      en: 'Paper account
+
+        (validate gate)'
+      zh: 'paper 账号
+
+        (验证审批闸门)'
   - id: live
     type: end
     rank: 7
     lane: 1
     label:
-      en: |-
-        Live execution
-        (IBKR / MT5 / crypto)
-      zh: |-
-        实盘执行
-        (IBKR / MT5 / 加密)
+      en: 'Live execution
+
+        (IBKR / MT5 / crypto)'
+      zh: '实盘执行
+
+        (IBKR / MT5 / 加密)'
   edges:
   - from: ask
     to: dec_indicator
@@ -373,3 +337,4 @@ third_party_services:
   signup_needed: true
   free_tier: true
   cost_note: ccxt supports many exchanges; trading fees apply
+business_category: finance

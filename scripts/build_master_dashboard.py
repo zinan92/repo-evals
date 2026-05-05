@@ -116,6 +116,7 @@ def load_repo(slug_dir: Path) -> dict | None:
         "stars": int(repo.get("stars", 0) or 0),
         "archetype": repo.get("archetype", "unknown"),
         "layer": repo.get("layer", "unknown"),
+        "business_category": str(repo.get("business_category", "") or "").lower(),
         "score": result.get("score", 0),
         "tier_key": result.get("tier_key", "unknown"),
         "tier_emoji": result.get("tier_emoji", ""),
@@ -184,16 +185,32 @@ def build():
             else '<span class="muted">—</span>'
         )
 
+        biz = r["business_category"]
+        biz_pill = ""
+        if biz in {"content", "finance", "development"}:
+            biz_label_en = {"content": "Content", "finance": "Finance",
+                            "development": "Development"}[biz]
+            biz_label_zh = {"content": "内容", "finance": "金融",
+                            "development": "开发"}[biz]
+            biz_emoji = {"content": "📝", "finance": "💹", "development": "🛠"}[biz]
+            biz_pill = (
+                f' · <span class="tag biz-{biz}">{biz_emoji} '
+                f'<span class="i18n-block en-block inline">{biz_label_en}</span>'
+                f'<span class="i18n-block zh-block inline">{biz_label_zh}</span>'
+                f'</span>'
+            )
+
         table_rows.append(
             f'<tr data-score="{r["score"]}" data-stars="{r["stars"]}" '
             f'data-category="{r["category_key"]}" data-tier="{r["tier_key"]}" '
-            f'data-layer="{r["layer"]}">'
+            f'data-layer="{r["layer"]}" data-biz="{biz}">'
             f'<td class="num">{i}</td>'
             f'<td class="repo-cell">'
             f'<div class="repo-name"><strong>{html.escape(r["owner"])}/{html.escape(r["display"])}</strong> {repo_link}</div>'
             f'<div class="repo-meta">⭐ {r["stars"]:,} · '
             f'<span class="tag arche-{r["archetype"]}">{html.escape(r["archetype"])}</span> · '
             f'<span class="tag layer-{r["layer"]}">{html.escape(r["layer"])}</span>'
+            f'{biz_pill}'
             f'</div>'
             f'</td>'
             f'<td>{_bilingual_cell(r["one_liner_en"], r["one_liner_zh"])}</td>'
@@ -304,6 +321,9 @@ td.num {{ font-family: var(--font-mono); text-align: center; color: var(--text-3
 .tag.layer-atom {{ color: var(--layer-atom); }}
 .tag.layer-molecule {{ color: var(--layer-molecule); }}
 .tag.layer-compound {{ color: var(--layer-compound); }}
+.tag.biz-content     {{ color: #f59e0b; }}
+.tag.biz-finance     {{ color: #4ade80; }}
+.tag.biz-development {{ color: #60a5fa; }}
 
 .cost-cell {{ font-size: 12px; color: var(--text-2); max-width: 240px; line-height: 1.5; }}
 
@@ -352,6 +372,13 @@ footer {{ margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--borde
     <button class="filter-pill" data-category="risky">⚠️ <span class="i18n-block en-block">Risky</span><span class="i18n-block zh-block">有风险</span></button>
     <button class="filter-pill" data-category="dont_use">🛑 <span class="i18n-block en-block">Don't use</span><span class="i18n-block zh-block">不可使用</span></button>
   </div>
+  <div class="controls">
+    <span class="filter-label"><span class="i18n-block en-block">By domain:</span><span class="i18n-block zh-block">按业务大类:</span></span>
+    <button class="filter-pill biz-pill active" data-biz="">All</button>
+    <button class="filter-pill biz-pill" data-biz="content">📝 <span class="i18n-block en-block">Content</span><span class="i18n-block zh-block">内容</span></button>
+    <button class="filter-pill biz-pill" data-biz="finance">💹 <span class="i18n-block en-block">Finance</span><span class="i18n-block zh-block">金融</span></button>
+    <button class="filter-pill biz-pill" data-biz="development">🛠 <span class="i18n-block en-block">Development</span><span class="i18n-block zh-block">开发</span></button>
+  </div>
 
   <table id="all-evals-table">
     <thead>
@@ -397,23 +424,37 @@ setLang(_lang);
 const tbody = document.querySelector('#all-evals-table tbody');
 const allRows = Array.from(tbody.querySelectorAll('tr'));
 let activeCategory = '';
+let activeBiz = '';
 let activeQuery = '';
 
 function applyFilters() {{
   for (const row of allRows) {{
     const cat = row.dataset.category || '';
+    const biz = row.dataset.biz || '';
     const matchesCat = !activeCategory || cat === activeCategory;
+    const matchesBiz = !activeBiz || biz === activeBiz;
     const text = row.textContent.toLowerCase();
     const matchesSearch = !activeQuery || text.includes(activeQuery);
-    row.style.display = (matchesCat && matchesSearch) ? '' : 'none';
+    row.style.display = (matchesCat && matchesBiz && matchesSearch) ? '' : 'none';
   }}
 }}
 
-document.querySelectorAll('.filter-pill').forEach(pill => {{
+// Category filter pills (production / available / risky / dont_use)
+document.querySelectorAll('.filter-pill[data-category]').forEach(pill => {{
   pill.addEventListener('click', () => {{
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.filter-pill[data-category]').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
     activeCategory = pill.dataset.category || '';
+    applyFilters();
+  }});
+}});
+
+// Business-domain filter pills (content / finance / development)
+document.querySelectorAll('.filter-pill.biz-pill').forEach(pill => {{
+  pill.addEventListener('click', () => {{
+    document.querySelectorAll('.filter-pill.biz-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeBiz = pill.dataset.biz || '';
     applyFilters();
   }});
 }});

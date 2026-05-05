@@ -98,6 +98,7 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
 
 /* --- Layer strip (atom · molecule · compound) ---------------------- */
 .layer-strip-section { margin-bottom: 40px; }
+.layer-strip-biz-row { margin: -8px 0 14px; }
 .layer-strip {
   display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
   align-items: stretch; gap: 0;
@@ -248,6 +249,24 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
 .similar-row-this  .similar-row-label { color: var(--ok); }
 .similar-row-other .similar-row-label { color: #c084fc; }
 
+.similar-pending {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+.similar-pending-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.similar-pending-row {
+  font-size: 13.5px; line-height: 1.55;
+  color: var(--text-2); white-space: pre-wrap;
+}
+.similar-pending-row + .similar-pending-row { margin-top: 8px; }
+
 /* --- Workflow diagram (atom / molecule / compound) ----------------- */
 .workflow-diagram-section { margin-bottom: 80px; }
 .wd-why {
@@ -353,11 +372,61 @@ html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
   color: var(--text-3); text-transform: uppercase;
   letter-spacing: 0.14em; font-weight: 700;
 }
+.benefit-num {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--bucket); font-weight: 700;
+  padding: 2px 6px; background: var(--bucket-bg);
+  border-radius: 3px;
+}
 .benefit-icon { font-size: 16px; }
 .benefit-body {
   font-size: 15px; line-height: 1.62;
   color: var(--text); white-space: pre-wrap;
 }
+
+/* Card #4 — Before & After comparison */
+.benefit-ba {
+  grid-column: 1 / -1;  /* span both columns of benefits-grid */
+  background: var(--surface-1);
+}
+.ba-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 4px;
+}
+@media (max-width: 720px) { .ba-grid { grid-template-columns: 1fr; } }
+.ba-side {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+.ba-before {
+  background: linear-gradient(to bottom right, transparent, var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.18);
+}
+.ba-after {
+  background: linear-gradient(to bottom right, transparent, var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}
+.ba-side-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 8px; font-weight: 700;
+}
+.ba-before .ba-side-label { color: var(--bad); }
+.ba-after .ba-side-label  { color: var(--ok); }
+.ba-side-body { font-size: 14px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }
+
+/* business_category pill — content / finance / development */
+.biz-cat-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.08em; font-weight: 600;
+  background: var(--surface-2); border: 1px solid var(--border);
+}
+.biz-cat-pill.biz-content     { color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
+.biz-cat-pill.biz-finance     { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
+.biz-cat-pill.biz-development { color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); }
 
 /* Concrete usage examples (lives inside the benefits section) */
 .usex-block { margin-top: 28px; }
@@ -1228,18 +1297,18 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
   </header>
 
-  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一层?"></span></h2></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip-biz-row"><span class="biz-cat-pill biz-content"><span>📝</span><span class="i18n" data-en="Content" data-zh="内容类"></span></span></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
 
   <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:75%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">75</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 75 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div></section>
 
-  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-icon">👤</span><span class="i18n" data-en="Who this is for" data-zh="谁会用上它"></span></div><div class="benefit-body"><span class="i18n" data-en="A Python-comfortable researcher, content analyst, or trend tracker who needs raw post / comment / creator data from one or more Chinese platforms for non-commercial analysis. NOT for production scraping." data-zh="懂 Python 的研究者 / 内容分析师 / 趋势追踪人 —— 需要从某个或多个中文平台拿到原始的帖子 / 评论 / 创作者数据,用于非商用分析。不是给生产抓取用。"></span></div></article>
-<article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-icon">🎯</span><span class="i18n" data-en="When you'd reach for it" data-zh="什么时候用上"></span></div><div class="benefit-body"><span class="i18n" data-en="You want this week&#x27;s top Xiaohongshu posts under a tag, or all comments on a Douyin video, or a creator&#x27;s last 200 Weibo posts. You&#x27;ll log in with your real account once (QR / phone / cookie), let it run on your laptop, and dump to CSV / SQLite for downstream analysis." data-zh="你想要本周小红书某个 tag 下的爆款,或者某个抖音视频的全量评论,或者某创作者在微博的最近 200 条帖子。准备真实账号登一次(扫码 / 短信 / cookie),挂在自己电脑上跑,导出 CSV / SQLite 给下游分析用。"></span></div></article>
-<article class="benefit-card benefit-without"><div class="benefit-eyebrow"><span class="benefit-icon">😩</span><span class="i18n" data-en="What you'd do without it" data-zh="没它的时候怎么办"></span></div><div class="benefit-body"><span class="i18n" data-en="You write per-platform crawlers from scratch. Each platform&#x27;s anti-bot, signing, login flow, pagination, comment threading is its own can of worms — a serious solo build is weeks per platform. Or you pay a SaaS data vendor (¥¥¥), or you scrape the open web (lower-quality data, no comments).
+  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-num">#1</span><span class="benefit-icon">👤</span><span class="i18n" data-en="Who" data-zh="谁用"></span></div><div class="benefit-body"><span class="i18n" data-en="A Python-comfortable researcher, content analyst, or trend tracker who needs raw post / comment / creator data from one or more Chinese platforms for non-commercial analysis. NOT for production scraping." data-zh="懂 Python 的研究者 / 内容分析师 / 趋势追踪人 —— 需要从某个或多个中文平台拿到原始的帖子 / 评论 / 创作者数据,用于非商用分析。不是给生产抓取用。"></span></div></article>
+<article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-num">#2</span><span class="benefit-icon">🎯</span><span class="i18n" data-en="When" data-zh="什么时候用"></span></div><div class="benefit-body"><span class="i18n" data-en="You want this week&#x27;s top Xiaohongshu posts under a tag, or all comments on a Douyin video, or a creator&#x27;s last 200 Weibo posts. You&#x27;ll log in with your real account once (QR / phone / cookie), let it run on your laptop, and dump to CSV / SQLite for downstream analysis." data-zh="你想要本周小红书某个 tag 下的爆款,或者某个抖音视频的全量评论,或者某创作者在微博的最近 200 条帖子。准备真实账号登一次(扫码 / 短信 / cookie),挂在自己电脑上跑,导出 CSV / SQLite 给下游分析用。"></span></div></article>
+<article class="benefit-card benefit-how"><div class="benefit-eyebrow"><span class="benefit-num">#3</span><span class="benefit-icon">🧭</span><span class="i18n" data-en="How" data-zh="怎么用"></span></div><div class="benefit-body"><span class="i18n" data-en="git clone, uv pip install. Run `python main.py --platform &lt;name&gt; --type &lt;mode&gt; --keyword/--note_id/--creator_id ...`. First run pops a QR code or asks for cookie to log in to the platform. Playwright opens a real browser, scrapes per your flags, writes results to `data/&lt;platform&gt;/&lt;file&gt;` in your chosen format (CSV / JSON / SQLite / Postgres / Mongo / etc.)." data-zh="git clone + uv pip install。`python main.py --platform &lt;平台&gt; --type &lt;类型&gt; --keyword/--note_id/--creator_id ...` 跑起来。第一次会弹二维码或问你 cookie 登录平台。Playwright 开真实浏览器按你的参数抓,把结果写到 `data/&lt;平台&gt;/&lt;文件&gt;`,格式按你挑(CSV / JSON / SQLite / Postgres / Mongo 等)。"></span></div></article>
+<article class="benefit-card benefit-ba"><div class="benefit-eyebrow"><span class="benefit-num">#4</span><span class="benefit-icon">⇄</span><span class="i18n" data-en="Before &amp; After" data-zh="前后对比"></span></div><div class="ba-grid"><div class="ba-side ba-before"><div class="ba-side-label"><span class="i18n" data-en="Before — without it" data-zh="之前 —— 没它的时候"></span></div><div class="ba-side-body"><span class="i18n" data-en="You write per-platform crawlers from scratch. Each platform&#x27;s anti-bot, signing, login flow, pagination, comment threading is its own can of worms — a serious solo build is weeks per platform. Or you pay a SaaS data vendor (¥¥¥), or you scrape the open web (lower-quality data, no comments).
 " data-zh="一个个平台从头写爬虫。每个平台的反爬 / 签名 / 登录 / 翻页 / 评论嵌套都是一堆坑 —— 单人认真写一个平台要好几周。要么花钱买 SaaS 数据(¥¥¥),要么爬公开 web(数据质量低 / 评论拿不到)。
-"></span></div></article>
-<article class="benefit-card benefit-with"><div class="benefit-eyebrow"><span class="benefit-icon">✨</span><span class="i18n" data-en="What having it changes" data-zh="有它之后变化在哪"></span></div><div class="benefit-body"><span class="i18n" data-en="One CLI for 7 platforms. Login type (QR/phone/cookie), crawl type (search/detail/creator), and storage backend (CSV/JSON/SQLite/Postgres/MongoDB) are all flags. Day-1 you have a working baseline. You&#x27;ll patch when a platform updates DOM/signing — but you&#x27;re patching working code, not starting from a blank file.
+"></span></div></div><div class="ba-side ba-after"><div class="ba-side-label"><span class="i18n" data-en="After — with it" data-zh="之后 —— 有了它之后"></span></div><div class="ba-side-body"><span class="i18n" data-en="One CLI for 7 platforms. Login type (QR/phone/cookie), crawl type (search/detail/creator), and storage backend (CSV/JSON/SQLite/Postgres/MongoDB) are all flags. Day-1 you have a working baseline. You&#x27;ll patch when a platform updates DOM/signing — but you&#x27;re patching working code, not starting from a blank file.
 " data-zh="一个 CLI 跑 7 个平台。登录方式(扫码 / 手机 / cookie)、抓取类型(搜索 / 详情 / 创作者)、存储后端(CSV / JSON / SQLite / Postgres / MongoDB) 都是参数。第一天就有可跑的版本。平台改版你要打补丁,但起点是能跑的代码,不是空文件。
-"></span></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A content analyst researching trends before Double-11 — needs the top 100 posts under #双十一美妆 on Xiaohongshu for keyword + engagement analysis" data-zh="内容分析师调研双十一前小红书 #双十一美妆 话题下 top 100 帖子,要做关键词 + 互动度分析"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="python main.py --platform xhs --type search --keyword &quot;双十一美妆&quot; --start 0 --end 100 --save_data csv" data-zh="python main.py --platform xhs --type search --keyword &quot;双十一美妆&quot; --start 0 --end 100 --save_data csv"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="First run pops a QR code in your terminal — scan with Xiaohongshu app to authorise. Playwright then opens a real browser, runs the search, paginates through 100 results, and writes data/xhs/search_results.csv with title / author / engagement / publish_time columns. Total: ~6 minutes for 100 posts." data-zh="第一次跑会在终端弹一个二维码 —— 用小红书 App 扫码授权。Playwright 然后开真实浏览器,跑搜索,翻页 100 条,把数据写到 data/xhs/search_results.csv(标题 / 作者 / 互动量 / 发布时间)。100 条大约 6 分钟。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A social-media researcher studying a Douyin influencer&#x27;s content strategy — needs the last 200 videos from one creator with view counts" data-zh="社交媒体研究者研究某抖音博主的内容策略 —— 需要某个创作者最近 200 条视频带播放量"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="python main.py --platform douyin --type creator --creator_id 12345678 --max_count 200 --save_data sqlite" data-zh="python main.py --platform douyin --type creator --creator_id 12345678 --max_count 200 --save_data sqlite"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Login is cookie-based on first run (paste your douyin cookie into the config). Crawler iterates the creator&#x27;s video list, hits the signing helper for each request, and writes 200 rows to data/douyin/creator_videos.sqlite. You query with SQL afterwards." data-zh="第一次跑用 cookie 登录(把你的抖音 cookie 贴到 config 里)。爬虫遍历创作者视频列表,每个请求都过签名辅助,写 200 行进 data/douyin/creator_videos.sqlite。之后用 SQL 查。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="An indie dev building a local &quot;Weibo trends&quot; dashboard — needs all comments under one viral post for sentiment analysis" data-zh="独立开发者做一个本地&quot;微博热搜&quot;dashboard —— 需要某条爆款博文下的全部评论做情绪分析"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="python main.py --platform weibo --type detail --note_id 4901234567 --get_comment True --save_data jsonl" data-zh="python main.py --platform weibo --type detail --note_id 4901234567 --get_comment True --save_data jsonl"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Crawler hits the post detail endpoint, then walks the comment tree (top-level comments → replies → replies-to-replies) until exhausted. Output goes to data/weibo/comments.jsonl, one comment per line — easy to stream into a sentiment classifier." data-zh="爬虫先打详情端点,然后遍历评论树(一级评论 → 回复 → 回复的回复)直到取完。输出到 data/weibo/comments.jsonl,每行一条评论 —— 容易喂给情绪分类器。"></span></span></div></article></div></div></section>
+"></span></div></div></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A content analyst researching trends before Double-11 — needs the top 100 posts under #双十一美妆 on Xiaohongshu for keyword + engagement analysis" data-zh="内容分析师调研双十一前小红书 #双十一美妆 话题下 top 100 帖子,要做关键词 + 互动度分析"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="python main.py --platform xhs --type search --keyword &quot;双十一美妆&quot; --start 0 --end 100 --save_data csv" data-zh="python main.py --platform xhs --type search --keyword &quot;双十一美妆&quot; --start 0 --end 100 --save_data csv"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="First run pops a QR code in your terminal — scan with Xiaohongshu app to authorise. Playwright then opens a real browser, runs the search, paginates through 100 results, and writes data/xhs/search_results.csv with title / author / engagement / publish_time columns. Total: ~6 minutes for 100 posts." data-zh="第一次跑会在终端弹一个二维码 —— 用小红书 App 扫码授权。Playwright 然后开真实浏览器,跑搜索,翻页 100 条,把数据写到 data/xhs/search_results.csv(标题 / 作者 / 互动量 / 发布时间)。100 条大约 6 分钟。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A social-media researcher studying a Douyin influencer&#x27;s content strategy — needs the last 200 videos from one creator with view counts" data-zh="社交媒体研究者研究某抖音博主的内容策略 —— 需要某个创作者最近 200 条视频带播放量"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="python main.py --platform douyin --type creator --creator_id 12345678 --max_count 200 --save_data sqlite" data-zh="python main.py --platform douyin --type creator --creator_id 12345678 --max_count 200 --save_data sqlite"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Login is cookie-based on first run (paste your douyin cookie into the config). Crawler iterates the creator&#x27;s video list, hits the signing helper for each request, and writes 200 rows to data/douyin/creator_videos.sqlite. You query with SQL afterwards." data-zh="第一次跑用 cookie 登录(把你的抖音 cookie 贴到 config 里)。爬虫遍历创作者视频列表,每个请求都过签名辅助,写 200 行进 data/douyin/creator_videos.sqlite。之后用 SQL 查。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="An indie dev building a local &quot;Weibo trends&quot; dashboard — needs all comments under one viral post for sentiment analysis" data-zh="独立开发者做一个本地&quot;微博热搜&quot;dashboard —— 需要某条爆款博文下的全部评论做情绪分析"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="python main.py --platform weibo --type detail --note_id 4901234567 --get_comment True --save_data jsonl" data-zh="python main.py --platform weibo --type detail --note_id 4901234567 --get_comment True --save_data jsonl"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Crawler hits the post detail endpoint, then walks the comment tree (top-level comments → replies → replies-to-replies) until exhausted. Output goes to data/weibo/comments.jsonl, one comment per line — easy to stream into a sentiment classifier." data-zh="爬虫先打详情端点,然后遍历评论树(一级评论 → 回复 → 回复的回复)直到取完。输出到 data/weibo/comments.jsonl,每行一条评论 —— 容易喂给情绪分类器。"></span></span></div></article></div></div></section>
 
   
 

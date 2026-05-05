@@ -1201,33 +1201,36 @@ def render_scenarios(vd: VerdictData) -> str:
 
 
 def render_benefits_section(vd: VerdictData) -> str:
-    """Benefits-driven hero block — replaces best_for + scenarios when the
-    new schema is present. Reads persona / scenario / without_this /
-    with_this from product_view and renders a 4-card layout that answers:
+    """Benefits-driven hero block — 4 numbered cards in narrative order:
 
-        👤 Who is this for?
-        🎯 When would they use it?
-        😩 What would they do without it?
-        ✨ What does it actually change?
+        #1 Who    (persona)
+        #2 When   (scenario)
+        #3 How    (concrete usage paragraph — the `how` field)
+        #4 Before & After  (without_this + with_this side-by-side)
 
-    Falls back to empty string if none of the new fields are populated;
-    callers should then render the legacy best_for/scenarios blocks."""
+    Below the 4 cards: the 3 example cards (context / you_say / what_happens)
+    as concrete-moments supplementary detail.
+
+    Falls back to empty string if no benefits-schema fields populated."""
 
     pv = vd.repo.get("product_view") or {}
     persona = pv.get("persona")
     scenario = pv.get("scenario")
+    how = pv.get("how")
     without_this = pv.get("without_this")
     with_this = pv.get("with_this")
 
-    if not (persona or scenario or without_this or with_this):
+    if not (persona or scenario or how or without_this or with_this):
         return ""
 
-    def _card(icon: str, label_en: str, label_zh: str, body: Any, klass: str) -> str:
+    def _card(num: str, icon: str, label_en: str, label_zh: str,
+              body: Any, klass: str) -> str:
         if not body:
             return ""
         return (
             f'<article class="benefit-card {klass}">'
             f'<div class="benefit-eyebrow">'
+            f'<span class="benefit-num">{num}</span>'
             f'<span class="benefit-icon">{icon}</span>'
             f'<span class="i18n" data-en="{label_en}" data-zh="{label_zh}"></span>'
             f'</div>'
@@ -1235,15 +1238,49 @@ def render_benefits_section(vd: VerdictData) -> str:
             f'</article>'
         )
 
-    cards = [
-        _card("👤", "Who this is for", "谁会用上它", persona, "benefit-persona"),
-        _card("🎯", "When you'd reach for it", "什么时候用上",
-              scenario, "benefit-scenario"),
-        _card("😩", "What you'd do without it", "没它的时候怎么办",
-              without_this, "benefit-without"),
-        _card("✨", "What having it changes", "有它之后变化在哪",
-              with_this, "benefit-with"),
-    ]
+    def _before_after_card(without: Any, with_: Any) -> str:
+        if not (without or with_):
+            return ""
+        without_html = (
+            f'<div class="ba-side ba-before">'
+            f'<div class="ba-side-label">'
+            f'<span class="i18n" data-en="Before — without it" '
+            f'data-zh="之前 —— 没它的时候"></span>'
+            f'</div>'
+            f'<div class="ba-side-body">{dual_lang(without)}</div>'
+            f'</div>'
+            if without else ''
+        )
+        with_html = (
+            f'<div class="ba-side ba-after">'
+            f'<div class="ba-side-label">'
+            f'<span class="i18n" data-en="After — with it" '
+            f'data-zh="之后 —— 有了它之后"></span>'
+            f'</div>'
+            f'<div class="ba-side-body">{dual_lang(with_)}</div>'
+            f'</div>'
+            if with_ else ''
+        )
+        return (
+            '<article class="benefit-card benefit-ba">'
+            '<div class="benefit-eyebrow">'
+            '<span class="benefit-num">#4</span>'
+            '<span class="benefit-icon">⇄</span>'
+            '<span class="i18n" data-en="Before &amp; After" '
+            'data-zh="前后对比"></span>'
+            '</div>'
+            f'<div class="ba-grid">{without_html}{with_html}</div>'
+            '</article>'
+        )
+
+    cards: list[str] = []
+    cards.append(_card("#1", "👤", "Who", "谁用",
+                       persona, "benefit-persona"))
+    cards.append(_card("#2", "🎯", "When", "什么时候用",
+                       scenario, "benefit-scenario"))
+    cards.append(_card("#3", "🧭", "How", "怎么用",
+                       how, "benefit-how"))
+    cards.append(_before_after_card(without_this, with_this))
     cards_html = "\n".join(c for c in cards if c)
 
     examples_html = render_usage_examples(vd)
@@ -1346,6 +1383,31 @@ def render_cost_summary(vd: VerdictData) -> str:
     )
 
 
+def render_business_category(vd: VerdictData) -> str:
+    """Pill showing the business domain (content / finance / development).
+
+    Reads ``repo.yaml.business_category``. Surfaces alongside the layer
+    strip so readers see at a glance what kind of *problem domain* the
+    repo addresses, separate from the technical layer (atom / molecule
+    / compound)."""
+
+    cat = str(vd.repo.get("business_category", "") or "").strip().lower()
+    if cat not in {"content", "finance", "development"}:
+        return ""
+    labels = {
+        "content":     ("Content",      "内容类",  "📝"),
+        "finance":     ("Finance",      "金融类",  "💹"),
+        "development": ("Development",  "开发类",  "🛠"),
+    }
+    en, zh, emoji = labels[cat]
+    return (
+        f'<span class="biz-cat-pill biz-{cat}">'
+        f'<span>{emoji}</span>'
+        f'<span class="i18n" data-en="{en}" data-zh="{zh}"></span>'
+        '</span>'
+    )
+
+
 def render_layer_strip(vd: VerdictData) -> str:
     """Visual #2 (after the one-liner): the layer spectrum.
 
@@ -1385,11 +1447,19 @@ def render_layer_strip(vd: VerdictData) -> str:
             f'</div>'
         )
 
+    biz_pill = render_business_category(vd)
+    biz_row = (
+        '<div class="layer-strip-biz-row">'
+        f'{biz_pill}'
+        '</div>'
+        if biz_pill else ''
+    )
     return (
         '<section class="layer-strip-section">'
         '<div class="section-head">'
         '<h2><span class="i18n" data-en="What kind of skill is this?" '
-        'data-zh="它是哪一层?"></span></h2></div>'
+        'data-zh="它是哪一类?"></span></h2></div>'
+        f'{biz_row}'
         '<div class="layer-strip">'
         + '<div class="layer-strip-arrow">→</div>'.join(cards)
         + '</div>'
@@ -2316,6 +2386,7 @@ html[data-category="dont_use"]   {{ --bucket:#f87171; --bucket-bg:rgba(248,113,1
 
 /* --- Layer strip (atom · molecule · compound) ---------------------- */
 .layer-strip-section {{ margin-bottom: 40px; }}
+.layer-strip-biz-row {{ margin: -8px 0 14px; }}
 .layer-strip {{
   display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
   align-items: stretch; gap: 0;
@@ -2589,11 +2660,61 @@ html[lang="zh"] .wd-label {{ font-size: 11.5px; letter-spacing: 0; }}
   color: var(--text-3); text-transform: uppercase;
   letter-spacing: 0.14em; font-weight: 700;
 }}
+.benefit-num {{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--bucket); font-weight: 700;
+  padding: 2px 6px; background: var(--bucket-bg);
+  border-radius: 3px;
+}}
 .benefit-icon {{ font-size: 16px; }}
 .benefit-body {{
   font-size: 15px; line-height: 1.62;
   color: var(--text); white-space: pre-wrap;
 }}
+
+/* Card #4 — Before & After comparison */
+.benefit-ba {{
+  grid-column: 1 / -1;  /* span both columns of benefits-grid */
+  background: var(--surface-1);
+}}
+.ba-grid {{
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 4px;
+}}
+@media (max-width: 720px) {{ .ba-grid {{ grid-template-columns: 1fr; }} }}
+.ba-side {{
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}}
+.ba-before {{
+  background: linear-gradient(to bottom right, transparent, var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.18);
+}}
+.ba-after {{
+  background: linear-gradient(to bottom right, transparent, var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}}
+.ba-side-label {{
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 8px; font-weight: 700;
+}}
+.ba-before .ba-side-label {{ color: var(--bad); }}
+.ba-after .ba-side-label  {{ color: var(--ok); }}
+.ba-side-body {{ font-size: 14px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }}
+
+/* business_category pill — content / finance / development */
+.biz-cat-pill {{
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.08em; font-weight: 600;
+  background: var(--surface-2); border: 1px solid var(--border);
+}}
+.biz-cat-pill.biz-content     {{ color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }}
+.biz-cat-pill.biz-finance     {{ color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }}
+.biz-cat-pill.biz-development {{ color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); }}
 
 /* Concrete usage examples (lives inside the benefits section) */
 .usex-block {{ margin-top: 28px; }}

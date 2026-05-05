@@ -51,258 +51,223 @@ notes: 'Tsinghua-affiliated open-source AI classroom platform (paper in JCST''26
   '
 product_view:
   one_liner:
-    en: An open-source Next.js + LangGraph multi-agent platform that turns any topic
-      or document into an interactive classroom — AI teachers + AI peers + auto-generated
-      slides / quizzes / interactive simulations / whiteboard / TTS, with 5 LLM providers
-      and 5 TTS providers wired in. Vercel-deploy or self-host; OpenClaw skill ships
-      for chat-app integration.
-    zh: 清华团队开源的 Next.js + LangGraph 多 Agent 教学平台：把任何题目或文档变成互动课堂 —— AI 老师 + AI 同学一起讲、画白板、生成幻灯片
-      / 测验 / 互动模拟 / TTS 朗读。配套 5 家 LLM provider + 5 家 TTS provider，可一键 Vercel 部署或本机自建；自带
-      OpenClaw skill，能从飞书 / Slack / Discord / Telegram 直接生成课堂。
+    en: An open-source Next.js + LangGraph multi-agent platform that turns any topic or document into an interactive classroom — AI teachers + AI peers + auto-generated slides / quizzes / interactive simulations / whiteboard / TTS, with 5 LLM providers and 5 TTS providers wired in. Vercel-deploy or self-host; OpenClaw skill ships for chat-app integration.
+    zh: 清华团队开源的 Next.js + LangGraph 多 Agent 教学平台：把任何题目或文档变成互动课堂 —— AI 老师 + AI 同学一起讲、画白板、生成幻灯片 / 测验 / 互动模拟 / TTS 朗读。配套 5 家 LLM provider + 5 家 TTS provider，可一键 Vercel 部署或本机自建；自带 OpenClaw skill，能从飞书 / Slack / Discord / Telegram 直接生成课堂。
   persona:
-    en: |-
-      A self-learner or educator with a topic / paper / chapter they want to actually understand — not skim a 5-paragraph summary, but sit through a real classroom where an AI teacher walks them through the whiteboard, asks them quiz questions, and answers their follow-ups. Typical: PhD student grokking an unfamiliar paper, K-12 teacher prepping a lesson, online-course author building modules.
-    zh: |-
-      有一个主题 / 论文 / 章节真心想搞懂的自学者或教育者 —— 不要 5 段话总结,要一堂真正的课,AI 老师在白板上讲、提问、答疑。典型: 啃陌生论文的 PhD 学生、备课的中小学老师、做线上课程的作者。
+    en: 'A self-learner or educator with a topic / paper / chapter they want to actually understand — not skim a 5-paragraph summary, but sit through a real classroom where an AI teacher walks them through the whiteboard, asks them quiz questions, and answers their follow-ups. Typical: PhD student grokking an unfamiliar paper, K-12 teacher prepping a lesson, online-course author building modules.'
+    zh: '有一个主题 / 论文 / 章节真心想搞懂的自学者或教育者 —— 不要 5 段话总结,要一堂真正的课,AI 老师在白板上讲、提问、答疑。典型: 啃陌生论文的 PhD 学生、备课的中小学老师、做线上课程的作者。'
   scenario:
-    en: |-
-      You have a 30-page paper on a topic you don't fully understand. Reading it cover-to-cover takes 2 hours and you'll forget half. You want a 20-minute classroom where AI teachers walk you through the key points, drawing on a whiteboard, with quiz checkpoints, and an AI peer asking the questions you wouldn't have thought to ask.
-    zh: |-
-      你有一份 30 页的陌生主题论文。完整读一遍要 2 小时,读完忘一半。你想要 20 分钟的课堂,AI 老师在白板上讲核心点,带 quiz 检查,加一个 AI 同学问你想不到要问的问题。
+    en: You have a 30-page paper on a topic you don't fully understand. Reading it cover-to-cover takes 2 hours and you'll forget half. You want a 20-minute classroom where AI teachers walk you through the key points, drawing on a whiteboard, with quiz checkpoints, and an AI peer asking the questions you wouldn't have thought to ask.
+    zh: 你有一份 30 页的陌生主题论文。完整读一遍要 2 小时,读完忘一半。你想要 20 分钟的课堂,AI 老师在白板上讲核心点,带 quiz 检查,加一个 AI 同学问你想不到要问的问题。
   without_this:
-    en: |-
-      Three options. (1) Read it yourself, take notes, hope you understood — slow + you don't know what you missed. (2) Paste into ChatGPT for a summary — flat text, no structure, no quiz, no whiteboard, missing the engagement that makes you actually retain. (3) Find a YouTube explainer (if it exists) — generic, not your specific paper.
-    zh: |-
-      三条路。(1) 自己读 + 做笔记 + 希望读懂 —— 慢 + 不知道漏了什么。(2) 扔给 ChatGPT 让它总结 —— 平铺文字,没有结构、quiz、白板,失去让你真正记住的互动。(3) 找 YouTube 讲解(如果有) —— 通用的,不是你那篇论文。
+    en: Three options. (1) Read it yourself, take notes, hope you understood — slow + you don't know what you missed. (2) Paste into ChatGPT for a summary — flat text, no structure, no quiz, no whiteboard, missing the engagement that makes you actually retain. (3) Find a YouTube explainer (if it exists) — generic, not your specific paper.
+    zh: 三条路。(1) 自己读 + 做笔记 + 希望读懂 —— 慢 + 不知道漏了什么。(2) 扔给 ChatGPT 让它总结 —— 平铺文字,没有结构、quiz、白板,失去让你真正记住的互动。(3) 找 YouTube 讲解(如果有) —— 通用的,不是你那篇论文。
   with_this:
-    en: |-
-      Paste your topic / upload your document. LangGraph multi-agent stack generates a classroom: AI teacher walks the whiteboard, AI peer asks questions, slides + quizzes + interactive simulations get auto-generated. TTS streams real voice. Either Vercel-deploy your own or use the hosted demo at open.maic.chat. OpenClaw skill ships so Slack / Telegram / Discord / Feishu can ask "make me a classroom about X".
-    zh: |-
-      贴主题或上传文档。LangGraph 多 agent stack 生成一堂课: AI 老师讲白板,AI 同学问问题,幻灯片 / quiz / 互动模拟自动生成。TTS 流式真实语音。可以 Vercel 一键部署或用 open.maic.chat 的托管 demo。自带 OpenClaw skill,可以在 Slack / Telegram / Discord / 飞书 直接说"给我做一节关于 X 的课"。
+    en: 'Paste your topic / upload your document. LangGraph multi-agent stack generates a classroom: AI teacher walks the whiteboard, AI peer asks questions, slides + quizzes + interactive simulations get auto-generated. TTS streams real voice. Either Vercel-deploy your own or use the hosted demo at open.maic.chat. OpenClaw skill ships so Slack / Telegram / Discord / Feishu can ask "make me a classroom about X".'
+    zh: '贴主题或上传文档。LangGraph 多 agent stack 生成一堂课: AI 老师讲白板,AI 同学问问题,幻灯片 / quiz / 互动模拟自动生成。TTS 流式真实语音。可以 Vercel 一键部署或用 open.maic.chat 的托管 demo。自带 OpenClaw skill,可以在 Slack / Telegram / Discord / 飞书 直接说"给我做一节关于 X 的课"。'
   cost_summary:
-    en: |-
-      AGPL-3.0 — any modified deployment must release source. You bring your own LLM key (5 supported: OpenAI / Anthropic / Google / DeepSeek / Grok) and optional TTS key (5 supported: OpenAI / Azure / GLM / Qwen / MiniMax). Per-classroom cost is non-trivial when TTS is on — budget 1-3 USD per 20-minute class depending on model + voice.
-    zh: |-
-      AGPL-3.0 —— 任何二次部署改了代码必须开源。自己带 LLM key(5 家可选: OpenAI / Anthropic / Google / DeepSeek / Grok),TTS key 可选(5 家: OpenAI / Azure / GLM / Qwen / MiniMax)。开 TTS 的话每堂课成本不低 —— 预算每 20 分钟课 1-3 USD,看模型 + 声音。
+    en: 'AGPL-3.0 — any modified deployment must release source. You bring your own LLM key (5 supported: OpenAI / Anthropic / Google / DeepSeek / Grok) and optional TTS key (5 supported: OpenAI / Azure / GLM / Qwen / MiniMax). Per-classroom cost is non-trivial when TTS is on — budget 1-3 USD per 20-minute class depending on model + voice.'
+    zh: 'AGPL-3.0 —— 任何二次部署改了代码必须开源。自己带 LLM key(5 家可选: OpenAI / Anthropic / Google / DeepSeek / Grok),TTS key 可选(5 家: OpenAI / Azure / GLM / Qwen / MiniMax)。开 TTS 的话每堂课成本不低 —— 预算每 20 分钟课 1-3 USD,看模型 + 声音。'
   watch_out:
-    en: |-
-      AGPL-3.0 is strong copyleft; if you're at a company that prohibits AGPL deployment, check first. Compound layer means a lot of moving parts (5 LLM × 5 TTS × LangGraph multi-agent × whiteboard × TTS streaming) — any single provider going down can break a classroom mid-flight. Eval harness only covers two surfaces (outline-language, whiteboard-layout); other surfaces are visually polished but not formally verified.
-    zh: |-
-      AGPL-3.0 是强 copyleft 协议;公司禁用 AGPL 的话先查清楚。复合物层意味着组件多(5 LLM × 5 TTS × LangGraph 多 agent × 白板 × TTS 流式) —— 任意一家 provider 中断都可能让课堂中途崩。Eval 只覆盖两个面(outline-language / whiteboard-layout),其他面视觉漂亮但没正式验证。
+    en: AGPL-3.0 is strong copyleft; if you're at a company that prohibits AGPL deployment, check first. Compound layer means a lot of moving parts (5 LLM × 5 TTS × LangGraph multi-agent × whiteboard × TTS streaming) — any single provider going down can break a classroom mid-flight. Eval harness only covers two surfaces (outline-language, whiteboard-layout); other surfaces are visually polished but not formally verified.
+    zh: AGPL-3.0 是强 copyleft 协议;公司禁用 AGPL 的话先查清楚。复合物层意味着组件多(5 LLM × 5 TTS × LangGraph 多 agent × 白板 × TTS 流式) —— 任意一家 provider 中断都可能让课堂中途崩。Eval 只覆盖两个面(outline-language / whiteboard-layout),其他面视觉漂亮但没正式验证。
   examples:
   - context:
-      en: |-
-        A PhD student staring at a 30-page paper on diffusion models that they need to understand for journal club tomorrow
-      zh: |-
-        PhD 学生面对一篇 30 页 diffusion model 论文,明天 journal club 要讲
+      en: A PhD student staring at a 30-page paper on diffusion models that they need to understand for journal club tomorrow
+      zh: PhD 学生面对一篇 30 页 diffusion model 论文,明天 journal club 要讲
     you_say:
-      en: |-
-        Generate a 20-minute classroom for this paper — AI teacher should walk through the math on the whiteboard, AI peer should ask the 5 most important questions
-      zh: |-
-        给这篇论文生成 20 分钟的课堂 —— AI 老师在白板上讲数学,AI 同学问最重要的 5 个问题
+      en: Generate a 20-minute classroom for this paper — AI teacher should walk through the math on the whiteboard, AI peer should ask the 5 most important questions
+      zh: 给这篇论文生成 20 分钟的课堂 —— AI 老师在白板上讲数学,AI 同学问最重要的 5 个问题
     what_happens:
-      en: |-
-        LangGraph orchestrator parses the paper, plans a lesson outline, dispatches: (1) outline-agent to structure the 20 minutes, (2) whiteboard-agent to plan visuals, (3) teacher-agent to deliver, (4) peer-agent to ask questions, (5) quiz-agent at checkpoints. TTS streams real voice. You sit through 20 minutes and now actually understand it.
-      zh: |-
-        LangGraph 编排器解析论文,规划课程大纲,分发: (1) outline-agent 排 20 分钟结构,(2) whiteboard-agent 规划视觉,(3) teacher-agent 讲解,(4) peer-agent 提问,(5) quiz-agent 在检查点出题。TTS 流式真人声音。你听完 20 分钟,真懂了。
+      en: 'LangGraph orchestrator parses the paper, plans a lesson outline, dispatches: (1) outline-agent to structure the 20 minutes, (2) whiteboard-agent to plan visuals, (3) teacher-agent to deliver, (4) peer-agent to ask questions, (5) quiz-agent at checkpoints. TTS streams real voice. You sit through 20 minutes and now actually understand it.'
+      zh: 'LangGraph 编排器解析论文,规划课程大纲,分发: (1) outline-agent 排 20 分钟结构,(2) whiteboard-agent 规划视觉,(3) teacher-agent 讲解,(4) peer-agent 提问,(5) quiz-agent 在检查点出题。TTS 流式真人声音。你听完 20 分钟,真懂了。'
   - context:
-      en: |-
-        A K-12 teacher prepping a lesson on photosynthesis for tomorrow's class
-      zh: |-
-        中小学老师明天要上光合作用一课,准备课件
+      en: A K-12 teacher prepping a lesson on photosynthesis for tomorrow's class
+      zh: 中小学老师明天要上光合作用一课,准备课件
     you_say:
-      en: |-
-        Generate an interactive 30-minute classroom on photosynthesis for 7th graders — include 3 quiz checkpoints and 1 simulation showing the Calvin cycle
-      zh: |-
-        给 7 年级学生生成 30 分钟光合作用互动课堂 —— 3 个 quiz 检查点 + 1 个卡尔文循环互动模拟
+      en: Generate an interactive 30-minute classroom on photosynthesis for 7th graders — include 3 quiz checkpoints and 1 simulation showing the Calvin cycle
+      zh: 给 7 年级学生生成 30 分钟光合作用互动课堂 —— 3 个 quiz 检查点 + 1 个卡尔文循环互动模拟
     what_happens:
-      en: |-
-        Multi-agent stack assembles a kid-appropriate lesson, generates a Calvin-cycle simulation as an interactive React component, slides have age-appropriate visuals, quizzes are multiple-choice with feedback. You preview at home, then run it live in class — either screen-shared or each kid on their own laptop.
-      zh: |-
-        多 agent stack 组装一堂适合小朋友的课,把卡尔文循环做成 React 互动组件,幻灯片用合适视觉,quiz 是有反馈的多选。你在家预览,课堂上跑 —— 投屏或者每个学生自己的电脑。
+      en: Multi-agent stack assembles a kid-appropriate lesson, generates a Calvin-cycle simulation as an interactive React component, slides have age-appropriate visuals, quizzes are multiple-choice with feedback. You preview at home, then run it live in class — either screen-shared or each kid on their own laptop.
+      zh: 多 agent stack 组装一堂适合小朋友的课,把卡尔文循环做成 React 互动组件,幻灯片用合适视觉,quiz 是有反馈的多选。你在家预览,课堂上跑 —— 投屏或者每个学生自己的电脑。
   - context:
-      en: |-
-        An online-course author building module 3 of a 12-week machine-learning course
-      zh: |-
-        线上课程作者做 12 周机器学习课的第 3 周模块
+      en: An online-course author building module 3 of a 12-week machine-learning course
+      zh: 线上课程作者做 12 周机器学习课的第 3 周模块
     you_say:
-      en: |-
-        Build a 25-minute classroom on backpropagation — base it on these 3 chapters from the textbook I uploaded; mid-class quiz to check gradient understanding
-      zh: |-
-        基于我上传的教材这 3 章,做一节 25 分钟的反向传播课堂 —— 中段 quiz 检查学生对梯度的理解
+      en: Build a 25-minute classroom on backpropagation — base it on these 3 chapters from the textbook I uploaded; mid-class quiz to check gradient understanding
+      zh: 基于我上传的教材这 3 章,做一节 25 分钟的反向传播课堂 —— 中段 quiz 检查学生对梯度的理解
     what_happens:
-      en: |-
-        OpenMAIC ingests the chapters, generates a classroom that ties the math to those specific chapters' notation, mid-class quiz tests gradient computation. You record + edit + deploy as week-3 module. Your students get a structured lesson, not a video monologue; quiz scores feed back to your dashboard.
-      zh: |-
-        OpenMAIC 吃进章节,生成与这几章符号一致的课堂,中段 quiz 测梯度计算。你录制 + 编辑 + 发布成第 3 周模块。学生得到结构化课程而不是视频独白;quiz 成绩回到你的 dashboard。
+      en: OpenMAIC ingests the chapters, generates a classroom that ties the math to those specific chapters' notation, mid-class quiz tests gradient computation. You record + edit + deploy as week-3 module. Your students get a structured lesson, not a video monologue; quiz scores feed back to your dashboard.
+      zh: OpenMAIC 吃进章节,生成与这几章符号一致的课堂,中段 quiz 测梯度计算。你录制 + 编辑 + 发布成第 3 周模块。学生得到结构化课程而不是视频独白;quiz 成绩回到你的 dashboard。
+  how:
+    en: 'Either use the hosted demo at `open.maic.chat` (zero setup, you bring an LLM key) or one-click Vercel deploy your own / `docker compose up` self-host. Drop a topic or upload a paper / chapter. LangGraph multi-agent stack generates a 20-30 minute classroom: AI teacher walks the whiteboard, AI peer asks questions, slides + quizzes + interactive simulations get auto-generated, TTS streams real voice.'
+    zh: '用 `open.maic.chat` 托管 demo(零安装,自带 LLM key)或一键 Vercel 部署自己的版本 / `docker compose up` 自托管。贴主题或上传论文 / 章节。LangGraph 多 agent stack 生成 20-30 分钟课堂: AI 老师讲白板,AI 同学提问,幻灯片 + quiz + 互动模拟自动生成,TTS 流式真人声音。'
 similar_repos:
 - slug: zarazhangrui--codebase-to-course
   shared_purpose:
-    en: |-
-      Both turn one input (topic / paper / codebase) into an educational artefact via AI multi-agent. Both bet on AI handling the structuring + presentation work the user doesn't want to do by hand.
-    zh: |-
-      都把一个输入(主题 / 论文 / 代码库)通过 AI 多 agent 变成教学产物。都让 AI 处理用户不想手做的结构化 + 呈现工作。
+    en: Both turn one input (topic / paper / codebase) into an educational artefact via AI multi-agent. Both bet on AI handling the structuring + presentation work the user doesn't want to do by hand.
+    zh: 都把一个输入(主题 / 论文 / 代码库)通过 AI 多 agent 变成教学产物。都让 AI 处理用户不想手做的结构化 + 呈现工作。
   this_better_at:
-    en: |-
-      Live interactive classroom — AI teacher + AI peer + whiteboard + TTS streaming. Real-time experience, not a static artefact. Multi-LLM + multi-TTS provider support so users can pick.
-    zh: |-
-      真正实时互动课堂 —— AI 老师 + AI 同学 + 白板 + TTS 流式。实时体验,不是静态产物。多 LLM + 多 TTS,用户可选。
+    en: Live interactive classroom — AI teacher + AI peer + whiteboard + TTS streaming. Real-time experience, not a static artefact. Multi-LLM + multi-TTS provider support so users can pick.
+    zh: 真正实时互动课堂 —— AI 老师 + AI 同学 + 白板 + TTS 流式。实时体验,不是静态产物。多 LLM + 多 TTS,用户可选。
   other_better_at:
-    en: |-
-      Static markdown course generation — easier to fork, easier to version-control, easier to hand-edit. When you want documentation rather than a live classroom, codebase-to-course is the right fit.
-    zh: |-
-      静态 markdown 课程生成 —— 更容易 fork、版本管理、手改。当你要文档而不是实时课堂时,codebase-to-course 更合适。
+    en: Static markdown course generation — easier to fork, easier to version-control, easier to hand-edit. When you want documentation rather than a live classroom, codebase-to-course is the right fit.
+    zh: 静态 markdown 课程生成 —— 更容易 fork、版本管理、手改。当你要文档而不是实时课堂时,codebase-to-course 更合适。
 - slug: zarazhangrui--frontend-slides
   shared_purpose:
-    en: |-
-      Both generate visual learning artefacts from a topic input. Both rely on LLM to do the layout + structure work.
-    zh: |-
-      都从主题输入生成视觉学习产物。都靠 LLM 做布局 + 结构工作。
+    en: Both generate visual learning artefacts from a topic input. Both rely on LLM to do the layout + structure work.
+    zh: 都从主题输入生成视觉学习产物。都靠 LLM 做布局 + 结构工作。
   this_better_at:
-    en: |-
-      Multi-modal experience (slides + whiteboard + TTS + quizzes + simulations) coordinated by multi-agent backend. When the goal is "lecture-quality teaching", not "deck for a talk", this is the right fit.
-    zh: |-
-      多模态体验(幻灯片 + 白板 + TTS + quiz + 模拟)由多 agent 后端协调。当目标是"讲课级教学"而不是"做个 talk 的 deck"时,这是对的。
+    en: Multi-modal experience (slides + whiteboard + TTS + quizzes + simulations) coordinated by multi-agent backend. When the goal is "lecture-quality teaching", not "deck for a talk", this is the right fit.
+    zh: 多模态体验(幻灯片 + 白板 + TTS + quiz + 模拟)由多 agent 后端协调。当目标是"讲课级教学"而不是"做个 talk 的 deck"时,这是对的。
   other_better_at:
-    en: |-
-      Lighter weight — output is just static HTML slides you host on Vercel. No LangGraph, no per-classroom TTS bill, easier to fork + edit. When you only need a deck, frontend-slides wins on simplicity.
-    zh: |-
-      更轻 —— 输出就是静态 HTML 幻灯片放 Vercel。没有 LangGraph,没有每堂课 TTS 账单,更容易 fork + 改。当你只需要 deck 时,frontend-slides 简洁取胜。
+    en: Lighter weight — output is just static HTML slides you host on Vercel. No LangGraph, no per-classroom TTS bill, easier to fork + edit. When you only need a deck, frontend-slides wins on simplicity.
+    zh: 更轻 —— 输出就是静态 HTML 幻灯片放 Vercel。没有 LangGraph,没有每堂课 TTS 账单,更容易 fork + 改。当你只需要 deck 时,frontend-slides 简洁取胜。
 workflow_diagram:
   layout: tree
-  why_layer: |
-    Compound — at three diamond decision nodes, the LangGraph
-    orchestrator (running the LLM at runtime) decides which sub-agent
-    fires next based on the topic + the current classroom state.
-    (1) "Outline strategy?" — branches to depth-first vs breadth-first
-    based on topic complexity. (2) "Need whiteboard or simulation?"
-    — branches to whiteboard-agent vs simulation-agent based on
-    content type (math vs process). (3) "Quiz or continue lecturing?"
-    — branches based on student-engagement signal. A molecule would
-    follow a fixed pipeline; OpenMAIC dispatches differently per
-    classroom. That's compound.
+  why_layer:
+    en: 'Compound — at three diamond decision nodes, the LangGraph
+
+      orchestrator (running the LLM at runtime) decides which sub-agent
+
+      fires next based on the topic + the current classroom state.
+
+      (1) "Outline strategy?" — branches to depth-first vs breadth-first
+
+      based on topic complexity. (2) "Need whiteboard or simulation?"
+
+      — branches to whiteboard-agent vs simulation-agent based on
+
+      content type (math vs process). (3) "Quiz or continue lecturing?"
+
+      — branches based on student-engagement signal. A molecule would
+
+      follow a fixed pipeline; OpenMAIC dispatches differently per
+
+      classroom. That''s compound.'
+    zh: 复合物 —— 在 3 个菱形决策节点上,LangGraph 编排器(运行时跑 LLM)根据主题 + 课堂当前状态决定下一个子 agent 触发哪个。(1)"大纲策略?" 分深度优先 vs 广度;(2)"白板 or 模拟?" 分到 whiteboard-agent vs simulation-agent(数学 vs 过程内容);(3)"quiz or 继续讲?" 按学生参与度信号分。分子是固定流水线;OpenMAIC 每堂课不一样。这是复合物。
   nodes:
   - id: ask
     type: start
     rank: 0
     lane: 1
     label:
-      en: |-
-        Topic / document
-        (paper / chapter / brief)
-      zh: |-
-        主题 / 文档
-        (论文 / 章节 / 简介)
+      en: 'Topic / document
+
+        (paper / chapter / brief)'
+      zh: '主题 / 文档
+
+        (论文 / 章节 / 简介)'
   - id: dec_outline
     type: decision
     rank: 1
     lane: 1
     label:
-      en: |-
-        Outline strategy?
-        (LLM picks depth-first / breadth)
-      zh: |-
-        大纲策略?
-        (LLM 选深度优先 / 广度)
+      en: 'Outline strategy?
+
+        (LLM picks depth-first / breadth)'
+      zh: '大纲策略?
+
+        (LLM 选深度优先 / 广度)'
   - id: outline_depth
     type: atom
     rank: 2
     lane: 0
     label:
-      en: |-
-        Depth-first outline
-        (1 hard concept, deep)
-      zh: |-
-        深度优先大纲
-        (1 个难点深挖)
+      en: 'Depth-first outline
+
+        (1 hard concept, deep)'
+      zh: '深度优先大纲
+
+        (1 个难点深挖)'
   - id: outline_breadth
     type: atom
     rank: 2
     lane: 2
     label:
-      en: |-
-        Breadth-first outline
-        (5 concepts, light)
-      zh: |-
-        广度优先大纲
-        (5 个概念,浅)
+      en: 'Breadth-first outline
+
+        (5 concepts, light)'
+      zh: '广度优先大纲
+
+        (5 个概念,浅)'
   - id: dec_visual
     type: decision
     rank: 3
     lane: 1
     label:
-      en: |-
-        Whiteboard or simulation?
-        (LLM decides per topic)
-      zh: |-
-        白板 或 模拟?
-        (LLM 按主题决定)
+      en: 'Whiteboard or simulation?
+
+        (LLM decides per topic)'
+      zh: '白板 或 模拟?
+
+        (LLM 按主题决定)'
   - id: whiteboard
     type: atom
     rank: 4
     lane: 0
     label:
-      en: |-
-        whiteboard-agent
-        (math / diagram)
-      zh: |-
-        whiteboard-agent
-        (数学 / 图)
+      en: 'whiteboard-agent
+
+        (math / diagram)'
+      zh: 'whiteboard-agent
+
+        (数学 / 图)'
   - id: simulation
     type: atom
     rank: 4
     lane: 2
     label:
-      en: |-
-        simulation-agent
-        (interactive process)
-      zh: |-
-        simulation-agent
-        (互动过程)
+      en: 'simulation-agent
+
+        (interactive process)'
+      zh: 'simulation-agent
+
+        (互动过程)'
   - id: teach
     type: atom
     rank: 5
     lane: 1
     label:
-      en: |-
-        teacher-agent + peer-agent
-        (with TTS streaming)
-      zh: |-
-        teacher-agent + peer-agent
-        (TTS 流式)
+      en: 'teacher-agent + peer-agent
+
+        (with TTS streaming)'
+      zh: 'teacher-agent + peer-agent
+
+        (TTS 流式)'
   - id: dec_quiz
     type: decision
     rank: 6
     lane: 1
     label:
-      en: |-
-        Quiz or continue?
-        (LLM reads engagement)
-      zh: |-
-        quiz 或 继续?
-        (LLM 读参与度)
+      en: 'Quiz or continue?
+
+        (LLM reads engagement)'
+      zh: 'quiz 或 继续?
+
+        (LLM 读参与度)'
   - id: quiz
     type: atom
     rank: 7
     lane: 0
     label:
-      en: |-
-        quiz-agent
-        (checkpoint)
-      zh: |-
-        quiz-agent
-        (检查点)
+      en: 'quiz-agent
+
+        (checkpoint)'
+      zh: 'quiz-agent
+
+        (检查点)'
   - id: out
     type: end
     rank: 7
     lane: 1
     label:
-      en: |-
-        Classroom delivered
-        (you actually learned)
-      zh: |-
-        课堂上完
-        (你真学到了)
+      en: 'Classroom delivered
+
+        (you actually learned)'
+      zh: '课堂上完
+
+        (你真学到了)'
   edges:
   - from: ask
     to: dec_outline
@@ -377,8 +342,7 @@ third_party_services:
   api_key_needed: true
   signup_needed: true
   free_tier: false
-  cost_note: Per-classroom token cost can be substantial — pick a model + lock spend
-    before opening to non-tech users
+  cost_note: Per-classroom token cost can be substantial — pick a model + lock spend before opening to non-tech users
 - name: OpenAI / Azure / GLM / Qwen / MiniMax TTS
   purpose: Voice synthesis for AI teachers
   required: false
@@ -386,3 +350,4 @@ third_party_services:
   signup_needed: true
   free_tier: true
   cost_note: Optional — disable TTS for text-only mode; self-hosted VoxCPM2 is free
+business_category: content
