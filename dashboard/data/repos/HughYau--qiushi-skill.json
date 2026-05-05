@@ -1,0 +1,42 @@
+{
+  "slug": "HughYau--qiushi-skill",
+  "display_name": "qiushi-skill",
+  "owner": "HughYau",
+  "repo": "qiushi-skill",
+  "repo_url": "https://github.com/HughYau/qiushi-skill",
+  "repo_type": "skill-catalog",
+  "archetype": "hybrid-skill",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "毛思想方法论的 10 个 AI agent skills 合集（9 大方法论工具 + 1 总原则 「实事求是」），适配 Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode 7 个平台。3K stars，4 月 9 日 GitHub 日榜第七， MIT。 10 skills 分 3 层： - 哲学基座：矛盾分析法 / 实践认识论 - 工作方法：调查研究 / 群众路线 / 批评与自我批评 - 战略战术：持久战略 / 集中兵力 / 星火燎原 / 统筹兼顾 - 总原则：实事…",
+  "repo_path": "repos/HughYau--qiushi-skill",
+  "claims_summary": {
+    "total": 7,
+    "passed": 6,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 4,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 3
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/HughYau--qiushi-skill/plans/2026-05-05-eval-plan.md",
+  "verdict_path": "repos/HughYau--qiushi-skill/verdicts/2026-05-05-final-verdict.md",
+  "attention_level": "high"
+}

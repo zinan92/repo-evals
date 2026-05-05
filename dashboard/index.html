@@ -12,14 +12,14 @@
       <h1>repo-evals operator dashboard</h1>
       <p>One place to see what is usable, what is still shaky, and what changed recently — without hiding low-confidence baselines or missing provenance.</p>
       <div class="meta-row">
-        <span class="chip">generated at 2026-05-05T10:58:53Z</span>
-        <span class="chip">source commit 11abf4a</span>
+        <span class="chip">generated at 2026-05-05T11:27:47Z</span>
+        <span class="chip">source commit 65ea7b9</span>
         <a class="chip" href="data/index.json">raw dashboard data</a>
       </div>
     </section>
 
     <section class="grid stats">
-      <div class="stat-card"><h3>Evaluated repos</h3><div class="stat-value">27</div><div class="muted small">out of 27 total repos</div></div>
+      <div class="stat-card"><h3>Evaluated repos</h3><div class="stat-value">30</div><div class="muted small">out of 30 total repos</div></div>
       <div class="stat-card"><h3>Critical unresolved gaps</h3><div class="stat-value">19</div><div class="muted small">from latest committed gap reports</div></div>
       <div class="stat-card"><h3>Full provenance repos</h3><div class="stat-value">6</div><div class="muted small">repos whose current runs are fully captured</div></div>
       <div class="stat-card"><h3>Medium/low diff confidence</h3><div class="stat-value">4</div><div class="muted small">latest committed diffs needing careful reading</div></div>
@@ -30,7 +30,7 @@
       <div class="stat-card"><h3>Recommendable</h3><div class="stat-value">0</div></div>
       <div class="stat-card"><h3>Reusable</h3><div class="stat-value">2</div></div>
       <div class="stat-card"><h3>Usable</h3><div class="stat-value">19</div></div>
-      <div class="stat-card"><h3>Unusable / Unknown</h3><div class="stat-value">6</div></div>
+      <div class="stat-card"><h3>Unusable / Unknown</h3><div class="stat-value">9</div></div>
     </section>
 
     <h2 class="section-title">Needs attention first</h2>
@@ -234,6 +234,36 @@
       </div>
     </article>
 <article class="panel repo-card attention-high" data-role="repo-card"
+      data-search="HughYau--qiushi-skill qiushi-skill qiushi-skill HughYau hybrid-skill unknown evaluated"
+      data-bucket="unknown"
+      data-confidence="unknown">
+      <header>
+        <div>
+          <h3><a href="repos/HughYau--qiushi-skill.html">qiushi-skill</a></h3>
+          <p class="muted small">HughYau/qiushi-skill · skill-catalog · hybrid-skill</p>
+        </div>
+        <div><span class="badge bucket-unknown">bucket: unknown</span></div>
+      </header>
+      <div class="meta-row">
+        <span class="badge layer-molecule">layer: molecule</span>
+        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="badge bucket-usable">status: evaluated</span>
+      </div>
+      <p>毛思想方法论的 10 个 AI agent skills 合集（9 大方法论工具 + 1 总原则 「实事求是」），适配 Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode 7 个平台。3K stars，4 月 9 日 GitHub 日榜第七， MIT。 10 skills 分 3 层： - 哲学基座：矛盾分析法 / 实践认识论 - 工作方法：调查研究 / 群众路线 / 批评与自我批评 - 战略战术：持久战略 / 集中兵力 / 星火燎原 / 统筹兼顾 - 总原则：实事…</p>
+      <div class="headline">No committed re-eval diff yet.</div>
+      <div class="kv">
+        <div><strong>Claims</strong>6 passed / 0 failed / 1 untested</div>
+        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Unresolved Gaps</strong>No gap report yet</div>
+        <div><strong>Areas</strong>0</div>
+      </div>
+      <div class="source-links">
+        <a href="repos/HughYau--qiushi-skill.html">Open detail</a>
+        <a href="../repos/HughYau--qiushi-skill/repo.yaml">repo.yaml</a>
+      </div>
+    </article>
+<article class="panel repo-card attention-high" data-role="repo-card"
       data-search="anthropics--skill-creator skill-creator skill-creator anthropics hybrid-skill unknown evaluated"
       data-bucket="unknown"
       data-confidence="unknown">
@@ -261,6 +291,66 @@
       <div class="source-links">
         <a href="repos/anthropics--skill-creator.html">Open detail</a>
         <a href="../repos/anthropics--skill-creator/repo.yaml">repo.yaml</a>
+      </div>
+    </article>
+<article class="panel repo-card attention-high" data-role="repo-card"
+      data-search="karpathy--autoresearch autoresearch autoresearch karpathy hybrid-skill unknown evaluated"
+      data-bucket="unknown"
+      data-confidence="unknown">
+      <header>
+        <div>
+          <h3><a href="repos/karpathy--autoresearch.html">autoresearch</a></h3>
+          <p class="muted small">karpathy/autoresearch · research-template · hybrid-skill</p>
+        </div>
+        <div><span class="badge bucket-unknown">bucket: unknown</span></div>
+      </header>
+      <div class="meta-row">
+        <span class="badge layer-compound">layer: compound</span>
+        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="badge bucket-usable">status: evaluated</span>
+      </div>
+      <p>Karpathy&#x27;s &quot;give an AI agent a small but real LLM training setup and let it experiment overnight&quot; template. 79K stars in ~6 weeks. 3-file core: prepare.py (389 lines, fixed) + train.py (630 lines, agent edits) + program.md (114 lines, the &quot;skill&quot;). Single H100 required for the m…</p>
+      <div class="headline">No committed re-eval diff yet.</div>
+      <div class="kv">
+        <div><strong>Claims</strong>6 passed / 1 failed / 1 untested</div>
+        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Unresolved Gaps</strong>No gap report yet</div>
+        <div><strong>Areas</strong>0</div>
+      </div>
+      <div class="source-links">
+        <a href="repos/karpathy--autoresearch.html">Open detail</a>
+        <a href="../repos/karpathy--autoresearch/repo.yaml">repo.yaml</a>
+      </div>
+    </article>
+<article class="panel repo-card attention-high" data-role="repo-card"
+      data-search="obra--superpowers superpowers superpowers obra hybrid-skill unknown evaluated"
+      data-bucket="unknown"
+      data-confidence="unknown">
+      <header>
+        <div>
+          <h3><a href="repos/obra--superpowers.html">superpowers</a></h3>
+          <p class="muted small">obra/superpowers · skill-catalog · hybrid-skill</p>
+        </div>
+        <div><span class="badge bucket-unknown">bucket: unknown</span></div>
+      </header>
+      <div class="meta-row">
+        <span class="badge layer-molecule">layer: molecule</span>
+        <span class="badge prov-missing">provenance: missing</span>
+        <span class="badge conf-unknown">diff confidence: unknown</span>
+        <span class="badge bucket-usable">status: evaluated</span>
+      </div>
+      <p>Jesse Vincent&#x27;s &quot;complete software-development methodology for coding agents&quot; — 14 composable skills (brainstorming / TDD / debugging / planning / subagent-driven-development / git-worktrees / etc) plus multi-platform install (Claude Code official marketplace, Codex CLI, Codex A…</p>
+      <div class="headline">No committed re-eval diff yet.</div>
+      <div class="kv">
+        <div><strong>Claims</strong>6 passed / 0 failed / 1 untested</div>
+        <div><strong>Runs</strong>1 total</div>
+        <div><strong>Unresolved Gaps</strong>No gap report yet</div>
+        <div><strong>Areas</strong>0</div>
+      </div>
+      <div class="source-links">
+        <a href="repos/obra--superpowers.html">Open detail</a>
+        <a href="../repos/obra--superpowers/repo.yaml">repo.yaml</a>
       </div>
     </article>
 <article class="panel repo-card attention-high" data-role="repo-card"

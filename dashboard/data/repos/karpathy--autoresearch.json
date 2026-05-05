@@ -1,0 +1,42 @@
+{
+  "slug": "karpathy--autoresearch",
+  "display_name": "autoresearch",
+  "owner": "karpathy",
+  "repo": "autoresearch",
+  "repo_url": "https://github.com/karpathy/autoresearch",
+  "repo_type": "research-template",
+  "archetype": "hybrid-skill",
+  "layer": "compound",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Karpathy's \"give an AI agent a small but real LLM training setup and let it experiment overnight\" template. 79K stars in ~6 weeks. 3-file core: prepare.py (389 lines, fixed) + train.py (630 lines, agent edits) + program.md (114 lines, the \"skill\"). Single H100 required for the m…",
+  "repo_path": "repos/karpathy--autoresearch",
+  "claims_summary": {
+    "total": 8,
+    "passed": 6,
+    "failed": 1,
+    "untested": 1,
+    "critical_total": 6,
+    "critical_passed": 4,
+    "critical_failed": 1,
+    "critical_untested": 1,
+    "high_total": 2
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/karpathy--autoresearch/plans/2026-05-05-eval-plan.md",
+  "verdict_path": "repos/karpathy--autoresearch/verdicts/2026-05-05-final-verdict.md",
+  "attention_level": "high"
+}

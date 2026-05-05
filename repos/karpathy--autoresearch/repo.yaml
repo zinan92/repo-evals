@@ -1,0 +1,104 @@
+owner: karpathy
+repo: autoresearch
+display_name: autoresearch
+repo_url: https://github.com/karpathy/autoresearch
+repo_type: research-template
+archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# The agent autonomously decides what to modify in train.py, runs a
+# 5-minute experiment, evaluates val_bpb, decides keep/discard, then
+# repeats — runtime LLM-driven orchestration → compound.
+layer: compound
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-05"
+version_tested: "master@HEAD"
+stars: 78982
+archived: false
+# README says MIT but the LICENSE FILE is missing (HTTP 404). Strict
+# read of the eval framework: until LICENSE is shipped, license claim
+# is unverified.
+has_license: false
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 1   # analysis.ipynb only, no LLM-output eval
+recently_active: true      # last push 2026-03-26 (~40 days ago, < 90)
+notes: |
+  Karpathy's "give an AI agent a small but real LLM training setup
+  and let it experiment overnight" template. 79K stars in ~6 weeks.
+  3-file core: prepare.py (389 lines, fixed) + train.py (630 lines,
+  agent edits) + program.md (114 lines, the "skill"). Single H100
+  required for the main repo; 4 community forks cover Mac / MLX /
+  Windows-RTX / AMD.
+
+  Compound layer: LLM agent decides what to change in train.py, runs
+  uv run train.py for a 5-min budget, parses val_bpb, keeps or
+  discards, iterates. ~100 experiments per overnight run on H100.
+
+  README claims MIT license, but no LICENSE file ships with the repo.
+  That's a real defect for a 79K-star repo — downstream forks have
+  to take the README's word for it.
+
+product_view:
+  one_liner:
+    en: "Karpathy's autonomous-research template — let your AI agent edit a single 630-line train.py, run 5-minute training experiments overnight, and wake up to a log of 100 attempts and (hopefully) a better model. The 'program.md' file is the lightweight skill that drives the agent."
+    zh: "Karpathy 出的「让 AI agent 替你做研究」模板 —— 让 agent 自己改一个 630 行的 train.py，每次跑 5 分钟训练实验，过夜跑 100 轮，早上起来看日志和（希望中的）更好的模型。program.md 是驱动 agent 的轻量 skill。"
+  best_for:
+    en: "Researchers / AI engineers with an H100 (or compatible) who want to play with autonomous experimentation on small LLM training. Also: anyone studying how to design 'AI agents that do research', because program.md is a clear, minimal example."
+    zh: "有 H100（或兼容卡）的研究员 / AI 工程师，想玩自动实验做小 LLM 训练。还有：想研究「AI agent 做研究」怎么设计的人 —— program.md 是个简洁清晰的最小例子。"
+  watch_out:
+    en: |
+      No LICENSE file at repo root despite README claiming MIT — fork / commercial use legal status is technically unclear until a LICENSE is shipped. Single-NVIDIA-H100 required for the main repo; if you have anything else (Mac / Windows / AMD), use one of the community forks listed in README. Each experiment burns 5 minutes of GPU time + non-trivial agent token cost — overnight = serious cost. The agent has 'all permissions disabled' is a recommendation in the README; verify your platform respects that or it can edit anything.
+    zh: |
+      README 说 MIT 但仓库根没有 LICENSE 文件 —— fork / 商用法律状态严格说不明确，等 LICENSE 上线为止。主仓库要单卡 H100；其他硬件（Mac / Windows / AMD）用 README 里列的社区 fork。每个实验烧 5 分钟 GPU + 不少 agent token —— 通宵跑成本不低。README 建议「关闭 agent 所有权限」是建议，不是强制 —— 自己确认 agent 平台真的能限权，不然 agent 改的不只是 train.py。
+  use_for:
+    - en: "Have an H100 idle overnight? Let the agent run 100 experiments and see what comes out."
+      zh: "有 H100 闲着过夜？让 agent 跑 100 个实验看看出什么。"
+    - en: "Study program.md as a minimal example of how to design an 'AI agent that does autonomous research'."
+      zh: "把 program.md 当做「AI agent 自动做研究」该怎么写的最小学习样例。"
+    - en: "Fork it for your own training task — train.py is intentionally simple to give the agent a manageable surface."
+      zh: "Fork 之后改成自己的训练任务 —— train.py 故意保持简单，给 agent 一个能管住的修改面。"
+  dont_use_for:
+    - en: "Don't run on Mac / Windows / AMD with the main repo — use one of the 4 community forks."
+      zh: "Mac / Windows / AMD 不要用主仓库 —— 用 README 列的 4 个社区 fork。"
+    - en: "Don't run unattended without setting an explicit token / GPU-time budget — overnight cost can be substantial."
+      zh: "无人值守跑前一定先设好 token / GPU 时间预算 —— 一整晚成本可能不低。"
+    - en: "Don't redistribute commercially yet — README says MIT but no LICENSE file ships."
+      zh: "暂时别商用分发 —— README 说 MIT 但没 LICENSE 文件兜底。"
+
+deployment:
+  installable: true
+  install_methods:
+    - method: "git clone + uv sync + uv run prepare.py"
+      platform: "Linux + single NVIDIA H100"
+      complexity: moderate
+    - method: "Use community fork (Mac / MLX / Windows-RTX / AMD)"
+      platform: "macOS / Windows / AMD"
+      complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false  # Agent calls LLM API
+  windows_unsupported: true   # main repo only; forks exist
+
+third_party_services:
+  - name: "Anthropic Claude / OpenAI Codex / similar agent CLI"
+    purpose: "The agent that edits train.py + iterates"
+    required: true
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "Each experiment iteration consumes tokens; overnight 100-experiment runs can be expensive — set a token budget"
+  - name: "Single NVIDIA H100 GPU (or compatible via fork)"
+    purpose: "Runs the 5-minute training experiments"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: false
+    cost_note: "Cloud H100 ≈ $2-4/hr depending on provider; 12 experiments/hour, ~100 overnight"
+  - name: "FineWeb / shakespeare-style training data (auto-downloaded)"
+    purpose: "Data prep via prepare.py"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Public datasets; download is one-time ~2 minutes"

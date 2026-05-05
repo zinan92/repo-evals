@@ -1,0 +1,94 @@
+owner: HughYau
+repo: qiushi-skill
+display_name: qiushi-skill
+repo_url: https://github.com/HughYau/qiushi-skill
+repo_type: skill-catalog
+# Reclassified: ships JS installer (bin/qiushi-skill.mjs) + 7-platform
+# install paths + tests + npm package — hybrid-skill, not pure prompt.
+archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# 10 distinct user-invocable methodology skills (矛盾分析法 / 实践认识论 /
+# 调查研究 / 群众路线 / 批评与自我批评 / 持久战略 / 集中兵力 / 星火燎原 /
+# 统筹兼顾 + 实事求是总原则). User invokes any one separately. → molecule.
+layer: molecule
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-05"
+version_tested: "main@HEAD (npm v1.4.1)"
+stars: 3007
+archived: false
+has_license: true   # MIT
+multilingual_readme: true   # README.md + README.en.md
+release_pipeline_score: 2   # npm + JS bin + tests + 7-platform install
+eval_discipline_score: 1    # has tests/ but no LLM-output evals
+recently_active: true
+notes: |
+  毛思想方法论的 10 个 AI agent skills 合集（9 大方法论工具 + 1 总原则
+  「实事求是」），适配 Claude Code / Codex / Cursor / Hermes / NanoBot /
+  OpenClaw / OpenCode 7 个平台。3K stars，4 月 9 日 GitHub 日榜第七，
+  MIT。
+
+  10 skills 分 3 层：
+  - 哲学基座：矛盾分析法 / 实践认识论
+  - 工作方法：调查研究 / 群众路线 / 批评与自我批评
+  - 战略战术：持久战略 / 集中兵力 / 星火燎原 / 统筹兼顾
+  - 总原则：实事求是 (arming-thought)
+
+  npm package qiushi-skill v1.4.1，bin/qiushi-skill.mjs 是真实 JS 安装
+  CLI；配 tests/validate.sh + validate.ps1 跨平台验证。每条 skill 自带
+  original-texts.md 引用经典著作原文。
+
+  Molecule layer: 用户可以单独调任意一条方法论 skill —— 比如「用矛盾分析
+  法分析这件事」、「先调查再下判断」—— 多个独立 user-invocable 单元 +
+  predefined 7-platform 安装编排。
+
+product_view:
+  one_liner:
+    en: "10 dialectical-materialism methodology skills (contradiction analysis, investigation-first, mass-line, criticism, protracted strategy, etc.) packaged as installable AI agent skills for Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode. Each skill grounds itself in classical-text excerpts. MIT, multilingual (中文 + EN)."
+    zh: "10 个唯物辩证法 + 实践哲学方法论 AI agent skill（矛盾分析、调查在先、群众路线、批评与自我批评、持久战、集中兵力 ……），适配 Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode 7 个平台。每条方法论都引用经典著作原文。MIT，中英双语。"
+  best_for:
+    en: "Anyone whose AI agent feels like a yes-machine — give it a methodology to push back, dig deeper, and stick with hard problems. Use the 'investigation first' skill before letting the agent give answers; use 'contradiction analysis' for complex tradeoffs."
+    zh: "想让自己的 AI agent 不再像「点头机器」的人 —— 给它一套方法论，让它先调查、抓主要矛盾、坚持把活做完。复杂问题前用「调查研究」+「矛盾分析」，做战略前用「集中兵力」。"
+  watch_out:
+    en: |
+      The methodologies are derived from Mao-era Chinese dialectical materialism — the README explicitly says "this is methodology, not politics", but you should be aware of the cultural register before installing in a corporate skill catalog. Each skill is independent — installing all 10 may be more than you need; pick the 2-3 that match your actual workflow. The 7-platform installer is per-platform unique paths; verify the right one writes to your tool.
+    zh: |
+      方法论提炼自毛时代的唯物辩证法 —— README 明确说「这是方法论不是政治」，但放进企业级 skill catalog 之前要清楚这层文化基调。10 条 skill 互相独立 —— 一次装 10 条可能太多，挑 2-3 条匹配自己工作流的就够。7 平台安装路径每家不一样，确认你那家工具对应的位置写对了。
+  use_for:
+    - en: "Force the agent to investigate a problem before answering — 'investigation-first' skill."
+      zh: "在 agent 给答案前强制让它先调查 —— 用 investigation-first skill。"
+    - en: "Disciplined trade-off analysis — 'contradiction-analysis' identifies the principal contradiction."
+      zh: "面对多重矛盾时找主要矛盾 —— 用 contradiction-analysis skill。"
+    - en: "Long-running difficult tasks — 'protracted-strategy' keeps the agent from quitting halfway."
+      zh: "长期复杂任务（不让 agent 中途放弃）—— 用 protracted-strategy skill。"
+    - en: "Multi-platform skill installs — same 10 skills work in Claude Code / Cursor / Codex / Hermes / NanoBot / OpenClaw / OpenCode."
+      zh: "跨平台 skill 安装 —— 同一套 10 条在 7 个 agent 平台都能装。"
+  dont_use_for:
+    - en: "Don't install all 10 at once for a small project — pick 2-3 that match your real workflow."
+      zh: "小项目别一次装 10 条 —— 挑 2-3 条与自己工作流匹配的就够。"
+    - en: "Don't deploy in environments where the political register of the source texts would be a problem — methodology is general but the original quotations carry their own context."
+      zh: "对方法论原文政治色彩敏感的部署环境（如某些企业 catalog）先想清楚 —— 方法论本身通用，但原文引用带自身语境。"
+    - en: "Don't expect one skill to teach the agent — these are reflexes that need to be invoked at the right moment in a workflow."
+      zh: "别指望装一个 skill 就让 agent 自己懂方法论 —— 这是工作流里特定节点要主动触发的反射，不是常驻人格。"
+
+deployment:
+  installable: true
+  install_methods:
+    - method: "npx qiushi-skill install <platform>"
+      platform: "Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode"
+      complexity: easy
+    - method: "git clone + cp skills/ to platform skills dir"
+      platform: any
+      complexity: moderate
+  requires_compile: false
+  works_offline_after_install: true
+
+third_party_services:
+  - name: "AI agent runtime (Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode)"
+    purpose: "Host that loads the skills"
+    required: true
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "Standard agent-side cost; the skill itself is pure markdown (no extra API calls)"

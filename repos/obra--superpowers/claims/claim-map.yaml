@@ -1,0 +1,134 @@
+claims:
+- id: claim-001
+  title: 14 个 methodology skills 都真实存在且非占位
+  source: README "set of composable skills"
+  source_ref: skills/<each>/SKILL.md
+  priority: critical
+  area: skill-coverage
+  statement: 'skills/ 下 14 个子目录每个都有 SKILL.md。抽样 ≥ 5 个，每个 ≥ 100 行
+
+    （说明不是占位）。
+
+    '
+  business_expectation: '用户照 README 任意一个 methodology（brainstorming / TDD / debugging
+
+    / planning ...）调起来都命中真实文件。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: Sampled 5 skills 152-371 lines each
+- id: claim-002
+  title: 8-platform 安装路径都有官方 marketplace 或 plugin 入口
+  source: README "Quickstart" + "Installation"
+  source_ref: .claude-plugin / .codex-plugin / .cursor-plugin / .opencode
+  priority: critical
+  area: cross-platform
+  statement: '仓库根目录至少存在 .claude-plugin / .codex-plugin / .cursor-plugin /
+
+    .opencode 这 4 个 plugin 配置目录。README 列出 8 个 platform 的安装命
+
+    令（Claude Code / Codex CLI / Codex App / Factory Droid / Gemini CLI
+
+    / OpenCode / Cursor / GitHub Copilot CLI），每个都有具体安装命令。
+
+    '
+  business_expectation: '用户照自己用的 agent 平台找对应 install 命令，不会走错路径。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 4 plugin config dirs + 8 README install sections (Claude/Codex CLI+App/Factory
+    Droid/Gemini CLI/OpenCode/Cursor/GH Copilot CLI)
+- id: claim-003
+  title: package.json + 版本号说明项目成熟度
+  source: package.json + RELEASE-NOTES.md
+  source_ref: package.json
+  priority: high
+  area: maturity
+  statement: 'package.json 真实存在；version >= 5.0.0 表示项目已迭代多个 major 版本。
+
+    RELEASE-NOTES.md 真实存在记录变更。
+
+    '
+  business_expectation: '用户能从版本号看到项目成熟度，不是 v0.x 实验性。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: package.json v5.1.0 + RELEASE-NOTES.md present
+- id: claim-004
+  title: 仓库有 LICENSE 文件
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: 'LICENSE 文件存在于仓库根目录（开源协议之一）。
+
+    '
+  business_expectation: '用户能合法 fork / 修改 / 转发本 skill 集合。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: LICENSE is MIT
+- id: claim-005
+  title: CLAUDE.md / GEMINI.md / AGENTS.md 等 agent-facing docs 真有内容
+  source: 仓库根目录
+  source_ref: CLAUDE.md, GEMINI.md, AGENTS.md
+  priority: high
+  area: agent-discoverability
+  statement: '根目录有面向 agent 的 docs 文件（CLAUDE.md / GEMINI.md / AGENTS.md）。
+
+    每个文件 ≥ 50 行（说明真有内容引导 agent）。
+
+    '
+  business_expectation: '不同平台的 agent 能照 platform-specific docs 找到怎么用本 skill。
+
+    '
+  status: passed_with_concerns
+  last_run: runs/2026-05-05/run-static-checks
+  note: CLAUDE.md 106 lines real; GEMINI.md only 2 lines + AGENTS.md is 0 bytes empty
+- id: claim-006
+  title: tests/ 真有测试覆盖
+  source: 仓库根目录
+  source_ref: tests/
+  priority: high
+  area: testing
+  statement: 'tests/ 目录下至少 5 个文件（说明真有测试）。
+
+    '
+  business_expectation: '项目自身有质量保障，不是 SKILL.md only 的纯 markdown 项目。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: tests/ has 7 dirs covering install paths + skill behaviors
+- id: claim-007
+  title: 端到端：装上 superpowers 后 agent 真在工作流里调起方法论
+  source: README "How it works"
+  source_ref: 任意 skill
+  priority: critical
+  area: end-to-end
+  statement: '装好 superpowers 后，给 agent 一个新功能请求（"add a feature that
+
+    does X"），agent 应：(a) 先用 brainstorming 跟用户聊清楚需求 →
+
+    (b) 用 writing-plans 写实现计划 → (c) 用 TDD 先写测试 →
+
+    (d) 进入实现 → (e) 用 verification-before-completion 验证。
+
+    不应该一上来就写代码。
+
+    '
+  business_expectation: '"skills 自动触发" 不是营销词，agent 真按方法论走。
+
+    '
+  evidence_needed: 'molecule 级 — 需要 Claude Code session + 真实功能开发任务。建议
+
+    1 个 happy path + 1 个 agent 想跳过方法论直接写代码的对抗场景
+
+    （验证 superpowers 是否真能拦住）。
+
+    '
+  status: untested

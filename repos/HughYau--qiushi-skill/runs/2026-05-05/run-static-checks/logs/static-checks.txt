@@ -1,0 +1,26 @@
+=== claim-002 7 platform configs ===
+  .claude-plugin: 2 files
+  .codex: 1 files
+  .cursor-plugin: 1 files
+  .hermes: 1 files
+  .nanobot: 1 files
+  .openclaw: 1 files
+  .opencode: 1 files
+
+=== claim-003 bin/qiushi-skill.mjs ===
+  bin/qiushi-skill.mjs:      307 lines
+  npm registry version: 1.4.1
+
+=== claim-004 i18n + tests ===
+  tests/validate.sh:      216 lines
+  tests/validate.ps1:      212 lines
+  README.en.md:      165 lines
+
+=== claim-005 original-texts.md sample ===
+  skills/arming-thought/original-texts.md:        0 bytes
+  skills/contradiction-analysis/original-texts.md:     2147 bytes
+  skills/investigation-first/original-texts.md:     2240 bytes
+
+=== claim-006 LICENSE ===
+MIT License
+

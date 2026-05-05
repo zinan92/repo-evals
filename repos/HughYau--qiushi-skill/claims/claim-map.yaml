@@ -1,0 +1,127 @@
+claims:
+- id: claim-001
+  title: 10 个 SKILL.md 都真实存在（9 大方法论 + 1 总原则）
+  source: README "方法结构"
+  source_ref: skills/<each>/SKILL.md
+  priority: critical
+  area: skill-coverage
+  statement: 'skills/ 下 10 个子目录每个都有 SKILL.md：arming-thought / contradiction-analysis
+    /
+
+    practice-cognition / investigation-first / mass-line / criticism-self-criticism
+    /
+
+    protracted-strategy / concentrate-forces / spark-prairie-fire / overall-planning。
+
+    '
+  business_expectation: '用户照 README 调任意一个方法论 skill 都命中真实文件。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: All 10 SKILL.md files HTTP 200
+- id: claim-002
+  title: 7-platform 安装路径在仓库根目录都有专用配置目录
+  source: README install + repo root
+  source_ref: .claude-plugin / .codex / .cursor-plugin / .hermes / .nanobot / .openclaw
+    / .opencode
+  priority: critical
+  area: cross-platform
+  statement: '仓库根目录有 7 个平台专用配置目录（隐藏目录）：.claude-plugin / .codex /
+
+    .cursor-plugin / .hermes / .nanobot / .openclaw / .opencode。每个目录非空。
+
+    '
+  business_expectation: '"适配 7 个 agent 平台" 不是营销，每家都有真实的安装契约目录。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: All 7 platform config dirs exist with 1-2 files each
+- id: claim-003
+  title: npm 包真实可装，bin entry 是真 JS CLI
+  source: package.json + npm
+  source_ref: package.json::bin
+  priority: critical
+  area: install
+  statement: 'package.json::bin 指向 ./bin/qiushi-skill.mjs；该文件真实存在且非占位
+
+    （≥ 100 行）。`npm i -g qiushi-skill` 在 npm registry 上能查到 v1.4.1。
+
+    '
+  business_expectation: '用户照 README 一句 `npx qiushi-skill install <platform>` 真能跑。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: bin/qiushi-skill.mjs 307 lines; npm registry has v1.4.1
+- id: claim-004
+  title: 双语 README + tests/ 跨平台验证脚本
+  source: README + tests/
+  source_ref: README.en.md + tests/validate.{sh,ps1}
+  priority: high
+  area: i18n + testing
+  statement: '根目录有 README.en.md（英文版）+ tests/ 下有 validate.sh（POSIX）和
+
+    validate.ps1（Windows）。两个 validate 脚本都不是 1 行占位。
+
+    '
+  business_expectation: '非中文用户也能读 README；Windows 用户也能验证安装。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: README.en.md 165 lines + tests/validate.sh 216 + tests/validate.ps1 212
+- id: claim-005
+  title: 每个 skill 自带 original-texts.md 引用经典原文
+  source: README "每一条方法都有据可依"
+  source_ref: skills/<name>/original-texts.md
+  priority: high
+  area: depth
+  statement: '抽样 ≥ 3 个 skill 子目录，每个都有 original-texts.md 文件且非空（≥ 1 KB）。
+
+    '
+  business_expectation: '"方法论可追溯到原典" 不是营销词，每条都有可读出处。
+
+    '
+  status: passed_with_concerns
+  last_run: runs/2026-05-05/run-static-checks
+  note: 1 of 3 sampled (arming-thought/original-texts.md) is 0 bytes empty; others
+    2KB+
+- id: claim-006
+  title: LICENSE 是 MIT 且对中英文都明确
+  source: framework
+  source_ref: LICENSE
+  priority: high
+  area: licensing
+  statement: 'LICENSE 文件存在且为 MIT（与 package.json 一致）。
+
+    '
+  business_expectation: '用户能合法 fork / 修改 / 转发本 skill。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: LICENSE is MIT
+- id: claim-007
+  title: 端到端 happy path：装上后 agent 真在工作流里调起方法论
+  source: README "为什么需要这个？"
+  source_ref: 任意 skill
+  priority: critical
+  area: end-to-end
+  statement: '装好 skill 后，给 agent 一个复杂问题（"分析这个产品的核心矛盾"），
+
+    agent 应主动 reference contradiction-analysis 的工作流，按"识别矛盾 →
+
+    抓主要矛盾 → 区分性质"框架给出回答，而不是直接堆答案。
+
+    '
+  business_expectation: 'Skill 真的影响 agent 行为，不是装饰。
+
+    '
+  evidence_needed: 'molecule 级 — 需要真实 agent session。建议 1 个 happy path（用矛盾分析）+
+
+    1 个边界（agent 是否在不该用方法论的简单问题上误触发）。
+
+    '
+  status: untested

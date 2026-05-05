@@ -1,0 +1,54 @@
+run_id: run-static-checks
+date: 2026-05-05
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: HughYau
+  repo: qiushi-skill
+  branch: main
+  npm_version: "1.4.1"
+
+scope: |
+  Static-checkable claims for skill catalog completeness, 7-platform
+  install configs, npm install path, bilingual READMEs + cross-platform
+  test scripts, original-text references, and LICENSE. Live agent
+  workflow (claim-007) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "All 10 SKILL.md files exist (HTTP 200): arming-thought / contradiction-analysis / practice-cognition / investigation-first / mass-line / criticism-self-criticism / protracted-strategy / concentrate-forces / spark-prairie-fire / overall-planning"
+  - id: claim-002
+    status: passed
+    note: "All 7 platform config dirs present (1-2 files each): .claude-plugin / .codex / .cursor-plugin / .hermes / .nanobot / .openclaw / .opencode"
+  - id: claim-003
+    status: passed
+    note: "bin/qiushi-skill.mjs is 307-line CLI; npm registry has qiushi-skill v1.4.1 matching package.json"
+  - id: claim-004
+    status: passed
+    note: "tests/validate.sh (216 lines) + validate.ps1 (212 lines) + README.en.md (165 lines) all real"
+  - id: claim-005
+    status: passed_with_concerns
+    note: "Sampled 3 skills: contradiction-analysis 2.1 KB + investigation-first 2.2 KB are real; but arming-thought/original-texts.md is 0 bytes (empty). One stub among three samples."
+  - id: claim-006
+    status: passed
+    note: "LICENSE is MIT (matches package.json)"
+
+claims_deferred:
+  - claim-007  # live agent workflow
+
+artifacts:
+  - artifacts/package.json
+  - artifacts/qiushi-skill.mjs
+  - artifacts/LICENSE
+
+logs:
+  - logs/root.txt
+  - logs/static-checks.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/HughYau/qiushi-skill/main/{package.json,bin/qiushi-skill.mjs,LICENSE,tests/*,README.en.md,skills/*/SKILL.md,skills/*/original-texts.md}"
+    - "registry.npmjs.org/qiushi-skill/latest"
+    - "gh api repos/HughYau/qiushi-skill/contents/{.claude-plugin,.codex,.cursor-plugin,.hermes,.nanobot,.openclaw,.opencode}"
+  network_dependent: true
+  reproducible: yes

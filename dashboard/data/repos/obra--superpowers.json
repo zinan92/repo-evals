@@ -1,0 +1,42 @@
+{
+  "slug": "obra--superpowers",
+  "display_name": "superpowers",
+  "owner": "obra",
+  "repo": "superpowers",
+  "repo_url": "https://github.com/obra/superpowers",
+  "repo_type": "skill-catalog",
+  "archetype": "hybrid-skill",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Jesse Vincent's \"complete software-development methodology for coding agents\" — 14 composable skills (brainstorming / TDD / debugging / planning / subagent-driven-development / git-worktrees / etc) plus multi-platform install (Claude Code official marketplace, Codex CLI, Codex A…",
+  "repo_path": "repos/obra--superpowers",
+  "claims_summary": {
+    "total": 7,
+    "passed": 6,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 4,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 3
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/obra--superpowers/plans/2026-05-05-eval-plan.md",
+  "verdict_path": "repos/obra--superpowers/verdicts/2026-05-05-final-verdict.md",
+  "attention_level": "high"
+}

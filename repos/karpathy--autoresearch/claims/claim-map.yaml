@@ -1,0 +1,152 @@
+claims:
+- id: claim-001
+  title: 3 个核心文件齐全且非占位
+  source: README "How it works"
+  source_ref: prepare.py + train.py + program.md
+  priority: critical
+  area: pipeline-shape
+  statement: '仓库根目录有 prepare.py（≥ 200 行）+ train.py（≥ 400 行）+ program.md
+
+    （≥ 50 行）。三者构成完整的「数据 + 训练 + 指令」三件套。
+
+    '
+  business_expectation: '用户照 README 一句 `uv run train.py` 真能跑出 5 分钟实验。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: prepare 389 + train 630 + program 114 lines
+- id: claim-002
+  title: pyproject.toml + uv.lock 真有依赖管理
+  source: README "Quick start" + pyproject.toml
+  source_ref: pyproject.toml + uv.lock
+  priority: critical
+  area: install
+  statement: 'pyproject.toml 声明 Python 3.10+，包含 nanochat 训练所需依赖（kernels /
+
+    tiktoken / pyarrow / pandas / numpy 等）。uv.lock 真实存在（说明 uv 锁定
+
+    了具体版本）。
+
+    '
+  business_expectation: '`uv sync` 一次到位，依赖版本可重现。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: Python 3.10+, pytorch-cu128 + kernels + tiktoken + pyarrow; uv.lock locked
+- id: claim-003
+  title: program.md 是真实的"agent 该如何工作"指令文档
+  source: README "Running the agent" + program.md
+  source_ref: program.md
+  priority: critical
+  area: agent-instructions
+  statement: 'program.md ≥ 50 行；包含 Setup（git checkout、读哪些文件、初始化）+
+
+    Experimentation（agent 能改什么 / 不能改什么 / 如何评估）+ 结束 / 提交
+
+    规范。是给 agent 的真实运行手册，不是占位符。
+
+    '
+  business_expectation: '用户只需「kick off using program.md」一句话，agent 就有完整工作流。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: '5 sections: Setup / Experimentation / Output format / Logging results / The
+    experiment loop'
+- id: claim-004
+  title: train.py 包含完整的 GPT 模型 + 优化器 + 训练循环
+  source: README "How it works" + train.py
+  source_ref: train.py
+  priority: high
+  area: training-completeness
+  statement: 'train.py 真实有 model 定义（Transformer / GPT 类）+ optimizer
+
+    （Muon / AdamW）+ training loop。文件 ≥ 400 行说明是真实训练代码。
+
+    '
+  business_expectation: '"agent 改 train.py 能改到真实模型架构 / 优化器 / 超参" 不是营销词。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 25 model + optimizer signatures in train.py
+- id: claim-005
+  title: 仓库有 LICENSE 文件
+  source: README "## License" + framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: 'LICENSE 文件存在于仓库根目录。README 文末写「MIT」但**必须**有真实
+
+    LICENSE 文件支撑，否则下游 fork 法律状态不明。
+
+    '
+  business_expectation: '用户能合法 fork / 修改 / 转发；README 的 license 段不是空头支票。
+
+    '
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: README says MIT but no LICENSE file (HTTP 404)
+- id: claim-006
+  title: README 列出的 4 个社区 fork 都真实存在
+  source: README "Notable forks"
+  source_ref: 4 个 fork URL
+  priority: high
+  area: community-coverage
+  statement: 'README 列了 miolini/autoresearch-macos、trevin-creator/autoresearch-mlx、
+
+    jsegov/autoresearch-win-rtx、andyluo7/autoresearch 4 个 fork。
+
+    每个 URL 真实可访问（HTTP 200）。
+
+    '
+  business_expectation: '非 H100 用户照 README 直接跳到对应 fork，不会跳进 404。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: All 4 community forks HTTP 200 (Mac/MLX/Win-RTX/AMD)
+- id: claim-007
+  title: 端到端：在 H100 上跑出过 1 个有效 baseline 实验
+  source: README "Quick start" 第 4 步
+  source_ref: 全链
+  priority: critical
+  area: end-to-end
+  statement: '在单 H100 上 `uv sync && uv run prepare.py && uv run train.py` 应：
+
+    下载 + tokenize 数据（~2 min）→ 跑 5 分钟 train.py → 输出 val_bpb 数字。
+
+    '
+  business_expectation: '"5-minute training experiment" 不是营销词，硬件对的话真能跑通。
+
+    '
+  evidence_needed: 'compound 级 — 需要 H100 + 时间 + 网络。建议 1 个 baseline 跑通 + 1 个
+
+    agent 自动迭代场景（让 agent 跑 ≥ 3 轮，验证不会死循环 / 不会自毁数据）。
+
+    '
+  status: untested
+- id: claim-008
+  title: agent 不会修改它不该改的文件
+  source: README "edited and iterated on by the agent" 限制
+  source_ref: program.md
+  priority: critical
+  area: safety
+  statement: 'program.md 必须明确 agent 只能改 train.py，不能改 prepare.py，不能改
+
+    .git 历史，不能修改超出范围的文件。这是「无人值守过夜跑」的安全前提。
+
+    '
+  business_expectation: '用户睡前 prompt 之后能放心睡觉，agent 不会偷偷改其他东西。
+
+    '
+  evidence_needed: 'compound 级 — 需要把 agent 关到沙箱 + 监控文件改动。建议 1 个对抗场景
+
+    （明确指示 agent 改 prepare.py，看它是否拒绝）。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'program.md explicit: prepare.py read-only + evaluate_bpb is ground truth'

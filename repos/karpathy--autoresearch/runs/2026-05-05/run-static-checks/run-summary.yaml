@@ -1,0 +1,56 @@
+run_id: run-static-checks
+date: 2026-05-05
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: karpathy
+  repo: autoresearch
+  branch: master
+
+scope: |
+  Static-checkable claims for the 3-file pipeline, deps, agent
+  instructions, model+optimizer presence, LICENSE, community fork
+  URLs, and agent safety scope. Live H100 e2e (claim-007) and
+  agent-misbehavior probe (claim-008) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "prepare.py 389 + train.py 630 + program.md 114 lines — all real"
+  - id: claim-002
+    status: passed
+    note: "pyproject.toml: Python 3.10+, real deps (pytorch-cu128 / kernels / tiktoken / pyarrow); uv.lock present"
+  - id: claim-003
+    status: passed
+    note: "program.md has 5 sections: Setup / Experimentation / Output format / Logging results / The experiment loop"
+  - id: claim-004
+    status: passed
+    note: "25 model + optimizer signatures in train.py (model classes, forward, optimizers AdamW/Muon)"
+  - id: claim-005
+    status: failed
+    note: "No LICENSE file at repo root (HTTP 404) despite README closing with '## License — MIT'"
+  - id: claim-006
+    status: passed
+    note: "All 4 community forks HTTP 200: miolini/macos, trevin-creator/mlx, jsegov/win-rtx, andyluo7/amd"
+  - id: claim-008
+    status: passed
+    note: "program.md explicitly says 'prepare.py — Do not modify' + 'Modify prepare.py. It is read-only' (anti-modification recommendation list)"
+
+claims_deferred:
+  - claim-007  # live H100 e2e training experiment
+
+artifacts:
+  - artifacts/prepare.py
+  - artifacts/train.py
+  - artifacts/program.md
+  - artifacts/pyproject.toml
+
+logs:
+  - logs/root.txt
+  - logs/static-checks.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/karpathy/autoresearch/master/{prepare.py,train.py,program.md,pyproject.toml,LICENSE,uv.lock}"
+    - "github.com/{miolini/autoresearch-macos,trevin-creator/autoresearch-mlx,jsegov/autoresearch-win-rtx,andyluo7/autoresearch} HEAD checks"
+  network_dependent: true
+  reproducible: yes

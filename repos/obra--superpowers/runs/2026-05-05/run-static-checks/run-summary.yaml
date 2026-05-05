@@ -1,0 +1,54 @@
+run_id: run-static-checks
+date: 2026-05-05
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: obra
+  repo: superpowers
+  branch: main
+  npm_version: "5.1.0"
+
+scope: |
+  Static-checkable claims for 14-skill catalog, 8-platform install
+  paths, package.json maturity, LICENSE, agent-facing docs, and test
+  coverage. Live agent workflow (claim-007) deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "Sampled 5 skills 152-371 lines each (brainstorming/systematic-debugging/TDD/writing-plans/subagent-driven-development); none stub"
+  - id: claim-002
+    status: passed
+    note: "4 plugin configs (.claude-plugin, .codex-plugin, .cursor-plugin, .opencode); README has 8 install sections (Claude/Codex CLI+App/Factory Droid/Gemini CLI/OpenCode/Cursor/GH Copilot CLI)"
+  - id: claim-003
+    status: passed
+    note: "package.json v5.1.0 (mature) + RELEASE-NOTES.md HTTP 200"
+  - id: claim-004
+    status: passed
+    note: "LICENSE present; MIT"
+  - id: claim-005
+    status: passed_with_concerns
+    note: "CLAUDE.md (106 lines) is real with famous '94% PR rejection' contributor guidelines; but GEMINI.md (2 lines) and AGENTS.md (0 bytes empty) are thin"
+  - id: claim-006
+    status: passed
+    note: "tests/ has 7 directories (brainstorm-server, claude-code, codex-plugin-sync, explicit-skill-requests, opencode, skill-triggering, subagent-driven-dev) — substantial coverage"
+
+claims_deferred:
+  - claim-007  # live agent workflow
+
+artifacts:
+  - artifacts/package.json
+  - artifacts/CLAUDE.md
+  - artifacts/LICENSE
+
+logs:
+  - logs/root.txt
+  - logs/skills.txt
+  - logs/static-checks.txt
+  - logs/checks.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/obra/superpowers/main/{package.json,LICENSE,CLAUDE.md,AGENTS.md,GEMINI.md,RELEASE-NOTES.md,skills/*/SKILL.md}"
+    - "gh api repos/obra/superpowers/contents/{skills,tests,.claude-plugin,.codex-plugin,.cursor-plugin,.opencode}"
+  network_dependent: true
+  reproducible: yes

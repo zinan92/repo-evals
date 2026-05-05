@@ -1,0 +1,40 @@
+=== claim-001 sample 5 skills ===
+  brainstorming:      164 lines
+  systematic-debugging:      296 lines
+  test-driven-development:      371 lines
+  writing-plans:      152 lines
+  subagent-driven-development:      279 lines
+
+=== claim-002 plugin configs ===
+  .claude-plugin: 2 files
+  .codex-plugin: 1 files
+  .cursor-plugin: 1 files
+  .opencode: 2 files
+README install sections:
+### Claude Code
+### Codex CLI
+### Codex App
+### Factory Droid
+### Gemini CLI
+### OpenCode
+### Cursor
+### GitHub Copilot CLI
+### Skills Library
+
+=== claim-003 version + release-notes ===
+"5.1.0"
+  RELEASE-NOTES.md HTTP 200
+
+=== claim-005 agent-facing docs ===
+  CLAUDE.md:      106 lines
+  GEMINI.md:        2 lines
+  AGENTS.md:        0 lines
+
+=== claim-006 tests ===
+brainstorm-server
+claude-code
+codex-plugin-sync
+explicit-skill-requests
+opencode
+skill-triggering
+subagent-driven-dev
