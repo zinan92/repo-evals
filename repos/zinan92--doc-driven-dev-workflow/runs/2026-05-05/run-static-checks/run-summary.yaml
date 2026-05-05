@@ -1,0 +1,37 @@
+run:
+  id: run-static-checks
+  date: '2026-05-05'
+  evaluator: static-eval
+  target_commit: '96c25cc (single visible commit — docs: productize README)'
+  notes: |
+    Static layer only. The 22-stage workflow + workflow_guard
+    state-machine + 52-passing test suite were verified by reading
+    + running pytest from a fresh clone of /tmp/ddd. Live e2e (a
+    real Codex + Claude Code session driving a task to maintenance)
+    is intentionally not attempted in this static eval — that's
+    claim-009 untested.
+
+    Two real defects flagged: (1) no LICENSE file at root (claim-007
+    failed) — same defect we caught on karpathy/autoresearch + the
+    earlier repo-evals self-eval; (2) README is Chinese-only
+    (claim-008 passed_with_concerns) — workflow JSON / scripts /
+    logs are English so non-CN readers can use the system, but
+    they read CLAUDE.md instead of README.
+metrics:
+  pass_rate: 0.78
+  total_claims: 9     # 10 minus the still-untested live e2e
+  passed: 7
+  passed_with_concerns: 1
+  failed: 1
+  untested: 1
+results_by_claim:
+  claim-001: passed   # 5 phases × 22 stages exact
+  claim-002: passed   # 6 scripts, 921 lines
+  claim-003: passed   # 52/52 tests pass
+  claim-004: passed   # frontend/src/ has real components
+  claim-005: passed   # docs/ substantive
+  claim-006: passed   # 2 example tasks with full layout
+  claim-007: failed   # no LICENSE file
+  claim-008: passed_with_concerns  # README CN-only, system bilingual
+  claim-009: untested  # live e2e by Codex + Claude Code
+  claim-010: passed   # workflow_guard.py + tests cover state-machine

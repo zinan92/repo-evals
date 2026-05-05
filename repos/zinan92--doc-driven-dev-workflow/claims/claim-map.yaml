@@ -1,0 +1,175 @@
+claims:
+- id: claim-001
+  title: canonical-workflow.json defines 5 phases × 22 stages exactly as README claims
+  source: README.md + docs/canonical-workflow.json
+  source_ref: docs/canonical-workflow.json
+  priority: critical
+  area: workflow-spec-shape
+  statement: |
+    docs/canonical-workflow.json exists with version "2.0", contains
+    5 phases (research / design / development / packaging / maintenance),
+    and the union of phase.stage_ids covers exactly 22 stages, all
+    defined in the top-level "stages" array.
+  business_expectation: |
+    The README badge "5_phase | 22_stage" matches the machine-readable
+    spec. An agent reading the JSON gets the same workflow shape the
+    human reads from the markdown.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'Verified via Python: 5 phases / 22 stages / 22 stages defined in top-level stages array. Numbers match exactly.'
+- id: claim-002
+  title: 6 Python scripts are real implementations, not placeholders
+  source: README + scripts/
+  source_ref: scripts/
+  priority: critical
+  area: support-tooling
+  statement: |
+    scripts/ contains 6 Python files: scaffold_dev_workflow_task.py,
+    update_task_state.py, validate_dev_workflow_task.py,
+    workflow_guard.py, append_task_event.py, dev_workflow_next_step.py.
+    Each is non-trivial (>= 100 lines).
+  business_expectation: |
+    The README's "task scaffolding, workflow guards, state/event writer
+    scripts" claim corresponds to working code, not stubs.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: '6 scripts: 102-251 lines each, total 921 lines. workflow_guard.py is the largest (251 lines).'
+- id: claim-003
+  title: Test suite passes
+  source: tests/
+  source_ref: tests/
+  priority: critical
+  area: test-discipline
+  statement: |
+    `python3 -m pytest tests/` exits 0. At least one test file each
+    for scaffold_dev_workflow_task, dev_workflow_helpers, and
+    workflow_guard.
+  business_expectation: |
+    Refactoring any of the workflow scripts cannot silently break
+    the state-transition rules.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 52/52 tests passing in 0.20s. Three named test files cover scaffold + helpers + workflow guard plus one shared test_dev_workflow_helpers.
+- id: claim-004
+  title: Frontend observer dashboard is real React + TypeScript code
+  source: frontend/
+  source_ref: frontend/src/
+  priority: high
+  area: dashboard-implementation
+  statement: |
+    frontend/ has a complete Vite + React + TypeScript project with
+    real components/state/types directories under src/ — not a single
+    placeholder file. package.json declares React 19 + Vite + Vitest.
+  business_expectation: |
+    The "local-first observer dashboard" mentioned in README is real
+    code you can run with `npm install && npm run dev`, not a screenshot.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'frontend/src/ has 8 entries: app.tsx, app.test.tsx, main.tsx, components/, data/, lib/, state/, styles.css, test/, types/, vite-env.d.ts. ~80KB of TypeScript.'
+- id: claim-005
+  title: docs/ contains the human-readable workflow doctrine
+  source: docs/
+  source_ref: docs/development-workflow.md, docs/build-anything-workflow.md
+  priority: high
+  area: documentation
+  statement: |
+    docs/development-workflow.md (canonical instruction set) and
+    docs/build-anything-workflow.md (higher-level lifecycle) both
+    exist with substantive content. Plus docs/workflow-driven-developer/
+    contains agent-runner-prompt.md, claude-implementation-prompt.md,
+    user-flow.yaml + .md, observer-data-model.md, process-tuning-checklist.md.
+  business_expectation: |
+    A reader (human or agent) gets explicit operating instructions,
+    not a hand-wavy "see the code".
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'docs/ has 4 top-level docs + 6 files under workflow-driven-developer/ + 1 plan. Substantive (development-workflow.md alone is rich operating-manual content).'
+- id: claim-006
+  title: examples/ tasks demonstrate the real task layout
+  source: examples/
+  source_ref: examples/example-task/, examples/medium-example-task/
+  priority: high
+  area: example-completeness
+  statement: |
+    examples/ contains at least 2 example tasks, each with:
+    decision-log.md + status.md + README.md. Status.md shows real
+    workflow state (current stage, current owner, latest conclusion,
+    blockers, next step) — the kind of output the scripts would produce.
+  business_expectation: |
+    A new user can copy an example task and start filling it in;
+    they don't have to first reverse-engineer what a real task
+    folder should contain.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 2 example tasks (example-task + medium-example-task), each with decision-log.md + status.md + README.md. status.md content shows real state — current_stage, owner, round, blockers, next-step.
+- id: claim-007
+  title: Repository has a LICENSE file
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: |
+    LICENSE file exists at the repo root. Without one, contributors,
+    forkers, and adopters cannot legally redistribute or build on
+    the workflow scripts/templates.
+  business_expectation: |
+    Anyone reading the workflow can fork it, adapt it for their own
+    team, or build on top of the scaffold scripts.
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'No LICENSE or COPYING file at repo root. GitHub API confirms licenseInfo: null. Same defect we caught on karpathy/autoresearch + earlier on this org''s repo-evals — same one-line fix (commit a LICENSE file, MIT or Apache-2.0).'
+- id: claim-008
+  title: Multilingual README (EN + ZH)
+  source: README.md
+  source_ref: README.md
+  priority: medium
+  area: docs-i18n
+  statement: |
+    README.md exists in both English and Chinese OR a single
+    bilingual README that an English-speaking reader can navigate.
+  business_expectation: |
+    The framework targets a Chinese-developer audience (README is
+    Chinese), but the workflow itself uses English file names and
+    canonical IDs — non-CN readers can still use it.
+  status: passed_with_concerns
+  last_run: runs/2026-05-05/run-static-checks
+  note: README.md is Chinese-only (no English README). Workflow JSON + script names + log formats are all English. CLAUDE.md is English. Net effect (CN docs + EN system) is bilingual *in practice* but not by README convention.
+- id: claim-009
+  title: Live end-to-end execution by a coding agent on a real task
+  source: README "5-phase / 22-stage workflow"
+  source_ref: tasks/
+  priority: critical
+  area: end-to-end
+  statement: |
+    A coding agent (Codex + Claude Code as the README assigns) drives
+    a real task from research → design → development → packaging →
+    maintenance, hitting all approval gates, producing handoffs/*.md,
+    state.json updates, and run-log.jsonl events. Final state.json
+    should show status: done.
+  business_expectation: |
+    The 22-stage workflow is not a doctrine document — it actually
+    runs, agents follow it, and the final task is the canonical
+    artifact (not just the README claim).
+  evidence_needed: |
+    molecule level — needs a logged session of Codex + Claude Code
+    (or another paired agent setup) running scaffold_dev_workflow_task
+    → walking through all 22 stages → marking task done. Save the
+    full tasks/<task-id>/ directory + the run-log.jsonl as evidence.
+  status: untested
+- id: claim-010
+  title: workflow_guard enforces state transitions correctly
+  source: scripts/workflow_guard.py
+  source_ref: scripts/workflow_guard.py
+  priority: high
+  area: state-machine-correctness
+  statement: |
+    workflow_guard.py rejects invalid stage transitions (e.g., trying
+    to skip an approval gate, or advancing while blocked). Tests in
+    tests/test_workflow_guard.py exercise these rejection paths.
+  business_expectation: |
+    The framework's promise of "approval gates" is enforced by code,
+    not just convention. An agent that tries to skip a gate gets
+    rejected by the guard, not silently allowed.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'tests/test_workflow_guard.py exists; pytest passes 52/52 (workflow_guard tests are part of that). 251-line workflow_guard.py is the largest script — substantive enforcement code.'

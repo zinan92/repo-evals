@@ -1,0 +1,300 @@
+owner: zinan92
+repo: doc-driven-dev-workflow
+display_name: doc-driven-dev-workflow
+repo_url: https://github.com/zinan92/doc-driven-dev-workflow
+repo_type: framework
+archetype: pure-cli
+layer: molecule
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-05'
+version_tested: main@HEAD (frontend v0.1.0)
+stars: 1
+archived: false
+has_license: false
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 2
+recently_active: true
+business_category: development
+use_case_tags:
+- agent-methodology
+- coding-workflow
+notes: |
+  An AI-native "doc-driven development workflow" framework. Source of
+  truth is docs/canonical-workflow.json (5 phases × 22 stages, version
+  2.0). Six Python scripts (~921 lines total) implement task scaffolding
+  + state-transition enforcement + event logging + workflow validation.
+  A React 19 + Vite + TypeScript "observer dashboard" (in frontend/)
+  reads task state from disk and shows progress to the human watcher.
+
+  The architecture is human-driven approval gates + Codex (planner /
+  reviewer) + Claude Code (coder) + scripts (state I/O). Every state
+  transition flows through scripts/update_task_state.py which calls
+  workflow_guard.py to reject invalid moves (e.g., skipping an approval
+  gate). 52 tests pass under tests/.
+
+  Two example tasks (examples/example-task/ + medium-example-task/)
+  demonstrate the directory layout: status.md + decision-log.md +
+  handoffs/*.md + system/state.json + run-log.jsonl per task.
+
+  Two real defects flagged by static eval: (1) no LICENSE file at
+  repo root despite README implying open distribution; (2) README is
+  Chinese-only (workflow JSON + script names + log formats are
+  English, so the system is bilingual in practice but the README
+  convention isn't).
+
+  Molecule layer — the 22-stage canonical workflow is a fixed
+  pipeline. Codex and Claude Code play roles inside it (planner /
+  reviewer / coder), but neither LLM decides at runtime which stage
+  fires next. workflow_guard.py enforces the structure deterministically.
+product_view:
+  one_liner:
+    en: |-
+      A terminal-first, repo-local, doc-driven development workflow — 5 phases × 22 stages canonicalised in JSON, with task scaffolding scripts, a workflow_guard state machine that rejects invalid moves, and a React observer dashboard the human watches while Codex + Claude Code execute against the spec.
+    zh: |-
+      一个终端优先、仓库本地、文档驱动的开发工作流 —— 5 阶段 × 22 stage 的 canonical JSON,task 脚手架脚本,工作流闸门(workflow_guard)拒绝非法状态迁移,加一个 React observer dashboard 让你边看边让 Codex + Claude Code 按 spec 干活。
+  persona:
+    en: |-
+      A solo dev or small team doing AI-assisted coding (Codex + Claude Code or similar) who feels the agents work fast but leave nothing auditable behind — chat scrollback is the only "doc trail", approvals get lost, and you can't tell stage 7 "what was actually decided" without re-reading 200 messages. You want process discipline without buying Jira / Linear.
+    zh: |-
+      单人开发者 / 小团队,在用 Codex + Claude Code 做 AI 辅助开发,觉得 agent 干得快但留不下可审计痕迹 —— 聊天 scrollback 是唯一的"文档轨迹",审批环节丢失,过了第 7 步谁都说不清"那一步到底定了什么"。你想要流程纪律,但不想上 Jira / Linear。
+  scenario:
+    en: |-
+      You're about to give Codex + Claude Code a non-trivial task — a new feature, a refactor, a migration. You know the agents will jump to coding without a research / PRD step. You want a structured handoff: research outputs, then PRD, then plan, then bounded code batches with reviews, with approval gates between phases that you (the human) hold.
+    zh: |-
+      你准备给 Codex + Claude Code 一个不平凡的任务 —— 新功能 / 重构 / 迁移。你知道 agent 会直接跳到写代码,跳过研究 / PRD 步骤。你想要结构化的 handoff: 研究产出 → PRD → 实现计划 → 限定批次的代码 + 评审,phase 之间有你(人)把控的审批门。
+  without_this:
+    en: |-
+      Three options, each costly. (1) Trust the agent's chat-driven flow — fast first round, but you can't audit decisions and version-2 of the same feature drifts because the rationale lives only in scrollback. (2) Buy a heavyweight orchestrator (n8n / Temporal / Linear automation) — overkill for a solo / small team, and your AI agents weren't designed to plug into them. (3) DIY: build your own scaffold + state-machine + dashboard — weeks of plumbing before any actual feature work.
+    zh: |-
+      三条路,代价都高。(1) 信任 agent 的聊天驱动流程 —— 第一轮快,但决策无法审计,改 v2 时因为理由只在 scrollback 里所以会跑偏。(2) 买重型 orchestrator(n8n / Temporal / Linear automation) —— 单人 / 小团队太重,而且 AI agent 不是为接它们设计的。(3) DIY: 自己搭脚手架 + 状态机 + dashboard —— 真正写功能之前先花几周接管道。
+  with_this:
+    en: |-
+      Run `scaffold_dev_workflow_task.py --name "Build Feature X"`. You get a task folder with handoffs/*.md templates, system/state.json, and a 22-stage roadmap. Codex starts at stage 1 (clarify_objective), produces a real document, you approve, state advances. Claude Code joins at the development phase for bounded batches. workflow_guard.py rejects out-of-order or skip-the-gate moves. The dashboard shows where you are, who owns it, and what's next.
+    zh: |-
+      跑 `scaffold_dev_workflow_task.py --name "Build Feature X"`。你拿到一个 task 目录,有 handoffs/*.md 模板、system/state.json 和 22-stage 路线图。Codex 从 stage 1(clarify_objective) 起,产出真实文档,你审批,状态推进。Claude Code 在 development phase 加入做限定批次。workflow_guard.py 拒绝乱序或跳门的操作。dashboard 显示当前状态、owner、下一步。
+  cost_summary:
+    en: |-
+      No LICENSE file yet (treat as personal-use until upstream ships one). Free OSS otherwise. Need Python 3.9+ + Node 18+ (frontend dashboard). You bring your own AI agent subscriptions (Codex + Claude Code or equivalents). No external services at runtime — everything is repo-local files + a localhost dashboard.
+    zh: |-
+      暂无 LICENSE 文件(在上游补之前当个人用看待)。其他都免费开源。需要 Python 3.9+ + Node 18+(前端 dashboard)。自带 AI agent 订阅(Codex + Claude Code 或同类)。运行时不需要外部服务 —— 都是仓库本地文件 + 本机 dashboard。
+  how:
+    en: |-
+      Clone + `cd frontend && npm install && cd ..`. Run `python3 scripts/scaffold_dev_workflow_task.py --name "Feature X" --repo-path /path/to/your/repo` to create a task. Open the dashboard with `cd frontend && npm run build:data && npm run dev`. Hand the active task to Codex first (it does research / PRD / plan). When stage advances to development, hand off to Claude Code for bounded code batches. State transitions go through update_task_state.py which calls workflow_guard.py — invalid moves get rejected.
+    zh: |-
+      Clone + `cd frontend && npm install && cd ..`。跑 `python3 scripts/scaffold_dev_workflow_task.py --name "Feature X" --repo-path /path/to/your/repo` 创建 task。`cd frontend && npm run build:data && npm run dev` 打开 dashboard。先把 active task 交给 Codex(做研究 / PRD / 计划)。stage 推进到 development 时交给 Claude Code 做限定批次。状态迁移走 update_task_state.py(它调用 workflow_guard.py),非法操作被拒。
+  watch_out:
+    en: |-
+      v0.1.0 — single-author, single-commit visible history, 1 star. The framework is conceptually sound and tested (52 tests pass) but has not been observed running end-to-end on a real multi-day task by a third party. The Codex + Claude Code role split is a design assumption — works in theory, not yet validated by a logged session. README is Chinese-only; non-CN readers will read CLAUDE.md instead. No LICENSE file (claim-007 failed). Treat as production-of-one for now: the author can use it confidently; strangers should run a small task as proof-of-concept first.
+    zh: |-
+      v0.1.0 —— 单作者,可见历史只 1 个 commit,1 star。框架概念清晰且有测试(52 tests pass),但还没有第三方在真实多日任务上跑通端到端。Codex + Claude Code 的角色分工是设计假设 —— 理论上行,还没有日志记录的 session 验证。README 只有中文;非中文读者读 CLAUDE.md。没有 LICENSE 文件(claim-007 失败)。当成"production-of-one"看: 作者自己用没问题,陌生人先跑一个小任务做 proof-of-concept。
+  examples:
+  - context:
+      en: |-
+        A solo dev about to add a new payment provider integration to their SaaS — 3-5 day task, multiple files
+      zh: |-
+        独立开发者准备给 SaaS 加一个新支付 provider 集成 —— 3-5 天的活,跨多个文件
+    you_say:
+      en: |-
+        python3 scripts/scaffold_dev_workflow_task.py --name "Add Stripe Connect" --repo-path ~/projects/saas
+      zh: |-
+        python3 scripts/scaffold_dev_workflow_task.py --name "Add Stripe Connect" --repo-path ~/projects/saas
+    what_happens:
+      en: |-
+        Scaffold creates tasks/TASK-2026-05-05-add-stripe-connect/ with status.md (stage = clarify_objective, owner = codex), handoffs/ with stage-keyed markdown templates, system/state.json. You hand it to Codex saying "you are Codex; pick up TASK-2026-05-05-add-stripe-connect". Codex reads CLAUDE.md, finds active task, fills in clarify_objective.md → product_research.md → draft_prd.md, hits approval gates between phases. State advances via update_task_state.py.
+      zh: |-
+        scaffold 创建 tasks/TASK-2026-05-05-add-stripe-connect/,带 status.md(stage = clarify_objective,owner = codex)、handoffs/ 各 stage 的 markdown 模板、system/state.json。你把它交给 Codex 说 "你是 Codex,接手 TASK-2026-05-05-add-stripe-connect"。Codex 读 CLAUDE.md,找到 active task,逐步填 clarify_objective.md → product_research.md → draft_prd.md,phase 之间过审批门。状态通过 update_task_state.py 推进。
+  - context:
+      en: |-
+        A small team where the senior dev wants discipline but the junior keeps merging without review
+      zh: |-
+        小团队里 senior 想要纪律但 junior 总不 review 就合并
+    you_say:
+      en: |-
+        Set up doc-driven-dev-workflow on this repo, every PR-sized change goes through scaffold_dev_workflow_task first, no exceptions
+      zh: |-
+        在这个仓库上铺 doc-driven-dev-workflow,每个 PR 级别的改动都要先 scaffold_dev_workflow_task,没例外
+    what_happens:
+      en: |-
+        workflow_guard.py becomes the policy enforcer. Junior cannot mark a task done without hitting the design_approval_gate + the gate_major_phase. The decision-log.md becomes the auditable record of why each stage was approved. Senior reviews via the dashboard; when something is wrong, they reject in update_task_state.py and the task goes back a stage.
+      zh: |-
+        workflow_guard.py 变成策略执行者。Junior 没经过 design_approval_gate + gate_major_phase 就不能把 task 标 done。decision-log.md 成为每个 stage 为什么通过的可审计记录。Senior 通过 dashboard 审,有问题就在 update_task_state.py 里 reject,task 回退一个 stage。
+  - context:
+      en: |-
+        A consultant prepping the same workflow for 3 different client repos, wanting consistency
+      zh: |-
+        咨询师在 3 个不同客户仓库上铺同一套工作流,想保持一致性
+    you_say:
+      en: |-
+        Clone doc-driven-dev-workflow into each client repo as a submodule, customise canonical-workflow.json for each client's domain, but keep the script + dashboard layer shared
+      zh: |-
+        把 doc-driven-dev-workflow 作为 submodule 进每个客户仓库,根据各家业务域改 canonical-workflow.json,但脚本 + dashboard 层共享
+    what_happens:
+      en: |-
+        Each client repo gets the same scaffold + guard + dashboard. The 22-stage spec adapts to the domain (a fintech client might add a "compliance_review" stage). Process drift between clients drops to zero because the validate_dev_workflow_task.py + workflow_guard.py reject divergence. You can review state across all 3 clients in identical dashboards.
+      zh: |-
+        每家客户仓库都有同一套 scaffold + guard + dashboard。22-stage 规范按业务域适配(金融客户可能加一个 compliance_review stage)。客户之间的流程漂移降到 0,因为 validate_dev_workflow_task.py + workflow_guard.py 拒绝偏离。你能在 3 家相同 dashboard 里 review 状态。
+  next_step:
+    en: |-
+      Two highest-leverage actions. (1) Add a LICENSE file (one commit) — closes claim-007 and lifts the score by ~+15 because the failed critical claim flips to passed. (2) Run one logged real task end-to-end: scaffold a small feature on a real repo, drive it through Codex (research / PRD / plan) → Claude Code (development) → maintenance. Save the full tasks/TASK-.../ directory + run-log.jsonl as evidence. Closes claim-009. Together those move the score from 59 to roughly 80.
+    zh: |-
+      两个最高 ROI 动作。(1) 加一个 LICENSE 文件(一个 commit) —— 关掉 claim-007,失败的 critical claim 翻成通过,分数 +15 左右。(2) 跑一次有日志的真实 task 端到端: 在真实仓库上 scaffold 一个小功能,Codex(研究 / PRD / 计划) → Claude Code(开发) → maintenance。保存完整的 tasks/TASK-.../ 目录 + run-log.jsonl 作为证据。关掉 claim-009。两件加起来把分数从 59 推到大约 80。
+similar_repos:
+- slug: obra--superpowers
+  shared_purpose:
+    en: |-
+      Both target "make the AI agent work better at engineering tasks". Both bet that explicit methodology beats ad-hoc chat-driven coding. Both are framework-shape (install once, agents follow a defined process), not single-skill atoms.
+    zh: |-
+      都瞄准"让 AI agent 做工程任务更好"。都押注"显式方法论比聊天驱动的随意编程更靠谱"。都是框架形态(装一次,agent 按既定流程走),不是单 skill 原子。
+  this_better_at:
+    en: |-
+      Audit trail + state machine + approval gates. Every transition is enforced by code (workflow_guard.py), every decision lives in decision-log.md, every event in run-log.jsonl. When you need to prove "what happened on stage 7", the evidence is on disk, not in chat scrollback. Plus a real observer dashboard.
+    zh: |-
+      审计轨迹 + 状态机 + 审批门。每一个状态迁移由代码(workflow_guard.py)强制,每个决策落在 decision-log.md,每个事件在 run-log.jsonl。你想证明"第 7 步发生了什么",证据在磁盘上不在聊天 scrollback 里。还有真实的观测 dashboard。
+  other_better_at:
+    en: |-
+      Multi-platform reach + ecosystem maturity. superpowers ships 14 methodology skills + 8-platform install (Claude Code / Codex / Cursor / Gemini / OpenCode / Factory Droid / GH Copilot / Codex App), 179K stars, v5.1.0. doc-driven is single-author v0.1.0 with 1 star — different maturity tier even though the philosophy overlaps.
+    zh: |-
+      多平台覆盖 + 生态成熟度。superpowers 发 14 个方法论 skill + 8 平台安装(Claude Code / Codex / Cursor / Gemini / OpenCode / Factory Droid / GH Copilot / Codex App),179K stars,v5.1.0。doc-driven 是单作者 v0.1.0 + 1 star —— 不同成熟度档次,即使哲学重叠。
+- slug: zinan92--repo-evals
+  shared_purpose:
+    en: |-
+      Both are personal-toolkit Python frameworks by the same author (zinan92), MIT-leaning even when LICENSE is absent (in the case of repo-evals it was added; doc-driven still missing). Both are molecule-layer pipelines: a fixed sequence of scripts + a hand-authored spec + a rendered output. Both treat the dossier / task folder as the durable artefact.
+    zh: |-
+      都是同一作者(zinan92)的个人工具箱型 Python 框架,倾向 MIT 即使 LICENSE 缺失(repo-evals 已经补上,doc-driven 还没)。都是分子层流水线: 固定的脚本顺序 + 手写规范 + 渲染产物。都把 dossier / task 文件夹作为持久产物。
+  this_better_at:
+    en: |-
+      Application breadth — manages real ongoing dev work (Stripe integration, refactor, migration), not just one-shot evaluations. Has a live React dashboard for watching tasks. Targets "the act of building software" — broader scope than evaluation.
+    zh: |-
+      应用广度 —— 管理真正在进行的开发工作(Stripe 集成 / 重构 / 迁移),不是一次性评测。有 React dashboard 实时看任务。瞄准"做软件这件事" —— 范围比评测更广。
+  other_better_at:
+    en: |-
+      Maturity + cross-comparison. repo-evals has 30+ evaluated repos, scoring model with auditable breakdown, similar-repos cross-comparison. It's been used to evaluate this very repo. doc-driven is fresh; repo-evals is in active corpus-building mode.
+    zh: |-
+      成熟度 + 横向对比。repo-evals 有 30+ 已评测仓库、有可审计明细的评分模型、有 similar-repos 横向对比。它被用来评测这个仓库。doc-driven 是新生,repo-evals 在积极建语料库。
+- slug: anthropics--skill-creator
+  shared_purpose:
+    en: |-
+      Both formalise an opinionated process — skill-creator for skill-authoring, doc-driven for general dev workflow. Both reject "just do it ad-hoc" in favour of a measurable / auditable process the agent follows.
+    zh: |-
+      都把一套有偏好的流程形式化 —— skill-creator 给 skill 写作,doc-driven 给一般开发流程。都拒绝"随便干"换成 agent 可遵循的可测量 / 可审计流程。
+  this_better_at:
+    en: |-
+      Generality — works on any feature / refactor / migration, not just skill authoring. Includes the human-in-the-loop approval gates explicitly; skill-creator is more "the agent runs the loop" oriented.
+    zh: |-
+      通用性 —— 任何功能 / 重构 / 迁移都能用,不只 skill 写作。明确包含 human-in-the-loop 审批门;skill-creator 更倾向"agent 自己跑循环"。
+  other_better_at:
+    en: |-
+      Production-grade tooling for its specific domain. skill-creator is at 81 / Production-ready (this corpus); doc-driven is at 72 / Available with an honest "untested live e2e" caveat.
+    zh: |-
+      在自己领域内的生产级工具。skill-creator 在本语料库 81 / 可用于生产;doc-driven 是 72 / 可使用,并有诚实的"端到端未验证"声明。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — the 5-phase / 22-stage canonical workflow is a fixed pipeline. Codex and Claude Code play roles within stages (planner / reviewer vs coder), but neither LLM decides at runtime which stage fires next; workflow_guard.py enforces the deterministic transition table. A compound would let the LLM pick branches; doc-driven explicitly denies that.
+    zh: |
+      分子 —— 5 阶段 / 22-stage 的 canonical 工作流是固定流水线。Codex 和 Claude Code 在 stage 内承担角色(规划者 / 评审者 vs 程序员),但运行时没有 LLM 决定下一个 stage 触发哪个;workflow_guard.py 强制确定性的迁移表。复合物会让 LLM 选分支;doc-driven 明确拒绝这种做法。
+  nodes:
+  - id: scaffold
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        scaffold_dev_workflow_task
+        (creates tasks/TASK-.../)
+      zh: |-
+        scaffold_dev_workflow_task
+        (创建 tasks/TASK-.../)
+  - id: research
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Research phase
+        (5 stages, codex)
+      zh: |-
+        Research phase
+        (5 stages, codex)
+  - id: design
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Design phase
+        (8 stages, codex)
+      zh: |-
+        Design phase
+        (8 stages, codex)
+  - id: development
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Development phase
+        (4 stages, claude code)
+      zh: |-
+        Development phase
+        (4 stages, claude code)
+  - id: packaging
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Packaging phase
+        (codex review + ship)
+      zh: |-
+        Packaging phase
+        (codex 复审 + 出货)
+  - id: maintenance
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        Maintenance phase
+        (status: done + backlog)
+      zh: |-
+        Maintenance phase
+        (状态: 完成 + backlog)
+  edges:
+  - from: scaffold
+    to: research
+  - from: research
+    to: design
+  - from: design
+    to: development
+  - from: development
+    to: packaging
+  - from: packaging
+    to: maintenance
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + npm install (frontend)
+    platform: any (Python 3.9+ / Node 18+)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: AI coding agents (Codex + Claude Code)
+  purpose: Plan / review / coder roles within the workflow
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: BYOK — bring your own Codex + Claude Code subscriptions; framework itself doesn't talk to APIs directly
+- name: Python 3.9+ + Node 18+
+  purpose: Run the scripts + the observer dashboard
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Standard local runtime
