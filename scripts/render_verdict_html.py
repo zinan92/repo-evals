@@ -1633,6 +1633,7 @@ h1.repo-title {{
   text-transform: uppercase; letter-spacing: 0.08em;
 }}
 .verdict-meta .confidence .value {{ color: var(--bucket); font-weight: 700; }}
+.verdict-meta .layer-row {{ margin-bottom: 18px; }}
 
 /* --- 0-100 score hero ----------------------------------------------- */
 
@@ -2349,8 +2350,7 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
       </div>
 
       <div class="verdict-meta">
-        <div class="label"><span class="i18n" data-en="Confidence" data-zh="置信度"></span></div>
-        <div class="confidence"><span class="value">{confidence}</span>{layer_pill_html}</div>
+        <div class="layer-row">{layer_pill_html}</div>
 
         <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · {total_claims} <span class="i18n" data-en="total" data-zh="共"></span></div>
         <div class="stats-bar">{stats_bar_html}</div>

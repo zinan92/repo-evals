@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-05T11:27:47Z",
-  "generated_from_commit": "65ea7b9",
+  "generated_at": "2026-05-05T12:13:50Z",
+  "generated_from_commit": "b35b620",
   "repos": [
     {
       "slug": "zarazhangrui--frontend-slides",
@@ -717,7 +717,7 @@
       "repo_url": "https://github.com/obra/superpowers",
       "repo_type": "skill-catalog",
       "archetype": "hybrid-skill",
-      "layer": "molecule",
+      "layer": "compound",
       "layer_inferred": "molecule",
       "status": "evaluated",
       "current_bucket": "unknown",

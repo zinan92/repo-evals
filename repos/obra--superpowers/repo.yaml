@@ -4,91 +4,132 @@ display_name: superpowers
 repo_url: https://github.com/obra/superpowers
 repo_type: skill-catalog
 archetype: hybrid-skill
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
-# 14 distinct user-invocable methodology skills (brainstorming, TDD,
-# debugging, planning, subagent-driven-development, etc.) wired by
-# multi-platform installer + Claude/Gemini/Codex/etc plugin contracts.
-# Predefined orchestration → molecule.
-layer: molecule
+layer: compound
 complexity: complex
 uses_areas: false
 status: evaluated
-last_evaluated: "2026-05-05"
-version_tested: "main@HEAD (npm v5.1.0)"
+last_evaluated: '2026-05-05'
+version_tested: main@HEAD (npm v5.1.0)
 stars: 178762
 archived: false
-has_license: true   # MIT
+has_license: true
 multilingual_readme: false
-release_pipeline_score: 2   # multi-platform plugin marketplace + version 5.1.0 + RELEASE-NOTES.md
-eval_discipline_score: 1    # tests/ exists but unclear if LLM-output evals
-recently_active: true       # pushed 2026-05-04 (yesterday)
-notes: |
-  Jesse Vincent's "complete software-development methodology for coding
+release_pipeline_score: 2
+eval_discipline_score: 1
+recently_active: true
+notes: 'Jesse Vincent''s "complete software-development methodology for coding
+
   agents" — 14 composable skills (brainstorming / TDD / debugging /
+
   planning / subagent-driven-development / git-worktrees / etc) plus
+
   multi-platform install (Claude Code official marketplace, Codex CLI,
+
   Codex App, Factory Droid, Gemini CLI, OpenCode, Cursor, GitHub Copilot
+
   CLI). 179K stars, MIT, version 5.1.0, pushed yesterday.
 
+
   Mature: 5.x version + RELEASE-NOTES.md + tests/ + hooks/ + scripts/.
+
   Contributor-facing CLAUDE.md is famous for its blunt "94% PR rejection
+
   rate" anti-slop guidelines.
 
+
   One small finding: AGENTS.md is 0 bytes (empty) and GEMINI.md is only
-  2 lines — given the project's audience IS agents, those docs being
+
+  2 lines — given the project''s audience IS agents, those docs being
+
   thin is a polish gap. CLAUDE.md (106 lines) is the real one.
 
-  Molecule layer: 14 distinct skills the user can invoke separately —
+
+  Compound layer: 14 distinct skills the user can invoke separately —
+
   "use brainstorming first" / "kick off TDD" / "use writing-plans" —
+
   multiple independent user-invocable atoms wired by predefined
+
   install contracts.
 
+  '
 product_view:
   one_liner:
-    en: "A 14-skill methodology bundle for coding agents — brainstorming, planning, TDD, subagent-driven development, debugging, code review, git worktrees — auto-triggers when your agent starts work. Installs into 8 platforms (Claude Code official marketplace, Codex CLI/App, Cursor, OpenCode, Gemini CLI, Factory Droid, GitHub Copilot CLI). MIT, 179K stars, v5.1.0."
-    zh: "给 coding agent 的 14 个方法论 skill 合集 —— brainstorming / 写计划 / TDD / 子 agent 拆活 / 系统性 debug / 代码 review / git worktrees。agent 一开工就自动触发。装到 8 个平台（Claude Code 官方 marketplace / Codex CLI/App / Cursor / OpenCode / Gemini CLI / Factory Droid / GitHub Copilot CLI）。MIT，179K stars，v5.1.0。"
+    en: A 14-skill methodology bundle for coding agents — brainstorming, planning,
+      TDD, subagent-driven development, debugging, code review, git worktrees — auto-triggers
+      when your agent starts work. Installs into 8 platforms (Claude Code official
+      marketplace, Codex CLI/App, Cursor, OpenCode, Gemini CLI, Factory Droid, GitHub
+      Copilot CLI). MIT, 179K stars, v5.1.0.
+    zh: 给 coding agent 的 14 个方法论 skill 合集 —— brainstorming / 写计划 / TDD / 子 agent 拆活
+      / 系统性 debug / 代码 review / git worktrees。agent 一开工就自动触发。装到 8 个平台（Claude Code
+      官方 marketplace / Codex CLI/App / Cursor / OpenCode / Gemini CLI / Factory Droid
+      / GitHub Copilot CLI）。MIT，179K stars，v5.1.0。
   best_for:
-    en: "Anyone using a coding agent (Claude Code / Codex / Cursor etc) who wants the agent to follow real software-engineering methodology — TDD, planning before coding, brainstorming with you, doing code review on its own subagents — instead of jumping straight into writing code."
-    zh: "用 coding agent 的人，希望 agent 按真正的软件工程方法论干活（TDD、先写计划、跟你 brainstorm、自己给自己的子 agent 做 code review）—— 而不是上来就写代码。"
+    en: Anyone using a coding agent (Claude Code / Codex / Cursor etc) who wants the
+      agent to follow real software-engineering methodology — TDD, planning before
+      coding, brainstorming with you, doing code review on its own subagents — instead
+      of jumping straight into writing code.
+    zh: 用 coding agent 的人，希望 agent 按真正的软件工程方法论干活（TDD、先写计划、跟你 brainstorm、自己给自己的子 agent
+      做 code review）—— 而不是上来就写代码。
   watch_out:
-    en: |
-      Heavy: 14 skills auto-trigger means more agent overhead before each task. CLAUDE.md is 106 lines of strict contributor guidelines and the maintainer is famously blunt about closing 'slop PRs' — be ready for that culture if you contribute. AGENTS.md is empty and GEMINI.md is 2 lines, so support across non-Claude platforms relies on platform-specific configs in .codex-plugin / .cursor-plugin / .opencode that are smaller (1-2 files each). On Claude Code it's fully fleshed out; other platforms are more bare.
-    zh: |
-      重：14 个 skill 自动触发意味着每个任务前 agent 多走一遍方法论。CLAUDE.md 106 行严格的 contributor 规范 + 维护者以「关掉 slop PR」出名 —— 想 contribute 要做好心理准备。AGENTS.md 空 + GEMINI.md 只有 2 行，所以 Claude 之外的平台支持要靠各自的 .codex-plugin / .cursor-plugin / .opencode 配置（每家 1-2 个文件，比较薄）。Claude Code 上是齐活的，其他平台稍简。
-  use_for:
-    - en: "Have your coding agent ask you for a spec before writing code — `brainstorming` skill auto-triggers."
-      zh: "让 agent 写代码前先跟你聊需求 —— `brainstorming` skill 自动触发。"
-    - en: "TDD discipline — `test-driven-development` skill keeps the agent writing tests first."
-      zh: "TDD 纪律 —— `test-driven-development` skill 让 agent 先写测试。"
-    - en: "Long autonomous work — `subagent-driven-development` lets one agent dispatch + review subagents."
-      zh: "长时间自主开发 —— `subagent-driven-development` 让一个 agent 分配并审核子 agent 的活。"
-    - en: "Multi-platform — same 14 skills work across 8 different agent harnesses."
-      zh: "多平台一致 —— 14 个 skill 在 8 个不同 agent 平台上都能用。"
-  dont_use_for:
-    - en: "Don't install if you want a 'just code, don't talk' agent — Superpowers makes the agent stop and consult the methodology before acting."
-      zh: "想要「闭嘴写代码」的 agent 别装 —— Superpowers 强制 agent 在动手前先走方法论。"
-    - en: "Don't expect Claude-Code-level depth on Gemini / Codex right away — those plugin configs are thinner; check .codex-plugin / .opencode for what's wired before relying on them."
-      zh: "Gemini / Codex 上别期待 Claude Code 级别的完整度 —— 那些平台的 plugin 配置更薄，依赖前先看 .codex-plugin / .opencode 里有啥。"
-    - en: "Don't contribute without reading CLAUDE.md first — maintainer has a 94% PR rejection rate and closes 'slop PRs' on sight."
-      zh: "想 contribute 先把 CLAUDE.md 读完 —— 维护者 PR 拒绝率 94%，看见 slop PR 直接关。"
+    en: 'Heavy: 14 skills auto-trigger means more agent overhead before each task.
+      CLAUDE.md is 106 lines of strict contributor guidelines and the maintainer is
+      famously blunt about closing ''slop PRs'' — be ready for that culture if you
+      contribute. AGENTS.md is empty and GEMINI.md is 2 lines, so support across non-Claude
+      platforms relies on platform-specific configs in .codex-plugin / .cursor-plugin
+      / .opencode that are smaller (1-2 files each). On Claude Code it''s fully fleshed
+      out; other platforms are more bare.
 
+      '
+    zh: '重：14 个 skill 自动触发意味着每个任务前 agent 多走一遍方法论。CLAUDE.md 106 行严格的 contributor 规范
+      + 维护者以「关掉 slop PR」出名 —— 想 contribute 要做好心理准备。AGENTS.md 空 + GEMINI.md 只有 2 行，所以
+      Claude 之外的平台支持要靠各自的 .codex-plugin / .cursor-plugin / .opencode 配置（每家 1-2 个文件，比较薄）。Claude
+      Code 上是齐活的，其他平台稍简。
+
+      '
+  use_for:
+  - en: Have your coding agent ask you for a spec before writing code — `brainstorming`
+      skill auto-triggers.
+    zh: 让 agent 写代码前先跟你聊需求 —— `brainstorming` skill 自动触发。
+  - en: TDD discipline — `test-driven-development` skill keeps the agent writing tests
+      first.
+    zh: TDD 纪律 —— `test-driven-development` skill 让 agent 先写测试。
+  - en: Long autonomous work — `subagent-driven-development` lets one agent dispatch
+      + review subagents.
+    zh: 长时间自主开发 —— `subagent-driven-development` 让一个 agent 分配并审核子 agent 的活。
+  - en: Multi-platform — same 14 skills work across 8 different agent harnesses.
+    zh: 多平台一致 —— 14 个 skill 在 8 个不同 agent 平台上都能用。
+  dont_use_for:
+  - en: Don't install if you want a 'just code, don't talk' agent — Superpowers makes
+      the agent stop and consult the methodology before acting.
+    zh: 想要「闭嘴写代码」的 agent 别装 —— Superpowers 强制 agent 在动手前先走方法论。
+  - en: Don't expect Claude-Code-level depth on Gemini / Codex right away — those
+      plugin configs are thinner; check .codex-plugin / .opencode for what's wired
+      before relying on them.
+    zh: Gemini / Codex 上别期待 Claude Code 级别的完整度 —— 那些平台的 plugin 配置更薄，依赖前先看 .codex-plugin
+      / .opencode 里有啥。
+  - en: Don't contribute without reading CLAUDE.md first — maintainer has a 94% PR
+      rejection rate and closes 'slop PRs' on sight.
+    zh: 想 contribute 先把 CLAUDE.md 读完 —— 维护者 PR 拒绝率 94%，看见 slop PR 直接关。
 deployment:
   installable: true
   install_methods:
-    - method: "/plugin install superpowers@claude-plugins-official (Claude Code)"
-      platform: "Claude Code"
-      complexity: easy
-    - method: "Plugin marketplace (Codex CLI / Codex App / Factory Droid / Gemini CLI / OpenCode / Cursor / GitHub Copilot CLI)"
-      platform: "8 agent platforms"
-      complexity: easy
+  - method: /plugin install superpowers@claude-plugins-official (Claude Code)
+    platform: Claude Code
+    complexity: easy
+  - method: Plugin marketplace (Codex CLI / Codex App / Factory Droid / Gemini CLI
+      / OpenCode / Cursor / GitHub Copilot CLI)
+    platform: 8 agent platforms
+    complexity: easy
   requires_compile: false
-  works_offline_after_install: true   # skills are markdown
-
+  works_offline_after_install: true
 third_party_services:
-  - name: "AI agent harness (Claude Code / Codex / Cursor / Gemini / OpenCode / Factory Droid / GH Copilot CLI)"
-    purpose: "Host that loads + auto-triggers the skills"
-    required: true
-    api_key_needed: true
-    signup_needed: true
-    free_tier: false
-    cost_note: "Standard agent-side cost; auto-triggering 14 skills means more tokens consumed per task before any actual work happens"
+- name: AI agent harness (Claude Code / Codex / Cursor / Gemini / OpenCode / Factory
+    Droid / GH Copilot CLI)
+  purpose: Host that loads + auto-triggers the skills
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Standard agent-side cost; auto-triggering 14 skills means more tokens
+    consumed per task before any actual work happens

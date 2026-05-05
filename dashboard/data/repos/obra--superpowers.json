@@ -6,7 +6,7 @@
   "repo_url": "https://github.com/obra/superpowers",
   "repo_type": "skill-catalog",
   "archetype": "hybrid-skill",
-  "layer": "molecule",
+  "layer": "compound",
   "layer_inferred": "molecule",
   "status": "evaluated",
   "current_bucket": "unknown",

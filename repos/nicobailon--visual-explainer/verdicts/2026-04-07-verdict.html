@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>skill-creator — verdict · repo-evals</title>
+<title>visual-explainer — verdict · repo-evals</title>
 <style>
 /* ============================================================
    REPO-EVALS VERDICT PAGE — Editorial Dossier style
@@ -874,76 +874,74 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
     <div class="eyebrow">
       <span class="i18n" data-en="Verdict report" data-zh="评测结论"></span>
       <span class="sep">·</span>
-      <span>2026-05-05</span>
-      <span class="sep">·</span><span>main@HEAD (in anthropics/skills monorepo, pushed 2026-05-03)</span>
+      <span>2026-04-07</span>
+      
     </div>
 
-    <h1 class="repo-title">skill-creator</h1>
-    <div class="repo-slug">anthropics/skill-creator</div>
+    <h1 class="repo-title">visual-explainer</h1>
+    <div class="repo-slug">nicobailon/visual-explainer</div>
 
-    <p class="tagline"><span class="i18n" data-en="Anthropic&#x27;s official Claude Code skill for creating, evaluating, and iteratively improving skills — ships a full LLM-output eval harness (3 grader agents, blind-comparison, benchmark aggregation, HTML eval-viewer) so quality measurement is built into the workflow, not an afterthought." data-zh="Anthropic 官方的「写 skill 的 skill」：创建 / 评测 / 迭代改进 skill 一站式。自带完整的 LLM 输出评测工具链（3 个评测 agent、盲对比、benchmark 聚合、HTML 评测看板），把质量测量做成工作流的一部分，不是事后补的。"></span></p>
+    <p class="tagline"><span class="i18n" data-en="Hybrid repo: Claude Code skill (8 LLM-driven slash commands + 4 HTML reference" data-zh="Hybrid repo: Claude Code skill (8 LLM-driven slash commands + 4 HTML reference"></span></p>
 
     <div class="verdict-block">
       <div>
         <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="score-hero tier-team"><div class="score-hero-row"><span class="score-emoji">🏭</span><span class="score-num">80</span><span class="score-denom">/ 100</span></div><div class="score-tier"><span class="i18n" data-en="Team-ready" data-zh="团队就绪"></span></div><p class="score-blurb"><span class="i18n" data-en="Safe to depend on in team / production pipelines." data-zh="团队 / 生产 pipeline 可以依赖。"></span></p></div>
+        <div class="score-hero tier-risky"><div class="score-hero-row"><span class="score-emoji">⚠️</span><span class="score-num">45</span><span class="score-denom">/ 100</span></div><div class="score-tier"><span class="i18n" data-en="Risky" data-zh="慎用"></span></div><p class="score-blurb"><span class="i18n" data-en="Runs but has unverified critical issues; expect surprises." data-zh="跑得通但有未验证的关键问题，会有意外。"></span></p></div>
       </div>
 
       <div class="verdict-meta">
         <div class="layer-row"><span class="layer-pill layer-molecule" title="molecule"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Molecule" data-zh="分子"></span></span></div>
 
-        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 7 <span class="i18n" data-en="total" data-zh="共"></span></div>
-        <div class="stats-bar"><span class="s-pass" style="flex: 6"></span><span class="s-skip" style="flex: 1"></span></div>
-        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">6</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">1</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 8 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 3"></span><span class="s-warn" style="flex: 1"></span><span class="s-bad" style="flex: 2"></span><span class="s-skip" style="flex: 2"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">3</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--bad)"></span><span class="num">2</span> <span class="i18n" data-en="failed" data-zh="失败"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">2</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
 
-        <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+18</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+10</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+12</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
+        <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+5</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
       </div>
     </div>
   </header>
 
-  <section class="scenarios-section"><div class="section-head"><h2><span class="i18n" data-en="Use it for / Don't use it for" data-zh="什么时候用 / 什么时候别用"></span></h2></div><ul class="scenarios"><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Designing a new Claude Code skill from scratch — let it walk you through draft → eval → iterate." data-zh="从零设计一个新的 Claude Code skill —— 让它带你走完「草稿 → 评测 → 迭代」全流程。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Optimizing the description of an existing skill so auto-discovery picks it more reliably." data-zh="优化现有 skill 的 description，提升 auto-discovery 命中率。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Running quantitative benchmarks (with variance analysis) on a skill before shipping." data-zh="skill 发布前跑量化 benchmark（带方差分析）确认稳定性。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Blind-comparing two versions of a skill to decide which one to keep." data-zh="盲对比两个版本的 skill，决定保留哪个。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t expect a quick install — you need to clone anthropics/skills and copy skill-creator/ into your skills directory yourself." data-zh="别期待一键装 —— 要 clone 整个 anthropics/skills 然后把 skill-creator/ 拷到自己的 skills 目录。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t run iterative improvement loops without setting a token budget — each round multiplies LLM calls across grader/comparator/analyzer agents." data-zh="迭代改进 loop 不设 token 预算别跑 —— 每一轮 grader/comparator/analyzer 都会各自 LLM 调用，叠加很快。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t use this for trivial 50-line skills — the overhead isn&#x27;t worth it; just hand-write SKILL.md." data-zh="50 行小 skill 别动用这个 —— 学习成本不值得，直接手写 SKILL.md 更快。"></span></li></ul></section>
+  
 
-  <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>git clone anthropics/skills + cp -r skills/skill-creator ~/.claude/skills/</code></td><td>any</td><td><span class="badge complexity-moderate">moderate</span></td></tr><tr><td><code>Git sparse-checkout for just this one skill</code></td><td>any</td><td><span class="badge complexity-moderate">moderate</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">Anthropic Claude API</div><div class="service-purpose">LLM that runs the skill itself + powers all 3 sub-agents (analyzer/comparator/grader)</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-paid"><span class="i18n" data-en="💰 Paid API key" data-zh="💰 需付费 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Iterative improvement loop multiplies token cost per round (grader + comparator + analyzer all consume tokens). Budget accordingly.</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Python 3 runtime</div><div class="service-purpose">Runs the 9 scripts (eval / package / validate / report)</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Standard local Python — no extra cost</div></div></div></div></section>
+  
 
   <div class="pull-quotes">
-    <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Anyone serious about building Claude Code skills who wants Anthropic&#x27;s own methodology — works whether you&#x27;re starting from scratch, modifying an existing skill, or trying to optimize a skill&#x27;s description for better auto-triggering." data-zh="认真在做 Claude Code skill、想用 Anthropic 自家方法论的人。从头建、改老 skill、优化 description 触发率，三种场景都覆盖。"></span></div></section>
-    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="It&#x27;s a sub-directory of anthropics/skills (catalog repo); to install you have to clone the whole catalog and copy this one folder, not `npm install`. The eval harness needs Anthropic API keys + can rack up token cost on iterative improvement loops. Sub-agents (analyzer / comparator / grader) each spawn additional LLM calls per eval round — budget accordingly. It&#x27;s heavyweight: 485-line SKILL.md and 9 scripts means more surface to learn than a typical 100-line skill.
-" data-zh="这是 anthropics/skills（catalog 仓库）的子目录；要装得 clone 整个 catalog 然后把 skill-creator 这个文件夹拷出来，不能 `npm install`。评测工具链需要 Anthropic API key + 迭代改进 loop 烧 token 比较多。3 个 sub-agent（analyzer / comparator / grader）每轮评测都各自发 LLM 调用，要先做预算。skill 本身比较重：485 行 SKILL.md + 9 个脚本，比一般 100 行的 skill 学习量大。
-"></span></div></section>
+    
+    
   </div>
 
   <section>
     <div class="section-head">
       <h2><span class="i18n" data-en="What we verified" data-zh="我们验证了什么"></span></h2>
-      <span class="count">6 / 7</span>
+      <span class="count">6 / 8</span>
     </div>
     <div class="capabilities-grid">
-      <article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-001</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="SKILL.md 是真实大体量文档（≥ 400 行）+ 标准 frontmatter" data-zh="SKILL.md 是真实大体量文档（≥ 400 行）+ 标准 frontmatter"></span></h3>  <p class="cap-description"><span class="i18n" data-en="用户说「make me a skill」、「optimize this skill」、「benchmark a skill」
-任意一个都能触发这个 skill。
-" data-zh="用户说「make me a skill」、「optimize this skill」、「benchmark a skill」
-任意一个都能触发这个 skill。
+      <article class="capability-card status-passed_with_concerns">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-001</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Plugin marketplace 安装路径有效（Claude Code）" data-zh="Plugin marketplace 安装路径有效（Claude Code）"></span></h3>  <p class="cap-description"><span class="i18n" data-en=".claude-plugin/marketplace.json + plugin.json 结构合法，所有引用文件存在，
+版本号一致。
+" data-zh=".claude-plugin/marketplace.json + plugin.json 结构合法，所有引用文件存在，
+版本号一致。
 "></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-002</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="9 个 Python 脚本每个都是真实非占位实现" data-zh="9 个 Python 脚本每个都是真实非占位实现"></span></h3>  <p class="cap-description"><span class="i18n" data-en="&quot;evals + benchmark + iterative-improve&quot; 不是 README 用语，每条命令背后
-都有真实代码。
-" data-zh="&quot;evals + benchmark + iterative-improve&quot; 不是 README 用语，每条命令背后
-都有真实代码。
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-002</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="SKILL.md 内部引用全部解析得到" data-zh="SKILL.md 内部引用全部解析得到"></span></h3>  <p class="cap-description"><span class="i18n" data-en="LLM 在执行 skill 时不会因为找不到文件而 fallback 到瞎写。
+" data-zh="LLM 在执行 skill 时不会因为找不到文件而 fallback 到瞎写。
 "></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-003</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="3 个 sub-agent prompt 都是真实评测 / 对比 / 分析 prompt" data-zh="3 个 sub-agent prompt 都是真实评测 / 对比 / 分析 prompt"></span></h3>  <p class="cap-description"><span class="i18n" data-en="&quot;blind comparison + grading + post-hoc analysis&quot; 是真实可运行的评测
-工序，不是 PR 段落。
-" data-zh="&quot;blind comparison + grading + post-hoc analysis&quot; 是真实可运行的评测
-工序，不是 PR 段落。
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-003</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="4 个 HTML 参考模板可以在浏览器里渲染" data-zh="4 个 HTML 参考模板可以在浏览器里渲染"></span></h3>  <p class="cap-description"><span class="i18n" data-en="LLM 生成时直接读这些模板抄结构；agent users 也可以直接打开这些模板
+作为 reference 学习。
+" data-zh="LLM 生成时直接读这些模板抄结构；agent users 也可以直接打开这些模板
+作为 reference 学习。
 "></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-004</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="eval-viewer 是真实可工作的本地评测看板" data-zh="eval-viewer 是真实可工作的本地评测看板"></span></h3>  <p class="cap-description"><span class="i18n" data-en="用户能可视化看 eval 结果，不只能读 JSON。
-" data-zh="用户能可视化看 eval 结果，不只能读 JSON。
+<article class="capability-card status-failed">  <div class="cap-header">    <span class="cap-badge">failed</span>    <span class="cap-id">claim-004</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="install-pi.sh 能在干净环境装上 skill" data-zh="install-pi.sh 能在干净环境装上 skill"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Pi 用户照 README 跑一行就能装上。
+" data-zh="Pi 用户照 README 跑一行就能装上。
 "></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-005</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="schemas.md 提供清晰的 JSON schema 参考" data-zh="schemas.md 提供清晰的 JSON schema 参考"></span></h3>  <p class="cap-description"><span class="i18n" data-en="用户写自定义 eval 时有清晰的契约可参考，不用读源码猜。
-" data-zh="用户写自定义 eval 时有清晰的契约可参考，不用读源码猜。
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-006</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="失败模式 — 清晰错误 + 非零退出码" data-zh="失败模式 — 清晰错误 + 非零退出码"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Pipeline / 用户能立即知道下一步做什么。
+" data-zh="Pipeline / 用户能立即知道下一步做什么。
 "></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-006</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="子目录自带 LICENSE，不依赖 parent" data-zh="子目录自带 LICENSE，不依赖 parent"></span></h3>  <p class="cap-description"><span class="i18n" data-en="用户拷贝单个 skill 到自己 setup 也是合法的。
-" data-zh="用户拷贝单个 skill 到自己 setup 也是合法的。
+<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-007</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="8 个 LLM-driven 命令真的能产出 styled HTML" data-zh="8 个 LLM-driven 命令真的能产出 styled HTML"></span></h3>  <p class="cap-description"><span class="i18n" data-en="用户拿到符合 SKILL.md 美学契约（避开 AI slop、变化 aesthetic、
+domain-fit 信息密度）的 HTML，自动在浏览器里打开。
+" data-zh="用户拿到符合 SKILL.md 美学契约（避开 AI slop、变化 aesthetic、
+domain-fit 信息密度）的 HTML，自动在浏览器里打开。
 "></span></p>  </article>
-<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-007</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="端到端：用 skill-creator 创建一个新 skill 能跑出 eval 报告" data-zh="端到端：用 skill-creator 创建一个新 skill 能跑出 eval 报告"></span></h3>  <p class="cap-description"><span class="i18n" data-en="&quot;create + eval + iterate&quot; 不是 SKILL.md 上的词，真能跑通。
-" data-zh="&quot;create + eval + iterate&quot; 不是 SKILL.md 上的词，真能跑通。
+<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-008</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Proactive table rendering — 4+ rows / 3+ cols 自动转 HTML" data-zh="Proactive table rendering — 4+ rows / 3+ cols 自动转 HTML"></span></h3>  <p class="cap-description"><span class="i18n" data-en="用户不用每次手动喊 &quot;make this a HTML page&quot;。
+" data-zh="用户不用每次手动喊 &quot;make this a HTML page&quot;。
 "></span></p>  </article>
     </div>
   </section>
@@ -974,7 +972,7 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
           </div>
           <div class="mini-card">
             <h4><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h4>
-            <ul><li>only 3/4 critical claims covered</li></ul>
+            <ul><li>only 2/3 critical claims covered</li></ul>
           </div>
         </div>
       </div>
@@ -998,13 +996,14 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
             </tr>
           </thead>
           <tbody>
-            <tr class="prio-critical"><td class="c-id">claim-001</td><td class="c-title">SKILL.md 是真实大体量文档（≥ 400 行）+ 标准 frontmatter</td><td><span class="prio-pill critical">critical</span></td><td>skill-shape</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
-<tr class="prio-critical"><td class="c-id">claim-002</td><td class="c-title">9 个 Python 脚本每个都是真实非占位实现</td><td><span class="prio-pill critical">critical</span></td><td>tooling-completeness</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
-<tr class="prio-critical"><td class="c-id">claim-003</td><td class="c-title">3 个 sub-agent prompt 都是真实评测 / 对比 / 分析 prompt</td><td><span class="prio-pill critical">critical</span></td><td>eval-discipline</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
-<tr class="prio-high"><td class="c-id">claim-004</td><td class="c-title">eval-viewer 是真实可工作的本地评测看板</td><td><span class="prio-pill high">high</span></td><td>eval-tooling</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
-<tr class="prio-high"><td class="c-id">claim-005</td><td class="c-title">schemas.md 提供清晰的 JSON schema 参考</td><td><span class="prio-pill high">high</span></td><td>contract</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
-<tr class="prio-high"><td class="c-id">claim-006</td><td class="c-title">子目录自带 LICENSE，不依赖 parent</td><td><span class="prio-pill high">high</span></td><td>licensing</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
-<tr class="prio-critical"><td class="c-id">claim-007</td><td class="c-title">端到端：用 skill-creator 创建一个新 skill 能跑出 eval 报告</td><td><span class="prio-pill critical">critical</span></td><td>end-to-end</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
+            <tr class="prio-critical"><td class="c-id">claim-001</td><td class="c-title">Plugin marketplace 安装路径有效（Claude Code）</td><td><span class="prio-pill critical">critical</span></td><td>packaging</td><td class="c-status" style="color:var(--warn)">◐ partial</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-002</td><td class="c-title">SKILL.md 内部引用全部解析得到</td><td><span class="prio-pill high">high</span></td><td>skill-integrity</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-003</td><td class="c-title">4 个 HTML 参考模板可以在浏览器里渲染</td><td><span class="prio-pill critical">critical</span></td><td>templates</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-004</td><td class="c-title">install-pi.sh 能在干净环境装上 skill</td><td><span class="prio-pill high">high</span></td><td>install</td><td class="c-status" style="color:var(--bad)">✕ failed</td><td class="c-skip"></td></tr>
+<tr class="prio-medium"><td class="c-id">claim-005</td><td class="c-title">share.sh 能把 HTML 部署到 Vercel</td><td><span class="prio-pill medium">medium</span></td><td>share</td><td class="c-status" style="color:var(--bad)">✕ failed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-006</td><td class="c-title">失败模式 — 清晰错误 + 非零退出码</td><td><span class="prio-pill high">high</span></td><td>failure-transparency</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-007</td><td class="c-title">8 个 LLM-driven 命令真的能产出 styled HTML</td><td><span class="prio-pill critical">critical</span></td><td>end-to-end-llm</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-008</td><td class="c-title">Proactive table rendering — 4+ rows / 3+ cols 自动转 HTML</td><td><span class="prio-pill high">high</span></td><td>end-to-end-llm</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
           </tbody>
         </table>
       </div>
@@ -1014,7 +1013,7 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
         <div class="metric-tiles">
           <div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="pass rate" data-zh="通过率"></span></div>  <div class="mt-value">0<span class="mt-unit">%</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="elapsed" data-zh="耗时"></span></div>  <div class="mt-value">0.00<span class="mt-unit">s</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="token output" data-zh="token 输出"></span></div>  <div class="mt-value">0</div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="in · 0 / out · 0" data-zh="输入 · 0 / 输出 · 0"></span></div></div>
         </div>
-        <div class="run-card">  <h3>run-static-checks</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-05-05</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  </div>
+        <div class="run-card">  <h3>run-support-layer-and-structure</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-04-07</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="skip">claim-001-plugin-marketplace · pass-with-concerns</li><li class="skip">claim-002-skill-md-references · pass</li><li class="skip">claim-003-templates-render · pass</li><li class="skip">claim-004-install-pi-clean · fail</li><li class="skip">claim-005-share-vercel · fail-partial</li><li class="skip">claim-006-failure-transparency · pass</li><li class="skip">claim-007-end-to-end-llm · untested</li><li class="skip">claim-008-proactive-table-rendering · untested</li></ul></div>
       </div>
 
     </div>
@@ -1023,120 +1022,120 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
   <details class="section-fold">
     <summary><span class="i18n" data-en="Test log — all probes we ran" data-zh="测试日志 — 我们跑过的所有探针"></span></summary>
     <div class="body">
-      <div class="run-card">  <h3>run-static-checks</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-05-05</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  </div>
+      <div class="run-card">  <h3>run-support-layer-and-structure</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-04-07</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="skip">claim-001-plugin-marketplace · pass-with-concerns</li><li class="skip">claim-002-skill-md-references · pass</li><li class="skip">claim-003-templates-render · pass</li><li class="skip">claim-004-install-pi-clean · fail</li><li class="skip">claim-005-share-vercel · fail-partial</li><li class="skip">claim-006-failure-transparency · pass</li><li class="skip">claim-007-end-to-end-llm · untested</li><li class="skip">claim-008-proactive-table-rendering · untested</li></ul></div>
     </div>
   </details>
 
   <details class="section-fold">
     <summary><span class="i18n" data-en="Raw verdict archive (authored by evaluator)" data-zh="原始 verdict 存档（评测者原文）"></span></summary>
     <div class="body">
-<pre class="md"># anthropics/skill-creator — final verdict (2026-05-05)
+<pre class="md"># Final Verdict — visual-explainer
 
 ## Repo
 
-- **Slug:** anthropics/skill-creator
-- **Actual location:** github.com/anthropics/skills/tree/main/skills/skill-creator
-- **Archetype:** hybrid-skill · **Layer:** molecule
-- **Parent stars:** 128,303 · **License:** Apache 2.0 (in subdir) · **Pushed:** 2026-05-03
+- **Name:** nicobailon/visual-explainer
+- **Date:** 2026-04-07
+- **Final bucket:** `usable`
+- **Framework:** repo-evals @ `21f90eb` (provenance + hybrid-repo cap)
+- **Target commit:** `9a97a58`
 
-## What was evaluated
+## Why This Bucket
 
-| Claim | Status | Notes |
-|---|---|---|
-| 001 SKILL.md substantive + frontmatter | passed | 485 lines, multi-intent triggers |
-| 002 9 scripts non-trivial | passed | 7 of 9 scripts 102–401 lines (utils intentionally small) |
-| 003 3 sub-agent prompts | passed | analyzer 274 / comparator 202 / grader 223 lines |
-| 004 eval-viewer real | passed | 471-line Python + 1,325-line HTML |
-| 005 schemas.md depth | passed | 430 lines of JSON schemas |
-| 006 LICENSE in subdir | passed | Apache 2.0 (201 lines) |
-| 007 live &quot;create a skill&quot; e2e | untested | needs Claude Code + Anthropic API |
+### Hybrid-repo cap rule applies
 
-## Real findings
+`visual-explainer` 的真正用户价值在 8 个 LLM-driven 命令产出的 styled HTML（generate-web-diagram / diff-review / plan-review / project-recap / fact-check / generate-visual-plan / generate-slides / share）。本次 eval **完全没碰** LLM 端 —— 跟 frontend-slides 一样，按 framework 的 hybrid-repo cap rule，**整体 verdict 上限 = `usable`**。
 
-1. **Eval-discipline = 3, the only repo in the batch to earn it.**
-   This skill IS an eval framework. It ships:
-   - `run_eval.py` (310 lines)
-   - `run_loop.py` (328 lines, iterative improvement)
-   - `aggregate_benchmark.py` (401 lines, variance analysis)
-   - 3 LLM grader/comparator/analyzer agents
-   - 1,325-line HTML viewer for browsing results
-   No other repo evaluated has even half this depth on its own
-   output quality. This is the canonical example for the
-   `eval_discipline_score=3` field.
+### Support layer — 强但有 3 处 bug
 
-2. **Heavyweight by design.** 485-line SKILL.md + ~70 KB Python +
-   1.3K-line HTML viewer is an unusual amount of surface for a
-   single skill. The scope (create / modify / eval / benchmark /
-   optimize description) genuinely needs that much, but users
-   evaluating &quot;should I install this for a 50-line skill?&quot; should
-   know the overhead in advance — covered in `watch_out`.
+| 检查 | 结果 |
+|------|------|
+| Plugin marketplace + plugin.json 结构 | ⚠️ 合法但版本号不一致（0.5.1 vs 0.6.3） |
+| SKILL.md 9 个文件引用 | ✅ 全部存在 |
+| 8 个 commands ↔ SKILL.md 表格 | ✅ 全部对齐 |
+| 4 个 HTML 模板 headless 渲染 | ✅ 0 page errors |
+| install-pi.sh 干净环境 | ❌ `cp: No such file or directory`（缺 mkdir -p） |
+| install-pi.sh 已建 parent dir | ✅ 占位符替换正确 |
+| share.sh 失败模式 × 3 | ✅ 全部 exit 1 + 清晰错误 |
+| share.sh 的 vercel-deploy 依赖文档化 | ❌ README 没提 |
 
-3. **Sub-directory of a catalog (not a standalone repo) is a
-   first-class case for the framework.** All other 18 repos in this
-   batch are standalone; skill-creator lives inside
-   `anthropics/skills/skills/skill-creator/`. The framework handled
-   it gracefully — repo_url points to the subtree, parent&#x27;s stars
-   inherited as ecosystem signal, LICENSE bundled in subdir
-   sufficed.
+### Failure transparency — 强
 
-4. **Apache 2.0 inside the subdir is a great pattern.** Many
-   in-house Anthropic projects ship without LICENSE; here it&#x27;s
-   self-contained at the skill level, so anyone copying just this
-   one folder still has clear legal cover. Worth recommending as
-   the default pattern for sub-skills inside catalog repos.
+share.sh 的 3 个失败场景全部清晰报错 + 退出码 1，连&quot;缺 vercel-deploy 怎么装&quot;都告诉你。这一项跟 content-downloader 的 silent fail 是天壤之别。
 
-5. **3 sub-agents implement actually-honest evaluation:**
-   - **comparator** is *blind* — doesn&#x27;t know which version it&#x27;s
-     judging
-   - **grader** scores against documented expectations, not vibes
-   - **analyzer** is post-hoc — only looks at results, doesn&#x27;t
-     write or judge live runs
-   That&#x27;s the right shape for variance-aware skill evaluation.
+## What I Would Say In Plain English
 
-## Why the score is high
+&gt; &quot;Support layer 大体上 ready：4 个 HTML 模板渲染干净、SKILL.md 引用都对、错误处理也好。但有 3 个用户看得见的坑：
+&gt;
+&gt; 1. **install-pi.sh 在干净环境必坏** — 1 行 mkdir 修复就行，但任何 fresh Pi 用户都会踩。
+&gt; 2. **marketplace.json 写 0.5.1，plugin.json 写 0.6.3** — Claude Code marketplace 会显示旧版号。
+&gt; 3. **share.sh 静悄悄要一个 vercel-deploy skill** — README 完全没提这个隐形依赖，新用户跑 /share 才会发现。
+&gt;
+&gt; 而真正的核心价值（8 个 slash command 产出的 styled HTML）这次完全没测 —— hybrid 框架规则把整体 verdict 锁在 `usable`。修这 3 个 support layer bug + 跑一次端到端 LLM 会话评测，可以晋级 `reusable`。&quot;
 
-This is the exemplar repo for what the score model rewards:
+## 三+1 repo 横向对比
 
-- Static evidence: 6/7 claims passed → near-cap static eval points
-- Maintainer evidence: eval-discipline=3 (+5) + recently_active (+5) → +10 of +15
-- Ecosystem: 128K-star parent (+12)
-- Layer bonus: molecule (+0)
-- Penalties: 0
+| Repo | Bucket | Support layer | Core LLM 层 | README ↔ 代码 | Failure transparency |
+|------|--------|--------------|------------|--------------|---------------------|
+| content-downloader | `usable` | n/a (无) | n/a | ❌ 2 silent fails | ❌ wechat/x 假装成功 |
+| frontend-slides | `usable` | ✅ 完美 | ⚪ 未测 | ✅ 100% 对齐 | ✅ 优秀 |
+| content-extractor | `usable` | ⚠️ 视频强 audio 假 | ⚪ 部分（视频路径） | ❌ 3 处不对齐 | ✅ 优秀 |
+| **visual-explainer** | **`usable`** | **⚠️ 3 处 bug** | **⚪ 未测** | **❌ install + share + version 三处** | **✅ 优秀** |
 
-Predicted score: ~89/100, **🏭 Team-ready** territory.
+四个 repo 都落在 `usable`，但内部健康度不一样：
+- **frontend-slides** 离 `reusable` 最近（只缺 LLM 端验证）
+- **visual-explainer** 离 `reusable` 第二近（缺 LLM 端验证 + 3 处 1-行 bug）
+- **content-extractor** 离 `reusable` 第三远（要修 audio adapter + 测试套件 + Mac 性能）
+- **content-downloader** 离 `reusable` 最远（要修 silent fails 的根本设计）
 
-## Why not higher
+## Remaining Risks
 
-`recommendable` (90+) requires multi-evaluator coverage and live e2e
-evidence. We have neither. claim-007 (live skill-creation flow) is
-the gating evidence — until someone runs `run_loop.py` end-to-end
-and logs the results, the dossier honestly says &quot;team-ready&quot; not
-&quot;recommend&quot;.
+1. **B 层完全空白。** LLM 是否真的会读 references/ + templates/，是否真的避开 SKILL.md 列出的 anti-AI-slop 模式（neon dashboard / gradient mesh / Inter+violet），proactive table rendering 触发是否可靠 —— 全部未知。
+2. **install-pi.sh 干净环境的 mkdir bug** 是 cleanup-blind spot：maintainer 自己测试时 ~/.pi 早就存在所以从来不会踩。必须在 fresh container 才能抓到。
+3. **Marketplace version drift** 可能让 Claude Code marketplace 显示旧版号 —— 用户以为装的是 0.5.1，实际上拉到的是 0.6.3。
+4. **share.sh 的隐形依赖** 让&quot;开箱即用&quot;的承诺打折扣，且依赖另一个 skill 长期可用 + maintained。
+5. **Mermaid + ELK + jsdelivr ESM imports** 是 CDN 依赖：用户网络挡 jsdelivr 就坏了（公司内网、防火墙、离线环境）。这是个 trade-off 选择，不算 bug，但需要文档化。
+6. **未测 OpenAI Codex 安装路径**（README 列了 Codex 手工 cp 的方法，本次没碰）。
 
-## Path to ⭐ Recommend
+## Recommended Next Actions
 
-1. Run a happy-path scenario: in Claude Code, ask the skill to
-   create a new skill, let it walk through draft → eval → iterate.
-   Log in `runs/&lt;date&gt;/run-live-skill-creation/business-notes.md`.
-2. Run a benchmark variance scenario: invoke
-   `scripts/aggregate_benchmark.py` on an existing skill with ≥10
-   trials; verify variance numbers + viewer.html report.
-3. Multi-evaluator: have a second person on a different machine run
-   the same flow and confirm reproducibility.
-4. Update claim-007 to passed; re-run verdict_calculator.
+按优先级：
 
-## Recommended
+1. **修 install-pi.sh 的 mkdir bug**（最高，5 秒）：
+   ```bash
+   # 在 line 22 的 rm -rf &quot;$SKILL_DIR&quot; 之前加：
+   mkdir -p &quot;$(dirname &quot;$SKILL_DIR&quot;)&quot;
+   ```
+2. **同步 marketplace.json 的版本号到 0.6.3** + 加一个 CI assertion：`grep -q &#x27;&quot;version&quot;: &quot;0.6.3&quot;&#x27; .claude-plugin/marketplace.json`
+3. **在 README Install 部分加一行 vercel-deploy 依赖说明**：
+   &gt; Note: `/share` requires the `vercel-deploy` skill. Install it with `pi install npm:vercel-deploy`.
+4. **跑一次 B 层端到端会话评测**：
+   - 在 Claude Code 里跑 `/visual-explainer:generate-web-diagram`、`/diff-review`、`/plan-review`、`/generate-slides --slides`
+   - 用 Playwright 截图产物 HTML
+   - 对照 SKILL.md 的 anti-AI-slop list 打分
+   - 用一个会触发 Proactive Table Rendering 的提示验证 auto-trigger
+5. **Mermaid CDN 依赖文档化**：在 README &quot;Limitations&quot; 段加一句&quot;Templates that use Mermaid require internet access to load mermaid@11 + elk from jsdelivr; offline use requires inlining the bundles&quot;
+6. **测一遍 Codex 安装路径**：README 列了步骤但没人验证过。
+7. 修完 1-3 + 完成 4 后重跑 eval，目标晋级 `reusable`。
 
-```yaml
-status: evaluated
-```
+## Provenance
+
+| Field | Value |
+|-------|-------|
+| runner | cc |
+| agent | Claude Code |
+| model | claude-opus-4-6 |
+| repo_evals_commit | `21f90eb` |
+| target_repo_path | `/tmp/visual-explainer` |
+| target_repo_ref | `main` |
+| target_repo_commit | `9a97a58` |
+| evaluated_at | 2026-04-07T04:25:54Z |
 </pre>
     </div>
   </details>
 
   <footer>
     <div><span class="i18n" data-en="Rendered by repo-evals · render_verdict_html.py" data-zh="由 repo-evals · render_verdict_html.py 生成"></span></div>
-    <div><a href="https://github.com/anthropics/skills/tree/main/skills/skill-creator" target="_blank" rel="noopener">anthropics/skill-creator</a></div>
+    <div><a href="https://github.com/nicobailon/visual-explainer" target="_blank" rel="noopener">nicobailon/visual-explainer</a></div>
   </footer>
 
 </main>

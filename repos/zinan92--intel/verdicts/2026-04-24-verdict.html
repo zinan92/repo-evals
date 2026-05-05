@@ -173,6 +173,184 @@ h1.repo-title {
   text-transform: uppercase; letter-spacing: 0.08em;
 }
 .verdict-meta .confidence .value { color: var(--bucket); font-weight: 700; }
+.verdict-meta .layer-row { margin-bottom: 18px; }
+
+/* --- 0-100 score hero ----------------------------------------------- */
+
+.score-hero { margin: 0; }
+.score-hero-row {
+  display: flex; align-items: baseline; gap: 16px;
+  flex-wrap: wrap;
+}
+.score-emoji { font-size: 60px; line-height: 1; }
+.score-num {
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(80px, 12vw, 144px); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 0.85;
+}
+.score-denom {
+  font-family: var(--font-mono); font-size: 16px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.score-tier {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+  margin-top: 4px;
+}
+.score-blurb {
+  margin: 14px 0 0; max-width: 60ch;
+  color: var(--text-2); font-size: 16px; line-height: 1.55;
+}
+
+/* tier-driven accent — overrides --bucket */
+.score-hero.tier-recommend  .score-num { color: #4ade80; }
+.score-hero.tier-team       .score-num { color: #60a5fa; }
+.score-hero.tier-self       .score-num { color: #c084fc; }
+.score-hero.tier-try        .score-num { color: #f59e0b; }
+.score-hero.tier-risky      .score-num { color: #f87171; }
+.score-hero.tier-broken     .score-num { color: #f87171; }
+
+/* --- score breakdown (collapsible) ---------------------------------- */
+
+details.score-breakdown {
+  margin-top: 22px; border: 1px solid var(--border);
+  border-radius: 10px; padding: 0;
+}
+details.score-breakdown > summary {
+  list-style: none; cursor: pointer;
+  padding: 10px 14px; font-family: var(--font-mono);
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--text-3);
+}
+details.score-breakdown > summary::-webkit-details-marker { display: none; }
+details.score-breakdown > summary::after {
+  content: "+"; float: right; font-weight: 700;
+}
+details.score-breakdown[open] > summary::after { content: "−"; }
+.breakdown-table { width: 100%; border-collapse: collapse; }
+.breakdown-table th, .breakdown-table td {
+  padding: 8px 14px; border-top: 1px solid var(--border);
+  font-size: 13px; text-align: left;
+}
+.breakdown-table th { font-weight: 500; color: var(--text-2); width: 60%; }
+.breakdown-table td.num {
+  text-align: right; font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums; color: var(--text);
+}
+
+/* --- ✅ / ❌ scenarios section -------------------------------------- */
+
+.scenarios-section { margin: 24px 0 56px; }
+.scenarios {
+  list-style: none; padding: 0; margin: 12px 0 0;
+  display: grid; gap: 10px;
+}
+.scenario {
+  display: flex; gap: 12px; padding: 12px 16px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface-1); align-items: baseline;
+  font-size: 15px; line-height: 1.55;
+}
+.scenario-mark { font-size: 18px; flex-shrink: 0; }
+.scenario-yes { border-left: 3px solid #4ade80; }
+.scenario-no  { border-left: 3px solid #f87171; color: var(--text-2); }
+
+/* --- Deployment + 3rd-party services section ------------------------ */
+
+.deployment-section { margin: 24px 0 48px; }
+.deploy-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 12px;
+}
+@media (max-width: 720px) { .deploy-grid { grid-template-columns: 1fr; } }
+
+.deploy-card, .services-card {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+}
+.card-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 10px;
+}
+.card-headline { margin-bottom: 14px; }
+
+.deploy-status {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}
+.deploy-status.status-good { color: #4ade80; }
+.deploy-status.status-bad { color: #f87171; }
+
+.install-table {
+  width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 14px;
+}
+.install-table th, .install-table td {
+  padding: 8px 10px; border-top: 1px solid var(--border);
+  text-align: left; vertical-align: top; font-size: 13px;
+}
+.install-table th {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-weight: 600;
+}
+.install-table td code { font-size: 12px; word-break: break-word; }
+
+.install-table .badge {
+  display: inline-block; padding: 1px 7px; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.install-table .complexity-easy { color: #4ade80; border-color: rgba(74,222,128,.3); }
+.install-table .complexity-moderate { color: #f59e0b; border-color: rgba(245,158,11,.3); }
+.install-table .complexity-hard { color: #f87171; border-color: rgba(248,113,113,.3); }
+
+.deploy-flags { list-style: none; padding: 0; margin: 8px 0 0; }
+.deploy-flags li {
+  padding: 6px 0; font-size: 13px; color: var(--text-2);
+  display: flex; gap: 10px; align-items: baseline;
+}
+.flag-icon { flex-shrink: 0; }
+
+.service-card {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px;
+  background: var(--surface-2);
+}
+.service-card:last-child { margin-bottom: 0; }
+.service-head {
+  display: flex; justify-content: space-between;
+  gap: 12px; align-items: flex-start;
+}
+.service-name { font-weight: 600; color: var(--text); font-size: 14px; }
+.service-purpose {
+  font-size: 12px; color: var(--text-2);
+  margin-top: 2px; line-height: 1.45;
+}
+.service-pills {
+  display: flex; flex-direction: column;
+  gap: 4px; flex-shrink: 0; align-items: flex-end;
+}
+.service-pill {
+  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.service-pill.status-must  { background: rgba(248,113,113,.14); color: #f87171; }
+.service-pill.status-opt   { background: var(--surface-1); color: var(--text-3); }
+.service-pill.status-paid  { background: rgba(245,158,11,.14); color: #f59e0b; }
+.service-pill.status-free  { background: rgba(96,165,250,.14); color: #60a5fa; }
+.service-pill.status-signup { background: rgba(192,132,252,.14); color: #c084fc; }
+.service-pill.status-easy  { background: rgba(74,222,128,.14); color: #4ade80; }
+
+.service-cost {
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px; color: var(--text-2); line-height: 1.5;
+}
 
 .stats-bar {
   display: flex; height: 10px; border-radius: 999px;
@@ -708,19 +886,24 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
     <div class="verdict-block">
       <div>
         <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="verdict-word">reusable</div>
+        <div class="score-hero tier-try"><div class="score-hero-row"><span class="score-emoji">🧪</span><span class="score-num">62</span><span class="score-denom">/ 100</span></div><div class="score-tier"><span class="i18n" data-en="Try once" data-zh="试一下"></span></div><p class="score-blurb"><span class="i18n" data-en="Install and try; do not put in your critical path yet." data-zh="装上玩一下行；别让生产环境 / 工作流依赖它。"></span></p></div>
       </div>
 
       <div class="verdict-meta">
-        <div class="label"><span class="i18n" data-en="Confidence" data-zh="置信度"></span></div>
-        <div class="confidence"><span class="value">medium</span><span class="layer-pill layer-molecule" title="molecule"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Molecule" data-zh="分子"></span></span></div>
+        <div class="layer-row"><span class="layer-pill layer-molecule" title="molecule"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Molecule" data-zh="分子"></span></span></div>
 
         <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 8 <span class="i18n" data-en="total" data-zh="共"></span></div>
         <div class="stats-bar"><span class="s-pass" style="flex: 7"></span><span class="s-warn" style="flex: 1"></span></div>
         <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">7</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span></div>
+
+        <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+22</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
       </div>
     </div>
   </header>
+
+  
+
+  
 
   <div class="pull-quotes">
     <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Solo traders / researchers who want their own real-time news-flow dashboard, already comfortable running Python services locally, don&#x27;t want to pay for a commercial feed and are OK running on one machine." data-zh="想自建实时新闻流看板的个人交易者 / 研究者。前提：会在本机跑 Python 服务、不想付费买商用新闻源、接受单机部署。"></span></div></section>
