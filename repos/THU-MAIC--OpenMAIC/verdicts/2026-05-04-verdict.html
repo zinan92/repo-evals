@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bucket="usable">
+<html lang="en" data-bucket="usable" data-category="available">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,6 +53,367 @@ html[data-bucket="reusable"]      { --bucket:#60a5fa; --bucket-bg:rgba(96,165,25
 html[data-bucket="recommendable"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
 html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
 
+/* 4-category theming (2026-05-05). Replaces the per-tier accent
+   so the page color tracks the top-level category, not the fine
+   tier inside it. */
+html[data-category="production"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-category="available"]  { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-category="risky"]      { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+/* --- Category chip (above score number) --- */
+.category-chip {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 10px 18px; margin-bottom: 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: 999px;
+}
+.category-emoji { font-size: 22px; line-height: 1; }
+.category-text { display: flex; flex-direction: column; line-height: 1.25; }
+.category-name {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--bucket); font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.category-blurb { font-size: 13px; color: var(--text-2); }
+
+/* --- Cost chip (one-line cost summary near the score) --- */
+.cost-chip {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  font-size: 14px; line-height: 1.55; color: var(--text);
+}
+.cost-label {
+  display: block;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}
+.cost-body { color: var(--text-2); }
+
+/* --- Layer strip (atom · molecule · compound) ---------------------- */
+.layer-strip-section { margin-bottom: 40px; }
+.layer-strip {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 0;
+}
+@media (max-width: 720px) {
+  .layer-strip { grid-template-columns: 1fr; }
+  .layer-strip-arrow { display: none; }
+}
+.layer-strip-card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 22px 22px 24px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: opacity .15s, border-color .15s;
+}
+.layer-strip-card.is-dim { opacity: 0.42; }
+.layer-strip-card.is-active {
+  background: var(--bucket-bg);
+  border-color: var(--bucket-soft);
+  box-shadow: 0 0 0 2px var(--bucket-soft);
+}
+.layer-strip-card.layer-atom.is-active     { --bucket: #2d7866; --bucket-bg: rgba(45,120,102,0.10); --bucket-soft: rgba(45,120,102,0.4); }
+.layer-strip-card.layer-molecule.is-active { --bucket: #5a3aa1; --bucket-bg: rgba(192,132,252,0.10); --bucket-soft: rgba(192,132,252,0.4); }
+.layer-strip-card.layer-compound.is-active { --bucket: #a13d30; --bucket-bg: rgba(248,113,113,0.10); --bucket-soft: rgba(248,113,113,0.4); }
+.layer-strip-emoji { font-size: 32px; line-height: 1; }
+.layer-strip-name {
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text); font-weight: 700;
+}
+.layer-strip-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
+.layer-strip-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); color: var(--text-3);
+  padding: 0 8px;
+}
+
+/* --- Category strip (4-zone score bar with pointer) ---------------- */
+.category-strip-section { margin-bottom: 40px; }
+.cat-strip-wrap { position: relative; margin-bottom: 14px; }
+.cat-strip {
+  display: flex; gap: 4px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cat-zone {
+  padding: 14px 14px 16px;
+  text-align: center;
+  background: var(--surface-2);
+  opacity: 0.55;
+  transition: opacity .15s;
+}
+.cat-zone.is-active { opacity: 1; }
+.cat-zone-emoji { font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.cat-zone-name {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text); font-weight: 600;
+}
+.cat-zone-range { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }
+.cat-zone-dont_use.is-active   { background: rgba(248, 113, 113, 0.18); }
+.cat-zone-risky.is-active      { background: rgba(245, 158, 11, 0.18); }
+.cat-zone-available.is-active  { background: rgba(96, 165, 250, 0.18); }
+.cat-zone-production.is-active { background: rgba(74, 222, 128, 0.18); }
+
+.cat-pointer-lane {
+  position: relative; height: 32px;
+  margin-top: 6px;
+}
+.cat-pointer {
+  position: absolute; top: 0; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--font-mono);
+}
+.cat-pointer-arrow { color: var(--bucket); font-size: 14px; line-height: 1; }
+.cat-pointer-score { font-size: 13px; color: var(--bucket); font-weight: 700; line-height: 1.2; }
+
+.cat-summary {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}
+.cat-summary-headline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-summary-emoji { font-size: 18px; }
+.cat-summary-name { font-family: var(--font-mono); font-size: 12px; color: var(--bucket); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.cat-summary-score { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.cat-summary-blurb { font-size: 14px; color: var(--text-2); }
+.cat-summary-production { --bucket: #4ade80; }
+.cat-summary-available  { --bucket: #60a5fa; }
+.cat-summary-risky      { --bucket: #f59e0b; }
+.cat-summary-dont_use   { --bucket: #f87171; }
+
+/* --- Similar repos comparison ------------------------------------- */
+.similar-section { margin-bottom: 80px; }
+.similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
+.similar-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+.similar-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.similar-card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.similar-card-name { color: var(--text); font-size: 14px; text-decoration: none; }
+.similar-card-name:hover strong { text-decoration: underline; }
+.similar-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.similar-cat-pill {
+  font-family: var(--font-mono); font-size: 10.5px; padding: 3px 9px;
+  border-radius: 999px; background: var(--surface-2); color: var(--text-2);
+  letter-spacing: 0.06em; white-space: nowrap;
+}
+.similar-cat-pill.cat-production { color: #4ade80; }
+.similar-cat-pill.cat-available  { color: #60a5fa; }
+.similar-cat-pill.cat-risky      { color: #f59e0b; }
+.similar-cat-pill.cat-dont_use   { color: #f87171; }
+.similar-layer-pill {
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 8px;
+  border-radius: 4px; background: var(--surface-2); color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.similar-layer-pill.layer-atom     { color: #6cae9d; }
+.similar-layer-pill.layer-molecule { color: #c084fc; }
+.similar-layer-pill.layer-compound { color: #f87171; }
+
+.similar-row {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 12px; padding: 8px 0; border-top: 1px solid var(--border);
+}
+.similar-row:first-of-type { border-top: 0; }
+.similar-row-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); padding-top: 2px; line-height: 1.55;
+}
+.similar-row-body { font-size: 13px; line-height: 1.55; color: var(--text-2); white-space: pre-wrap; }
+.similar-row-this  .similar-row-label { color: var(--ok); }
+.similar-row-other .similar-row-label { color: #c084fc; }
+
+.similar-pending {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+.similar-pending-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.similar-pending-row {
+  font-size: 13.5px; line-height: 1.55;
+  color: var(--text-2); white-space: pre-wrap;
+}
+.similar-pending-row + .similar-pending-row { margin-top: 8px; }
+
+/* --- Workflow diagram (atom / molecule / compound) ----------------- */
+.workflow-diagram-section { margin-bottom: 80px; }
+.wd-why {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.wd-why-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 6px;
+}
+.wd-why-body { font-size: 14px; color: var(--text-2); line-height: 1.55; white-space: pre-wrap; }
+
+.wd-legend {
+  list-style: none; padding: 0; margin: 0 0 14px;
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.wd-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.wd-legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.wd-legend-atom     { background: rgba(96, 165, 250, 0.4); }
+.wd-legend-decision { background: rgba(251, 191, 36, 0.55); transform: rotate(45deg); }
+.wd-legend-start    { background: rgba(166, 153, 138, 0.5); border-radius: 5px; }
+
+.wd-canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  overflow-x: auto;
+}
+.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+
+.wd-shape { stroke-width: 1.5; }
+.wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
+.wd-molecule { fill: rgba(192, 132, 252, 0.10); stroke: rgba(192, 132, 252, 0.55); }
+.wd-decision { fill: rgba(251, 191, 36, 0.18); stroke: rgba(251, 191, 36, 0.85); stroke-width: 2; }
+.wd-start    { fill: rgba(166, 153, 138, 0.18); stroke: rgba(166, 153, 138, 0.65); }
+.wd-end      { fill: rgba(74, 222, 128, 0.14);  stroke: rgba(74, 222, 128, 0.6); }
+
+.wd-canvas svg { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+.wd-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-anchor: middle;
+  fill: var(--text);
+  letter-spacing: 0.01em;
+}
+/* SVG text language toggle — pseudo-elements don't work in SVG, so
+   we duplicate text in EN + ZH and toggle display based on <html lang>. */
+.wd-lang-en, .wd-lang-zh { display: none; }
+html[lang="en"] .wd-lang-en { display: block; }
+html[lang="zh"] .wd-lang-zh { display: block; }
+/* CJK gets a slightly smaller size + tighter tracking so 4-character
+   labels feel even-density next to 2-character labels. */
+html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
+.wd-edge { fill: none; stroke: rgba(166, 153, 138, 0.6); stroke-width: 1.6; }
+.wd-edge-dashed { stroke-dasharray: 5,4; }
+.wd-arrowhead { fill: rgba(166, 153, 138, 0.85); }
+
+.wd-edge-label-bg {
+  fill: var(--surface-1); stroke: var(--border); stroke-width: 1;
+}
+.wd-edge-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
+/* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
+.benefits-section { margin-bottom: 80px; }
+.benefits-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 720px) {
+  .benefits-grid { grid-template-columns: 1fr; }
+}
+.benefit-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.benefit-card.benefit-without {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.15);
+}
+.benefit-card.benefit-with {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}
+.benefit-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
+}
+.benefit-icon { font-size: 16px; }
+.benefit-body {
+  font-size: 15px; line-height: 1.62;
+  color: var(--text); white-space: pre-wrap;
+}
+
+/* Concrete usage examples (lives inside the benefits section) */
+.usex-block { margin-top: 28px; }
+.usex-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 12px;
+}
+.usex-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.usex-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.usex-row { display: flex; flex-direction: column; gap: 4px; }
+.usex-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+}
+.usex-body { font-size: 13.5px; line-height: 1.55; color: var(--text); }
+.usex-row.usex-quote .usex-body {
+  margin: 0; padding: 10px 14px;
+  border-left: 3px solid var(--bucket);
+  background: var(--bucket-bg);
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--text); border-radius: 0 4px 4px 0;
+  font-style: normal;
+}
+.usex-row.usex-quote .usex-body::before { content: "\201C"; color: var(--bucket); margin-right: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-quote .usex-body::after { content: "\201D"; color: var(--bucket); margin-left: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-what .usex-body { color: var(--text-2); }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
@@ -105,7 +466,7 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {
   background: var(--text); color: var(--bg);
 }
 
-.hero { padding: 24px 0 72px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }
+.hero { padding: 16px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
 
 .eyebrow {
   font-family: var(--font-mono); font-size: 11px;
@@ -133,7 +494,7 @@ h1.repo-title {
   font-size: clamp(18px, 2vw, 22px);
   line-height: 1.45; font-weight: 400;
   color: var(--text); max-width: 62ch;
-  margin: 0 0 72px;
+  margin: 0;
 }
 
 .verdict-block { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }
@@ -409,7 +770,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-section { margin-bottom: 96px; }
+section { margin-bottom: 56px; }
 
 .capabilities-grid {
   display: grid;
@@ -883,34 +1244,61 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
     <p class="tagline"><span class="i18n" data-en="An open-source Next.js + LangGraph multi-agent platform that turns any topic or document into an interactive classroom — AI teachers + AI peers + auto-generated slides / quizzes / interactive simulations / whiteboard / TTS, with 5 LLM providers and 5 TTS providers wired in. Vercel-deploy or self-host; OpenClaw skill ships for chat-app integration." data-zh="清华团队开源的 Next.js + LangGraph 多 Agent 教学平台：把任何题目或文档变成互动课堂 —— AI 老师 + AI 同学一起讲、画白板、生成幻灯片 / 测验 / 互动模拟 / TTS 朗读。配套 5 家 LLM provider + 5 家 TTS provider，可一键 Vercel 部署或本机自建；自带 OpenClaw skill，能从飞书 / Slack / Discord / Telegram 直接生成课堂。"></span></p>
 
-    <div class="verdict-block">
-      <div>
-        <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="score-hero tier-self"><div class="score-hero-row"><span class="score-emoji">🛠</span><span class="score-num">75</span><span class="score-denom">/ 100</span></div><div class="score-tier"><span class="i18n" data-en="Self-use OK" data-zh="自用 OK"></span></div><p class="score-blurb"><span class="i18n" data-en="Use it yourself; not yet ready to recommend to others." data-zh="你自己日常用没问题，还不到推荐给陌生人的程度。"></span></p></div>
-      </div>
-
-      <div class="verdict-meta">
-        <div class="layer-row"><span class="layer-pill layer-compound" title="compound"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Compound" data-zh="复合物"></span></span></div>
-
-        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 7 <span class="i18n" data-en="total" data-zh="共"></span></div>
-        <div class="stats-bar"><span class="s-pass" style="flex: 5"></span><span class="s-skip" style="flex: 2"></span></div>
-        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">5</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">2</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
-
-        <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+14</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+15</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+9</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">-3</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
-      </div>
-    </div>
   </header>
 
-  <section class="scenarios-section"><div class="section-head"><h2><span class="i18n" data-en="Use it for / Don't use it for" data-zh="什么时候用 / 什么时候别用"></span></h2></div><ul class="scenarios"><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Self-learners and educators who want to turn a paper / chapter / topic into an interactive AI classroom." data-zh="想把一篇论文 / 一章书 / 一个主题变成 AI 互动课堂的自学者和教育者。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Want AI teachers + AI peers that actually teach (slides, quizzes, simulations, whiteboard, TTS), not just summarize." data-zh="想要 AI 老师 + AI 同学真讲课（幻灯片 / 测验 / 模拟 / 白板 / TTS），不是只做总结。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Comfortable bringing your own LLM key, OK with one-click Vercel deploy or self-host." data-zh="自己有 LLM key，能 Vercel 一键部署或会跑 Next.js 自建。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t deploy modified versions without releasing source — AGPL-3.0 means any modified deployment must be open-sourced." data-zh="改了代码再部署一定要按 AGPL-3.0 开源 —— 不开源就别二次部署。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t open it to non-technical users without first pinning model + voice — per-classroom token + TTS spend can be substantial." data-zh="对非技术用户开放前一定锁定 model + voice —— 每堂课 token + TTS 成本不小。"></span></li></ul></section>
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一层?"></span></h2></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-dim"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-active"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+
+  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:75%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">75</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 75 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div></section>
+
+  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-icon">👤</span><span class="i18n" data-en="Who this is for" data-zh="谁会用上它"></span></div><div class="benefit-body"><span class="i18n" data-en="A self-learner or educator with a topic / paper / chapter they want to actually understand — not skim a 5-paragraph summary, but sit through a real classroom where an AI teacher walks them through the whiteboard, asks them quiz questions, and answers their follow-ups. Typical: PhD student grokking an unfamiliar paper, K-12 teacher prepping a lesson, online-course author building modules." data-zh="有一个主题 / 论文 / 章节真心想搞懂的自学者或教育者 —— 不要 5 段话总结,要一堂真正的课,AI 老师在白板上讲、提问、答疑。典型: 啃陌生论文的 PhD 学生、备课的中小学老师、做线上课程的作者。"></span></div></article>
+<article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-icon">🎯</span><span class="i18n" data-en="When you'd reach for it" data-zh="什么时候用上"></span></div><div class="benefit-body"><span class="i18n" data-en="You have a 30-page paper on a topic you don&#x27;t fully understand. Reading it cover-to-cover takes 2 hours and you&#x27;ll forget half. You want a 20-minute classroom where AI teachers walk you through the key points, drawing on a whiteboard, with quiz checkpoints, and an AI peer asking the questions you wouldn&#x27;t have thought to ask." data-zh="你有一份 30 页的陌生主题论文。完整读一遍要 2 小时,读完忘一半。你想要 20 分钟的课堂,AI 老师在白板上讲核心点,带 quiz 检查,加一个 AI 同学问你想不到要问的问题。"></span></div></article>
+<article class="benefit-card benefit-without"><div class="benefit-eyebrow"><span class="benefit-icon">😩</span><span class="i18n" data-en="What you'd do without it" data-zh="没它的时候怎么办"></span></div><div class="benefit-body"><span class="i18n" data-en="Three options. (1) Read it yourself, take notes, hope you understood — slow + you don&#x27;t know what you missed. (2) Paste into ChatGPT for a summary — flat text, no structure, no quiz, no whiteboard, missing the engagement that makes you actually retain. (3) Find a YouTube explainer (if it exists) — generic, not your specific paper." data-zh="三条路。(1) 自己读 + 做笔记 + 希望读懂 —— 慢 + 不知道漏了什么。(2) 扔给 ChatGPT 让它总结 —— 平铺文字,没有结构、quiz、白板,失去让你真正记住的互动。(3) 找 YouTube 讲解(如果有) —— 通用的,不是你那篇论文。"></span></div></article>
+<article class="benefit-card benefit-with"><div class="benefit-eyebrow"><span class="benefit-icon">✨</span><span class="i18n" data-en="What having it changes" data-zh="有它之后变化在哪"></span></div><div class="benefit-body"><span class="i18n" data-en="Paste your topic / upload your document. LangGraph multi-agent stack generates a classroom: AI teacher walks the whiteboard, AI peer asks questions, slides + quizzes + interactive simulations get auto-generated. TTS streams real voice. Either Vercel-deploy your own or use the hosted demo at open.maic.chat. OpenClaw skill ships so Slack / Telegram / Discord / Feishu can ask &quot;make me a classroom about X&quot;." data-zh="贴主题或上传文档。LangGraph 多 agent stack 生成一堂课: AI 老师讲白板,AI 同学问问题,幻灯片 / quiz / 互动模拟自动生成。TTS 流式真实语音。可以 Vercel 一键部署或用 open.maic.chat 的托管 demo。自带 OpenClaw skill,可以在 Slack / Telegram / Discord / 飞书 直接说&quot;给我做一节关于 X 的课&quot;。"></span></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A PhD student staring at a 30-page paper on diffusion models that they need to understand for journal club tomorrow" data-zh="PhD 学生面对一篇 30 页 diffusion model 论文,明天 journal club 要讲"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Generate a 20-minute classroom for this paper — AI teacher should walk through the math on the whiteboard, AI peer should ask the 5 most important questions" data-zh="给这篇论文生成 20 分钟的课堂 —— AI 老师在白板上讲数学,AI 同学问最重要的 5 个问题"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="LangGraph orchestrator parses the paper, plans a lesson outline, dispatches: (1) outline-agent to structure the 20 minutes, (2) whiteboard-agent to plan visuals, (3) teacher-agent to deliver, (4) peer-agent to ask questions, (5) quiz-agent at checkpoints. TTS streams real voice. You sit through 20 minutes and now actually understand it." data-zh="LangGraph 编排器解析论文,规划课程大纲,分发: (1) outline-agent 排 20 分钟结构,(2) whiteboard-agent 规划视觉,(3) teacher-agent 讲解,(4) peer-agent 提问,(5) quiz-agent 在检查点出题。TTS 流式真人声音。你听完 20 分钟,真懂了。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A K-12 teacher prepping a lesson on photosynthesis for tomorrow&#x27;s class" data-zh="中小学老师明天要上光合作用一课,准备课件"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Generate an interactive 30-minute classroom on photosynthesis for 7th graders — include 3 quiz checkpoints and 1 simulation showing the Calvin cycle" data-zh="给 7 年级学生生成 30 分钟光合作用互动课堂 —— 3 个 quiz 检查点 + 1 个卡尔文循环互动模拟"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Multi-agent stack assembles a kid-appropriate lesson, generates a Calvin-cycle simulation as an interactive React component, slides have age-appropriate visuals, quizzes are multiple-choice with feedback. You preview at home, then run it live in class — either screen-shared or each kid on their own laptop." data-zh="多 agent stack 组装一堂适合小朋友的课,把卡尔文循环做成 React 互动组件,幻灯片用合适视觉,quiz 是有反馈的多选。你在家预览,课堂上跑 —— 投屏或者每个学生自己的电脑。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="An online-course author building module 3 of a 12-week machine-learning course" data-zh="线上课程作者做 12 周机器学习课的第 3 周模块"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Build a 25-minute classroom on backpropagation — base it on these 3 chapters from the textbook I uploaded; mid-class quiz to check gradient understanding" data-zh="基于我上传的教材这 3 章,做一节 25 分钟的反向传播课堂 —— 中段 quiz 检查学生对梯度的理解"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="OpenMAIC ingests the chapters, generates a classroom that ties the math to those specific chapters&#x27; notation, mid-class quiz tests gradient computation. You record + edit + deploy as week-3 module. Your students get a structured lesson, not a video monologue; quiz scores feed back to your dashboard." data-zh="OpenMAIC 吃进章节,生成与这几章符号一致的课堂,中段 quiz 测梯度计算。你录制 + 编辑 + 发布成第 3 周模块。学生得到结构化课程而不是视频独白;quiz 成绩回到你的 dashboard。"></span></span></div></article></div></div></section>
+
+  
+
+  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is compound" data-zh="为什么是复合物"></span></div><div class="wd-why-body"><span class="i18n" data-en="Compound — at three diamond decision nodes, the LangGraph
+orchestrator (running the LLM at runtime) decides which sub-agent
+fires next based on the topic + the current classroom state.
+(1) &quot;Outline strategy?&quot; — branches to depth-first vs breadth-first
+based on topic complexity. (2) &quot;Need whiteboard or simulation?&quot;
+— branches to whiteboard-agent vs simulation-agent based on
+content type (math vs process). (3) &quot;Quiz or continue lecturing?&quot;
+— branches based on student-engagement signal. A molecule would
+follow a fixed pipeline; OpenMAIC dispatches differently per
+classroom. That&#x27;s compound.
+" data-zh="Compound — at three diamond decision nodes, the LangGraph
+orchestrator (running the LLM at runtime) decides which sub-agent
+fires next based on the topic + the current classroom state.
+(1) &quot;Outline strategy?&quot; — branches to depth-first vs breadth-first
+based on topic complexity. (2) &quot;Need whiteboard or simulation?&quot;
+— branches to whiteboard-agent vs simulation-agent based on
+content type (math vs process). (3) &quot;Quiz or continue lecturing?&quot;
+— branches based on student-engagement signal. A molecule would
+follow a fixed pipeline; OpenMAIC dispatches differently per
+classroom. That&#x27;s compound.
+"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 736 500" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M368.0,62 C368.0,70.0 368.0,70.0 368.0,78" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,122 C368.0,130.0 118.0,130.0 118.0,138" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="121.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="134.0" class="wd-edge-label wd-lang-en">deep</text><text x="243.0" y="134.0" class="wd-edge-label wd-lang-zh">深</text></g><path d="M368.0,122 C368.0,130.0 618.0,130.0 618.0,138" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="465.0" y="121.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="493.0" y="134.0" class="wd-edge-label wd-lang-en">broad</text><text x="493.0" y="134.0" class="wd-edge-label wd-lang-zh">广</text></g><path d="M118.0,182 C118.0,190.0 368.0,190.0 368.0,198" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M618.0,182 C618.0,190.0 368.0,190.0 368.0,198" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,242 C368.0,250.0 118.0,250.0 118.0,258" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="241.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="254.0" class="wd-edge-label wd-lang-en">math</text><text x="243.0" y="254.0" class="wd-edge-label wd-lang-zh">数学</text></g><path d="M368.0,242 C368.0,250.0 618.0,250.0 618.0,258" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="465.0" y="241.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="493.0" y="254.0" class="wd-edge-label wd-lang-en">process</text><text x="493.0" y="254.0" class="wd-edge-label wd-lang-zh">过程</text></g><path d="M118.0,302 C118.0,310.0 368.0,310.0 368.0,318" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M618.0,302 C618.0,310.0 368.0,310.0 368.0,318" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,362 C368.0,370.0 368.0,370.0 368.0,378" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,422 C368.0,430.0 118.0,430.0 118.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="421.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="434.0" class="wd-edge-label wd-lang-en">checkpoint</text><text x="243.0" y="434.0" class="wd-edge-label wd-lang-zh">检查</text></g><path d="M118.0,482 C118.0,460.0 368.0,460.0 368.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,422 C368.0,430.0 368.0,430.0 368.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="340.0" y="421.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="368.0" y="434.0" class="wd-edge-label wd-lang-en">continue</text><text x="368.0" y="434.0" class="wd-edge-label wd-lang-zh">继续</text></g><g class="wd-node wd-type-start"><rect x="268" y="18" width="200" height="44" rx="22.0" class="wd-shape wd-start"/><text x="368.0" y="37.0" class="wd-label wd-lang-en">Topic / document</text><text x="368.0" y="37.0" class="wd-label wd-lang-zh">主题 / 文档</text><text x="368.0" y="51.0" class="wd-label wd-lang-en">(paper / chapter / brief)</text><text x="368.0" y="51.0" class="wd-label wd-lang-zh">(论文 / 章节 / 简介)</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,78 468,100.0 368.0,122 268,100.0" class="wd-shape wd-decision"/><text x="368.0" y="97.0" class="wd-label wd-lang-en">Outline strategy?</text><text x="368.0" y="97.0" class="wd-label wd-lang-zh">大纲策略?</text><text x="368.0" y="111.0" class="wd-label wd-lang-en">(LLM picks depth-first / breadth)</text><text x="368.0" y="111.0" class="wd-label wd-lang-zh">(LLM 选深度优先 / 广度)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="138" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="157.0" class="wd-label wd-lang-en">Depth-first outline</text><text x="118.0" y="157.0" class="wd-label wd-lang-zh">深度优先大纲</text><text x="118.0" y="171.0" class="wd-label wd-lang-en">(1 hard concept, deep)</text><text x="118.0" y="171.0" class="wd-label wd-lang-zh">(1 个难点深挖)</text></g><g class="wd-node wd-type-atom"><rect x="518" y="138" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="618.0" y="157.0" class="wd-label wd-lang-en">Breadth-first outline</text><text x="618.0" y="157.0" class="wd-label wd-lang-zh">广度优先大纲</text><text x="618.0" y="171.0" class="wd-label wd-lang-en">(5 concepts, light)</text><text x="618.0" y="171.0" class="wd-label wd-lang-zh">(5 个概念,浅)</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,198 468,220.0 368.0,242 268,220.0" class="wd-shape wd-decision"/><text x="368.0" y="217.0" class="wd-label wd-lang-en">Whiteboard or simulation?</text><text x="368.0" y="217.0" class="wd-label wd-lang-zh">白板 或 模拟?</text><text x="368.0" y="231.0" class="wd-label wd-lang-en">(LLM decides per topic)</text><text x="368.0" y="231.0" class="wd-label wd-lang-zh">(LLM 按主题决定)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="258" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="277.0" class="wd-label wd-lang-en">whiteboard-agent</text><text x="118.0" y="277.0" class="wd-label wd-lang-zh">whiteboard-agent</text><text x="118.0" y="291.0" class="wd-label wd-lang-en">(math / diagram)</text><text x="118.0" y="291.0" class="wd-label wd-lang-zh">(数学 / 图)</text></g><g class="wd-node wd-type-atom"><rect x="518" y="258" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="618.0" y="277.0" class="wd-label wd-lang-en">simulation-agent</text><text x="618.0" y="277.0" class="wd-label wd-lang-zh">simulation-agent</text><text x="618.0" y="291.0" class="wd-label wd-lang-en">(interactive process)</text><text x="618.0" y="291.0" class="wd-label wd-lang-zh">(互动过程)</text></g><g class="wd-node wd-type-atom"><rect x="268" y="318" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="368.0" y="337.0" class="wd-label wd-lang-en">teacher-agent + peer-agent</text><text x="368.0" y="337.0" class="wd-label wd-lang-zh">teacher-agent + peer-agent</text><text x="368.0" y="351.0" class="wd-label wd-lang-en">(with TTS streaming)</text><text x="368.0" y="351.0" class="wd-label wd-lang-zh">(TTS 流式)</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,378 468,400.0 368.0,422 268,400.0" class="wd-shape wd-decision"/><text x="368.0" y="397.0" class="wd-label wd-lang-en">Quiz or continue?</text><text x="368.0" y="397.0" class="wd-label wd-lang-zh">quiz 或 继续?</text><text x="368.0" y="411.0" class="wd-label wd-lang-en">(LLM reads engagement)</text><text x="368.0" y="411.0" class="wd-label wd-lang-zh">(LLM 读参与度)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="438" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="457.0" class="wd-label wd-lang-en">quiz-agent</text><text x="118.0" y="457.0" class="wd-label wd-lang-zh">quiz-agent</text><text x="118.0" y="471.0" class="wd-label wd-lang-en">(checkpoint)</text><text x="118.0" y="471.0" class="wd-label wd-lang-zh">(检查点)</text></g><g class="wd-node wd-type-end"><rect x="268" y="438" width="200" height="44" rx="22.0" class="wd-shape wd-end"/><text x="368.0" y="457.0" class="wd-label wd-lang-en">Classroom delivered</text><text x="368.0" y="457.0" class="wd-label wd-lang-zh">课堂上完</text><text x="368.0" y="471.0" class="wd-label wd-lang-en">(you actually learned)</text><text x="368.0" y="471.0" class="wd-label wd-lang-zh">(你真学到了)</text></g></svg></div></section>
+
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zarazhangrui--codebase-to-course/verdicts/2026-05-05-verdict.html"><strong>zarazhangrui/codebase-to-course</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 60</span><span class="similar-layer-pill layer-atom">atom</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both turn one input (topic / paper / codebase) into an educational artefact via AI multi-agent. Both bet on AI handling the structuring + presentation work the user doesn&#x27;t want to do by hand." data-zh="都把一个输入(主题 / 论文 / 代码库)通过 AI 多 agent 变成教学产物。都让 AI 处理用户不想手做的结构化 + 呈现工作。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="OpenMAIC wins at" data-zh="OpenMAIC 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Live interactive classroom — AI teacher + AI peer + whiteboard + TTS streaming. Real-time experience, not a static artefact. Multi-LLM + multi-TTS provider support so users can pick." data-zh="真正实时互动课堂 —— AI 老师 + AI 同学 + 白板 + TTS 流式。实时体验,不是静态产物。多 LLM + 多 TTS,用户可选。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="codebase-to-course wins at" data-zh="codebase-to-course 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Static markdown course generation — easier to fork, easier to version-control, easier to hand-edit. When you want documentation rather than a live classroom, codebase-to-course is the right fit." data-zh="静态 markdown 课程生成 —— 更容易 fork、版本管理、手改。当你要文档而不是实时课堂时,codebase-to-course 更合适。"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zarazhangrui--frontend-slides/verdicts/2026-04-07-verdict.html"><strong>zarazhangrui/frontend-slides</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 62</span><span class="similar-layer-pill layer-atom">atom</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both generate visual learning artefacts from a topic input. Both rely on LLM to do the layout + structure work." data-zh="都从主题输入生成视觉学习产物。都靠 LLM 做布局 + 结构工作。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="OpenMAIC wins at" data-zh="OpenMAIC 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Multi-modal experience (slides + whiteboard + TTS + quizzes + simulations) coordinated by multi-agent backend. When the goal is &quot;lecture-quality teaching&quot;, not &quot;deck for a talk&quot;, this is the right fit." data-zh="多模态体验(幻灯片 + 白板 + TTS + quiz + 模拟)由多 agent 后端协调。当目标是&quot;讲课级教学&quot;而不是&quot;做个 talk 的 deck&quot;时,这是对的。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="frontend-slides wins at" data-zh="frontend-slides 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Lighter weight — output is just static HTML slides you host on Vercel. No LangGraph, no per-classroom TTS bill, easier to fork + edit. When you only need a deck, frontend-slides wins on simplicity." data-zh="更轻 —— 输出就是静态 HTML 幻灯片放 Vercel。没有 LangGraph,没有每堂课 TTS 账单,更容易 fork + 改。当你只需要 deck 时,frontend-slides 简洁取胜。"></span></div></div></article></div></section>
 
   <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>Vercel one-click deploy</code></td><td>Vercel</td><td><span class="badge complexity-easy">easy</span></td></tr><tr><td><code>docker compose up</code></td><td>any (Docker)</td><td><span class="badge complexity-moderate">moderate</span></td></tr><tr><td><code>Hosted demo at open.maic.chat</code></td><td>any browser</td><td><span class="badge complexity-easy">easy</span> <span class="badge complexity-easy"><span class="i18n" data-en="no install" data-zh="免安装"></span></span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🛠</span><span class="i18n" data-en="Requires compile / build step" data-zh="需要编译 / build 步骤"></span></li><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">OpenAI / Anthropic / Google / DeepSeek / Grok</div><div class="service-purpose">LLM for classroom generation</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-paid"><span class="i18n" data-en="💰 Paid API key" data-zh="💰 需付费 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Per-classroom token cost can be substantial — pick a model + lock spend before opening to non-tech users</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">OpenAI / Azure / GLM / Qwen / MiniMax TTS</div><div class="service-purpose">Voice synthesis for AI teachers</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-free"><span class="i18n" data-en="🆓 Free tier API key" data-zh="🆓 免费版 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Optional — disable TTS for text-only mode; self-hosted VoxCPM2 is free</div></div></div></div></section>
 
   <div class="pull-quotes">
-    <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Self-learners and educators who want to turn a paper / chapter / topic into an interactive classroom with AI agents that actually teach (not just summarize) — willing to bring their own LLM key, comfortable with Next.js or one-click Vercel deploy." data-zh="想把一篇论文 / 一章书 / 一个主题变成有 AI 老师真讲课的互动课堂的自学者和教育者；自己有 LLM key，能 Vercel 一键部署或会跑 Next.js。"></span></div></section>
-    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="AGPL-3.0 — any modified deployment must release source under AGPL. The platform stitches together a lot of moving parts (5 LLM, 5 TTS, LangGraph multi-agent, whiteboard, TTS streaming). Compound layer means any single agent / LLM provider / TTS provider going down can break a classroom mid-flight; the eval/ harness only covers two surfaces (outline-language, whiteboard-layout). Per-classroom token + TTS spend can be substantial — pin a model + voice before opening to non-technical users.
-" data-zh="AGPL-3.0 协议 —— 任何二次部署如果改了代码必须按 AGPL 开源。平台缝合了非常多组件（5 家 LLM、5 家 TTS、LangGraph 多 agent 编排、白板、TTS 流式）。Compound 层意味着任意一家 LLM / TTS 中断都可能让课堂中途崩；自带 eval/ 只覆盖两个面（outline-language、whiteboard-layout）。每堂课的 token + TTS 成本可能不小，给非技术用户开放前先锁定模型和声音。
-"></span></div></section>
+    
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="AGPL-3.0 is strong copyleft; if you&#x27;re at a company that prohibits AGPL deployment, check first. Compound layer means a lot of moving parts (5 LLM × 5 TTS × LangGraph multi-agent × whiteboard × TTS streaming) — any single provider going down can break a classroom mid-flight. Eval harness only covers two surfaces (outline-language, whiteboard-layout); other surfaces are visually polished but not formally verified." data-zh="AGPL-3.0 是强 copyleft 协议;公司禁用 AGPL 的话先查清楚。复合物层意味着组件多(5 LLM × 5 TTS × LangGraph 多 agent × 白板 × TTS 流式) —— 任意一家 provider 中断都可能让课堂中途崩。Eval 只覆盖两个面(outline-language / whiteboard-layout),其他面视觉漂亮但没正式验证。"></span></div></section>
   </div>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Score breakdown · how the 75 was computed" data-zh="分数明细 · 75 是怎么算的"></span></summary>
+    <div class="body">
+      <div class="claim-stats-row">
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 7 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 5"></span><span class="s-skip" style="flex: 2"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">5</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">2</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+      </div>
+      <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+14</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+15</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+9</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">-3</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
+    </div>
+  </details>
 
   <section>
     <div class="section-head">
