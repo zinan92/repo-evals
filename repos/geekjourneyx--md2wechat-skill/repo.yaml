@@ -223,3 +223,11 @@ third_party_services:
 business_category: content
 use_case_tags:
 - content-publishing
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: 07_distribution
+  role: primary
+  medium: wechat
+  reason:
+    en: WeChat-specific channel adapter — markdown → WeChat editor-ready HTML, optionally pushes draft to WeChat material library. Best-in-class for WeChat publish.
+    zh: 公众号专用渠道适配器 —— markdown → 公众号可贴 HTML,可选推送到素材库。WeChat 发布层的最优解。

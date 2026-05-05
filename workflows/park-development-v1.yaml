@@ -1,0 +1,76 @@
+# Park Development workflow (v1) — "怎么造东西"
+#
+# 5-phase development pipeline lifted from Wendy's profile.
+# Less rigid than the 8-step content / trading pipelines because every
+# feature mixes the phases differently — phases are aspects, not strict
+# sequence.
+
+id: park-development-v1
+name:
+  en: Development workflow
+  zh: 开发工作流
+owner: zinan92
+status: active
+
+stages:
+- id: '01_research'
+  name:
+    en: Research
+    zh: 调研
+  expected_artifact:
+    en: anchored idea — concrete examples of similar things in the wild +
+      what makes ours different
+    zh: 锚定的想法 —— 同类东西的具体例子 + 我们的差异点
+  description:
+    en: Before designing anything, find existing solutions, understand how
+      they work, and identify the specific gap your thing fills. No design
+      until research is done.
+    zh: 设计前先找现有方案,理解它们怎么工作,定位你这个东西到底填的是什么具体缺口。研究做完之前不开设计。
+- id: '02_plan_design'
+  name:
+    en: Plan & design
+    zh: 计划与设计
+  expected_artifact:
+    en: PRD + implementation plan + UI prototype brief (where applicable)
+    zh: PRD + 实现计划 + UI 原型 brief(如有 UI)
+  description:
+    en: Turn the anchored idea into specs the agent / human can execute on.
+      PRD describes what; implementation plan describes how; UI brief
+      describes the front-end shape.
+    zh: 把锚定的想法变成 agent / 人能执行的规范。PRD 描述要做什么,实现计划描述怎么做,UI brief 描述前端形态。
+- id: '03_code_review'
+  name:
+    en: Code & review
+    zh: 开发与评审
+  expected_artifact:
+    en: working code in the target repo + reviewer-sign-off
+    zh: 目标仓库里能跑的代码 + reviewer 签字
+  description:
+    en: Implement the plan in bounded code batches. Codex / human reviews;
+      Claude Code (or equivalent) does the writing. Methodology skills
+      enforce TDD / test-first / verification-before-completion.
+    zh: 按计划做限定批次开发。Codex / 人 review;Claude Code(或同类) 写代码。方法论 skill 强制 TDD / 测试先行 /
+      完成前自检。
+- id: '04_package'
+  name:
+    en: Package
+    zh: 打包发布
+  expected_artifact:
+    en: deployable artifact — README / CI / Docker / landing page / domain
+      / npm package / etc.
+    zh: 可部署产物 —— README / CI / Docker / landing page / 域名 / npm 包 等等
+  description:
+    en: The "how do strangers install / use this" wrapping. Quality of this
+      step often gates adoption more than code quality does.
+    zh: "陌生人怎么装 / 怎么用"的包装。这一步质量决定采用率,比代码质量更重要。
+- id: '05_maintain'
+  name:
+    en: Maintain
+    zh: 维护
+  expected_artifact:
+    en: monitoring + feedback loop + iteration cadence
+    zh: 监控 + 反馈环 + 迭代节奏
+  description:
+    en: Watch what users + adopters say, fix what breaks, iterate. Close
+      the dev loop. Most projects die because this stage gets neglected.
+    zh: 看用户 + 采用者说什么,修坏掉的,迭代。闭环。多数项目死在这一步被忽视。

@@ -188,3 +188,11 @@ third_party_services:
 business_category: content
 use_case_tags:
 - presentation-content
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: 06_assembly
+  role: primary
+  medium: presentation
+  reason:
+    en: 'HTML deck assembly. Medium: presentation slides — browser-native, hostable, hand-editable HTML.'
+    zh: 'HTML 演示稿组装。媒介: 幻灯片 —— 浏览器原生、可托管、可手改的 HTML。'

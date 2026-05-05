@@ -1,0 +1,105 @@
+# Park Trading / Finance 8-step pipeline (v1)
+#
+# Wendy's MECE trading pipeline (restructured 2026-03-31 per memory).
+# Each stage maps to one of her zinan92 sub-repos (kline / intel / signal /
+# copilot / backtest / risk / executor / journal). Public-corpus evaluated
+# repos that fit each stage are placed accordingly.
+
+id: park-trading-v1
+name:
+  en: Trading / Finance 8-step pipeline
+  zh: 交易 / 金融八步管线
+owner: zinan92
+status: active
+
+stages:
+- id: '01_market_data'
+  name:
+    en: Market data
+    zh: 行情数据
+  expected_artifact:
+    en: clean kline / OHLCV time series for instruments under watch
+    zh: 已清洗的 kline / OHLCV 时序数据,覆盖你关注的标的
+  description:
+    en: The bedrock layer. If your data is wrong everything downstream is
+      wrong. Multi-source ingestion + reconciliation lives here.
+    zh: 最底层。数据错了下游全错。多源接入 + 对账在这一层。
+- id: '02_intel'
+  name:
+    en: Intel collection
+    zh: 情报采集
+  expected_artifact:
+    en: dated intel ledger (news / filings / social / disclosure summaries)
+    zh: 带日期的情报账本(新闻 / 公告 / 社交 / 监管披露摘要)
+  description:
+    en: Qualitative data — what humans are saying, what regulators are filing,
+      what insiders are leaking. Complements the quantitative kline layer.
+    zh: 定性数据 —— 人说了什么 / 监管发了什么 / 内部人在透露什么。补量化 kline 之外。
+- id: '03_signal_synthesis'
+  name:
+    en: Signal synthesis
+    zh: 信号合成
+  expected_artifact:
+    en: signal table — composite scores / direction / conviction per instrument
+    zh: 信号表 —— 每个标的的合成分数 / 方向 / 信心度
+  description:
+    en: Combine kline + intel into trade-actionable signals. This is where
+      your "edge" lives, if any.
+    zh: 把 kline + 情报合成可交易信号。如果你有"edge",就在这一层。
+- id: '04_methodology_routing'
+  name:
+    en: Methodology routing
+    zh: 方法论路由
+  expected_artifact:
+    en: strategy assignment — which methodology for which signal
+    zh: 策略分配 —— 哪条信号走哪个方法论
+  description:
+    en: Match a signal to a strategy / methodology library. Different signals
+      need different strategies (trend-following vs mean-reversion vs event-
+      driven).
+    zh: 把信号匹配到策略 / 方法论库。不同信号要不同策略(趋势 vs 均值回归 vs 事件驱动)。
+- id: '05_backtest'
+  name:
+    en: Backtest validation
+    zh: 回测验证
+  expected_artifact:
+    en: backtest report — Sharpe / drawdown / trade count + variance analysis
+    zh: 回测报告 —— Sharpe / 回撤 / 交易次数 + 方差分析
+  description:
+    en: Validate the strategy against historical data before risking real
+      capital. Variance analysis matters — single-Sharpe numbers lie.
+    zh: 上真钱前,先用历史数据验证策略。方差分析关键 —— 单 Sharpe 数字会骗人。
+- id: '06_risk'
+  name:
+    en: Risk management
+    zh: 风控决策
+  expected_artifact:
+    en: position sizing / max-loss caps / kill-switch rules
+    zh: 仓位规模 / 最大损失上限 / kill-switch 规则
+  description:
+    en: Once a signal + strategy is approved, decide *how much* and *what
+      stops*. The discipline that keeps a single bad trade from killing the
+      account.
+    zh: 信号 + 策略通过后,决定"多大仓位"和"什么时候止损"。让一笔烂单不至于打爆账户的纪律。
+- id: '07_execution'
+  name:
+    en: Execution engine
+    zh: 执行引擎
+  expected_artifact:
+    en: filled orders + execution receipts on the broker
+    zh: broker 端的成交单 + 执行回执
+  description:
+    en: Place the order through the broker (IBKR / MT5 / crypto exchange)
+      with a manual-approval gate for live capital.
+    zh: 通过 broker(IBKR / MT5 / 加密所)下单,真钱必须有人工审批门。
+- id: '08_journal'
+  name:
+    en: Journal & review
+    zh: 复盘学习
+  expected_artifact:
+    en: post-trade journal — what happened, what worked, what to fix
+    zh: 交易后复盘 —— 发生了什么 / 哪招管用 / 还要修什么
+  description:
+    en: Close the loop. Every trade goes into the journal. Patterns emerge
+      across journals over time and feed back into methodology-routing.
+    zh: 闭环。每笔单进 journal。时间一长 journal 之间会出 pattern,回流到方法论路由。

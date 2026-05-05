@@ -4,10 +4,16 @@ display_name: content-toolkit
 repo_url: https://github.com/zinan92/content-toolkit
 repo_type: orchestration
 archetype: orchestrator
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
 layer: compound
 complexity: complex
 uses_areas: true
 status: evaluated
 current_bucket: usable
-notes: "Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation."
+notes: Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: 05_production
+  role: support
+  reason:
+    en: Author's content-rewriter logic. Supplements Humanizer-zh on the production layer.
+    zh: 作者自己的内容改写工具。在生产层补 Humanizer-zh。

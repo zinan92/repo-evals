@@ -115,6 +115,92 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
   background: var(--surface-2); color: var(--text-2);
   border: 1px solid var(--border);
 }
+
+/* Workflow placement strip (Park content / trading / dev pipelines) */
+.wp-section { margin: 14px 0 16px; }
+.wp-block + .wp-block { margin-top: 16px; }
+.wp-eyebrow {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}
+.wp-pin-emoji { font-size: 14px; }
+.wp-name { color: var(--text-2); text-transform: none; letter-spacing: 0; }
+
+.wp-canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  overflow-x: auto;
+}
+.wp-canvas svg {
+  display: block; max-width: 100%; height: auto;
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+}
+
+.wp-stage {
+  fill: var(--surface-2);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+.wp-stage-active.wp-primary    { fill: rgba(74, 222, 128, 0.18); stroke: rgba(74, 222, 128, 0.85); stroke-width: 2; }
+.wp-stage-active.wp-support    { fill: rgba(96, 165, 250, 0.16); stroke: rgba(96, 165, 250, 0.75); stroke-width: 2; }
+.wp-stage-active.wp-alternative { fill: rgba(251, 191, 36, 0.14); stroke: rgba(251, 191, 36, 0.7); stroke-width: 2; }
+.wp-stage-active.wp-reference  { fill: rgba(166, 153, 138, 0.14); stroke: rgba(166, 153, 138, 0.65); stroke-width: 1.5; stroke-dasharray: 4,3; }
+
+.wp-stage-num {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+  text-anchor: middle; fill: var(--text);
+}
+.wp-stage-name {
+  font-family: system-ui, -apple-system, sans-serif; font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+}
+html[lang="zh"] .wp-stage-name { font-size: 9.5px; letter-spacing: -0.01em; }
+
+.wp-arrow { fill: none; stroke: var(--text-3); stroke-width: 1.4; }
+.wp-arrowhead-path { fill: var(--text-3); }
+
+/* Per-language SVG text toggle (matches workflow_diagram pattern) */
+.wp-lang-en, .wp-lang-zh { display: none; }
+html[lang="en"] .wp-lang-en { display: block; }
+html[lang="zh"] .wp-lang-zh { display: block; }
+
+.wp-callouts { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.wp-callout {
+  padding: 10px 14px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-3);
+  border-radius: var(--radius-md);
+}
+.wp-callout.wp-primary     { border-left-color: var(--ok); }
+.wp-callout.wp-support     { border-left-color: #60a5fa; }
+.wp-callout.wp-alternative { border-left-color: var(--warn); }
+.wp-callout.wp-reference   { border-left-color: var(--text-3); border-left-style: dashed; }
+.wp-callout-head {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.wp-callout-pin { font-size: 13px; }
+.wp-callout-stage { font-size: 13px; color: var(--text); font-weight: 600; }
+.wp-callout-role {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 2px 7px; border-radius: 999px;
+  background: var(--surface-2); color: var(--text-2);
+}
+.wp-callout.wp-primary     .wp-callout-role { color: var(--ok); }
+.wp-callout.wp-support     .wp-callout-role { color: #60a5fa; }
+.wp-callout.wp-alternative .wp-callout-role { color: var(--warn); }
+.wp-medium-pill {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 7px; border-radius: 4px;
+  background: var(--surface-2); color: var(--text-3);
+}
+.wp-callout-reason { font-size: 13px; color: var(--text-2); line-height: 1.5; }
 .layer-strip {
   display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
   align-items: stretch; gap: 0;

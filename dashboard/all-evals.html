@@ -27,6 +27,9 @@ a:hover { text-decoration: underline; }
 .crumb { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); margin-bottom: 6px; }
 h1 { font-family: var(--font-serif); font-size: 36px; font-weight: 700; margin: 0 0 8px; line-height: 1.05; }
 .lead { color: var(--text-2); max-width: 80ch; margin: 0 0 22px; font-size: 15px; }
+.workflow-overlays-link { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); margin: 0 0 12px; }
+.workflow-overlays-link a { color: var(--accent); margin-right: 4px; }
+.workflow-overlays-link .dim { color: var(--text-3); }
 
 /* lang toggle */
 .lang-toggle { position: fixed; top: 16px; right: 18px; display: inline-flex; gap: 4px; padding: 4px;
@@ -118,6 +121,13 @@ footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--border
 <main class="page">
   <div class="crumb"><span class="i18n-block en-block">repo-evals · all evaluated repos</span><span class="i18n-block zh-block">repo-evals · 所有评测过的仓库</span></div>
   <h1><span class="i18n-block en-block">All Evaluated Skills &amp; Repos</span><span class="i18n-block zh-block">已评测的所有 skill 和仓库</span></h1>
+  <p class="workflow-overlays-link">
+    <span class="i18n-block en-block">→ Workflow overlays:</span>
+    <span class="i18n-block zh-block">→ 工作流叠加层:</span>
+    <a href="workflows/content.html">📝 <span class="i18n-block en-block inline">Content pipeline</span><span class="i18n-block zh-block inline">内容八步管线</span></a>
+    <span class="dim"> · </span>
+    <span class="dim"><span class="i18n-block en-block">Trading + Development pipelines coming soon</span><span class="i18n-block zh-block">交易 + 开发管线开发中</span></span>
+  </p>
   <p class="lead">
     <span class="i18n-block en-block">Master index of every repo evaluated under repo-evals. Click into any row for the full bilingual dossier — claims, evidence, score breakdown, deployment notes, and the full benefits block (who / when / without / with). Sort by clicking a column header; filter by category or search by name.</span>
     <span class="i18n-block zh-block">repo-evals 评测过的所有仓库总目录。点任意一行进入完整双语 dossier —— claim、证据、分数明细、部署成本、完整 benefits 块（谁 / 什么时候 / 没它 / 有它）。点列头排序；按类别过滤或搜名字。</span>

@@ -1,0 +1,104 @@
+# Park Content / 自媒体 8-step pipeline (v1)
+#
+# Wendy's personal workflow for "find-trend → produce → distribute → learn".
+# Lifted from her GitHub profile README. Other operators can fork this
+# and define their own (e.g., zhang-content-v1) — the schema is portable.
+
+id: park-content-v1
+name:
+  en: Content / Self-media 8-step pipeline
+  zh: 内容 / 自媒体八步管线
+owner: zinan92
+status: active
+
+stages:
+- id: '01_signal_scan'
+  name:
+    en: Signal scanning
+    zh: 信号发现
+  expected_artifact:
+    en: trending topic / breakout post / candidate angle list
+    zh: 热点 / 爆款 / 选题候选列表
+  description:
+    en: Watch the platforms / sources you track and surface what's spiking before
+      everyone else. Outputs candidate topics, not finished decisions.
+    zh: 盯你订阅的那些平台 / 来源,在大家发现之前先看到爆款。产物是候选选题,不是最终决定。
+- id: '02_acquisition'
+  name:
+    en: Content acquisition
+    zh: 内容获取
+  expected_artifact:
+    en: raw source files (videos / posts / pages) downloaded locally
+    zh: 原始素材文件(视频 / 帖子 / 网页)本地落盘
+  description:
+    en: Once you've picked a candidate, fetch the source material — videos,
+      posts, comment threads, articles. Need real-account login for most CN
+      platforms.
+    zh: 候选定下来之后,把源素材抓下来 —— 视频 / 帖子 / 评论 / 文章。多数中国平台要真实账号登录。
+- id: '03_understanding'
+  name:
+    en: Content understanding
+    zh: 内容理解
+  expected_artifact:
+    en: structured extraction (transcript / summary / topics / quotes / fact list)
+    zh: 结构化提取(转录 / 摘要 / 话题 / 金句 / 事实列表)
+  description:
+    en: Turn raw source into something queryable — transcript a video, extract
+      structure from a post, pull out fact-claims and quotes worth re-using.
+    zh: 把原始素材变成可查询的东西 —— 视频转录 / 帖子拆结构 / 把值得复用的 claim 和金句拎出来。
+- id: '04_curation'
+  name:
+    en: Topic curation
+    zh: 选题决策
+  expected_artifact:
+    en: ranked content brief / shortlist with positioning
+    zh: 排序后的内容 brief / 带定位的 shortlist
+  description:
+    en: Decide what to actually make. Cross-reference signal-scanning + your
+      already-extracted material against your audience / channel mix. Output
+      is a tight brief, not a vague idea.
+    zh: 决定到底做什么。把 signal-scan 的热点和已经提取好的素材跟你的受众 / 渠道矩阵交叉,产物是一份明确的 brief,不是一个模糊想法。
+- id: '05_production'
+  name:
+    en: Content production
+    zh: 内容生产
+  expected_artifact:
+    en: human-voiced draft (article / script / shot list) in publishable form
+    zh: 像人写的草稿(文章 / 脚本 / 分镜),已是可发布形态
+  description:
+    en: Write or generate the actual content. AI-suspect language gets cleaned
+      up. The draft has voice — not a generic AI dump.
+    zh: 写或生成正式内容。AI 味要去掉。草稿要有"人味",不是泛 AI 输出。
+- id: '06_assembly'
+  name:
+    en: Asset assembly
+    zh: 成品组装
+  expected_artifact:
+    en: final deliverable (HTML deck / video file / podcast / WeChat HTML / ebook)
+    zh: 最终交付物(HTML deck / 视频文件 / 播客 / 公众号 HTML / 电子书)
+  description:
+    en: Wrap the content into the medium-specific format. Slide deck, video
+      cut, podcast episode, WeChat-formatted HTML, etc.
+    zh: 把内容包进对应媒介格式。幻灯片、视频剪辑、播客 episode、微信样式的 HTML 等等。
+- id: '07_distribution'
+  name:
+    en: Distribution
+    zh: 分发
+  expected_artifact:
+    en: published artifact live on each target platform
+    zh: 在每个目标平台已上线的内容
+  description:
+    en: Push to platforms — auto-upload to multiple channels, schedule for the
+      right times, handle per-platform metadata (titles / thumbnails / tags).
+    zh: 推送到平台 —— 多渠道自动上传 / 定时 / 各平台元数据(标题 / 缩略图 / 标签)。
+- id: '08_feedback'
+  name:
+    en: Feedback learning
+    zh: 反馈学习
+  expected_artifact:
+    en: post-publish performance log + actionable next-cycle notes
+    zh: 发布后表现日志 + 下一轮可操作的 notes
+  description:
+    en: Track what landed (views / engagement / conversions), feed it back into
+      signal-scanning for the next round. This is the loop closer.
+    zh: 跟踪表现(播放 / 互动 / 转化),回流到下一轮 signal-scan。这是闭环。

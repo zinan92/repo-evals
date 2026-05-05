@@ -259,3 +259,10 @@ third_party_services:
 business_category: content
 use_case_tags:
 - content-scraping
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: 02_acquisition
+  role: primary
+  reason:
+    en: Multi-platform CN crawler — 7 platforms × 4 crawl modes × 8 storage backends. When you need raw content from any of those platforms, this is the reference implementation.
+    zh: 多平台中国爬虫 —— 7 个平台 × 4 种抓取模式 × 8 种存储后端。任何一个平台想要原始内容,这是参考实现。

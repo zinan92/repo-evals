@@ -214,3 +214,11 @@ third_party_services:
 business_category: content
 use_case_tags:
 - video-generation
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: 06_assembly
+  role: primary
+  medium: video
+  reason:
+    en: 'Programmatic video assembly via the Remotion best-practices skill. Medium: video — captions, audio sync, lottie, ffmpeg.'
+    zh: '通过 Remotion best-practices skill 做程序化视频组装。媒介: 视频 —— 字幕 / 音频同步 / lottie / ffmpeg。'

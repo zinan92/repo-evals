@@ -42,49 +42,31 @@ notes: 'Python CLI tool that fetches YouTube videos from configured channels,
   '
 product_view:
   one_liner:
-    en: A Python tool + Claude skill that pulls latest videos from YouTube channels
-      you follow, runs the transcripts through Claude to make magazine-style articles,
-      packages them as an EPUB delivered to your email or Apple Books — set it on
-      a Mac LaunchAgent for weekly auto-delivery.
-    zh: 一个 Python 工具 + Claude 技能：从你订阅的 YouTube 频道拉最新视频，把字幕用 Claude 改写成杂志体文章，打成 EPUB
-      邮件给你或导入 Apple Books。配 Mac LaunchAgent 就能每周自动送到。
+    en: A Python tool + Claude skill that pulls latest videos from YouTube channels you follow, runs the transcripts through Claude to make magazine-style articles, packages them as an EPUB delivered to your email or Apple Books — set it on a Mac LaunchAgent for weekly auto-delivery.
+    zh: 一个 Python 工具 + Claude 技能：从你订阅的 YouTube 频道拉最新视频，把字幕用 Claude 改写成杂志体文章，打成 EPUB 邮件给你或导入 Apple Books。配 Mac LaunchAgent 就能每周自动送到。
   best_for:
-    en: Long-form readers who'd rather read than watch — turn favorite YouTubers (mkbhd
-      / veritasium / 3blue1brown) into a weekly ebook delivered to Kindle / Apple
-      Books / email.
-    zh: 更喜欢看文字的人 —— 把自己关注的 YouTube 频道（mkbhd / veritasium / 3blue1brown 等）变成每周一本电子书，送到
-      Kindle / Apple Books / 邮箱。
+    en: Long-form readers who'd rather read than watch — turn favorite YouTubers (mkbhd / veritasium / 3blue1brown) into a weekly ebook delivered to Kindle / Apple Books / email.
+    zh: 更喜欢看文字的人 —— 把自己关注的 YouTube 频道（mkbhd / veritasium / 3blue1brown 等）变成每周一本电子书，送到 Kindle / Apple Books / 邮箱。
   watch_out:
-    en: 'No LICENSE file at root — fork / commercial use legal status unclear. README''s
-      git-clone snippet still uses `YOUR_USERNAME` placeholder (Zara''s repo, not
-      yours, but the README templating leak is a polish gap). Not recently maintained
-      (last push 2026-01-28, 3+ months at eval time); YouTube transcript API can break
-      when YouTube changes the front-end. The Mac LaunchAgent path is Mac-only; Linux
-      users need to write their own cron config.
+    en: 'No LICENSE file at root — fork / commercial use legal status unclear. README''s git-clone snippet still uses `YOUR_USERNAME` placeholder (Zara''s repo, not yours, but the README templating leak is a polish gap). Not recently maintained (last push 2026-01-28, 3+ months at eval time); YouTube transcript API can break when YouTube changes the front-end. The Mac LaunchAgent path is Mac-only; Linux users need to write their own cron config.
 
       '
-    zh: '仓库根没有 LICENSE —— fork / 商用法律状态不明。README 的 git clone 命令里还写着 `YOUR_USERNAME`
-      占位符（其实是 Zara 自己的仓库，README 模板没改干净）。最近没维护（2026-01-28 最后一次 push，已 3 个月+）；YouTube
-      改前端时 transcript API 可能失效。Mac LaunchAgent 只 Mac 能用，Linux 用户要自己配 cron。
+    zh: '仓库根没有 LICENSE —— fork / 商用法律状态不明。README 的 git clone 命令里还写着 `YOUR_USERNAME` 占位符（其实是 Zara 自己的仓库，README 模板没改干净）。最近没维护（2026-01-28 最后一次 push，已 3 个月+）；YouTube 改前端时 transcript API 可能失效。Mac LaunchAgent 只 Mac 能用，Linux 用户要自己配 cron。
 
       '
   use_for:
-  - en: Turn YouTube channels you follow regularly into a weekly EPUB ebook delivered
-      to Kindle / Apple Books / email.
+  - en: Turn YouTube channels you follow regularly into a weekly EPUB ebook delivered to Kindle / Apple Books / email.
     zh: 把常看的 YouTube 频道变成每周送到 Kindle / Apple Books / 邮箱的 EPUB 电子书。
   - en: Mac users who want hands-off automation via LaunchAgent.
     zh: 想用 Mac LaunchAgent 实现完全无人值守自动化的用户。
   - en: Bring-your-own-key Anthropic + free-tier YouTube Data API.
     zh: 自带 Anthropic key + 用免费的 YouTube Data API。
   dont_use_for:
-  - en: Don't run on Linux without writing your own cron config — Mac LaunchAgent
-      paths won't help.
+  - en: Don't run on Linux without writing your own cron config — Mac LaunchAgent paths won't help.
     zh: Linux 上跑别指望仓库自带的 LaunchAgent，要自己写 cron 配置。
-  - en: Don't expect channels with auto-generated captions only to produce great articles
-      — quality of LLM rewrite ≤ quality of source transcript.
+  - en: Don't expect channels with auto-generated captions only to produce great articles — quality of LLM rewrite ≤ quality of source transcript.
     zh: 只有机器自动字幕的频道，别指望产出精品文章 —— LLM 改写质量 ≤ 字幕源质量。
-  - en: Don't redistribute generated ebooks commercially — no LICENSE; YouTube transcripts
-      have their own copyright considerations.
+  - en: Don't redistribute generated ebooks commercially — no LICENSE; YouTube transcripts have their own copyright considerations.
     zh: 生成的电子书别商用分发 —— 没 LICENSE；YouTube 字幕本身也有版权问题要自己评估。
 deployment:
   installable: true
@@ -119,3 +101,11 @@ third_party_services:
   signup_needed: true
   free_tier: true
   cost_note: Use Gmail / iCloud / etc.; only needed for email delivery
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: 03_understanding
+  role: primary
+  medium: video-to-text
+  reason:
+    en: Video → text comprehension specifically. Use when source material is a YouTube video and you need it in queryable text form.
+    zh: 专做视频 → 文字理解。源素材是 YouTube 视频、要变成可查询文本时用。

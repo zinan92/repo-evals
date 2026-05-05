@@ -1439,6 +1439,184 @@ def render_use_case_tags(vd: VerdictData) -> str:
     )
 
 
+def _load_workflow(workflow_id: str) -> dict[str, Any] | None:
+    """Load canonical workflow YAML from ``workflows/<id>.yaml``.
+
+    Returns None if the workflow file is missing — caller falls back to
+    showing just the placement role + reason without the pipeline graphic.
+    """
+
+    path = REPO_EVALS_ROOT / "workflows" / f"{workflow_id}.yaml"
+    if not path.exists():
+        return None
+    try:
+        return _read_yaml(path)
+    except Exception:
+        return None
+
+
+def render_workflow_placement_strip(vd: VerdictData) -> str:
+    """Visual #2 (workflow flavour) — for repos with workflow_placements.
+
+    Renders an inline 8-step (or N-step) pipeline strip per workflow this
+    repo is placed in. The stage(s) where this repo plays a role are
+    highlighted with a coloured ring + a callout below explaining the
+    role + reason.
+
+    Wendy's intent: the existing biz_pill ("📝 Content") only says
+    *which world*; the placement strip says *where in the pipeline*.
+    """
+
+    placements = vd.repo.get("workflow_placements") or []
+    if not placements:
+        return ""
+
+    # Group placements by workflow_id
+    by_wf: dict[str, list[dict]] = {}
+    for p in placements:
+        wf_id = str(p.get("workflow_id", ""))
+        if wf_id:
+            by_wf.setdefault(wf_id, []).append(p)
+    if not by_wf:
+        return ""
+
+    blocks: list[str] = []
+    for wf_id, wf_placements in by_wf.items():
+        wf = _load_workflow(wf_id)
+        if not wf:
+            continue
+        stages = wf.get("stages") or []
+        if not stages:
+            continue
+
+        # Index this repo's placements by stage_id for quick lookup
+        placed_by_stage: dict[str, dict] = {
+            str(p.get("stage_id", "")): p for p in wf_placements
+        }
+
+        # SVG pipeline metrics
+        node_w = max(60, min(80, int(900 / max(len(stages), 1)) - 14))
+        node_h = 60
+        col_gap = 14
+        pad = 14
+        svg_w = pad * 2 + len(stages) * node_w + (len(stages) - 1) * col_gap
+        svg_h = pad * 2 + node_h + 22  # +22 for stage number/name underneath
+
+        node_svgs: list[str] = []
+        edge_svgs: list[str] = []
+
+        for idx, st in enumerate(stages):
+            stage_id = str(st.get("id", ""))
+            x = pad + idx * (node_w + col_gap)
+            y = pad
+            cx = x + node_w / 2
+
+            placement = placed_by_stage.get(stage_id)
+            if placement:
+                role = str(placement.get("role", "")).lower()
+                role_class = f"wp-{role}" if role else "wp-primary"
+                shape_class = f"wp-stage wp-stage-active {role_class}"
+            else:
+                shape_class = "wp-stage"
+
+            node_svgs.append(
+                f'<rect x="{x}" y="{y}" width="{node_w}" height="{node_h}" '
+                f'rx="10" class="{shape_class}"/>'
+            )
+            # Stage number inside the box
+            stage_num_label = stage_id.split("_", 1)[0] if "_" in stage_id else stage_id
+            node_svgs.append(
+                f'<text x="{cx}" y="{y + 26}" class="wp-stage-num">{_esc(stage_num_label)}</text>'
+            )
+            # Stage name (zh + en) — small, two languages stacked, bottom of box
+            name = st.get("name") or {}
+            name_en = _esc((name.get("en") if isinstance(name, dict) else str(name)) or "")
+            name_zh = _esc((name.get("zh") if isinstance(name, dict) else str(name)) or "")
+            node_svgs.append(
+                f'<text x="{cx}" y="{y + 46}" class="wp-stage-name wp-lang-en">{name_en}</text>'
+                f'<text x="{cx}" y="{y + 46}" class="wp-stage-name wp-lang-zh">{name_zh}</text>'
+            )
+
+            # Arrow to next stage
+            if idx < len(stages) - 1:
+                ax1 = x + node_w
+                ax2 = ax1 + col_gap
+                ay = y + node_h / 2
+                edge_svgs.append(
+                    f'<path d="M{ax1},{ay} L{ax2},{ay}" '
+                    f'class="wp-arrow" marker-end="url(#wp-arrowhead)"/>'
+                )
+
+        # Callouts for each placement (one per stage placed)
+        callouts: list[str] = []
+        for p in wf_placements:
+            stage_id = str(p.get("stage_id", ""))
+            # Find stage details
+            stage = next((s for s in stages if str(s.get("id", "")) == stage_id), None)
+            if not stage:
+                continue
+            stage_name = stage.get("name") or {}
+            stage_name_html = dual_lang(stage_name)
+            role = str(p.get("role", "")).lower()
+            role_label = {
+                "primary": ("Primary", "主要"),
+                "support": ("Support", "辅助"),
+                "alternative": ("Alternative", "替代"),
+                "reference": ("Reference", "参考"),
+            }.get(role, (role.capitalize(), role))
+            medium = p.get("medium")
+            medium_pill = (
+                f'<span class="wp-medium-pill">{_esc(medium)}</span>' if medium else ''
+            )
+            reason = p.get("reason")
+            reason_html = dual_lang(reason) if reason else ""
+
+            callouts.append(
+                f'<div class="wp-callout wp-{role}">'
+                f'<div class="wp-callout-head">'
+                f'<span class="wp-callout-pin">📍</span>'
+                f'<span class="wp-callout-stage">{stage_name_html}</span>'
+                f'<span class="wp-callout-role">'
+                f'<span class="i18n" data-en="{_esc(role_label[0])}" data-zh="{_esc(role_label[1])}"></span>'
+                f'</span>'
+                f'{medium_pill}'
+                f'</div>'
+                f'<div class="wp-callout-reason">{reason_html}</div>'
+                f'</div>'
+            )
+
+        wf_name = wf.get("name") or {}
+        wf_name_html = dual_lang(wf_name)
+
+        blocks.append(
+            f'<div class="wp-block">'
+            f'<div class="wp-eyebrow">'
+            f'<span class="wp-pin-emoji">🗺</span>'
+            f'<span class="i18n" data-en="In this workflow:" data-zh="在这条工作流里:"></span>'
+            f'<span class="wp-name">{wf_name_html}</span>'
+            f'</div>'
+            f'<div class="wp-canvas">'
+            f'<svg viewBox="0 0 {svg_w} {svg_h}" xmlns="http://www.w3.org/2000/svg" '
+            f'width="100%" preserveAspectRatio="xMidYMid meet">'
+            f'<defs>'
+            f'<marker id="wp-arrowhead" viewBox="0 0 10 10" refX="9" refY="5" '
+            f'markerWidth="6" markerHeight="6" orient="auto">'
+            f'<path d="M0,0 L10,5 L0,10 z" class="wp-arrowhead-path"/>'
+            f'</marker>'
+            f'</defs>'
+            f'{"".join(edge_svgs)}'
+            f'{"".join(node_svgs)}'
+            f'</svg>'
+            f'</div>'
+            f'<div class="wp-callouts">{"".join(callouts)}</div>'
+            f'</div>'
+        )
+
+    if not blocks:
+        return ""
+    return f'<div class="wp-section">{"".join(blocks)}</div>'
+
+
 def render_business_category(vd: VerdictData) -> str:
     """Pill showing the business domain (content / finance / development).
 
@@ -1505,6 +1683,7 @@ def render_layer_strip(vd: VerdictData) -> str:
 
     biz_pill = render_business_category(vd)
     use_case_row = render_use_case_tags(vd)
+    workflow_strip = render_workflow_placement_strip(vd)
     biz_row = (
         '<div class="layer-strip-biz-row">'
         f'{biz_pill}'
@@ -1518,6 +1697,7 @@ def render_layer_strip(vd: VerdictData) -> str:
         'data-zh="它是哪一类?"></span></h2></div>'
         f'{biz_row}'
         f'{use_case_row}'
+        f'{workflow_strip}'
         '<div class="layer-strip">'
         + '<div class="layer-strip-arrow">→</div>'.join(cards)
         + '</div>'
@@ -2737,6 +2917,92 @@ html[data-category="dont_use"]   {{ --bucket:#f87171; --bucket-bg:rgba(248,113,1
   background: var(--surface-2); color: var(--text-2);
   border: 1px solid var(--border);
 }}
+
+/* Workflow placement strip (Park content / trading / dev pipelines) */
+.wp-section {{ margin: 14px 0 16px; }}
+.wp-block + .wp-block {{ margin-top: 16px; }}
+.wp-eyebrow {{
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}}
+.wp-pin-emoji {{ font-size: 14px; }}
+.wp-name {{ color: var(--text-2); text-transform: none; letter-spacing: 0; }}
+
+.wp-canvas {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  overflow-x: auto;
+}}
+.wp-canvas svg {{
+  display: block; max-width: 100%; height: auto;
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+}}
+
+.wp-stage {{
+  fill: var(--surface-2);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}}
+.wp-stage-active.wp-primary    {{ fill: rgba(74, 222, 128, 0.18); stroke: rgba(74, 222, 128, 0.85); stroke-width: 2; }}
+.wp-stage-active.wp-support    {{ fill: rgba(96, 165, 250, 0.16); stroke: rgba(96, 165, 250, 0.75); stroke-width: 2; }}
+.wp-stage-active.wp-alternative {{ fill: rgba(251, 191, 36, 0.14); stroke: rgba(251, 191, 36, 0.7); stroke-width: 2; }}
+.wp-stage-active.wp-reference  {{ fill: rgba(166, 153, 138, 0.14); stroke: rgba(166, 153, 138, 0.65); stroke-width: 1.5; stroke-dasharray: 4,3; }}
+
+.wp-stage-num {{
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+  text-anchor: middle; fill: var(--text);
+}}
+.wp-stage-name {{
+  font-family: system-ui, -apple-system, sans-serif; font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+}}
+html[lang="zh"] .wp-stage-name {{ font-size: 9.5px; letter-spacing: -0.01em; }}
+
+.wp-arrow {{ fill: none; stroke: var(--text-3); stroke-width: 1.4; }}
+.wp-arrowhead-path {{ fill: var(--text-3); }}
+
+/* Per-language SVG text toggle (matches workflow_diagram pattern) */
+.wp-lang-en, .wp-lang-zh {{ display: none; }}
+html[lang="en"] .wp-lang-en {{ display: block; }}
+html[lang="zh"] .wp-lang-zh {{ display: block; }}
+
+.wp-callouts {{ display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }}
+.wp-callout {{
+  padding: 10px 14px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-3);
+  border-radius: var(--radius-md);
+}}
+.wp-callout.wp-primary     {{ border-left-color: var(--ok); }}
+.wp-callout.wp-support     {{ border-left-color: #60a5fa; }}
+.wp-callout.wp-alternative {{ border-left-color: var(--warn); }}
+.wp-callout.wp-reference   {{ border-left-color: var(--text-3); border-left-style: dashed; }}
+.wp-callout-head {{
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 4px;
+}}
+.wp-callout-pin {{ font-size: 13px; }}
+.wp-callout-stage {{ font-size: 13px; color: var(--text); font-weight: 600; }}
+.wp-callout-role {{
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 2px 7px; border-radius: 999px;
+  background: var(--surface-2); color: var(--text-2);
+}}
+.wp-callout.wp-primary     .wp-callout-role {{ color: var(--ok); }}
+.wp-callout.wp-support     .wp-callout-role {{ color: #60a5fa; }}
+.wp-callout.wp-alternative .wp-callout-role {{ color: var(--warn); }}
+.wp-medium-pill {{
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 7px; border-radius: 4px;
+  background: var(--surface-2); color: var(--text-3);
+}}
+.wp-callout-reason {{ font-size: 13px; color: var(--text-2); line-height: 1.5; }}
 .layer-strip {{
   display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
   align-items: stretch; gap: 0;

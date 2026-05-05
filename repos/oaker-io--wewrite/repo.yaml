@@ -3,13 +3,17 @@ repo: wewrite
 display_name: wewrite
 repo_url: https://github.com/oaker-io/wewrite
 repo_type: skill
-# Archetype drives scaffolding and verdict-calculator ceiling rules.
-# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
 archetype: hybrid-skill
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
 layer: atom
 complexity: simple
 uses_areas: false
 status: evaluated
 current_bucket: usable
-notes: ""
+notes: ''
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: 05_production
+  role: alternative
+  reason:
+    en: Broader WeChat-content workflow tool. Use when production and publish are tightly coupled to one channel.
+    zh: 更宽的公众号内容工作流工具。生产 + 发布紧密绑定一个渠道时用。

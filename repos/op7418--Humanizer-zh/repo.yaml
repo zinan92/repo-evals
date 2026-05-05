@@ -169,3 +169,10 @@ third_party_services:
 business_category: content
 use_case_tags:
 - content-rewriting
+workflow_placements:
+- workflow_id: park-content-v1
+  stage_id: 05_production
+  role: primary
+  reason:
+    en: Chinese AI 味 cleanup + 50-point rubric. The de-AI step every CN draft needs before publish.
+    zh: 中文去 AI 味 + 50 分量化打分。每份中文草稿发布前的去 AI 步骤。
