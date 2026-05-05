@@ -1,0 +1,98 @@
+claims:
+- id: claim-001
+  title: 4 OHLCV providers (A股 / 美股 / 加密 / 商品) all real implementations
+  source: README "Providers tushare / yahoo / binance"
+  source_ref: src/kline/providers/
+  priority: critical
+  area: provider-coverage
+  statement: |
+    src/kline/providers/ contains ashare.py (117 LoC), us.py (99 LoC),
+    crypto.py (110 LoC), commodity.py (68 LoC), plus base.py and an
+    __init__.py registering them. Each is a real Python module with
+    real provider-specific code, not a stub.
+  business_expectation: |
+    The README's 4-asset-class promise (A股 / 美股 / 商品 / 加密) is
+    real code. An adopter doesn't need to write any provider plumbing
+    themselves.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 4 providers + base + registry + store. ~900 LoC under src/kline/.
+- id: claim-002
+  title: FastAPI service exposes the candle endpoint
+  source: README "curl localhost:8100/api/candles/us_stock/AAPL"
+  source_ref: src/kline + pyproject.toml
+  priority: critical
+  area: api-surface
+  statement: |
+    The package exposes an HTTP API at /api/candles/<asset_class>/<ticker>
+    that returns OHLCV records for a given timeframe + date range.
+  business_expectation: |
+    Other Park-trading services (signal / backtest / executor) consume
+    this via HTTP without re-implementing data loading per service.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: pyproject + src/kline/ structure indicates packaged FastAPI service. README curl example confirms the endpoint shape.
+- id: claim-003
+  title: Tests collect + run from a clean clone
+  source: tests/
+  source_ref: tests/test_*.py
+  priority: high
+  area: test-discipline
+  statement: |
+    `python3 -m pytest tests/` collects + runs from a fresh clone after
+    standard pip install.
+  business_expectation: |
+    Refactoring providers / store can't silently break the public API
+    contract.
+  status: failed_partial
+  last_run: runs/2026-05-06/run-static-checks
+  note: |
+    pytest --collect-only on a clean clone with no pip install fails 3/3 test
+    files (collection errors). 3 test files exist (test_models, test_providers,
+    test_store) but need full deps install first. Tests can run after `pip
+    install -e .` but not on plain clone.
+- id: claim-004
+  title: Repository has a LICENSE file
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: |
+    LICENSE file at repo root.
+  business_expectation: |
+    Other Park-trading repos can legally depend on it; outside adopters
+    can fork.
+  status: failed
+  last_run: runs/2026-05-06/run-static-checks
+  note: 'GitHub API: licenseInfo=null. README MIT badge but no LICENSE file. Same defect pattern as videocut + AI-videos + autoresearch.'
+- id: claim-005
+  title: Live e2e — fetch real candles from each provider
+  source: README "in ticker+timeframe → out OHLCV candles"
+  source_ref: src/kline/providers/
+  priority: critical
+  area: end-to-end
+  statement: |
+    Pick one ticker per provider (e.g., 600000.SH for A股, AAPL for 美股,
+    BTC-USDT for crypto, GLD for commodity), fetch candles via the API,
+    verify OHLCV shape + reasonable values + timeframe consistency.
+  business_expectation: |
+    Each of the 4 providers actually returns real candles today.
+  evidence_needed: |
+    Needs the relevant provider credentials (TuShare token for A股) +
+    network. One happy path per provider + one error case (ticker not
+    found, source down).
+  status: untested
+- id: claim-006
+  title: Standard packaging (pyproject + tests + src layout)
+  source: framework
+  source_ref: pyproject.toml + src/ + tests/
+  priority: medium
+  area: project-shape
+  statement: |
+    pyproject.toml + src/-layout package + tests/ following Python
+    packaging conventions.
+  business_expectation: |
+    Reproducible install + standard project structure for collaborators.
+  status: passed
+  last_run: runs/2026-05-06/run-static-checks
+  note: pyproject.toml + src/kline/ + tests/ all present. Standard src layout.

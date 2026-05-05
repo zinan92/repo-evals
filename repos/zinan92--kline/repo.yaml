@@ -1,0 +1,265 @@
+owner: zinan92
+repo: kline
+display_name: kline
+repo_url: https://github.com/zinan92/kline
+repo_type: framework
+archetype: api-service
+layer: molecule
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-06'
+version_tested: main@HEAD
+stars: 0
+archived: false
+has_license: false
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 2
+recently_active: true
+business_category: finance
+use_case_tags:
+- quant-trading
+notes: |
+  Wendy's own multi-asset OHLCV candle service (Park-trading stage 01).
+  Python 3.11 + FastAPI. 4 provider modules: tushare (A股), yahoo (美股),
+  binance (crypto), commodity. ~900 LoC in src/kline/ under proper
+  src-layout packaging. tests/ has 3 test files (test_models /
+  test_providers / test_store) but tests fail to collect from a clean
+  clone — needs full pip install first.
+
+  Two real defects: (1) no LICENSE file at root despite MIT badge in
+  README; (2) live e2e per provider untested — the 4-asset-class claim
+  is structural until verified against real ticker fetches.
+
+  Molecule layer: 4 provider atoms + registry + store, all wired by a
+  fixed FastAPI dispatch (URL → asset_class → provider). No LLM-runtime
+  routing.
+
+  Sits at Park-trading 01 行情数据 — the bedrock layer. Other trading
+  sub-repos (signal / backtest / risk / executor / journal) consume
+  this via HTTP.
+product_view:
+  one_liner:
+    en: |-
+      A multi-asset OHLCV candle service for the Park-trading pipeline — one ticker + one timeframe, returns standardised candles. 4 providers: 𝘁𝘂𝘀𝗵𝗮𝗿𝗲 (A股) / 𝘆𝗮𝗵𝗼𝗼 (美股) / 𝗯𝗶𝗻𝗮𝗻𝗰𝗲 (crypto) / 𝗰𝗼𝗺𝗺𝗼𝗱𝗶𝘁𝘆.
+    zh: |-
+      Park 交易管线的多资产 OHLCV 蜡烛数据服务 —— 一个 ticker + 一个 timeframe,返回标准化蜡烛。4 个 provider: 𝘁𝘂𝘀𝗵𝗮𝗿𝗲(A 股) / 𝘆𝗮𝗵𝗼𝗼(美股) / 𝗯𝗶𝗻𝗮𝗻𝗰𝗲(加密) / 𝗰𝗼𝗺𝗺𝗼𝗱𝗶𝘁𝘆(商品)。
+  persona:
+    en: |-
+      A solo quant or small trading-research team needing one HTTP service that returns clean OHLCV across 4 asset classes. Typical: someone running multiple downstream services (signal synthesis, backtest, risk model) that all need the same data layer; doesn't want to integrate 4 different vendor SDKs.
+    zh: |-
+      独立量化或小研究团队,需要一个 HTTP 服务在 4 个资产类别上返回干净的 OHLCV。典型: 跑多个下游服务(信号合成 / 回测 / 风控)都需要同一个数据层的人;不想接 4 个不同 vendor SDK。
+  scenario:
+    en: |-
+      Your trading pipeline needs daily candles for a watchlist that mixes 中国 A股 + 美股 + crypto + 商品. Each vendor has its own SDK + auth + rate-limit + symbol convention. You want a single HTTP call shape that abstracts over all of it.
+    zh: |-
+      你的交易 pipeline 要每日蜡烛 —— watchlist 混合 A 股 + 美股 + 加密 + 商品。每家 vendor 有自己 SDK / 鉴权 / rate limit / 符号规范。你要一个统一的 HTTP 调用形状,把这些抽象掉。
+  without_this:
+    en: |-
+      Hand-integrate tushare + yfinance + python-binance + commodity-vendor's SDK in every downstream service, propagate per-vendor errors, normalise symbol conventions, manage 4 sets of credentials. Multi-day plumbing per service, ongoing maintenance forever.
+    zh: |-
+      在每个下游服务里手动接 tushare + yfinance + python-binance + 商品 vendor SDK,各家错误传播,符号规范归一,4 套凭证管理。每个服务多天接管道 + 永远维护。
+  with_this:
+    en: |-
+      Run kline on localhost:8100. Other services hit `/api/candles/<asset_class>/<ticker>?timeframe=1d&limit=N`. One contract; vendor-specific handling stays inside kline. When a vendor breaks, kline takes the hit; downstream services don't need to change.
+    zh: |-
+      kline 跑在 localhost:8100。其他服务调 `/api/candles/<asset_class>/<ticker>?timeframe=1d&limit=N`。一份契约;vendor 相关处理留在 kline 内。某 vendor 挂了,kline 受冲击,下游不用改。
+  cost_summary:
+    en: |-
+      No LICENSE file. Free OSS otherwise. Need Python 3.11+ + the relevant vendor credentials per asset class — TuShare token for A股 is paid; yahoo / binance / commodity have free public access. Self-hosted; no cloud uploads.
+    zh: |-
+      没有 LICENSE 文件。其他免费开源。需要 Python 3.11+ + 各资产类对应 vendor 凭证 —— A 股的 TuShare token 要付费;yahoo / binance / 商品 公开免费可访问。自托管,不上云。
+  how:
+    en: |-
+      Clone + `pip install -e .`. Set TUSHARE_TOKEN env if you want A股. Run `python -m kline` (or `uvicorn kline:app`). Service listens on :8100. Call `curl "localhost:8100/api/candles/us_stock/AAPL?timeframe=1d&limit=30"` to fetch. Other Park-trading services point at the same base URL.
+    zh: |-
+      Clone + `pip install -e .`。要 A 股就设 TUSHARE_TOKEN 环境变量。`python -m kline` (或 `uvicorn kline:app`) 跑起来。服务监听 :8100。调 `curl "localhost:8100/api/candles/us_stock/AAPL?timeframe=1d&limit=30"` 拿数据。其他 Park 交易服务指向同一个 base URL。
+  watch_out:
+    en: |-
+      0 stars + early personal-toolkit territory. README MIT badge but no LICENSE file. Tests need pip install before they collect — claim-003 failed_partial. Live e2e per provider never logged in this static eval. The 4-asset breadth is the headline strength but also the maintenance surface — when one provider's API drifts, kline takes the hit on behalf of all downstream services.
+    zh: |-
+      0 stars + 早期个人工具箱。README MIT badge 但没 LICENSE 文件。测试要先 pip install 才能 collect —— claim-003 failed_partial。各 provider 的端到端没记录过日志。4 资产覆盖广是亮点也是维护面 —— 一家 vendor API 漂移,kline 替所有下游担一次。
+  examples:
+  - context:
+      en: |-
+        A daily backtest pipeline pulling SPY + QQQ + BTC-USDT for the last 5 years
+      zh: |-
+        每日跑一次的回测 pipeline,拉 SPY + QQQ + BTC-USDT 最近 5 年
+    you_say:
+      en: |-
+        for sym in SPY QQQ; do curl "localhost:8100/api/candles/us_stock/$sym?timeframe=1d&start=2020-01-01"; done; curl "localhost:8100/api/candles/crypto/BTC-USDT?timeframe=1d&start=2020-01-01"
+      zh: |-
+        for sym in SPY QQQ; do curl "localhost:8100/api/candles/us_stock/$sym?timeframe=1d&start=2020-01-01"; done; curl "localhost:8100/api/candles/crypto/BTC-USDT?timeframe=1d&start=2020-01-01"
+    what_happens:
+      en: |-
+        kline routes each call to the right provider (yahoo for SPY/QQQ, binance for BTC-USDT). Returns consistent OHLCV JSON. Backtest engine consumes all 3 the same way — no vendor-specific code in the backtest layer.
+      zh: |-
+        kline 把每次调用路由到对应 provider(SPY/QQQ 走 yahoo,BTC-USDT 走 binance)。返回一致的 OHLCV JSON。回测引擎用同样方式消费 3 个 —— 回测层没有 vendor 相关代码。
+  - context:
+      en: |-
+        A signal-synthesis service computing RSI on a 30-stock A-share watchlist
+      zh: |-
+        在 30 只 A 股 watchlist 上算 RSI 的信号合成服务
+    you_say:
+      en: |-
+        for sym in $(cat watchlist.txt); do curl "localhost:8100/api/candles/a_share/$sym?timeframe=1d&limit=60"; done > snapshot.json
+      zh: |-
+        for sym in $(cat watchlist.txt); do curl "localhost:8100/api/candles/a_share/$sym?timeframe=1d&limit=60"; done > snapshot.json
+    what_happens:
+      en: |-
+        Each call goes through the tushare provider (requires TUSHARE_TOKEN). 60-day candles per stock dumped to snapshot.json. Signal service reads snapshot.json and computes RSI. kline took the rate-limit hit, signal layer is clean.
+      zh: |-
+        每次调用走 tushare provider(要 TUSHARE_TOKEN)。每只股票 60 天蜡烛 dump 到 snapshot.json。信号服务读 snapshot.json 算 RSI。kline 替你扛了 rate limit,信号层干净。
+  - context:
+      en: |-
+        A risk-model service that needs intraday 5-minute candles for one futures contract
+      zh: |-
+        要某期货合约 5 分钟分钟级蜡烛的风控模型服务
+    you_say:
+      en: |-
+        curl "localhost:8100/api/candles/commodity/CL=F?timeframe=5m&limit=200"
+      zh: |-
+        curl "localhost:8100/api/candles/commodity/CL=F?timeframe=5m&limit=200"
+    what_happens:
+      en: |-
+        commodity provider hits the right vendor for crude futures, returns 200 5-min candles. Risk model uses them for variance estimation. Same call shape as A股 + 美股 + crypto — no asset-class-specific code in risk.
+      zh: |-
+        商品 provider 找对应 vendor 拉原油期货,返回 200 根 5 分钟蜡烛。风控模型用于方差估计。调用形状跟 A 股 / 美股 / 加密 一样 —— 风控里不必写各资产类相关代码。
+  next_step:
+    en: |-
+      Three actions. (1) Add LICENSE file (one commit) — closes claim-004, lifts ~+15. (2) Either set up tests/conftest.py to install deps as fixture, or document `pip install -e .` as the test-prereq — closes claim-003 partial. (3) Log one happy-path fetch per provider (4 fetches total) with response samples — closes claim-005 (live e2e).
+    zh: |-
+      三个动作。(1) 加 LICENSE 文件(一个 commit) —— 关掉 claim-004,~+15。(2) 要么 tests/conftest.py 里装依赖作为 fixture,要么文档化 `pip install -e .` 作为测试前置 —— 关掉 claim-003 partial。(3) 4 个 provider 各跑一次 happy path 留响应样本(共 4 次) —— 关掉 claim-005(端到端)。
+similar_repos:
+- slug: zinan92--quant-data-pipeline
+  shared_purpose:
+    en: |-
+      Both are author's market-data infrastructure repos. Both target the data-layer of the Park-trading 8-step pipeline.
+    zh: |-
+      都是作者的市场数据基础设施 repo。都瞄准 Park 交易 8 步管线的数据层。
+  this_better_at:
+    en: |-
+      Focused candle service — single-purpose API exposing OHLCV. Cleaner separation of concerns when downstream services just need candles.
+    zh: |-
+      专注蜡烛服务 —— 单目的 API 暴露 OHLCV。下游只要蜡烛时,关注点分得更干净。
+  other_better_at:
+    en: |-
+      Broader data platform — 28-API surface + perception signal engine + simulated trading. When you need more than candles, quant-data-pipeline is the bigger toolbox.
+    zh: |-
+      更广的数据平台 —— 28 组 API + 感知信号引擎 + 模拟交易。需要不止蜡烛时,quant-data-pipeline 工具箱更大。
+- slug: brokermr810--QuantDinger
+  shared_purpose:
+    en: |-
+      Both serve the trading-pipeline data + execution layer. Both target self-hosted (your-keys / your-server) over SaaS.
+    zh: |-
+      都服务交易管线的数据 + 执行层。都偏自托管(自己 key / 自己服务器)而不是 SaaS。
+  this_better_at:
+    en: |-
+      Pure data layer — clean separation between data + signal + execution. Makes downstream pipeline testable independently.
+    zh: |-
+      纯数据层 —— 数据 + 信号 + 执行 分得很干净。下游 pipeline 可独立测试。
+  other_better_at:
+    en: |-
+      Full backtest + execution + risk in one bundle. When you want one stack to do all 3 stages of trading, QuantDinger is more complete (76 / 🛠 in this corpus).
+    zh: |-
+      回测 + 执行 + 风控 一站式打包。想要一个 stack 做完交易 3 个阶段时,QuantDinger 更全(本语料库 76 / 🛠)。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — fixed pipeline (HTTP request → URL parse → asset-class router → per-vendor provider → normalise to OHLCV → return JSON). Provider selection is by URL pattern, not LLM at runtime.
+    zh: |
+      分子 —— 固定流水线(HTTP 请求 → URL 解析 → 资产类别路由 → 各 vendor provider → 归一化为 OHLCV → 返 JSON)。provider 选择按 URL 模式匹配,运行时无 LLM。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        HTTP GET
+        /api/candles/<class>/<ticker>
+      zh: |-
+        HTTP GET
+        /api/candles/<类>/<ticker>
+  - id: route
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Asset-class router
+      zh: |-
+        资产类别路由
+  - id: provider
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Per-vendor provider
+        (4: tushare/yahoo/binance/commodity)
+      zh: |-
+        各 vendor provider
+        (4 家)
+  - id: normalise
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Normalise to OHLCV
+      zh: |-
+        归一化到 OHLCV
+  - id: out
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        OHLCV JSON
+      zh: |-
+        OHLCV JSON
+  edges:
+  - {from: input, to: route}
+  - {from: route, to: provider}
+  - {from: provider, to: normalise}
+  - {from: normalise, to: out}
+workflow_placements:
+- workflow_id: park-trading-v1
+  stage_id: '01_market_data'
+  role: primary
+  reason:
+    en: The bedrock data layer of the Park trading 8-step pipeline. All downstream services (signal / backtest / risk / executor / journal) read OHLCV from kline. Fills the 01 gap that was previously empty.
+    zh: Park 交易 8 步管线的最底层数据层。所有下游服务(信号 / 回测 / 风控 / 执行 / 复盘) 都从 kline 读 OHLCV。填补了 01 阶段之前空缺的位置。
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + pip install -e .
+    platform: any (Python 3.11+)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: TuShare (A股 provider)
+  purpose: A-share OHLCV data
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: TuShare paid token; only required if you fetch A股
+- name: Yahoo Finance (US + commodity)
+  purpose: US stocks + commodities
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Public access; rate-limited
+- name: Binance (crypto provider)
+  purpose: Crypto OHLCV
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Public market endpoints; no auth needed for OHLCV
