@@ -465,13 +465,35 @@ def compute_verdict(inp: dict) -> dict:
         bucket = cap(bucket, "reusable")
 
     # --- Confidence --------------------------------------------------------
-    confidence = "high"
-    if stats["total"] == 0:
+    # Rebased meaning (2026-05-05):
+    #
+    #   confidence answers "how deep was this evaluation?"
+    #   NOT "how shaky is the bucket?". Bucket shakiness is now captured
+    #   by the 0-100 score (untested critical claims already cost points
+    #   in compute_score). Showing both meanings collapsed into one axis
+    #   was double-counting and made dossiers self-contradictory
+    #   (e.g. "score 75 / confidence low").
+    #
+    # Levels:
+    #   high   — live-run evidence logged (evidence_completeness=full)
+    #            OR the eval explicitly hit a critical failure (we're
+    #            confident in the bad news).
+    #   medium — standard static-only eval with at least 3 claims and
+    #            critical claims defined. This is the default for all
+    #            our static evals.
+    #   low    — too few claims to judge (< 3) OR no critical claims
+    #            defined OR ≥ 50% of claims untested (insufficient
+    #            coverage for ANY judgment).
+    confidence = "medium"
+    if stats["total"] < 3 or critical_total == 0:
         confidence = "low"
-    elif stats["critical_untested"] > 0 or stats["untested"] > stats["total"] // 3:
+    elif stats["total"] > 0 and stats["untested"] >= stats["total"] / 2:
         confidence = "low"
-    elif ceiling_reasons or stats["high_untested"] > 0:
-        confidence = "medium"
+    elif EVIDENCE_RANK[evidence_str] >= EVIDENCE_RANK["full"]:
+        confidence = "high"
+    elif stats["critical_failed"] > 0:
+        # We've identified a real defect — confident in the bad news.
+        confidence = "high"
 
     # --- Override ----------------------------------------------------------
     override_in = inp.get("override") or {}

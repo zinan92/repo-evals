@@ -84,7 +84,12 @@ def test_partial_critical_coverage_is_usable():
         ),
     })
     assert rec["recommended_bucket"] == "usable"
-    assert rec["confidence"] == "low"  # untested critical → low confidence
+    # Under the rebased confidence semantics (2026-05-05), confidence
+    # is "how deep was the eval", not "how shaky is the bucket". An
+    # untested critical claim already costs score points; we don't
+    # double-count it as low confidence. With 3 claims, critical defined,
+    # not all untested → medium is correct.
+    assert rec["confidence"] == "medium"
 
 
 # --- Ceiling: untested core layer (hybrid rule) ---------------------------
@@ -338,6 +343,62 @@ def test_score_privacy_concerns_penalised():
     cosmetic = compute_verdict(_input_with_concern_area("install-quality"))
     privacy  = compute_verdict(_input_with_concern_area("privacy"))
     assert privacy["score"] < cosmetic["score"]
+
+
+def test_confidence_default_is_medium_for_static_eval():
+    """Confidence describes eval depth, not score shakiness.
+
+    A standard static eval with critical claims defined and a normal
+    pass/untested mix should be `medium` — not `low` just because some
+    claims weren't live-tested. (That's already captured in the score.)
+    """
+    out = compute_verdict({
+        "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": False,
+        "evidence_completeness": "partial",
+        "claims": [
+            {"id": "c1", "priority": "critical", "status": "passed"},
+            {"id": "c2", "priority": "critical", "status": "passed"},
+            {"id": "c3", "priority": "critical", "status": "untested"},
+            {"id": "c4", "priority": "high", "status": "passed"},
+        ],
+        "stars": 1_000, "has_license": True,
+    })
+    assert out["confidence"] == "medium"
+
+
+def test_confidence_low_when_too_few_claims():
+    out = compute_verdict({
+        "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": True,
+        "claims": [{"id": "c1", "priority": "critical", "status": "passed"}],
+        "stars": 0, "has_license": True,
+    })
+    assert out["confidence"] == "low"
+
+
+def test_confidence_high_when_critical_failure_or_full_evidence():
+    """Confidence in the bad news, or in live-run evidence."""
+    bad = compute_verdict({
+        "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": True,
+        "claims": [
+            {"id": "c1", "priority": "critical", "status": "passed"},
+            {"id": "c2", "priority": "critical", "status": "failed"},
+            {"id": "c3", "priority": "high", "status": "passed"},
+        ],
+        "stars": 1_000, "has_license": True,
+    })
+    assert bad["confidence"] == "high"
+
+    full = compute_verdict({
+        "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": True,
+        "evidence_completeness": "full",
+        "claims": [
+            {"id": "c1", "priority": "critical", "status": "passed"},
+            {"id": "c2", "priority": "critical", "status": "passed"},
+            {"id": "c3", "priority": "high", "status": "passed"},
+        ],
+        "stars": 1_000, "has_license": True,
+    })
+    assert full["confidence"] == "high"
 
 
 def test_score_tier_thresholds():
