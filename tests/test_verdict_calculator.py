@@ -423,6 +423,54 @@ def test_score_tier_thresholds():
     assert tier_for_score(29)["key"] == "broken"
 
 
+def test_score_category_4_grouping():
+    """Top-level 4-category collapse: Production / Available / Risky / Don't use.
+
+    The 6-tier model lives underneath for fine sorting; the 4-category
+    grouping is what filter pills + the dossier hero show.
+    """
+    from verdict_calculator import category_for_score
+    # Production = team + recommend (80+)
+    assert category_for_score(95)["key"] == "production"
+    assert category_for_score(85)["key"] == "production"
+    assert category_for_score(80)["key"] == "production"
+    # Available = self + try (50-79)
+    assert category_for_score(79)["key"] == "available"
+    assert category_for_score(65)["key"] == "available"
+    assert category_for_score(50)["key"] == "available"
+    # Risky (30-49)
+    assert category_for_score(49)["key"] == "risky"
+    assert category_for_score(30)["key"] == "risky"
+    # Don't use (<30)
+    assert category_for_score(29)["key"] == "dont_use"
+    assert category_for_score(0)["key"] == "dont_use"
+
+
+def test_compute_verdict_emits_category_fields():
+    """compute_verdict result includes category_key/en/zh next to tier_*."""
+    from verdict_calculator import compute_verdict
+    result = compute_verdict({
+        "repo": "test/foo",
+        "archetype": "pure-cli",
+        "core_layer_tested": True,
+        "evidence_completeness": "full",
+        "claims": [
+            {"id": "c1", "priority": "critical", "status": "passed"},
+            {"id": "c2", "priority": "critical", "status": "passed"},
+            {"id": "c3", "priority": "high", "status": "passed"},
+        ],
+        "stars": 50_000,
+        "has_license": True,
+        "release_pipeline_score": 2,
+        "recently_active": True,
+    })
+    assert "category_key" in result
+    assert result["category_key"] in {"production", "available", "risky", "dont_use"}
+    assert "category_emoji" in result
+    assert "category_en" in result
+    assert "category_zh" in result
+
+
 # --- Ad-hoc runner (so tests work without pytest) --------------------------
 
 if __name__ == "__main__":

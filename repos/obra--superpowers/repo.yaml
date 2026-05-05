@@ -55,62 +55,263 @@ notes: 'Jesse Vincent''s "complete software-development methodology for coding
   '
 product_view:
   one_liner:
-    en: A 14-skill methodology bundle for coding agents — brainstorming, planning,
-      TDD, subagent-driven development, debugging, code review, git worktrees — auto-triggers
-      when your agent starts work. Installs into 8 platforms (Claude Code official
-      marketplace, Codex CLI/App, Cursor, OpenCode, Gemini CLI, Factory Droid, GitHub
-      Copilot CLI). MIT, 179K stars, v5.1.0.
-    zh: 给 coding agent 的 14 个方法论 skill 合集 —— brainstorming / 写计划 / TDD / 子 agent 拆活
-      / 系统性 debug / 代码 review / git worktrees。agent 一开工就自动触发。装到 8 个平台（Claude Code
-      官方 marketplace / Codex CLI/App / Cursor / OpenCode / Gemini CLI / Factory Droid
-      / GitHub Copilot CLI）。MIT，179K stars，v5.1.0。
-  best_for:
-    en: Anyone using a coding agent (Claude Code / Codex / Cursor etc) who wants the
-      agent to follow real software-engineering methodology — TDD, planning before
-      coding, brainstorming with you, doing code review on its own subagents — instead
-      of jumping straight into writing code.
-    zh: 用 coding agent 的人，希望 agent 按真正的软件工程方法论干活（TDD、先写计划、跟你 brainstorm、自己给自己的子 agent
-      做 code review）—— 而不是上来就写代码。
+    en: A 14-skill methodology bundle that auto-triggers when your coding agent starts
+      work — brainstorming, planning, TDD, subagent dispatch, debugging, code review,
+      git worktrees.
+    zh: 给 coding agent 的 14 个方法论 skill 合集，agent 一开工就自动触发 —— brainstorming / 写计划 /
+      TDD / 子 agent 拆活 / 系统性 debug / 代码 review / git worktrees。
+  persona:
+    en: A solo developer or small-team coder who uses Claude Code (or another agent)
+      and feels the agent jumps to writing code without asking enough questions, skips
+      writing tests, or produces code that "looks done" but isn't. You don't want
+      to be the agent's project manager.
+    zh: 用 Claude Code(或其他 agent) 的独立开发者 / 小团队 —— 觉得 agent 不问就动手、不写测试、写出的代码"看起来像完成了但其实没完成"。你不想自己当
+      agent 的 PM。
+  scenario:
+    en: You're about to ask your agent to build something non-trivial — a new auth
+      flow, a DB migration, a refactor that touches 5 files. You want it to think
+      it through first, not rush to a diff.
+    zh: 你要让 agent 做一个不是 5 行能搞定的活 —— 新加一套登录流程、改库表、重构跨 5 个文件的模块。你希望它先想清楚再动手,不是上来就直接 diff。
+  without_this:
+    en: 'You manually prompt the agent at every stage: "first brainstorm with me",
+      "now write the plan", "now write tests first", "now self-review subagent output".
+      Each new conversation you re-explain the methodology. The step you forget to
+      ask for is the step the agent skips.
+
+      '
+    zh: '你得一步一步手动催 agent: "先跟我 brainstorm" → "再写计划" → "再写测试" → "再自检子 agent 输出"。每个新对话都要重讲一遍方法论。你忘记说的那一步,agent
+      就会跳过。
+
+      '
+  with_this:
+    en: '14 methodology skills auto-trigger at the right moment: brainstorming → writing-plans
+      → TDD → subagent-driven-development → verification-before-completion → finishing-a-development-branch
+      → receiving-code-review. You give the agent one feature ask, and the methodology
+      fires itself. You stop being the PM and become the reviewer.
+
+      '
+    zh: '14 个方法论 skill 在该触发的时刻自动起效: brainstorming → 写计划 → TDD → 子 agent 拆活 → 完成前自检 → 收尾
+      → 接 code review。你只丢一个功能需求,方法论会自己跑。你不再是 PM,只当 reviewer。
+
+      '
+  cost_summary:
+    en: Free skill (MIT). Cost is on the agent side — 14 skills auto-trigger means
+      more tokens consumed per task before any code gets written. Need an existing
+      agent harness (Claude Code / Codex / Cursor / Gemini CLI / OpenCode / Factory
+      Droid / GitHub Copilot CLI).
+    zh: skill 本身免费(MIT)。成本在 agent 这边 —— 14 个 skill 自动触发,每个任务在写代码前要先消耗更多 token。需要已有的 agent
+      平台(Claude Code / Codex / Cursor / Gemini CLI / OpenCode / Factory Droid / GitHub
+      Copilot CLI)。
   watch_out:
-    en: 'Heavy: 14 skills auto-trigger means more agent overhead before each task.
-      CLAUDE.md is 106 lines of strict contributor guidelines and the maintainer is
-      famously blunt about closing ''slop PRs'' — be ready for that culture if you
-      contribute. AGENTS.md is empty and GEMINI.md is 2 lines, so support across non-Claude
-      platforms relies on platform-specific configs in .codex-plugin / .cursor-plugin
-      / .opencode that are smaller (1-2 files each). On Claude Code it''s fully fleshed
-      out; other platforms are more bare.
+    en: 'Claude Code is the first-class platform — AGENTS.md is empty and GEMINI.md
+      is only 2 lines, so non-Claude installs rely on thinner platform-specific configs
+      (.codex-plugin / .cursor-plugin / .opencode have 1-2 files each). Verify your
+      platform''s plugin contract before relying on it. Maintainer is famously blunt
+      about closing "slop PRs" — read CLAUDE.md before contributing.
 
       '
-    zh: '重：14 个 skill 自动触发意味着每个任务前 agent 多走一遍方法论。CLAUDE.md 106 行严格的 contributor 规范
-      + 维护者以「关掉 slop PR」出名 —— 想 contribute 要做好心理准备。AGENTS.md 空 + GEMINI.md 只有 2 行，所以
-      Claude 之外的平台支持要靠各自的 .codex-plugin / .cursor-plugin / .opencode 配置（每家 1-2 个文件，比较薄）。Claude
-      Code 上是齐活的，其他平台稍简。
+    zh: 'Claude Code 是一等公民 —— AGENTS.md 空 + GEMINI.md 只有 2 行,Claude 之外的平台靠各自薄一些的配置(.codex-plugin
+      / .cursor-plugin / .opencode 每家 1-2 个文件)。依赖前先看你那个平台的 plugin 合约。维护者以"关掉 slop PR"出名,想
+      contribute 先读 CLAUDE.md。
 
       '
-  use_for:
-  - en: Have your coding agent ask you for a spec before writing code — `brainstorming`
-      skill auto-triggers.
-    zh: 让 agent 写代码前先跟你聊需求 —— `brainstorming` skill 自动触发。
-  - en: TDD discipline — `test-driven-development` skill keeps the agent writing tests
-      first.
-    zh: TDD 纪律 —— `test-driven-development` skill 让 agent 先写测试。
-  - en: Long autonomous work — `subagent-driven-development` lets one agent dispatch
-      + review subagents.
-    zh: 长时间自主开发 —— `subagent-driven-development` 让一个 agent 分配并审核子 agent 的活。
-  - en: Multi-platform — same 14 skills work across 8 different agent harnesses.
-    zh: 多平台一致 —— 14 个 skill 在 8 个不同 agent 平台上都能用。
-  dont_use_for:
-  - en: Don't install if you want a 'just code, don't talk' agent — Superpowers makes
-      the agent stop and consult the methodology before acting.
-    zh: 想要「闭嘴写代码」的 agent 别装 —— Superpowers 强制 agent 在动手前先走方法论。
-  - en: Don't expect Claude-Code-level depth on Gemini / Codex right away — those
-      plugin configs are thinner; check .codex-plugin / .opencode for what's wired
-      before relying on them.
-    zh: Gemini / Codex 上别期待 Claude Code 级别的完整度 —— 那些平台的 plugin 配置更薄，依赖前先看 .codex-plugin
-      / .opencode 里有啥。
-  - en: Don't contribute without reading CLAUDE.md first — maintainer has a 94% PR
-      rejection rate and closes 'slop PRs' on sight.
-    zh: 想 contribute 先把 CLAUDE.md 读完 —— 维护者 PR 拒绝率 94%，看见 slop PR 直接关。
+  examples:
+  - context:
+      en: |-
+        An indie dev about to add OAuth login to a SaaS side project
+      zh: |-
+        独立开发者准备给 SaaS 副业项目加 OAuth 登录
+    you_say:
+      en: |-
+        Add GitHub OAuth login to my-saas — users should be able to sign in with their GitHub account
+      zh: |-
+        给 my-saas 加上 GitHub OAuth 登录,用户可以用 GitHub 账号登入
+    what_happens:
+      en: |-
+        brainstorming auto-fires first — agent asks: "GitHub-only or multi-provider? Where do you want session tokens stored? Is sign-up the same flow as sign-in?" After alignment, writing-plans drafts the implementation plan; TDD writes the failing tests; only then does the agent start writing the route handlers.
+      zh: |-
+        brainstorming 自动起 —— agent 先反问"只 GitHub 还是多家?session token 存哪?注册和登录走同一流程吗?"。聊清楚后,writing-plans 起草实现计划;TDD 先写失败的测试;然后 agent 才开始写路由 handler。
+  - context:
+      en: |-
+        A small-team developer who's been bitten by half-finished Claude features that "looked done"
+      zh: |-
+        被 Claude 写出"看起来像完成"的半成品坑过的小团队开发者
+    you_say:
+      en: |-
+        Refactor the inventory service to use the new pricing engine — touch the 5 files in src/inventory and make sure nothing else breaks
+      zh: |-
+        把 inventory service 改造成用新的 pricing engine,改动 src/inventory 下 5 个文件,别影响其他地方
+    what_happens:
+      en: |-
+        subagent-driven-development fires (decision: this work is big enough to split). The main agent dispatches per-file subagents for the 5 files, each subagent does its own TDD pass, then the main agent reviews each subagent's output before integrating. verification-before-completion runs the full test suite + greps for orphaned references before declaring done.
+      zh: |-
+        subagent-driven-development 起作用(LLM 判断:这活够大,值得拆)。主 agent 给 5 个文件分别派子 agent,每个子 agent 独立做 TDD,然后主 agent 审核每个子 agent 的产出再合并。verification-before-completion 跑全量测试 + grep 找漏改的引用,通过了才宣布完成。
+  - context:
+      en: |-
+        Same person on Cursor instead of Claude Code, wanting the methodology to follow them
+      zh: |-
+        同一个人换到 Cursor(不用 Claude Code),希望方法论也跟着过去
+    you_say:
+      en: |-
+        Install superpowers in this Cursor workspace, then start a new feature for me
+      zh: |-
+        在这个 Cursor 工作区装上 superpowers,然后给我开个新功能
+    what_happens:
+      en: |-
+        The .cursor-plugin folder configures Cursor to load the same 14 skills. The agent recognises the new feature request and brainstorms with you the same way it would in Claude Code — but plugin depth on Cursor is 1 file vs Claude Code's 2, so agent-side prompt prep is slightly thinner. You see the same flow, with a less polished trigger story.
+      zh: |-
+        .cursor-plugin 目录配置 Cursor 加载相同的 14 个 skill。agent 识别到新功能请求,跟你 brainstorm 的方式跟在 Claude Code 上一样 —— 但 Cursor 的 plugin 配置只有 1 个文件,Claude Code 有 2 个,所以触发提示稍薄。流程一致,触发故事略糙。
+similar_repos_pending:
+# Wendy's note (2026-05-05): superpowers is closer to G-Stack (which she
+# has starred but we haven't evaluated yet) than to autoresearch or
+# skill-creator. Both are "guide a user — even one with no dev habit —
+# through a complete development workflow", which neither autoresearch
+# (LLM-training research) nor skill-creator (author new skills meta-tool)
+# does. Comparison is on hold until G-Stack is evaluated under the same
+# framework so the score + category numbers come from the same model.
+- slug_note: |-
+    Pending evaluation: G-Stack — same problem space (guide a non-developer or
+    a developer-who-doesn't-want-to-think-about-next-step through an
+    end-to-end dev workflow). Need GitHub slug + claim-map before we can
+    render a real comparison card here.
+similar_repos: []
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: |
+      Compound (not molecule) — at two diamond-shaped nodes the agent decides at runtime which methodology skill fires next, based on the LLM's read of your request. A molecule would be a fixed pipeline (every run takes the same path); a compound is a tree with branches the LLM picks live. Specifically: (1) "Is the spec clear?" decides whether brainstorming fires; (2) "Is this work big enough to split?" decides whether subagent-driven-development fires.
+    zh: |
+      复合物(不是分子) —— 在两个菱形节点上,agent 运行时根据 LLM 对你需求的判断决定下一步触发哪个方法论 skill。分子是固定流水线(每次都走同一条路);复合物是 LLM 现场选支路的树。具体两个决策点: (1)"需求是否清晰?"决定是否触发 brainstorming;(2)"工作量是否需要拆分?"决定是否触发 subagent-driven-development。
+  nodes:
+  - id: request
+    type: start
+    rank: 0
+    lane: 1
+    label:
+      en: |-
+        User feature request
+      zh: |-
+        用户提需求
+  - id: dec_brainstorm
+    type: decision
+    rank: 1
+    lane: 1
+    label:
+      en: |-
+        Spec clear enough?
+        (LLM decides)
+      zh: |-
+        需求是否清晰?
+        (LLM 决定)
+  - id: brainstorming
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        brainstorming
+      zh: |-
+        brainstorming
+  - id: plans
+    type: atom
+    rank: 3
+    lane: 1
+    label:
+      en: |-
+        writing-plans
+      zh: |-
+        writing-plans
+  - id: tdd
+    type: atom
+    rank: 4
+    lane: 1
+    label:
+      en: |-
+        test-driven-development
+      zh: |-
+        test-driven-development
+  - id: dec_subagent
+    type: decision
+    rank: 5
+    lane: 1
+    label:
+      en: |-
+        Big enough to split?
+        (LLM decides)
+      zh: |-
+        工作量需要拆分?
+        (LLM 决定)
+  - id: subagent
+    type: atom
+    rank: 6
+    lane: 0
+    label:
+      en: |-
+        subagent-driven-development
+      zh: |-
+        subagent-driven-development
+  - id: verify
+    type: atom
+    rank: 7
+    lane: 1
+    label:
+      en: |-
+        verification-before-completion
+      zh: |-
+        verification-before-completion
+  - id: finish
+    type: atom
+    rank: 8
+    lane: 1
+    label:
+      en: |-
+        finishing-a-development-branch
+      zh: |-
+        finishing-a-development-branch
+  - id: review
+    type: end
+    rank: 9
+    lane: 1
+    label:
+      en: |-
+        receiving-code-review
+      zh: |-
+        receiving-code-review
+  edges:
+  - from: request
+    to: dec_brainstorm
+  - from: dec_brainstorm
+    to: brainstorming
+    label:
+      en: 'no'
+      zh: 不清晰
+  - from: dec_brainstorm
+    to: plans
+    label:
+      en: 'yes'
+      zh: 清晰
+  - from: brainstorming
+    to: plans
+  - from: plans
+    to: tdd
+  - from: tdd
+    to: dec_subagent
+  - from: dec_subagent
+    to: subagent
+    label:
+      en: split
+      zh: 拆
+  - from: dec_subagent
+    to: verify
+    label:
+      en: single
+      zh: 不拆
+  - from: subagent
+    to: verify
+  - from: verify
+    to: finish
+  - from: finish
+    to: review
 deployment:
   installable: true
   install_methods:

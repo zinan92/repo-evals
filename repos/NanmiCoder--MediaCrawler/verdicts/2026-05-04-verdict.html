@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bucket="usable">
+<html lang="en" data-bucket="usable" data-category="available">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,6 +53,349 @@ html[data-bucket="reusable"]      { --bucket:#60a5fa; --bucket-bg:rgba(96,165,25
 html[data-bucket="recommendable"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
 html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
 
+/* 4-category theming (2026-05-05). Replaces the per-tier accent
+   so the page color tracks the top-level category, not the fine
+   tier inside it. */
+html[data-category="production"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-category="available"]  { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-category="risky"]      { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+/* --- Category chip (above score number) --- */
+.category-chip {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 10px 18px; margin-bottom: 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: 999px;
+}
+.category-emoji { font-size: 22px; line-height: 1; }
+.category-text { display: flex; flex-direction: column; line-height: 1.25; }
+.category-name {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--bucket); font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.category-blurb { font-size: 13px; color: var(--text-2); }
+
+/* --- Cost chip (one-line cost summary near the score) --- */
+.cost-chip {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  font-size: 14px; line-height: 1.55; color: var(--text);
+}
+.cost-label {
+  display: block;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}
+.cost-body { color: var(--text-2); }
+
+/* --- Layer strip (atom · molecule · compound) ---------------------- */
+.layer-strip-section { margin-bottom: 40px; }
+.layer-strip {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 0;
+}
+@media (max-width: 720px) {
+  .layer-strip { grid-template-columns: 1fr; }
+  .layer-strip-arrow { display: none; }
+}
+.layer-strip-card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 22px 22px 24px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: opacity .15s, border-color .15s;
+}
+.layer-strip-card.is-dim { opacity: 0.42; }
+.layer-strip-card.is-active {
+  background: var(--bucket-bg);
+  border-color: var(--bucket-soft);
+  box-shadow: 0 0 0 2px var(--bucket-soft);
+}
+.layer-strip-card.layer-atom.is-active     { --bucket: #2d7866; --bucket-bg: rgba(45,120,102,0.10); --bucket-soft: rgba(45,120,102,0.4); }
+.layer-strip-card.layer-molecule.is-active { --bucket: #5a3aa1; --bucket-bg: rgba(192,132,252,0.10); --bucket-soft: rgba(192,132,252,0.4); }
+.layer-strip-card.layer-compound.is-active { --bucket: #a13d30; --bucket-bg: rgba(248,113,113,0.10); --bucket-soft: rgba(248,113,113,0.4); }
+.layer-strip-emoji { font-size: 32px; line-height: 1; }
+.layer-strip-name {
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text); font-weight: 700;
+}
+.layer-strip-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
+.layer-strip-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); color: var(--text-3);
+  padding: 0 8px;
+}
+
+/* --- Category strip (4-zone score bar with pointer) ---------------- */
+.category-strip-section { margin-bottom: 40px; }
+.cat-strip-wrap { position: relative; margin-bottom: 14px; }
+.cat-strip {
+  display: flex; gap: 4px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cat-zone {
+  padding: 14px 14px 16px;
+  text-align: center;
+  background: var(--surface-2);
+  opacity: 0.55;
+  transition: opacity .15s;
+}
+.cat-zone.is-active { opacity: 1; }
+.cat-zone-emoji { font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.cat-zone-name {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text); font-weight: 600;
+}
+.cat-zone-range { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }
+.cat-zone-dont_use.is-active   { background: rgba(248, 113, 113, 0.18); }
+.cat-zone-risky.is-active      { background: rgba(245, 158, 11, 0.18); }
+.cat-zone-available.is-active  { background: rgba(96, 165, 250, 0.18); }
+.cat-zone-production.is-active { background: rgba(74, 222, 128, 0.18); }
+
+.cat-pointer-lane {
+  position: relative; height: 32px;
+  margin-top: 6px;
+}
+.cat-pointer {
+  position: absolute; top: 0; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--font-mono);
+}
+.cat-pointer-arrow { color: var(--bucket); font-size: 14px; line-height: 1; }
+.cat-pointer-score { font-size: 13px; color: var(--bucket); font-weight: 700; line-height: 1.2; }
+
+.cat-summary {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}
+.cat-summary-headline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-summary-emoji { font-size: 18px; }
+.cat-summary-name { font-family: var(--font-mono); font-size: 12px; color: var(--bucket); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.cat-summary-score { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.cat-summary-blurb { font-size: 14px; color: var(--text-2); }
+.cat-summary-production { --bucket: #4ade80; }
+.cat-summary-available  { --bucket: #60a5fa; }
+.cat-summary-risky      { --bucket: #f59e0b; }
+.cat-summary-dont_use   { --bucket: #f87171; }
+
+/* --- Similar repos comparison ------------------------------------- */
+.similar-section { margin-bottom: 80px; }
+.similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
+.similar-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+.similar-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.similar-card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.similar-card-name { color: var(--text); font-size: 14px; text-decoration: none; }
+.similar-card-name:hover strong { text-decoration: underline; }
+.similar-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.similar-cat-pill {
+  font-family: var(--font-mono); font-size: 10.5px; padding: 3px 9px;
+  border-radius: 999px; background: var(--surface-2); color: var(--text-2);
+  letter-spacing: 0.06em; white-space: nowrap;
+}
+.similar-cat-pill.cat-production { color: #4ade80; }
+.similar-cat-pill.cat-available  { color: #60a5fa; }
+.similar-cat-pill.cat-risky      { color: #f59e0b; }
+.similar-cat-pill.cat-dont_use   { color: #f87171; }
+.similar-layer-pill {
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 8px;
+  border-radius: 4px; background: var(--surface-2); color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.similar-layer-pill.layer-atom     { color: #6cae9d; }
+.similar-layer-pill.layer-molecule { color: #c084fc; }
+.similar-layer-pill.layer-compound { color: #f87171; }
+
+.similar-row {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 12px; padding: 8px 0; border-top: 1px solid var(--border);
+}
+.similar-row:first-of-type { border-top: 0; }
+.similar-row-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); padding-top: 2px; line-height: 1.55;
+}
+.similar-row-body { font-size: 13px; line-height: 1.55; color: var(--text-2); white-space: pre-wrap; }
+.similar-row-this  .similar-row-label { color: var(--ok); }
+.similar-row-other .similar-row-label { color: #c084fc; }
+
+/* --- Workflow diagram (atom / molecule / compound) ----------------- */
+.workflow-diagram-section { margin-bottom: 80px; }
+.wd-why {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.wd-why-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 6px;
+}
+.wd-why-body { font-size: 14px; color: var(--text-2); line-height: 1.55; white-space: pre-wrap; }
+
+.wd-legend {
+  list-style: none; padding: 0; margin: 0 0 14px;
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.wd-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.wd-legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.wd-legend-atom     { background: rgba(96, 165, 250, 0.4); }
+.wd-legend-decision { background: rgba(251, 191, 36, 0.55); transform: rotate(45deg); }
+.wd-legend-start    { background: rgba(166, 153, 138, 0.5); border-radius: 5px; }
+
+.wd-canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  overflow-x: auto;
+}
+.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+
+.wd-shape { stroke-width: 1.5; }
+.wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
+.wd-molecule { fill: rgba(192, 132, 252, 0.10); stroke: rgba(192, 132, 252, 0.55); }
+.wd-decision { fill: rgba(251, 191, 36, 0.18); stroke: rgba(251, 191, 36, 0.85); stroke-width: 2; }
+.wd-start    { fill: rgba(166, 153, 138, 0.18); stroke: rgba(166, 153, 138, 0.65); }
+.wd-end      { fill: rgba(74, 222, 128, 0.14);  stroke: rgba(74, 222, 128, 0.6); }
+
+.wd-canvas svg { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+.wd-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-anchor: middle;
+  fill: var(--text);
+  letter-spacing: 0.01em;
+}
+/* SVG text language toggle — pseudo-elements don't work in SVG, so
+   we duplicate text in EN + ZH and toggle display based on <html lang>. */
+.wd-lang-en, .wd-lang-zh { display: none; }
+html[lang="en"] .wd-lang-en { display: block; }
+html[lang="zh"] .wd-lang-zh { display: block; }
+/* CJK gets a slightly smaller size + tighter tracking so 4-character
+   labels feel even-density next to 2-character labels. */
+html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
+.wd-edge { fill: none; stroke: rgba(166, 153, 138, 0.6); stroke-width: 1.6; }
+.wd-edge-dashed { stroke-dasharray: 5,4; }
+.wd-arrowhead { fill: rgba(166, 153, 138, 0.85); }
+
+.wd-edge-label-bg {
+  fill: var(--surface-1); stroke: var(--border); stroke-width: 1;
+}
+.wd-edge-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
+/* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
+.benefits-section { margin-bottom: 80px; }
+.benefits-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 720px) {
+  .benefits-grid { grid-template-columns: 1fr; }
+}
+.benefit-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.benefit-card.benefit-without {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.15);
+}
+.benefit-card.benefit-with {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}
+.benefit-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
+}
+.benefit-icon { font-size: 16px; }
+.benefit-body {
+  font-size: 15px; line-height: 1.62;
+  color: var(--text); white-space: pre-wrap;
+}
+
+/* Concrete usage examples (lives inside the benefits section) */
+.usex-block { margin-top: 28px; }
+.usex-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 12px;
+}
+.usex-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.usex-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.usex-row { display: flex; flex-direction: column; gap: 4px; }
+.usex-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+}
+.usex-body { font-size: 13.5px; line-height: 1.55; color: var(--text); }
+.usex-row.usex-quote .usex-body {
+  margin: 0; padding: 10px 14px;
+  border-left: 3px solid var(--bucket);
+  background: var(--bucket-bg);
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--text); border-radius: 0 4px 4px 0;
+  font-style: normal;
+}
+.usex-row.usex-quote .usex-body::before { content: "\201C"; color: var(--bucket); margin-right: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-quote .usex-body::after { content: "\201D"; color: var(--bucket); margin-left: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-what .usex-body { color: var(--text-2); }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
@@ -105,7 +448,7 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {
   background: var(--text); color: var(--bg);
 }
 
-.hero { padding: 24px 0 72px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }
+.hero { padding: 16px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
 
 .eyebrow {
   font-family: var(--font-mono); font-size: 11px;
@@ -133,7 +476,7 @@ h1.repo-title {
   font-size: clamp(18px, 2vw, 22px);
   line-height: 1.45; font-weight: 400;
   color: var(--text); max-width: 62ch;
-  margin: 0 0 72px;
+  margin: 0;
 }
 
 .verdict-block { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }
@@ -409,7 +752,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-section { margin-bottom: 96px; }
+section { margin-bottom: 56px; }
 
 .capabilities-grid {
   display: grid;
@@ -881,38 +1224,51 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
     <h1 class="repo-title">MediaCrawler</h1>
     <div class="repo-slug">NanmiCoder/MediaCrawler</div>
 
-    <p class="tagline"><span class="i18n" data-en="A Python crawler that uses Playwright browser automation to harvest public posts, comments, creator pages, and search results from 7 Chinese platforms (Xiaohongshu, Douyin, Kuaishou, Bilibili, Weibo, Tieba, Zhihu) — login by QR / phone / cookie, store to 8 backends (CSV, JSON, JSONL, Excel, SQLite, MySQL, PostgreSQL, MongoDB)." data-zh="一个用 Playwright 浏览器自动化抓 7 个中文平台（小红书 / 抖音 / 快手 / B 站 / 微博 / 贴吧 / 知乎）公开帖子、评论、创作者主页和搜索结果的 Python 爬虫。支持二维码 / 手机 / cookie 三种登录，可写入 8 种存储（CSV / JSON / JSONL / Excel / SQLite / MySQL / PostgreSQL / MongoDB）。"></span></p>
+    <p class="tagline"><span class="i18n" data-en="One Python CLI that crawls posts / comments / creators / search from 7 Chinese platforms (Xiaohongshu, Douyin, Kuaishou, Bilibili, Weibo, Tieba, Zhihu) into 8 storage backends." data-zh="一个 Python CLI,把 7 个中文平台(小红书 / 抖音 / 快手 / B 站 / 微博 / 贴吧 / 知乎)的帖子 / 评论 / 创作者 / 搜索抓进 8 种存储后端。"></span></p>
 
-    <div class="verdict-block">
-      <div>
-        <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="score-hero tier-self"><div class="score-hero-row"><span class="score-emoji">🛠</span><span class="score-num">75</span><span class="score-denom">/ 100</span></div><div class="score-tier"><span class="i18n" data-en="Self-use OK" data-zh="自用 OK"></span></div><p class="score-blurb"><span class="i18n" data-en="Use it yourself; not yet ready to recommend to others." data-zh="你自己日常用没问题，还不到推荐给陌生人的程度。"></span></p></div>
-      </div>
-
-      <div class="verdict-meta">
-        <div class="layer-row"><span class="layer-pill layer-molecule" title="molecule"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Molecule" data-zh="分子"></span></span></div>
-
-        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 7 <span class="i18n" data-en="total" data-zh="共"></span></div>
-        <div class="stats-bar"><span class="s-pass" style="flex: 3"></span><span class="s-warn" style="flex: 1"></span><span class="s-skip" style="flex: 3"></span></div>
-        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">3</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">3</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
-
-        <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+14</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+12</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+9</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
-      </div>
-    </div>
   </header>
 
-  <section class="scenarios-section"><div class="section-head"><h2><span class="i18n" data-en="Use it for / Don't use it for" data-zh="什么时候用 / 什么时候别用"></span></h2></div><ul class="scenarios"><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Researchers and indie devs who already know Python and want a working baseline crawler for the 7 supported Chinese platforms." data-zh="懂 Python、想要这 7 个中文平台开箱可跑爬虫的研究者 / 独立开发者。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Willing to maintain login state by hand, willing to update code when a platform breaks." data-zh="愿意手动维护登录态、愿意在平台改版时自己改代码。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t use for any non-research purpose — custom non-commercial license (NOASSERTION); read LICENSE before any non-research use." data-zh="任何非研究用途都不行 —— 自定义非商用 license（NOASSERTION），用前一定先读 LICENSE。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t run at scale — README disclaimer + platforms&#x27; anti-bot will limit your account." data-zh="不要大规模爬取 —— README 免责声明很明确，平台反爬也会限你的账号。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t assume &#x27;no encryption reversal&#x27; — signing lives in 3 places (libs/*.js, xhshow pip, per-platform client.py); platform changes break runs." data-zh="别相信「无需逆向」—— 签名藏在 3 个地方（libs/*.js、xhshow pip、各平台 client.py），平台一升级就坏。"></span></li></ul></section>
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一层?"></span></h2></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+
+  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:75%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">75</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 75 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div></section>
+
+  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-icon">👤</span><span class="i18n" data-en="Who this is for" data-zh="谁会用上它"></span></div><div class="benefit-body"><span class="i18n" data-en="A Python-comfortable researcher, content analyst, or trend tracker who needs raw post / comment / creator data from one or more Chinese platforms for non-commercial analysis. NOT for production scraping." data-zh="懂 Python 的研究者 / 内容分析师 / 趋势追踪人 —— 需要从某个或多个中文平台拿到原始的帖子 / 评论 / 创作者数据,用于非商用分析。不是给生产抓取用。"></span></div></article>
+<article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-icon">🎯</span><span class="i18n" data-en="When you'd reach for it" data-zh="什么时候用上"></span></div><div class="benefit-body"><span class="i18n" data-en="You want this week&#x27;s top Xiaohongshu posts under a tag, or all comments on a Douyin video, or a creator&#x27;s last 200 Weibo posts. You&#x27;ll log in with your real account once (QR / phone / cookie), let it run on your laptop, and dump to CSV / SQLite for downstream analysis." data-zh="你想要本周小红书某个 tag 下的爆款,或者某个抖音视频的全量评论,或者某创作者在微博的最近 200 条帖子。准备真实账号登一次(扫码 / 短信 / cookie),挂在自己电脑上跑,导出 CSV / SQLite 给下游分析用。"></span></div></article>
+<article class="benefit-card benefit-without"><div class="benefit-eyebrow"><span class="benefit-icon">😩</span><span class="i18n" data-en="What you'd do without it" data-zh="没它的时候怎么办"></span></div><div class="benefit-body"><span class="i18n" data-en="You write per-platform crawlers from scratch. Each platform&#x27;s anti-bot, signing, login flow, pagination, comment threading is its own can of worms — a serious solo build is weeks per platform. Or you pay a SaaS data vendor (¥¥¥), or you scrape the open web (lower-quality data, no comments).
+" data-zh="一个个平台从头写爬虫。每个平台的反爬 / 签名 / 登录 / 翻页 / 评论嵌套都是一堆坑 —— 单人认真写一个平台要好几周。要么花钱买 SaaS 数据(¥¥¥),要么爬公开 web(数据质量低 / 评论拿不到)。
+"></span></div></article>
+<article class="benefit-card benefit-with"><div class="benefit-eyebrow"><span class="benefit-icon">✨</span><span class="i18n" data-en="What having it changes" data-zh="有它之后变化在哪"></span></div><div class="benefit-body"><span class="i18n" data-en="One CLI for 7 platforms. Login type (QR/phone/cookie), crawl type (search/detail/creator), and storage backend (CSV/JSON/SQLite/Postgres/MongoDB) are all flags. Day-1 you have a working baseline. You&#x27;ll patch when a platform updates DOM/signing — but you&#x27;re patching working code, not starting from a blank file.
+" data-zh="一个 CLI 跑 7 个平台。登录方式(扫码 / 手机 / cookie)、抓取类型(搜索 / 详情 / 创作者)、存储后端(CSV / JSON / SQLite / Postgres / MongoDB) 都是参数。第一天就有可跑的版本。平台改版你要打补丁,但起点是能跑的代码,不是空文件。
+"></span></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A content analyst researching trends before Double-11 — needs the top 100 posts under #双十一美妆 on Xiaohongshu for keyword + engagement analysis" data-zh="内容分析师调研双十一前小红书 #双十一美妆 话题下 top 100 帖子,要做关键词 + 互动度分析"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="python main.py --platform xhs --type search --keyword &quot;双十一美妆&quot; --start 0 --end 100 --save_data csv" data-zh="python main.py --platform xhs --type search --keyword &quot;双十一美妆&quot; --start 0 --end 100 --save_data csv"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="First run pops a QR code in your terminal — scan with Xiaohongshu app to authorise. Playwright then opens a real browser, runs the search, paginates through 100 results, and writes data/xhs/search_results.csv with title / author / engagement / publish_time columns. Total: ~6 minutes for 100 posts." data-zh="第一次跑会在终端弹一个二维码 —— 用小红书 App 扫码授权。Playwright 然后开真实浏览器,跑搜索,翻页 100 条,把数据写到 data/xhs/search_results.csv(标题 / 作者 / 互动量 / 发布时间)。100 条大约 6 分钟。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A social-media researcher studying a Douyin influencer&#x27;s content strategy — needs the last 200 videos from one creator with view counts" data-zh="社交媒体研究者研究某抖音博主的内容策略 —— 需要某个创作者最近 200 条视频带播放量"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="python main.py --platform douyin --type creator --creator_id 12345678 --max_count 200 --save_data sqlite" data-zh="python main.py --platform douyin --type creator --creator_id 12345678 --max_count 200 --save_data sqlite"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Login is cookie-based on first run (paste your douyin cookie into the config). Crawler iterates the creator&#x27;s video list, hits the signing helper for each request, and writes 200 rows to data/douyin/creator_videos.sqlite. You query with SQL afterwards." data-zh="第一次跑用 cookie 登录(把你的抖音 cookie 贴到 config 里)。爬虫遍历创作者视频列表,每个请求都过签名辅助,写 200 行进 data/douyin/creator_videos.sqlite。之后用 SQL 查。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="An indie dev building a local &quot;Weibo trends&quot; dashboard — needs all comments under one viral post for sentiment analysis" data-zh="独立开发者做一个本地&quot;微博热搜&quot;dashboard —— 需要某条爆款博文下的全部评论做情绪分析"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="python main.py --platform weibo --type detail --note_id 4901234567 --get_comment True --save_data jsonl" data-zh="python main.py --platform weibo --type detail --note_id 4901234567 --get_comment True --save_data jsonl"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Crawler hits the post detail endpoint, then walks the comment tree (top-level comments → replies → replies-to-replies) until exhausted. Output goes to data/weibo/comments.jsonl, one comment per line — easy to stream into a sentiment classifier." data-zh="爬虫先打详情端点,然后遍历评论树(一级评论 → 回复 → 回复的回复)直到取完。输出到 data/weibo/comments.jsonl,每行一条评论 —— 容易喂给情绪分类器。"></span></span></div></article></div></div></section>
+
+  
+
+  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is molecule" data-zh="为什么是分子"></span></div><div class="wd-why-body"><span class="i18n" data-en="Molecule — a fixed pipeline of atoms (CLI parse → login → per-platform crawler → signing helper → storage adapter → output file). The pipeline is the same on every run; no LLM decides at runtime which step to take or skip. You configure once via flags, then the pipeline executes deterministically.
+" data-zh="分子 —— 固定的原子流水线(CLI 解析 → 登录 → 各平台爬虫 → 签名辅助 → 存储适配器 → 输出文件)。每次跑都是同一条路;运行时没有 LLM 决定下一步走哪或跳哪一步。flag 配一次,流水线确定性地执行。
+"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 1528 104" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M204,52.0 C244.0,52.0 244.0,52.0 284,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M464,52.0 C504.0,52.0 504.0,52.0 544,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M724,52.0 C764.0,52.0 764.0,52.0 804,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M984,52.0 C1024.0,52.0 1024.0,52.0 1064,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M1244,52.0 C1284.0,52.0 1284.0,52.0 1324,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="24" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-start"/><text x="114.0" y="49.0" class="wd-label wd-lang-en">CLI args</text><text x="114.0" y="49.0" class="wd-label wd-lang-zh">CLI 参数</text><text x="114.0" y="63.0" class="wd-label wd-lang-en">(platform / type / login)</text><text x="114.0" y="63.0" class="wd-label wd-lang-zh">(平台 / 类型 / 登录)</text></g><g class="wd-node wd-type-atom"><rect x="284" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="374.0" y="49.0" class="wd-label wd-lang-en">Login atom</text><text x="374.0" y="49.0" class="wd-label wd-lang-zh">登录原子</text><text x="374.0" y="63.0" class="wd-label wd-lang-en">(QR / phone / cookie)</text><text x="374.0" y="63.0" class="wd-label wd-lang-zh">(扫码 / 手机 / cookie)</text></g><g class="wd-node wd-type-atom"><rect x="544" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="634.0" y="49.0" class="wd-label wd-lang-en">Per-platform crawler</text><text x="634.0" y="49.0" class="wd-label wd-lang-zh">各平台爬虫</text><text x="634.0" y="63.0" class="wd-label wd-lang-en">(Playwright)</text><text x="634.0" y="63.0" class="wd-label wd-lang-zh">(Playwright)</text></g><g class="wd-node wd-type-atom"><rect x="804" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="894.0" y="49.0" class="wd-label wd-lang-en">Signing helper</text><text x="894.0" y="49.0" class="wd-label wd-lang-zh">签名辅助</text><text x="894.0" y="63.0" class="wd-label wd-lang-en">(libs/*.js + xhshow)</text><text x="894.0" y="63.0" class="wd-label wd-lang-zh">(libs/*.js + xhshow)</text></g><g class="wd-node wd-type-atom"><rect x="1064" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="1154.0" y="49.0" class="wd-label wd-lang-en">Storage adapter</text><text x="1154.0" y="49.0" class="wd-label wd-lang-zh">存储适配器</text><text x="1154.0" y="63.0" class="wd-label wd-lang-en">(1 of 8 backends)</text><text x="1154.0" y="63.0" class="wd-label wd-lang-zh">(8 选 1)</text></g><g class="wd-node wd-type-end"><rect x="1324" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-end"/><text x="1414.0" y="49.0" class="wd-label wd-lang-en">CSV / JSON / SQLite</text><text x="1414.0" y="49.0" class="wd-label wd-lang-zh">CSV / JSON / SQLite</text><text x="1414.0" y="63.0" class="wd-label wd-lang-en">/ Postgres / Mongo / ...</text><text x="1414.0" y="63.0" class="wd-label wd-lang-zh">/ Postgres / Mongo / ...</text></g></svg></div></section>
+
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zinan92--content-downloader/verdicts/2026-04-09-verdict.html"><strong>zinan92/content-downloader</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-dont_use">🛑 <span class="i18n" data-en="Don&#x27;t use" data-zh="不可使用"></span> · 29</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both are crawler/downloader pipelines for Chinese content platforms. Both have to handle login state + anti-bot signing per platform. Both store harvested content to local files for downstream analysis." data-zh="都是中国内容平台的爬虫/下载流水线。都要处理每个平台的登录态 + 反爬签名。都把抓到的内容存到本地文件给下游分析用。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="MediaCrawler wins at" data-zh="MediaCrawler 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Working today (48K stars, recently active) + 7 platforms in one tool + 8 storage backends. Battle-tested signing helpers (libs/*.js + xhshow) that are kept up to date when platforms change." data-zh="现在能用(48K stars,持续维护) + 一个工具覆盖 7 个平台 + 8 种存储后端。久经考验的签名辅助(libs/*.js + xhshow),平台改版时会同步更新。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="content-downloader wins at" data-zh="content-downloader 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Built specifically as a thin downloader (single-purpose, simpler API) — but currently broken on Douyin (signing failure → 0-byte output). When it works, simpler than MediaCrawler. When it doesn&#x27;t, MediaCrawler is your only option." data-zh="专门做一个轻量下载器(单一目的,API 更简单) —— 但抖音目前签名失败导致 0 字节输出。能跑的时候比 MediaCrawler 简单;跑不通的时候 MediaCrawler 是你唯一的选择。"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/Usagi-org--ai-goofish-monitor/verdicts/2026-05-04-verdict.html"><strong>Usagi-org/ai-goofish-monitor</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 69</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both are Python crawlers for a Chinese platform with a &quot;watch this thing for me&quot; use case. Both handle login + scraping + storing under one CLI. Both ask you to maintain login state by hand." data-zh="都是中国平台的 Python 爬虫,做&quot;帮我盯着这件事&quot;的 use case。都把登录 + 抓取 + 存储放在一个 CLI 里。都要你自己维护登录态。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="MediaCrawler wins at" data-zh="MediaCrawler 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Breadth — 7 platforms × 4 crawl modes (search / detail / creator / comments) × 8 storage backends. When you need data from any of those 7 platforms, this is the reference implementation." data-zh="覆盖广 —— 7 个平台 × 4 种抓取模式(搜索 / 详情 / 创作者 / 评论) × 8 种存储后端。任何这 7 个平台想要数据,这是参考实现。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="ai-goofish-monitor wins at" data-zh="ai-goofish-monitor 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Single-platform deep-watch (Goofish/闲鱼 product monitoring). Continuous notification + price-change alerts that MediaCrawler doesn&#x27;t have — MediaCrawler is one-shot scraping, not monitoring." data-zh="单平台深度监控(闲鱼商品价格 / 状态)。持续通知 + 降价提醒,MediaCrawler 没这些 —— MediaCrawler 是一次性抓取,不是监控。"></span></div></div></article></div></section>
 
   <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>git clone + uv pip install + uv run main.py</code></td><td>any (Python 3.11+)</td><td><span class="badge complexity-moderate">moderate</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">Real account on each platform</div><div class="service-purpose">Login cookies to access each platform</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-signup"><span class="i18n" data-en="📝 Signup needed" data-zh="📝 需要注册账号"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>QR / phone / cookie login; aggressive scraping risks account limits</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Per-platform anti-bot ecosystem</div><div class="service-purpose">Internal — handled via libs/*.js + xhshow + per-platform client.py</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Project handles signing internally; breaks when platforms change</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">MediaCrawlerPro (paid)</div><div class="service-purpose">Removes Playwright dependency, adds resume + multi-account</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-signup"><span class="i18n" data-en="📝 Signup needed" data-zh="📝 需要注册账号"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Commercial upgrade — separate from this OSS repo</div></div></div></div></section>
 
   <div class="pull-quotes">
-    <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Researchers and indie devs who already know Python and want a working baseline crawler for these specific Chinese platforms — willing to maintain login state by hand, willing to update the code when a platform breaks." data-zh="懂 Python、想要这 7 个中文平台开箱可跑爬虫的研究者 / 独立开发者。前提：愿意手动维护登录态，愿意在平台改版时自己改代码。"></span></div></section>
-    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="Custom non-commercial license — read it before any non-research use. Anti-bot moves fast: per-platform pipelines break frequently when DOM or signing changes; treat any green run as a snapshot of that day, not a permanent guarantee. README promises &quot;no need to reverse complex encryption algorithms&quot; but the codebase ships its own JS hooks (libs/) and signing helpers — encryption isn&#x27;t reversed by you, but it is being handled, so updates to platform signing can still break runs. The hosted PRO version (paid) explicitly removes the Playwright dependency; the OSS version always needs a real browser.
-Login state caches are local plain-text files; do not commit them. Use the IP proxy pool config if you plan more than a handful of requests, and keep request rates conservative — the disclaimer is explicit about &quot;no large-scale crawling&quot;.
-" data-zh="自定义非商用 license — 任何非研究用途都要先读原文。反爬迭代很快：单平台流水线经常因为 DOM / 签名变化而坏掉，所以任何一次绿色跑通，只能当成「那一天的快照」，不是永久保障。README 说「无需逆向复杂加密」但仓库里自己带了一套 JS hook（libs/）和签名辅助 —— 不是你来逆向，但加密一直在被处理，所以平台签名一旦升级仍然会让跑批失败。付费的 PRO 版本明确去掉了 Playwright 依赖；开源版必须有真实浏览器。
-登录态缓存以明文存到本地，别提交进 git。请求量超过几个就用自带的 IP 代理池配置，并保持保守频率 —— 免责声明里写得很清楚「不得用于大规模爬取」。
+    
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="README promises &quot;no need to reverse complex encryption algorithms&quot; but the codebase ships its own JS hooks (libs/) and signing helpers — encryption isn&#x27;t reversed by you, but it&#x27;s being handled internally, so platform signing updates still break runs. Login state caches are local plain-text files — don&#x27;t commit them. Use the built-in IP proxy pool config if you plan more than a handful of requests, and keep rates conservative — disclaimer is explicit about &quot;no large-scale crawling&quot;.
+" data-zh="README 说&quot;无需逆向复杂加密&quot;但仓库里自己带了一套 JS hook(libs/)和签名辅助 —— 不是你来逆向,但加密一直在被处理,所以平台签名一升级仍然会让跑批失败。登录态缓存以明文存本地,别提交进 git。请求量超过几个就用自带的 IP 代理池配置,频率保守一点 —— 免责声明很明确&quot;不得用于大规模爬取&quot;。
 "></span></div></section>
   </div>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Score breakdown · how the 75 was computed" data-zh="分数明细 · 75 是怎么算的"></span></summary>
+    <div class="body">
+      <div class="claim-stats-row">
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 7 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 3"></span><span class="s-warn" style="flex: 1"></span><span class="s-skip" style="flex: 3"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">3</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">3</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+      </div>
+      <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+14</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+12</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+9</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
+    </div>
+  </details>
 
   <section>
     <div class="section-head">

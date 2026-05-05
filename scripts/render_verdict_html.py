@@ -1109,31 +1109,21 @@ def render_layer_section(vd: VerdictData) -> str:
 
 
 def render_score_block(vd: VerdictData) -> str:
-    """Big-number score + emoji + bilingual tier label + blurb."""
+    """Big-number 0-100 score. The 4-category label sits in render_category_chip
+    above this; we don't repeat the 6-tier name here (would duplicate the
+    chip and clutter the hero)."""
 
     score = vd.verdict_input.get("score")
     if score is None:
         return ""  # legacy verdict-input without score field
-    tier_emoji = vd.verdict_input.get("tier_emoji", "")
-    tier_en = _esc(vd.verdict_input.get("tier_en", ""))
-    tier_zh = _esc(vd.verdict_input.get("tier_zh", ""))
-    blurb_en = _esc(vd.verdict_input.get("tier_blurb_en", ""))
-    blurb_zh = _esc(vd.verdict_input.get("tier_blurb_zh", ""))
     tier_key = vd.verdict_input.get("tier_key", "unknown")
 
     return (
         f'<div class="score-hero tier-{tier_key}">'
         f'<div class="score-hero-row">'
-        f'<span class="score-emoji">{tier_emoji}</span>'
         f'<span class="score-num">{int(score)}</span>'
         f'<span class="score-denom">/ 100</span>'
         f'</div>'
-        f'<div class="score-tier">'
-        f'<span class="i18n" data-en="{tier_en}" data-zh="{tier_zh}"></span>'
-        f'</div>'
-        f'<p class="score-blurb">'
-        f'<span class="i18n" data-en="{blurb_en}" data-zh="{blurb_zh}"></span>'
-        f'</p>'
         f'</div>'
     )
 
@@ -1179,7 +1169,9 @@ def render_score_breakdown(vd: VerdictData) -> str:
 
 
 def render_scenarios(vd: VerdictData) -> str:
-    """Render the ✅ use_for / ❌ dont_use_for lists from product_view."""
+    """Legacy: ✅ use_for / ❌ dont_use_for lists. Kept as fallback for
+    repo.yaml files that haven't been rewritten to the new
+    persona/scenario/without/with schema yet."""
 
     pv = vd.repo.get("product_view") or {}
     use_for = pv.get("use_for") or []
@@ -1205,6 +1197,764 @@ def render_scenarios(vd: VerdictData) -> str:
         'data-zh="什么时候用 / 什么时候别用"></span></h2></div>'
         f'<ul class="scenarios">{"".join(items)}</ul>'
         '</section>'
+    )
+
+
+def render_benefits_section(vd: VerdictData) -> str:
+    """Benefits-driven hero block — replaces best_for + scenarios when the
+    new schema is present. Reads persona / scenario / without_this /
+    with_this from product_view and renders a 4-card layout that answers:
+
+        👤 Who is this for?
+        🎯 When would they use it?
+        😩 What would they do without it?
+        ✨ What does it actually change?
+
+    Falls back to empty string if none of the new fields are populated;
+    callers should then render the legacy best_for/scenarios blocks."""
+
+    pv = vd.repo.get("product_view") or {}
+    persona = pv.get("persona")
+    scenario = pv.get("scenario")
+    without_this = pv.get("without_this")
+    with_this = pv.get("with_this")
+
+    if not (persona or scenario or without_this or with_this):
+        return ""
+
+    def _card(icon: str, label_en: str, label_zh: str, body: Any, klass: str) -> str:
+        if not body:
+            return ""
+        return (
+            f'<article class="benefit-card {klass}">'
+            f'<div class="benefit-eyebrow">'
+            f'<span class="benefit-icon">{icon}</span>'
+            f'<span class="i18n" data-en="{label_en}" data-zh="{label_zh}"></span>'
+            f'</div>'
+            f'<div class="benefit-body">{dual_lang(body)}</div>'
+            f'</article>'
+        )
+
+    cards = [
+        _card("👤", "Who this is for", "谁会用上它", persona, "benefit-persona"),
+        _card("🎯", "When you'd reach for it", "什么时候用上",
+              scenario, "benefit-scenario"),
+        _card("😩", "What you'd do without it", "没它的时候怎么办",
+              without_this, "benefit-without"),
+        _card("✨", "What having it changes", "有它之后变化在哪",
+              with_this, "benefit-with"),
+    ]
+    cards_html = "\n".join(c for c in cards if c)
+
+    examples_html = render_usage_examples(vd)
+
+    return (
+        '<section class="benefits-section">'
+        '<div class="section-head">'
+        '<h2><span class="i18n" data-en="What this skill actually buys you" '
+        'data-zh="它到底能帮你解决什么"></span></h2></div>'
+        f'<div class="benefits-grid">{cards_html}</div>'
+        f'{examples_html}'
+        '</section>'
+    )
+
+
+def render_usage_examples(vd: VerdictData) -> str:
+    """Concrete usage examples — context + the actual prompt/command the
+    user would say + what the skill does in response.
+
+    Reads ``product_view.examples``. Each example has::
+
+        - context:        { en, zh }   # who you are, what you're doing
+          you_say:        { en, zh }   # the actual quote / command
+          what_happens:   { en, zh }   # what the skill does
+
+    Wendy's intent: dossier readers should be able to imagine themselves
+    saying the quote and recognise the situation. Persona/scenario cards
+    above describe the abstract case — these examples make it concrete.
+    """
+
+    pv = vd.repo.get("product_view") or {}
+    examples = pv.get("examples") or []
+    if not examples:
+        return ""
+
+    cards: list[str] = []
+    for ex in examples:
+        ctx = ex.get("context")
+        say = ex.get("you_say")
+        what = ex.get("what_happens")
+        if not (ctx or say or what):
+            continue
+        ctx_html = (
+            '<div class="usex-row usex-context">'
+            '<span class="usex-label"><span class="i18n" '
+            'data-en="You are" data-zh="你是"></span></span>'
+            f'<span class="usex-body">{dual_lang(ctx)}</span>'
+            '</div>'
+            if ctx else ''
+        )
+        say_html = (
+            '<div class="usex-row usex-quote">'
+            '<span class="usex-label"><span class="i18n" '
+            'data-en="You say" data-zh="你会说"></span></span>'
+            f'<blockquote class="usex-body">{dual_lang(say)}</blockquote>'
+            '</div>'
+            if say else ''
+        )
+        what_html = (
+            '<div class="usex-row usex-what">'
+            '<span class="usex-label"><span class="i18n" '
+            'data-en="What happens" data-zh="然后会发生什么"></span></span>'
+            f'<span class="usex-body">{dual_lang(what)}</span>'
+            '</div>'
+            if what else ''
+        )
+        cards.append(
+            f'<article class="usex-card">{ctx_html}{say_html}{what_html}</article>'
+        )
+
+    if not cards:
+        return ""
+
+    return (
+        '<div class="usex-block">'
+        '<div class="usex-eyebrow">'
+        '<span class="i18n" data-en="↳ Three concrete moments where you would invoke it" '
+        'data-zh="↳ 三个真实场景里你会怎么唤醒它"></span>'
+        '</div>'
+        f'<div class="usex-grid">{"".join(cards)}</div>'
+        '</div>'
+    )
+
+
+def render_cost_summary(vd: VerdictData) -> str:
+    """One-sentence cost line shown next to the score hero. Reads
+    product_view.cost_summary; renders nothing if absent."""
+
+    pv = vd.repo.get("product_view") or {}
+    cs = pv.get("cost_summary")
+    if not cs:
+        return ""
+    return (
+        '<div class="cost-chip">'
+        '<span class="cost-label">'
+        '<span class="i18n" data-en="Cost &amp; deps" data-zh="成本 / 依赖"></span>'
+        '</span>'
+        f'<span class="cost-body">{dual_lang(cs)}</span>'
+        '</div>'
+    )
+
+
+def render_layer_strip(vd: VerdictData) -> str:
+    """Visual #2 (after the one-liner): the layer spectrum.
+
+    Three connected shapes — atom · molecule · compound — with the
+    current repo's layer highlighted. Reader sees in 1 second whether
+    they're looking at a single-capability skill, a fixed pipeline,
+    or an LLM-runtime orchestrator."""
+
+    layer = str(vd.repo.get("layer", "") or "").strip().lower()
+    if layer not in {"atom", "molecule", "compound"}:
+        return ""
+
+    layers = [
+        ("atom", "⚛", "Atom", "原子",
+         "single user-facing capability with deterministic internal phases",
+         "单个用户可调用能力,内部确定性"),
+        ("molecule", "⚗", "Molecule", "分子",
+         "fixed pipeline of atoms — no LLM decides next step at runtime",
+         "原子的固定流水线 —— LLM 不在运行时决定下一步"),
+        ("compound", "🧬", "Compound", "复合物",
+         "LLM decides at runtime which atom/molecule fires next",
+         "LLM 运行时决定下一步触发哪个原子/分子"),
+    ]
+
+    cards: list[str] = []
+    for key, emoji, en, zh, desc_en, desc_zh in layers:
+        active = " is-active" if key == layer else " is-dim"
+        cards.append(
+            f'<div class="layer-strip-card layer-{key}{active}">'
+            f'<div class="layer-strip-emoji">{emoji}</div>'
+            f'<div class="layer-strip-name">'
+            f'<span class="i18n" data-en="{en}" data-zh="{zh}"></span>'
+            f'</div>'
+            f'<div class="layer-strip-desc">'
+            f'<span class="i18n" data-en="{_esc(desc_en)}" data-zh="{_esc(desc_zh)}"></span>'
+            f'</div>'
+            f'</div>'
+        )
+
+    return (
+        '<section class="layer-strip-section">'
+        '<div class="section-head">'
+        '<h2><span class="i18n" data-en="What kind of skill is this?" '
+        'data-zh="它是哪一层?"></span></h2></div>'
+        '<div class="layer-strip">'
+        + '<div class="layer-strip-arrow">→</div>'.join(cards)
+        + '</div>'
+        '</section>'
+    )
+
+
+def render_category_strip(vd: VerdictData) -> str:
+    """Visual #3: the 4-zone category spectrum with a tick at the score.
+
+    A horizontal bar split into 4 zones (Don't use / Risky / Available /
+    Production) sized by their score range. A pointer beneath shows
+    where the actual score lands. Reader sees both the absolute score
+    AND its band at the same time."""
+
+    score = vd.verdict_input.get("score")
+    if score is None:
+        return ""
+    cat_key = vd.verdict_input.get("category_key", "available")
+    cat_emoji = vd.verdict_input.get("category_emoji", "")
+    cat_en = _esc(vd.verdict_input.get("category_en", ""))
+    cat_zh = _esc(vd.verdict_input.get("category_zh", ""))
+    blurb_en = _esc(vd.verdict_input.get("category_blurb_en", ""))
+    blurb_zh = _esc(vd.verdict_input.get("category_blurb_zh", ""))
+
+    # Zones: (key, range-width-percent, emoji, en, zh, range-label)
+    zones = [
+        ("dont_use",   30, "🛑", "Don't use",  "不可使用",   "0–29"),
+        ("risky",      20, "⚠️", "Risky",      "有风险",     "30–49"),
+        ("available",  30, "🛠", "Available",  "可使用",     "50–79"),
+        ("production", 20, "🏭", "Production", "可用于生产", "80–100"),
+    ]
+
+    zone_html: list[str] = []
+    for key, _w, emoji, en, zh, rng in zones:
+        active = " is-active" if key == cat_key else ""
+        zone_html.append(
+            f'<div class="cat-zone cat-zone-{key}{active}" style="flex:{_w}">'
+            f'<div class="cat-zone-emoji">{emoji}</div>'
+            f'<div class="cat-zone-name">'
+            f'<span class="i18n" data-en="{en}" data-zh="{zh}"></span>'
+            f'</div>'
+            f'<div class="cat-zone-range">{rng}</div>'
+            f'</div>'
+        )
+
+    score_pct = max(0, min(100, int(score)))
+
+    return (
+        '<section class="category-strip-section">'
+        '<div class="section-head">'
+        '<h2><span class="i18n" data-en="How usable is it?" '
+        'data-zh="它可用性如何?"></span></h2></div>'
+        '<div class="cat-strip-wrap">'
+        f'<div class="cat-strip">{"".join(zone_html)}</div>'
+        f'<div class="cat-pointer-lane">'
+        f'<div class="cat-pointer" style="left:{score_pct}%">'
+        f'<div class="cat-pointer-arrow">▼</div>'
+        f'<div class="cat-pointer-score">{int(score)}</div>'
+        f'</div>'
+        f'</div>'
+        '</div>'
+        f'<div class="cat-summary cat-summary-{cat_key}">'
+        f'<div class="cat-summary-headline">'
+        f'<span class="cat-summary-emoji">{cat_emoji}</span>'
+        f'<span class="cat-summary-name">'
+        f'<span class="i18n" data-en="{cat_en}" data-zh="{cat_zh}"></span>'
+        f'</span>'
+        f'<span class="cat-summary-score">· {int(score)} / 100</span>'
+        f'</div>'
+        f'<div class="cat-summary-blurb">'
+        f'<span class="i18n" data-en="{blurb_en}" data-zh="{blurb_zh}"></span>'
+        f'</div>'
+        f'</div>'
+        '</section>'
+    )
+
+
+def render_workflow_diagram(vd: VerdictData) -> str:
+    """Render the repo's workflow as a self-contained SVG diagram.
+
+    Reads ``repo.yaml.workflow_diagram``. Three diagram types map roughly
+    to the three layers:
+
+      * ``io`` — atom: input → atom → output (single user-facing capability)
+      * ``linear`` — molecule: left-to-right pipeline of atoms
+      * ``tree`` — compound: top-down, with diamond-shaped *decision*
+        nodes that highlight the LLM-runtime branches that make this
+        repo a compound (and not a fixed-pipeline molecule)
+
+    Schema::
+
+        workflow_diagram:
+          layout: io | linear | tree
+          why_layer:
+            en: "Compound because steps X and Y are decided at runtime by ..."
+            zh: "..."
+          nodes:
+            - id: req
+              type: start | end | atom | decision | molecule
+              label: { en, zh }
+              rank: 0      # column index for linear/io, row index for tree
+              lane: 0      # row index for linear/io, column index for tree
+          edges:
+            - from: req
+              to: brainstorm
+              label: { en, zh }    # optional, shown next to the edge
+              style: dashed        # optional; renders as dashed instead of solid
+
+    Renders nothing if ``workflow_diagram`` is absent.
+    """
+
+    wd = vd.repo.get("workflow_diagram") or {}
+    nodes = wd.get("nodes") or []
+    edges = wd.get("edges") or []
+    if not nodes:
+        return ""
+
+    layout = str(wd.get("layout") or "linear").lower()
+    why_layer = wd.get("why_layer")
+
+    # Node + grid metrics. Tree layout is denser than linear because
+    # compound trees can stack 8-12 ranks vertically — wide gaps make
+    # the diagram unreadably tall.
+    NODE_W = 200 if layout == "tree" else 180
+    NODE_H = 44 if layout == "tree" else 56
+    COL_GAP = 50 if layout == "tree" else 80
+    ROW_GAP = 16 if layout == "tree" else 28
+    PAD = 18 if layout == "tree" else 24
+
+    def _xy(rank: int, lane: int) -> tuple[float, float]:
+        """Map (rank, lane) → (x, y) in SVG coordinate space.
+
+        Linear/IO: rank is the column (x), lane is the row (y).
+        Tree:      rank is the row (y, top-down), lane is the column (x).
+        """
+        if layout == "tree":
+            x = PAD + lane * (NODE_W + COL_GAP)
+            y = PAD + rank * (NODE_H + ROW_GAP)
+        else:
+            x = PAD + rank * (NODE_W + COL_GAP)
+            y = PAD + lane * (NODE_H + ROW_GAP)
+        return x, y
+
+    pos: dict[str, tuple[float, float, dict]] = {}
+    max_rank = 0
+    max_lane = 0
+    for n in nodes:
+        rank = int(n.get("rank", 0))
+        lane = int(n.get("lane", 0))
+        x, y = _xy(rank, lane)
+        pos[n["id"]] = (x, y, n)
+        max_rank = max(max_rank, rank)
+        max_lane = max(max_lane, lane)
+
+    if layout == "tree":
+        svg_w = PAD * 2 + (max_lane + 1) * NODE_W + max_lane * COL_GAP
+        svg_h = PAD * 2 + (max_rank + 1) * NODE_H + max_rank * ROW_GAP
+    else:
+        svg_w = PAD * 2 + (max_rank + 1) * NODE_W + max_rank * COL_GAP
+        svg_h = PAD * 2 + (max_lane + 1) * NODE_H + max_lane * ROW_GAP
+
+    # ---- Render nodes ----
+    node_svgs: list[str] = []
+    for n in nodes:
+        x, y, node = pos[n["id"]]
+        ntype = node.get("type", "atom")
+        label = node.get("label") or {}
+        label_en = _esc(label.get("en") if isinstance(label, dict) else str(label))
+        label_zh = _esc(label.get("zh") if isinstance(label, dict) else str(label))
+
+        cx = x + NODE_W / 2
+        cy = y + NODE_H / 2
+
+        if ntype == "decision":
+            # Diamond — highlights an LLM-runtime decision point
+            points = (
+                f"{cx},{y} "
+                f"{x + NODE_W},{cy} "
+                f"{cx},{y + NODE_H} "
+                f"{x},{cy}"
+            )
+            shape = (
+                f'<polygon points="{points}" class="wd-shape wd-decision"/>'
+            )
+        elif ntype == "start":
+            shape = (
+                f'<rect x="{x}" y="{y}" width="{NODE_W}" height="{NODE_H}" '
+                f'rx="{NODE_H / 2}" class="wd-shape wd-start"/>'
+            )
+        elif ntype == "end":
+            shape = (
+                f'<rect x="{x}" y="{y}" width="{NODE_W}" height="{NODE_H}" '
+                f'rx="{NODE_H / 2}" class="wd-shape wd-end"/>'
+            )
+        elif ntype == "molecule":
+            shape = (
+                f'<rect x="{x}" y="{y}" width="{NODE_W}" height="{NODE_H}" '
+                f'rx="10" class="wd-shape wd-molecule"/>'
+            )
+        else:
+            shape = (
+                f'<rect x="{x}" y="{y}" width="{NODE_W}" height="{NODE_H}" '
+                f'rx="8" class="wd-shape wd-atom"/>'
+            )
+
+        # Label — split on \n in the source for two-line labels
+        en_lines = (label.get("en") or "").split("\n") if isinstance(label, dict) else [str(label)]
+        zh_lines = (label.get("zh") or "").split("\n") if isinstance(label, dict) else [str(label)]
+        # Keep the longer of the two as line count to ensure consistent
+        # vertical centering when zh and en differ in line count.
+        n_lines = max(len(en_lines), len(zh_lines))
+        line_h = 14
+        first_y = cy - (n_lines - 1) * line_h / 2 + 4
+
+        # Two parallel <text> elements per line — one EN, one ZH, with
+        # the literal text rendered directly inside. The dossier-wide
+        # .i18n / ::before pattern doesn't work inside SVG <tspan>
+        # (Chromium ignores pseudo-elements on SVG text), so we toggle
+        # via .wd-lang-{en,zh} display instead.
+        line_spans = []
+        for li in range(n_lines):
+            en_l = _esc(en_lines[li] if li < len(en_lines) else "")
+            zh_l = _esc(zh_lines[li] if li < len(zh_lines) else "")
+            ty = first_y + li * line_h
+            line_spans.append(
+                f'<text x="{cx}" y="{ty}" class="wd-label wd-lang-en">{en_l}</text>'
+                f'<text x="{cx}" y="{ty}" class="wd-label wd-lang-zh">{zh_l}</text>'
+            )
+
+        node_svgs.append(
+            f'<g class="wd-node wd-type-{ntype}">{shape}{"".join(line_spans)}</g>'
+        )
+
+    # ---- Render edges ----
+    edge_svgs: list[str] = []
+    for e in edges:
+        src_pos = pos.get(e["from"])
+        dst_pos = pos.get(e["to"])
+        if not src_pos or not dst_pos:
+            continue
+        sx, sy, _ = src_pos
+        ex, ey, _ = dst_pos
+
+        if layout == "tree":
+            # Top-down: bottom-center of source to top-center of dest
+            x1 = sx + NODE_W / 2
+            y1 = sy + NODE_H
+            x2 = ex + NODE_W / 2
+            y2 = ey
+            cy_mid = (y1 + y2) / 2
+            d = f"M{x1},{y1} C{x1},{cy_mid} {x2},{cy_mid} {x2},{y2}"
+        else:
+            # Left-right: right-center of source to left-center of dest
+            x1 = sx + NODE_W
+            y1 = sy + NODE_H / 2
+            x2 = ex
+            y2 = ey + NODE_H / 2
+            cx_mid = (x1 + x2) / 2
+            d = f"M{x1},{y1} C{cx_mid},{y1} {cx_mid},{y2} {x2},{y2}"
+
+        style = e.get("style", "solid")
+        klass = f"wd-edge wd-edge-{style}"
+        edge_svgs.append(
+            f'<path d="{d}" class="{klass}" marker-end="url(#wd-arrow)"/>'
+        )
+
+        # Optional edge label — placed at the curve midpoint
+        elabel = e.get("label")
+        if elabel:
+            mx = (x1 + x2) / 2
+            my = (y1 + y2) / 2
+            en_l = _esc(elabel.get("en") if isinstance(elabel, dict) else str(elabel))
+            zh_l = _esc(elabel.get("zh") if isinstance(elabel, dict) else str(elabel))
+            edge_svgs.append(
+                f'<g class="wd-edge-label-group">'
+                f'<rect x="{mx - 28}" y="{my - 9}" width="56" height="18" rx="9" '
+                f'class="wd-edge-label-bg"/>'
+                f'<text x="{mx}" y="{my + 4}" class="wd-edge-label wd-lang-en">{en_l}</text>'
+                f'<text x="{mx}" y="{my + 4}" class="wd-edge-label wd-lang-zh">{zh_l}</text>'
+                f'</g>'
+            )
+
+    why_html = ""
+    if why_layer:
+        layer_label_en = "Why this is " + str(vd.repo.get("layer", "")).lower()
+        layer_label_zh = "为什么是" + {"atom": "原子", "molecule": "分子",
+                                       "compound": "复合物"}.get(
+            str(vd.repo.get("layer", "")).lower(), str(vd.repo.get("layer", ""))
+        )
+        why_html = (
+            '<div class="wd-why">'
+            '<div class="wd-why-eyebrow">'
+            f'<span class="i18n" data-en="{_esc(layer_label_en)}" '
+            f'data-zh="{_esc(layer_label_zh)}"></span>'
+            '</div>'
+            f'<div class="wd-why-body">{dual_lang(why_layer)}</div>'
+            '</div>'
+        )
+
+    legend_html = (
+        '<ul class="wd-legend">'
+        '<li><span class="wd-legend-dot wd-legend-atom"></span>'
+        '<span class="i18n" data-en="atom (deterministic step)" '
+        'data-zh="原子（确定性步骤）"></span></li>'
+        '<li><span class="wd-legend-dot wd-legend-decision"></span>'
+        '<span class="i18n" data-en="LLM decides at runtime" '
+        'data-zh="LLM 运行时决策"></span></li>'
+        '<li><span class="wd-legend-dot wd-legend-start"></span>'
+        '<span class="i18n" data-en="input / output" '
+        'data-zh="输入 / 输出"></span></li>'
+        '</ul>'
+    )
+
+    return (
+        '<section class="workflow-diagram-section">'
+        '<div class="section-head">'
+        '<h2><span class="i18n" data-en="How it actually works" '
+        'data-zh="它的工作流"></span></h2></div>'
+        f'{why_html}'
+        f'{legend_html}'
+        '<div class="wd-canvas">'
+        f'<svg viewBox="0 0 {svg_w} {svg_h}" xmlns="http://www.w3.org/2000/svg" '
+        f'width="100%" preserveAspectRatio="xMidYMid meet">'
+        '<defs>'
+        '<marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" '
+        'markerWidth="7" markerHeight="7" orient="auto">'
+        '<path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/>'
+        '</marker>'
+        '</defs>'
+        f'{"".join(edge_svgs)}'
+        f'{"".join(node_svgs)}'
+        '</svg>'
+        '</div>'
+        '</section>'
+    )
+
+
+def _load_other_repo_for_compare(slug: str) -> dict[str, Any] | None:
+    """Load just enough of another evaluated repo to render a comparison
+    card (display name, layer, score, category, one-liner). Returns
+    None if the slug isn't in repos/ or the YAML can't be parsed.
+
+    Score and category are computed live via verdict_calculator so the
+    comparison stays in sync with the calibration in this codebase —
+    no stale numbers from a stored sidecar.
+    """
+
+    repo_dir = REPO_EVALS_ROOT / "repos" / slug
+    repo_yaml = repo_dir / "repo.yaml"
+    claim_map = repo_dir / "claims" / "claim-map.yaml"
+    if not repo_yaml.exists() or not claim_map.exists():
+        return None
+    try:
+        repo = _read_yaml(repo_yaml) or {}
+        cm = _read_yaml(claim_map) or {}
+    except Exception:
+        return None
+
+    claims = (cm.get("claims") or [])
+    inp = {
+        "repo": f"{repo.get('owner','?')}/{repo.get('repo','?')}",
+        "archetype": repo.get("archetype", "unknown"),
+        "layer": repo.get("layer", "unknown"),
+        "core_layer_tested": repo.get("layer", "") == "atom",
+        "evidence_completeness": "partial",
+        "claims": [
+            {"id": c.get("id", ""), "priority": c.get("priority", "medium"),
+             "status": c.get("status", "untested"), "area": c.get("area", "")}
+            for c in claims
+        ],
+    }
+    for k in ("stars", "archived", "has_license", "multilingual_readme",
+              "release_pipeline_score", "eval_discipline_score",
+              "recently_active"):
+        if k in repo:
+            inp[k] = repo[k]
+
+    try:
+        vc = _load_verdict_calculator()
+        result = vc.compute_verdict(inp)
+    except Exception:
+        return None
+
+    pv = repo.get("product_view") or {}
+    one_liner = pv.get("one_liner") or {}
+
+    # Pick the latest dossier as the link target
+    dossiers = sorted(repo_dir.glob("verdicts/*-verdict.html"), reverse=True)
+    dossier_rel = (
+        dossiers[0].relative_to(REPO_EVALS_ROOT).as_posix()
+        if dossiers else None
+    )
+
+    return {
+        "slug": slug,
+        "owner": repo.get("owner", ""),
+        "display": repo.get("display_name") or repo.get("repo", ""),
+        "layer": str(repo.get("layer", "") or "").lower(),
+        "score": int(result.get("score", 0)),
+        "category_key": result.get("category_key", "available"),
+        "category_emoji": result.get("category_emoji", ""),
+        "category_en": result.get("category_en", ""),
+        "category_zh": result.get("category_zh", ""),
+        "one_liner_en": (one_liner.get("en") if isinstance(one_liner, dict) else "") or "",
+        "one_liner_zh": (one_liner.get("zh") if isinstance(one_liner, dict) else "") or "",
+        "dossier_rel": dossier_rel,
+    }
+
+
+def render_similar_repos(vd: VerdictData) -> str:
+    """Comparison block: 'how does this stack up against other repos
+    we've already evaluated?'
+
+    Reads ``repo.yaml.similar_repos`` — a manually curated list of slugs
+    in our own corpus, with the trade-offs spelled out. We never
+    web-search; the comparison universe is exactly the 30 repos we've
+    evaluated. For each linked slug we pull the live score + category
+    so readers see how the alternatives rank too.
+
+    Schema::
+
+        similar_repos:
+          - slug: karpathy--autoresearch
+            shared_purpose:
+              en: "Both are compound methodology bundles where..."
+              zh: "都是..."
+            this_better_at:
+              en: "Methodology breadth (14 skills), cross-platform install"
+              zh: "方法论数量更多 + 跨平台"
+            other_better_at:
+              en: "Single-task focus on training language models"
+              zh: "聚焦单任务"
+    """
+
+    similar = vd.repo.get("similar_repos") or []
+    pending = vd.repo.get("similar_repos_pending") or []
+    if not similar and not pending:
+        return ""
+
+    cards: list[str] = []
+    for entry in similar:
+        slug = entry.get("slug")
+        if not slug:
+            continue
+        other = _load_other_repo_for_compare(slug)
+        if not other:
+            continue
+
+        link = (
+            f'../{_esc(other["dossier_rel"])}'
+            if other["dossier_rel"] else "#"
+        )
+
+        shared = entry.get("shared_purpose")
+        this_b = entry.get("this_better_at")
+        other_b = entry.get("other_better_at")
+
+        cards.append(
+            '<article class="similar-card">'
+            '<div class="similar-card-head">'
+            f'<a class="similar-card-name" href="{link}">'
+            f'<strong>{_esc(other["owner"])}/{_esc(other["display"])}</strong>'
+            f'</a>'
+            f'<div class="similar-card-meta">'
+            f'<span class="similar-cat-pill cat-{other["category_key"]}">'
+            f'{other["category_emoji"]} '
+            f'<span class="i18n" data-en="{_esc(other["category_en"])}" data-zh="{_esc(other["category_zh"])}"></span>'
+            f' · {other["score"]}'
+            f'</span>'
+            f'<span class="similar-layer-pill layer-{other["layer"]}">{_esc(other["layer"])}</span>'
+            f'</div>'
+            '</div>'
+            + (
+                '<div class="similar-row">'
+                '<div class="similar-row-label">'
+                '<span class="i18n" data-en="Same purpose" data-zh="相同目的"></span>'
+                '</div>'
+                f'<div class="similar-row-body">{dual_lang(shared)}</div>'
+                '</div>'
+                if shared else ''
+            )
+            + (
+                '<div class="similar-row similar-row-this">'
+                '<div class="similar-row-label">'
+                f'<span class="i18n" data-en="{_esc(vd.display_name)} wins at" '
+                f'data-zh="{_esc(vd.display_name)} 强在"></span>'
+                '</div>'
+                f'<div class="similar-row-body">{dual_lang(this_b)}</div>'
+                '</div>'
+                if this_b else ''
+            )
+            + (
+                '<div class="similar-row similar-row-other">'
+                '<div class="similar-row-label">'
+                f'<span class="i18n" data-en="{_esc(other["display"])} wins at" '
+                f'data-zh="{_esc(other["display"])} 强在"></span>'
+                '</div>'
+                f'<div class="similar-row-body">{dual_lang(other_b)}</div>'
+                '</div>'
+                if other_b else ''
+            )
+            + '</article>'
+        )
+
+    pending_html = ""
+    if pending:
+        rows: list[str] = []
+        for p in pending:
+            note = p.get("slug_note")
+            if note:
+                rows.append(
+                    f'<div class="similar-pending-row">{dual_lang(note)}</div>'
+                )
+        if rows:
+            pending_html = (
+                '<div class="similar-pending">'
+                '<div class="similar-pending-eyebrow">'
+                '<span class="i18n" '
+                'data-en="↳ Closer peers we have not evaluated yet" '
+                'data-zh="↳ 还没评测过的更接近的同类"></span>'
+                '</div>'
+                f'{"".join(rows)}'
+                '</div>'
+            )
+
+    if not cards and not pending_html:
+        return ""
+
+    return (
+        '<section class="similar-section">'
+        '<div class="section-head">'
+        '<h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" '
+        'data-zh="对比我们已经评测过的"></span></h2></div>'
+        '<p class="similar-lead">'
+        '<span class="i18n" '
+        'data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; '
+        'this is &quot;given what you already have access to, what are your alternatives.&quot;" '
+        'data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。">'
+        '</span></p>'
+        + (f'<div class="similar-grid">{"".join(cards)}</div>' if cards else '')
+        + pending_html
+        + '</section>'
+    )
+
+
+def render_category_chip(vd: VerdictData) -> str:
+    """Top-level 4-category pill (Production / Available / Risky / Don't use).
+    Sits above the big score number so readers see the bucket first."""
+
+    cat_emoji = vd.verdict_input.get("category_emoji")
+    if not cat_emoji:
+        return ""
+    cat_en = _esc(vd.verdict_input.get("category_en", ""))
+    cat_zh = _esc(vd.verdict_input.get("category_zh", ""))
+    blurb_en = _esc(vd.verdict_input.get("category_blurb_en", ""))
+    blurb_zh = _esc(vd.verdict_input.get("category_blurb_zh", ""))
+    return (
+        '<div class="category-chip">'
+        f'<span class="category-emoji">{cat_emoji}</span>'
+        '<span class="category-text">'
+        f'<span class="category-name i18n" data-en="{cat_en}" data-zh="{cat_zh}"></span>'
+        f'<span class="category-blurb i18n" data-en="{blurb_en}" data-zh="{blurb_zh}"></span>'
+        '</span>'
+        '</div>'
     )
 
 
@@ -1442,6 +2192,14 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     score_breakdown_html = render_score_breakdown(vd)
     scenarios_html = render_scenarios(vd)
     deployment_html = render_deployment_section(vd)
+    benefits_html = render_benefits_section(vd)
+    cost_summary_html = render_cost_summary(vd)
+    category_chip_html = render_category_chip(vd)
+    workflow_diagram_html = render_workflow_diagram(vd)
+    layer_strip_html = render_layer_strip(vd)
+    category_strip_html = render_category_strip(vd)
+    similar_repos_html = render_similar_repos(vd)
+    category_key = vd.verdict_input.get("category_key", "available")
 
     verdict_md_escaped = _esc(vd.verdict_md)
 
@@ -1459,7 +2217,7 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     server_lang = initial_lang if initial_lang in ("en", "zh") else "en"
 
     return f"""<!DOCTYPE html>
-<html lang="{server_lang}" data-bucket="{bucket}">
+<html lang="{server_lang}" data-bucket="{bucket}" data-category="{category_key}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1513,6 +2271,367 @@ html[data-bucket="reusable"]      {{ --bucket:#60a5fa; --bucket-bg:rgba(96,165,2
 html[data-bucket="recommendable"] {{ --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }}
 html[data-bucket="unusable"]      {{ --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }}
 
+/* 4-category theming (2026-05-05). Replaces the per-tier accent
+   so the page color tracks the top-level category, not the fine
+   tier inside it. */
+html[data-category="production"] {{ --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }}
+html[data-category="available"]  {{ --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }}
+html[data-category="risky"]      {{ --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }}
+html[data-category="dont_use"]   {{ --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }}
+
+/* --- Category chip (above score number) --- */
+.category-chip {{
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 10px 18px; margin-bottom: 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: 999px;
+}}
+.category-emoji {{ font-size: 22px; line-height: 1; }}
+.category-text {{ display: flex; flex-direction: column; line-height: 1.25; }}
+.category-name {{
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--bucket); font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}}
+.category-blurb {{ font-size: 13px; color: var(--text-2); }}
+
+/* --- Cost chip (one-line cost summary near the score) --- */
+.cost-chip {{
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  font-size: 14px; line-height: 1.55; color: var(--text);
+}}
+.cost-label {{
+  display: block;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}}
+.cost-body {{ color: var(--text-2); }}
+
+/* --- Layer strip (atom · molecule · compound) ---------------------- */
+.layer-strip-section {{ margin-bottom: 40px; }}
+.layer-strip {{
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 0;
+}}
+@media (max-width: 720px) {{
+  .layer-strip {{ grid-template-columns: 1fr; }}
+  .layer-strip-arrow {{ display: none; }}
+}}
+.layer-strip-card {{
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 22px 22px 24px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: opacity .15s, border-color .15s;
+}}
+.layer-strip-card.is-dim {{ opacity: 0.42; }}
+.layer-strip-card.is-active {{
+  background: var(--bucket-bg);
+  border-color: var(--bucket-soft);
+  box-shadow: 0 0 0 2px var(--bucket-soft);
+}}
+.layer-strip-card.layer-atom.is-active     {{ --bucket: #2d7866; --bucket-bg: rgba(45,120,102,0.10); --bucket-soft: rgba(45,120,102,0.4); }}
+.layer-strip-card.layer-molecule.is-active {{ --bucket: #5a3aa1; --bucket-bg: rgba(192,132,252,0.10); --bucket-soft: rgba(192,132,252,0.4); }}
+.layer-strip-card.layer-compound.is-active {{ --bucket: #a13d30; --bucket-bg: rgba(248,113,113,0.10); --bucket-soft: rgba(248,113,113,0.4); }}
+.layer-strip-emoji {{ font-size: 32px; line-height: 1; }}
+.layer-strip-name {{
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text); font-weight: 700;
+}}
+.layer-strip-desc {{ font-size: 12.5px; color: var(--text-2); line-height: 1.45; }}
+.layer-strip-arrow {{
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); color: var(--text-3);
+  padding: 0 8px;
+}}
+
+/* --- Category strip (4-zone score bar with pointer) ---------------- */
+.category-strip-section {{ margin-bottom: 40px; }}
+.cat-strip-wrap {{ position: relative; margin-bottom: 14px; }}
+.cat-strip {{
+  display: flex; gap: 4px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}}
+.cat-zone {{
+  padding: 14px 14px 16px;
+  text-align: center;
+  background: var(--surface-2);
+  opacity: 0.55;
+  transition: opacity .15s;
+}}
+.cat-zone.is-active {{ opacity: 1; }}
+.cat-zone-emoji {{ font-size: 20px; line-height: 1; margin-bottom: 4px; }}
+.cat-zone-name {{
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text); font-weight: 600;
+}}
+.cat-zone-range {{ font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }}
+.cat-zone-dont_use.is-active   {{ background: rgba(248, 113, 113, 0.18); }}
+.cat-zone-risky.is-active      {{ background: rgba(245, 158, 11, 0.18); }}
+.cat-zone-available.is-active  {{ background: rgba(96, 165, 250, 0.18); }}
+.cat-zone-production.is-active {{ background: rgba(74, 222, 128, 0.18); }}
+
+.cat-pointer-lane {{
+  position: relative; height: 32px;
+  margin-top: 6px;
+}}
+.cat-pointer {{
+  position: absolute; top: 0; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--font-mono);
+}}
+.cat-pointer-arrow {{ color: var(--bucket); font-size: 14px; line-height: 1; }}
+.cat-pointer-score {{ font-size: 13px; color: var(--bucket); font-weight: 700; line-height: 1.2; }}
+
+.cat-summary {{
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}}
+.cat-summary-headline {{ display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }}
+.cat-summary-emoji {{ font-size: 18px; }}
+.cat-summary-name {{ font-family: var(--font-mono); font-size: 12px; color: var(--bucket); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }}
+.cat-summary-score {{ font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }}
+.cat-summary-blurb {{ font-size: 14px; color: var(--text-2); }}
+.cat-summary-production {{ --bucket: #4ade80; }}
+.cat-summary-available  {{ --bucket: #60a5fa; }}
+.cat-summary-risky      {{ --bucket: #f59e0b; }}
+.cat-summary-dont_use   {{ --bucket: #f87171; }}
+
+/* --- Similar repos comparison ------------------------------------- */
+.similar-section {{ margin-bottom: 80px; }}
+.similar-lead {{ font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }}
+.similar-grid {{
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}}
+.similar-card {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}}
+.similar-card-head {{
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}}
+.similar-card-name {{ color: var(--text); font-size: 14px; text-decoration: none; }}
+.similar-card-name:hover strong {{ text-decoration: underline; }}
+.similar-card-meta {{ display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }}
+.similar-cat-pill {{
+  font-family: var(--font-mono); font-size: 10.5px; padding: 3px 9px;
+  border-radius: 999px; background: var(--surface-2); color: var(--text-2);
+  letter-spacing: 0.06em; white-space: nowrap;
+}}
+.similar-cat-pill.cat-production {{ color: #4ade80; }}
+.similar-cat-pill.cat-available  {{ color: #60a5fa; }}
+.similar-cat-pill.cat-risky      {{ color: #f59e0b; }}
+.similar-cat-pill.cat-dont_use   {{ color: #f87171; }}
+.similar-layer-pill {{
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 8px;
+  border-radius: 4px; background: var(--surface-2); color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}}
+.similar-layer-pill.layer-atom     {{ color: #6cae9d; }}
+.similar-layer-pill.layer-molecule {{ color: #c084fc; }}
+.similar-layer-pill.layer-compound {{ color: #f87171; }}
+
+.similar-row {{
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 12px; padding: 8px 0; border-top: 1px solid var(--border);
+}}
+.similar-row:first-of-type {{ border-top: 0; }}
+.similar-row-label {{
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); padding-top: 2px; line-height: 1.55;
+}}
+.similar-row-body {{ font-size: 13px; line-height: 1.55; color: var(--text-2); white-space: pre-wrap; }}
+.similar-row-this  .similar-row-label {{ color: var(--ok); }}
+.similar-row-other .similar-row-label {{ color: #c084fc; }}
+
+.similar-pending {{
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}}
+.similar-pending-eyebrow {{
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}}
+.similar-pending-row {{
+  font-size: 13.5px; line-height: 1.55;
+  color: var(--text-2); white-space: pre-wrap;
+}}
+.similar-pending-row + .similar-pending-row {{ margin-top: 8px; }}
+
+/* --- Workflow diagram (atom / molecule / compound) ----------------- */
+.workflow-diagram-section {{ margin-bottom: 80px; }}
+.wd-why {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}}
+.wd-why-eyebrow {{
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 6px;
+}}
+.wd-why-body {{ font-size: 14px; color: var(--text-2); line-height: 1.55; white-space: pre-wrap; }}
+
+.wd-legend {{
+  list-style: none; padding: 0; margin: 0 0 14px;
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}}
+.wd-legend li {{ display: inline-flex; align-items: center; gap: 8px; }}
+.wd-legend-dot {{ width: 10px; height: 10px; border-radius: 2px; display: inline-block; }}
+.wd-legend-atom     {{ background: rgba(96, 165, 250, 0.4); }}
+.wd-legend-decision {{ background: rgba(251, 191, 36, 0.55); transform: rotate(45deg); }}
+.wd-legend-start    {{ background: rgba(166, 153, 138, 0.5); border-radius: 5px; }}
+
+.wd-canvas {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  overflow-x: auto;
+}}
+.wd-canvas svg {{ display: block; max-width: 100%; height: auto; color: var(--text-2); }}
+
+.wd-shape {{ stroke-width: 1.5; }}
+.wd-atom     {{ fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }}
+.wd-molecule {{ fill: rgba(192, 132, 252, 0.10); stroke: rgba(192, 132, 252, 0.55); }}
+.wd-decision {{ fill: rgba(251, 191, 36, 0.18); stroke: rgba(251, 191, 36, 0.85); stroke-width: 2; }}
+.wd-start    {{ fill: rgba(166, 153, 138, 0.18); stroke: rgba(166, 153, 138, 0.65); }}
+.wd-end      {{ fill: rgba(74, 222, 128, 0.14);  stroke: rgba(74, 222, 128, 0.6); }}
+
+.wd-canvas svg {{ text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }}
+.wd-label {{
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-anchor: middle;
+  fill: var(--text);
+  letter-spacing: 0.01em;
+}}
+/* SVG text language toggle — pseudo-elements don't work in SVG, so
+   we duplicate text in EN + ZH and toggle display based on <html lang>. */
+.wd-lang-en, .wd-lang-zh {{ display: none; }}
+html[lang="en"] .wd-lang-en {{ display: block; }}
+html[lang="zh"] .wd-lang-zh {{ display: block; }}
+/* CJK gets a slightly smaller size + tighter tracking so 4-character
+   labels feel even-density next to 2-character labels. */
+html[lang="zh"] .wd-label {{ font-size: 11.5px; letter-spacing: 0; }}
+.wd-edge {{ fill: none; stroke: rgba(166, 153, 138, 0.6); stroke-width: 1.6; }}
+.wd-edge-dashed {{ stroke-dasharray: 5,4; }}
+.wd-arrowhead {{ fill: rgba(166, 153, 138, 0.85); }}
+
+.wd-edge-label-bg {{
+  fill: var(--surface-1); stroke: var(--border); stroke-width: 1;
+}}
+.wd-edge-label {{
+  font-family: var(--font-mono); font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+  letter-spacing: 0.04em;
+}}
+
+/* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
+.benefits-section {{ margin-bottom: 80px; }}
+.benefits-grid {{
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}}
+@media (max-width: 720px) {{
+  .benefits-grid {{ grid-template-columns: 1fr; }}
+}}
+.benefit-card {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}}
+.benefit-card.benefit-without {{
+  background: linear-gradient(to bottom right, var(--surface-1), var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.15);
+}}
+.benefit-card.benefit-with {{
+  background: linear-gradient(to bottom right, var(--surface-1), var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}}
+.benefit-eyebrow {{
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
+}}
+.benefit-icon {{ font-size: 16px; }}
+.benefit-body {{
+  font-size: 15px; line-height: 1.62;
+  color: var(--text); white-space: pre-wrap;
+}}
+
+/* Concrete usage examples (lives inside the benefits section) */
+.usex-block {{ margin-top: 28px; }}
+.usex-eyebrow {{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 12px;
+}}
+.usex-grid {{
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}}
+.usex-card {{
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}}
+.usex-row {{ display: flex; flex-direction: column; gap: 4px; }}
+.usex-label {{
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+}}
+.usex-body {{ font-size: 13.5px; line-height: 1.55; color: var(--text); }}
+.usex-row.usex-quote .usex-body {{
+  margin: 0; padding: 10px 14px;
+  border-left: 3px solid var(--bucket);
+  background: var(--bucket-bg);
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--text); border-radius: 0 4px 4px 0;
+  font-style: normal;
+}}
+.usex-row.usex-quote .usex-body::before {{ content: "\\201C"; color: var(--bucket); margin-right: 4px; font-size: 16px; line-height: 0; }}
+.usex-row.usex-quote .usex-body::after {{ content: "\\201D"; color: var(--bucket); margin-left: 4px; font-size: 16px; line-height: 0; }}
+.usex-row.usex-what .usex-body {{ color: var(--text-2); }}
+
 * {{ box-sizing: border-box; }}
 html, body {{ margin: 0; padding: 0; }}
 body {{
@@ -1565,7 +2684,7 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {{
   background: var(--text); color: var(--bg);
 }}
 
-.hero {{ padding: 24px 0 72px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }}
+.hero {{ padding: 16px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }}
 
 .eyebrow {{
   font-family: var(--font-mono); font-size: 11px;
@@ -1593,7 +2712,7 @@ h1.repo-title {{
   font-size: clamp(18px, 2vw, 22px);
   line-height: 1.45; font-weight: 400;
   color: var(--text); max-width: 62ch;
-  margin: 0 0 72px;
+  margin: 0;
 }}
 
 .verdict-block {{ display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }}
@@ -1869,7 +2988,7 @@ details.score-breakdown[open] > summary::after {{ content: "−"; }}
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }}
-section {{ margin-bottom: 96px; }}
+section {{ margin-bottom: 56px; }}
 
 .capabilities-grid {{
   display: grid;
@@ -2343,32 +3462,38 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
 
     <p class="tagline">{product_one_liner_html}</p>
 
-    <div class="verdict-block">
-      <div>
-        <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        {score_block_html or f'<div class="verdict-word">{_esc(bucket)}</div>'}
-      </div>
-
-      <div class="verdict-meta">
-        <div class="layer-row">{layer_pill_html}</div>
-
-        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · {total_claims} <span class="i18n" data-en="total" data-zh="共"></span></div>
-        <div class="stats-bar">{stats_bar_html}</div>
-        <div class="stats-legend">{stats_legend_html}</div>
-
-        {score_breakdown_html}
-      </div>
-    </div>
   </header>
 
-  {scenarios_html}
+  {layer_strip_html}
+
+  {category_strip_html}
+
+  {benefits_html}
+
+  {("" if benefits_html else scenarios_html)}
+
+  {workflow_diagram_html}
+
+  {similar_repos_html}
 
   {deployment_html}
 
   <div class="pull-quotes">
-    {best_for_html or ''}
+    {("" if benefits_html else (best_for_html or ''))}
     {watch_out_html or ''}
   </div>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Score breakdown · how the {int(vd.verdict_input.get("score") or 0)} was computed" data-zh="分数明细 · {int(vd.verdict_input.get("score") or 0)} 是怎么算的"></span></summary>
+    <div class="body">
+      <div class="claim-stats-row">
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · {total_claims} <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar">{stats_bar_html}</div>
+        <div class="stats-legend">{stats_legend_html}</div>
+      </div>
+      {score_breakdown_html}
+    </div>
+  </details>
 
   <section>
     <div class="section-head">

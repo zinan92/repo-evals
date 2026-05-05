@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Build dashboard/all-evals.html — master index of every evaluated repo.
 
-Three primary columns per Wendy's spec:
-  - 它是做什么的 (what it does, from product_view.one_liner)
-  - 什么时候适合用 (when to use, from product_view.use_for)
-  - 分数 (score + tier emoji)
+Surfaces the 5 pieces of key info Wendy locked in (2026-05-05):
+  1. tech classification (atom / molecule / compound)
+  2. 0-100 score
+  3. cost / external deps (API key etc.)
+  4. benefits (what scenario this skill solves)
+  5. category (Production / Available / Risky / Don't use)
 
-Plus secondary columns: stars, archetype, layer, dossier link.
-
-Sortable client-side (TS-free, JS-only). Bilingual EN/ZH toggle reuses
-the same i18n pattern as the per-repo dossiers.
+Sortable client-side, filter pills are 4 categories (not 6 tiers).
+Bilingual EN/ZH toggle reuses the dossier i18n pattern.
 
 Run:
     python3 scripts/build_master_dashboard.py
@@ -33,6 +33,17 @@ def find_dossier(repo_dir: Path) -> Path | None:
 
     vds = sorted(repo_dir.glob("verdicts/*-verdict.html"), reverse=True)
     return vds[0] if vds else None
+
+
+def _bilingual(val) -> tuple[str, str]:
+    """Pull (en, zh) out of either a {en, zh} dict or a plain string."""
+
+    if isinstance(val, dict):
+        en = val.get("en", "")
+        zh = val.get("zh", "")
+        return (en or zh, zh or en)
+    s = str(val or "")
+    return (s, s)
 
 
 def load_repo(slug_dir: Path) -> dict | None:
@@ -76,8 +87,21 @@ def load_repo(slug_dir: Path) -> dict | None:
         return None
 
     pv = repo.get("product_view") or {}
-    one_liner = pv.get("one_liner") or {}
-    use_for = pv.get("use_for") or []
+    one_liner_en, one_liner_zh = _bilingual(pv.get("one_liner"))
+
+    # When-to-use: prefer the new `scenario` field (benefits-driven schema);
+    # fall back to the first `use_for` entry for repos still on the old
+    # schema. Either way we display ONE concise line in the dashboard,
+    # readers click into the dossier for the full benefits-cards block.
+    when_en = when_zh = ""
+    if pv.get("scenario"):
+        when_en, when_zh = _bilingual(pv["scenario"])
+    elif pv.get("use_for"):
+        first = (pv["use_for"] or [None])[0]
+        if first:
+            when_en, when_zh = _bilingual(first)
+
+    cost_en, cost_zh = _bilingual(pv.get("cost_summary"))
 
     dossier = find_dossier(slug_dir)
     rel_dossier = (
@@ -95,30 +119,40 @@ def load_repo(slug_dir: Path) -> dict | None:
         "score": result.get("score", 0),
         "tier_key": result.get("tier_key", "unknown"),
         "tier_emoji": result.get("tier_emoji", ""),
-        "tier_zh": result.get("tier_zh", ""),
-        "tier_en": result.get("tier_en", ""),
-        "one_liner_en": one_liner.get("en", "") if isinstance(one_liner, dict) else str(one_liner or ""),
-        "one_liner_zh": one_liner.get("zh", "") if isinstance(one_liner, dict) else str(one_liner or ""),
-        "use_for": use_for[:3],  # top 3
+        "category_key": result.get("category_key", "unknown"),
+        "category_emoji": result.get("category_emoji", ""),
+        "category_en": result.get("category_en", ""),
+        "category_zh": result.get("category_zh", ""),
+        "one_liner_en": one_liner_en,
+        "one_liner_zh": one_liner_zh,
+        "when_en": when_en,
+        "when_zh": when_zh,
+        "cost_en": cost_en,
+        "cost_zh": cost_zh,
+        "has_new_schema": bool(pv.get("scenario") or pv.get("with_this") or pv.get("cost_summary")),
         "dossier": rel_dossier,
         "url": repo.get("repo_url", ""),
     }
 
 
-def render_use_for(items: list, lang: str) -> str:
-    """Render up to 3 use-for entries as <li>."""
+def _bilingual_cell(en: str, zh: str, kind: str = "block") -> str:
+    """Render an EN/ZH pair using the i18n-block CSS pattern.
 
-    if not items:
-        return '<span class="muted">—</span>'
-    lis: list[str] = []
-    for s in items:
-        if isinstance(s, dict):
-            text = s.get(lang) or s.get("en") or s.get("zh") or ""
-        else:
-            text = str(s or "")
-        if text:
-            lis.append(f"<li>{html.escape(text)}</li>")
-    return f"<ul class=\"use-for-list\">{''.join(lis)}</ul>" if lis else '<span class="muted">—</span>'
+    `kind` controls whether the spans render block-level or inline; "inline"
+    is right for tight cells, "block" for paragraph-style cells.
+    """
+
+    en_e = html.escape(en or zh or "")
+    zh_e = html.escape(zh or en or "")
+    if kind == "inline":
+        return (
+            f'<span class="i18n-block en-block inline">{en_e}</span>'
+            f'<span class="i18n-block zh-block inline">{zh_e}</span>'
+        )
+    return (
+        f'<span class="i18n-block en-block">{en_e}</span>'
+        f'<span class="i18n-block zh-block">{zh_e}</span>'
+    )
 
 
 def build():
@@ -133,8 +167,6 @@ def build():
 
     print(f"  collected {len(rows)} evaluated repos")
 
-    rows_json = json.dumps(rows, ensure_ascii=False)
-
     table_rows: list[str] = []
     for i, r in enumerate(rows, start=1):
         dossier_link = (
@@ -146,19 +178,16 @@ def build():
             if r["url"] else ""
         )
 
-        # Build use_for cell with EN/ZH spans
-        use_for_en = render_use_for(r["use_for"], "en")
-        use_for_zh = render_use_for(r["use_for"], "zh")
-        use_for_cell = (
-            f'<div class="i18n-block en-block">{use_for_en}</div>'
-            f'<div class="i18n-block zh-block">{use_for_zh}</div>'
+        cost_cell = (
+            _bilingual_cell(r["cost_en"], r["cost_zh"])
+            if r["cost_en"] or r["cost_zh"]
+            else '<span class="muted">—</span>'
         )
 
-        ol_en = html.escape(r["one_liner_en"] or r["one_liner_zh"] or "")
-        ol_zh = html.escape(r["one_liner_zh"] or r["one_liner_en"] or "")
-
         table_rows.append(
-            f'<tr data-score="{r["score"]}" data-stars="{r["stars"]}" data-tier="{r["tier_key"]}" data-layer="{r["layer"]}">'
+            f'<tr data-score="{r["score"]}" data-stars="{r["stars"]}" '
+            f'data-category="{r["category_key"]}" data-tier="{r["tier_key"]}" '
+            f'data-layer="{r["layer"]}">'
             f'<td class="num">{i}</td>'
             f'<td class="repo-cell">'
             f'<div class="repo-name"><strong>{html.escape(r["owner"])}/{html.escape(r["display"])}</strong> {repo_link}</div>'
@@ -167,25 +196,23 @@ def build():
             f'<span class="tag layer-{r["layer"]}">{html.escape(r["layer"])}</span>'
             f'</div>'
             f'</td>'
-            f'<td>'
-            f'<span class="i18n-block en-block">{ol_en}</span>'
-            f'<span class="i18n-block zh-block">{ol_zh}</span>'
-            f'</td>'
-            f'<td>{use_for_cell}</td>'
-            f'<td class="score-cell tier-{r["tier_key"]}">'
+            f'<td>{_bilingual_cell(r["one_liner_en"], r["one_liner_zh"])}</td>'
+            f'<td>{_bilingual_cell(r["when_en"], r["when_zh"]) if (r["when_en"] or r["when_zh"]) else "<span class=muted>—</span>"}</td>'
+            f'<td class="cost-cell">{cost_cell}</td>'
+            f'<td class="score-cell category-{r["category_key"]}">'
             f'<div class="score-num">{r["score"]}</div>'
-            f'<div class="score-tier">'
-            f'<span class="i18n-block en-block">{r["tier_emoji"]} {html.escape(r["tier_en"])}</span>'
-            f'<span class="i18n-block zh-block">{r["tier_emoji"]} {html.escape(r["tier_zh"])}</span>'
+            f'<div class="score-cat">'
+            f'<span>{r["category_emoji"]}</span> '
+            f'{_bilingual_cell(r["category_en"], r["category_zh"], kind="inline")}'
             f'</div></td>'
             f'<td class="num">{dossier_link}</td>'
             f'</tr>'
         )
 
-    # Tier counts
-    tier_counts: dict[str, int] = {}
+    # Category counts (4 buckets)
+    cat_counts: dict[str, int] = {}
     for r in rows:
-        tier_counts[r["tier_key"]] = tier_counts.get(r["tier_key"], 0) + 1
+        cat_counts[r["category_key"]] = cat_counts.get(r["category_key"], 0) + 1
 
     page = f"""<!DOCTYPE html>
 <html lang="en">
@@ -199,6 +226,10 @@ def build():
   --border: #2a2a36; --text: #f0f0f5; --text-2: #a0a0b0; --text-3: #6a6a78;
   --accent: #60a5fa; --good: #4ade80; --warn: #f59e0b; --bad: #f87171;
   --layer-atom: #4ade80; --layer-molecule: #c084fc; --layer-compound: #f87171;
+  --cat-production: #4ade80;
+  --cat-available:  #60a5fa;
+  --cat-risky:      #f59e0b;
+  --cat-dont_use:   #f87171;
   --font-sans: ui-sans-serif, system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-serif: ui-serif, Georgia, serif;
@@ -206,7 +237,7 @@ def build():
 * {{ box-sizing: border-box; }}
 html, body {{ margin: 0; padding: 0; }}
 body {{ font-family: var(--font-sans); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.55; }}
-.page {{ max-width: 1400px; margin: 0 auto; padding: 28px 24px 80px; }}
+.page {{ max-width: 1500px; margin: 0 auto; padding: 28px 24px 80px; }}
 a {{ color: var(--accent); text-decoration: none; }}
 a:hover {{ text-decoration: underline; }}
 .crumb {{ font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); margin-bottom: 6px; }}
@@ -229,20 +260,18 @@ html[lang="zh"] .zh-block.inline {{ display: inline; }}
 html[lang="en"] span.en-block, html[lang="en"] span.en-block.i18n-block {{ display: inline; }}
 html[lang="zh"] span.zh-block, html[lang="zh"] span.zh-block.i18n-block {{ display: inline; }}
 
-/* tile stats */
-.tiles {{ display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 12px 0 24px; }}
-@media (max-width: 900px) {{ .tiles {{ grid-template-columns: repeat(3, 1fr); }} }}
+/* tile stats — 4 categories */
+.tiles {{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 12px 0 24px; }}
+@media (max-width: 900px) {{ .tiles {{ grid-template-columns: repeat(2, 1fr); }} }}
 .tile {{ background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }}
 .tile-label {{ font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); margin-bottom: 4px; white-space: nowrap; }}
 .tile-value {{ font-family: var(--font-serif); font-size: 24px; font-weight: 700; line-height: 1.05; }}
-.tile.tier-recommend .tile-value {{ color: #4ade80; }}
-.tile.tier-team .tile-value {{ color: #60a5fa; }}
-.tile.tier-self .tile-value {{ color: #c084fc; }}
-.tile.tier-try .tile-value {{ color: #f59e0b; }}
-.tile.tier-risky .tile-value {{ color: #f87171; }}
-.tile.tier-broken .tile-value {{ color: #f87171; }}
+.tile.cat-production .tile-value {{ color: var(--cat-production); }}
+.tile.cat-available .tile-value  {{ color: var(--cat-available); }}
+.tile.cat-risky .tile-value      {{ color: var(--cat-risky); }}
+.tile.cat-dont_use .tile-value   {{ color: var(--cat-dont_use); }}
 
-/* search */
+/* search + filter pills */
 .controls {{ display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }}
 .controls input[type="search"] {{
   flex: 1; min-width: 240px; max-width: 380px;
@@ -252,7 +281,7 @@ html[lang="zh"] span.zh-block, html[lang="zh"] span.zh-block.i18n-block {{ displ
 .controls input[type="search"]:focus {{ outline: 0; border-color: var(--accent); }}
 .controls .filter-pill {{
   background: transparent; border: 1px solid var(--border); color: var(--text-2);
-  padding: 4px 10px; border-radius: 999px; font-family: var(--font-mono); font-size: 11px;
+  padding: 4px 12px; border-radius: 999px; font-family: var(--font-mono); font-size: 11px;
   cursor: pointer;
 }}
 .controls .filter-pill.active {{ background: var(--surface-2); color: var(--text); border-color: var(--text-3); }}
@@ -276,19 +305,16 @@ td.num {{ font-family: var(--font-mono); text-align: center; color: var(--text-3
 .tag.layer-molecule {{ color: var(--layer-molecule); }}
 .tag.layer-compound {{ color: var(--layer-compound); }}
 
-.use-for-list {{ margin: 0; padding: 0 0 0 16px; }}
-.use-for-list li {{ margin-bottom: 4px; line-height: 1.45; }}
+.cost-cell {{ font-size: 12px; color: var(--text-2); max-width: 240px; line-height: 1.5; }}
 
 /* score cell */
-.score-cell {{ text-align: center; min-width: 90px; }}
+.score-cell {{ text-align: center; min-width: 110px; }}
 .score-cell .score-num {{ font-family: var(--font-serif); font-size: 28px; font-weight: 700; line-height: 1; }}
-.score-cell .score-tier {{ font-family: var(--font-mono); font-size: 10px; color: var(--text-2); margin-top: 4px; }}
-.score-cell.tier-recommend .score-num {{ color: #4ade80; }}
-.score-cell.tier-team .score-num {{ color: #60a5fa; }}
-.score-cell.tier-self .score-num {{ color: #c084fc; }}
-.score-cell.tier-try .score-num {{ color: #f59e0b; }}
-.score-cell.tier-risky .score-num {{ color: #f87171; }}
-.score-cell.tier-broken .score-num {{ color: #f87171; }}
+.score-cell .score-cat {{ font-family: var(--font-mono); font-size: 10px; color: var(--text-2); margin-top: 4px; white-space: nowrap; }}
+.score-cell.category-production .score-num {{ color: var(--cat-production); }}
+.score-cell.category-available .score-num  {{ color: var(--cat-available); }}
+.score-cell.category-risky .score-num      {{ color: var(--cat-risky); }}
+.score-cell.category-dont_use .score-num   {{ color: var(--cat-dont_use); }}
 
 .muted {{ color: var(--text-3); font-style: italic; }}
 
@@ -306,27 +332,25 @@ footer {{ margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--borde
   <div class="crumb"><span class="i18n-block en-block">repo-evals · all evaluated repos</span><span class="i18n-block zh-block">repo-evals · 所有评测过的仓库</span></div>
   <h1><span class="i18n-block en-block">All Evaluated Skills &amp; Repos</span><span class="i18n-block zh-block">已评测的所有 skill 和仓库</span></h1>
   <p class="lead">
-    <span class="i18n-block en-block">Master index of every repo evaluated under repo-evals. Each row links to the full bilingual dossier with claims, evidence, score breakdown, and deployment notes. Sortable by clicking a column header; filter by score tier or search by name.</span>
-    <span class="i18n-block zh-block">repo-evals 评测过的所有仓库总目录。每行链接到完整双语 dossier（claim、证据、分数明细、部署成本）。点列头排序；按档位过滤或搜名字。</span>
+    <span class="i18n-block en-block">Master index of every repo evaluated under repo-evals. Click into any row for the full bilingual dossier — claims, evidence, score breakdown, deployment notes, and the full benefits block (who / when / without / with). Sort by clicking a column header; filter by category or search by name.</span>
+    <span class="i18n-block zh-block">repo-evals 评测过的所有仓库总目录。点任意一行进入完整双语 dossier —— claim、证据、分数明细、部署成本、完整 benefits 块（谁 / 什么时候 / 没它 / 有它）。点列头排序；按类别过滤或搜名字。</span>
   </p>
 
   <div class="tiles">
     <div class="tile"><div class="tile-label"><span class="i18n-block en-block">Total</span><span class="i18n-block zh-block">总数</span></div><div class="tile-value">{len(rows)}</div></div>
-    <div class="tile tier-recommend"><div class="tile-label">⭐ <span class="i18n-block en-block">Recommend</span><span class="i18n-block zh-block">公开推荐</span></div><div class="tile-value">{tier_counts.get('recommend', 0)}</div></div>
-    <div class="tile tier-team"><div class="tile-label">🏭 <span class="i18n-block en-block">Team-ready</span><span class="i18n-block zh-block">团队就绪</span></div><div class="tile-value">{tier_counts.get('team', 0)}</div></div>
-    <div class="tile tier-self"><div class="tile-label">🛠 <span class="i18n-block en-block">Self-use</span><span class="i18n-block zh-block">自用 OK</span></div><div class="tile-value">{tier_counts.get('self', 0)}</div></div>
-    <div class="tile tier-try"><div class="tile-label">🧪 <span class="i18n-block en-block">Try</span><span class="i18n-block zh-block">试一下</span></div><div class="tile-value">{tier_counts.get('try', 0)}</div></div>
-    <div class="tile tier-risky"><div class="tile-label">⚠️ <span class="i18n-block en-block">Risky</span><span class="i18n-block zh-block">慎用</span></div><div class="tile-value">{tier_counts.get('risky', 0) + tier_counts.get('broken', 0)}</div></div>
+    <div class="tile cat-production"><div class="tile-label">🏭 <span class="i18n-block en-block">Production</span><span class="i18n-block zh-block">可用于生产</span></div><div class="tile-value">{cat_counts.get('production', 0)}</div></div>
+    <div class="tile cat-available"><div class="tile-label">🛠 <span class="i18n-block en-block">Available</span><span class="i18n-block zh-block">可使用</span></div><div class="tile-value">{cat_counts.get('available', 0)}</div></div>
+    <div class="tile cat-risky"><div class="tile-label">⚠️ <span class="i18n-block en-block">Risky</span><span class="i18n-block zh-block">有风险</span></div><div class="tile-value">{cat_counts.get('risky', 0)}</div></div>
+    <div class="tile cat-dont_use"><div class="tile-label">🛑 <span class="i18n-block en-block">Don't use</span><span class="i18n-block zh-block">不可使用</span></div><div class="tile-value">{cat_counts.get('dont_use', 0)}</div></div>
   </div>
 
   <div class="controls">
     <input type="search" id="search-box" placeholder="Search repo / owner ..." />
-    <button class="filter-pill active" data-tier="">All</button>
-    <button class="filter-pill" data-tier="recommend">⭐</button>
-    <button class="filter-pill" data-tier="team">🏭</button>
-    <button class="filter-pill" data-tier="self">🛠</button>
-    <button class="filter-pill" data-tier="try">🧪</button>
-    <button class="filter-pill" data-tier="risky">⚠️</button>
+    <button class="filter-pill active" data-category="">All</button>
+    <button class="filter-pill" data-category="production">🏭 <span class="i18n-block en-block">Production</span><span class="i18n-block zh-block">可用于生产</span></button>
+    <button class="filter-pill" data-category="available">🛠 <span class="i18n-block en-block">Available</span><span class="i18n-block zh-block">可使用</span></button>
+    <button class="filter-pill" data-category="risky">⚠️ <span class="i18n-block en-block">Risky</span><span class="i18n-block zh-block">有风险</span></button>
+    <button class="filter-pill" data-category="dont_use">🛑 <span class="i18n-block en-block">Don't use</span><span class="i18n-block zh-block">不可使用</span></button>
   </div>
 
   <table id="all-evals-table">
@@ -335,9 +359,10 @@ footer {{ margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--borde
         <th>#</th>
         <th data-sort="repo"><span class="i18n-block en-block">Repo</span><span class="i18n-block zh-block">仓库</span></th>
         <th data-sort="one"><span class="i18n-block en-block">What it does</span><span class="i18n-block zh-block">做什么</span></th>
-        <th data-sort="when"><span class="i18n-block en-block">When to use</span><span class="i18n-block zh-block">什么时候用</span></th>
+        <th data-sort="when"><span class="i18n-block en-block">When you'd use it</span><span class="i18n-block zh-block">什么时候用上</span></th>
+        <th><span class="i18n-block en-block">Cost &amp; deps</span><span class="i18n-block zh-block">成本 / 依赖</span></th>
         <th data-sort="score" class="sort-active"><span class="i18n-block en-block">Score</span><span class="i18n-block zh-block">分数</span></th>
-        <th><span class="i18n-block en-block">Dossier</span><span class="i18n-block zh-block">详细 dossier</span></th>
+        <th><span class="i18n-block en-block">Dossier</span><span class="i18n-block zh-block">详细</span></th>
       </tr>
     </thead>
     <tbody>
@@ -371,16 +396,16 @@ setLang(_lang);
 // Sort + filter + search
 const tbody = document.querySelector('#all-evals-table tbody');
 const allRows = Array.from(tbody.querySelectorAll('tr'));
-let activeTier = '';
+let activeCategory = '';
 let activeQuery = '';
 
 function applyFilters() {{
   for (const row of allRows) {{
-    const tier = row.dataset.tier || '';
-    const matchesTier = !activeTier || tier === activeTier;
+    const cat = row.dataset.category || '';
+    const matchesCat = !activeCategory || cat === activeCategory;
     const text = row.textContent.toLowerCase();
     const matchesSearch = !activeQuery || text.includes(activeQuery);
-    row.style.display = (matchesTier && matchesSearch) ? '' : 'none';
+    row.style.display = (matchesCat && matchesSearch) ? '' : 'none';
   }}
 }}
 
@@ -388,7 +413,7 @@ document.querySelectorAll('.filter-pill').forEach(pill => {{
   pill.addEventListener('click', () => {{
     document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
-    activeTier = pill.dataset.tier || '';
+    activeCategory = pill.dataset.category || '';
     applyFilters();
   }});
 }});
@@ -398,7 +423,7 @@ document.querySelector('#search-box').addEventListener('input', e => {{
   applyFilters();
 }});
 
-// Click sort by score / stars
+// Click sort
 document.querySelectorAll('th[data-sort]').forEach(th => {{
   th.addEventListener('click', () => {{
     document.querySelectorAll('th').forEach(h => h.classList.remove('sort-active'));

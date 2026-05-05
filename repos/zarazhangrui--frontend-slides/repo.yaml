@@ -22,6 +22,181 @@ notes: 'Claude Code skill (LLM-driven prompt) + 3 supporting scripts (extract-pp
   framework''s hybrid-repo rule, that gap caps the overall repo at ''usable''.
 
   '
+product_view:
+  one_liner:
+    en: A Claude Code skill that turns a topic into a polished HTML slide deck —
+      consistent layout, browser-native, deployable to Vercel in one click.
+    zh: 一个 Claude Code skill,把一个主题变成一份调性统一的 HTML 演示稿 —— 浏览器原生、可一键部署到 Vercel。
+  persona:
+    en: |
+      A creator who needs an HTML-based slide deck but doesn't want to fight Keynote, hand-build PPT layouts, or learn reveal.js. Typical: a course author, a workshop trainer, a content marketer building a "long-form thought-piece" deck they want to share as a link.
+    zh: |
+      想做 HTML 形式的演示稿,但不想跟 Keynote 死磕、手写 PPT 布局、或学 reveal.js 的人。典型: 课程作者、工作坊讲师、做"长图文思考"幻灯片想以链接形式分享的内容人。
+  scenario:
+    en: You have a topic and want a 10-30 page deck out of it. You want it to look
+      polished, run in a browser (so you can host it on Vercel and share a link),
+      and stay editable later by hand without touching a binary file.
+    zh: 你有个主题,想做一份 10-30 页的 deck。你希望成品有调性、能在浏览器跑(可以扔到 Vercel 上分享链接)、之后想手改不会卡在 .pptx
+      二进制里。
+  without_this:
+    en: 'Three options, each painful: (1) Keynote / PPT — binary file, hard to version-control,
+      hard to share as a link. (2) Hand-write reveal.js / impress.js — that''s an
+      afternoon of layout fighting before you write any slide content. (3) Slidev
+      or similar — still need to learn its conventions and pick a theme.
+
+      '
+    zh: '三条路,每条都不爽: (1) Keynote / PPT —— 二进制文件,难做版本管理,不好发链接。(2) 手写 reveal.js / impress.js
+      —— 写正文前一下午时间在调布局。(3) Slidev 之类 —— 仍要学它的写法 + 挑主题。
+
+      '
+  with_this:
+    en: 'Tell Claude Code "make me a deck about X". The skill auto-runs Phase 1 (analyze
+      topic + outline) → Phase 2 (generate HTML slides with consistent layout) →
+      Phase 3 (optional Vercel deploy). What you get back is a real HTML directory
+      you can host, hand-edit, or re-prompt the agent to revise.
+
+      '
+    zh: '跟 Claude Code 说"给我做一个关于 X 的 deck"。skill 自动跑 Phase 1(分析主题 + 列大纲) → Phase 2(生成统一调性的
+      HTML 幻灯片) → Phase 3(可选,Vercel 一键部署)。出来的就是一个能托管 / 手改 / 再让 agent 改的真实 HTML 目录。
+
+      '
+  cost_summary:
+    en: Skill is free. You need a Claude Code subscription (the skill drives the
+      LLM). Optional Vercel free tier if you want one-click deploy.
+    zh: skill 免费。需要 Claude Code 订阅(它驱动 LLM 生成)。可选 Vercel 免费档(想一键部署的话)。
+  watch_out:
+    en: 'Phase 1-3 quality depends on the LLM run — without a logged session you
+      can''t guarantee a specific layout style. Bring a clear topic; vague prompts
+      yield vague decks. Vercel deploy is a separate optional skill; not bundled.
+
+      '
+    zh: 'Phase 1-3 的质量取决于 LLM 那一次跑得怎么样 —— 没跑过日志的话不能保证一定的布局风格。主题越清晰输出越准,模糊 prompt 出模糊
+      deck。Vercel 一键部署是另一个可选 skill,不是内置。
+
+      '
+  examples:
+  - context:
+      en: |-
+        A course author who finished an outline at noon and has a recording slot at 5pm — needs a deck before then, no time for Keynote layout fights
+      zh: |-
+        课程作者中午刚写完大纲,下午 5 点要录课 —— 录之前必须要有 deck,没时间跟 Keynote 排版死磕
+    you_say:
+      en: |-
+        Build me a deck about "Prompt engineering for non-technical PMs" — 18 slides, Stripe-style aesthetic, code blocks where appropriate
+      zh: |-
+        做一份关于"非技术 PM 的 prompt 工程"的 deck,18 页,Stripe 那种调性,需要时插代码块
+    what_happens:
+      en: |-
+        Phase 1 expands the topic into 18 slide titles with a content draft per slide. Phase 2 generates the HTML deck with consistent layout (header / body / code block CSS). Phase 3 (optional) deploys to Vercel and gives you the link. Total: ~3 minutes wall-clock.
+      zh: |-
+        Phase 1 把主题展开成 18 个幻灯片标题,每页带内容草稿。Phase 2 生成 HTML deck,布局一致(header / body / 代码块 CSS)。Phase 3 (可选) 部署到 Vercel 并返回链接。全程大约 3 分钟。
+  - context:
+      en: |-
+        A startup founder writing a long-form thought-piece deck for LinkedIn — wants a shareable link, not a binary file
+      zh: |-
+        创业者准备给 LinkedIn 写一份"长图文 + 思考"形式的 deck —— 想要分享链接,不要二进制文件
+    you_say:
+      en: |-
+        Make a 12-slide deck on why most AI products will fail — argument-driven, big bold quotes between sections
+      zh: |-
+        做一份 12 页的 deck,讲为什么大多数 AI 产品会失败 —— 论点驱动,各章之间穿插大字号引用
+    what_happens:
+      en: |-
+        Phase 1 organises the argument into 12 logical beats. Phase 2 generates HTML with quote-typography CSS for the section separators. You open it in the browser, refine the wording on slides 4-7 by hand (it's just HTML), commit, redeploy.
+      zh: |-
+        Phase 1 把论点拆成 12 个逻辑节拍。Phase 2 生成 HTML,各章分隔处用大字号引用排版。你在浏览器打开,手动改第 4-7 页的措辞(就是 HTML 嘛),提交,重新部署。
+  - context:
+      en: |-
+        A freelance trainer doing a 1-hour workshop on Claude Code skills — needs a deck plus a follow-along README
+      zh: |-
+        独立讲师准备做一场 1 小时关于 Claude Code skill 的 workshop —— 需要 deck 加一份 follow-along README
+    you_say:
+      en: |-
+        Convert this README into a 25-slide workshop deck — preserve all the code examples, add a "checkpoint" slide every 5 slides
+      zh: |-
+        把这个 README 转成 25 页的 workshop deck,保留所有代码示例,每 5 页加一个"checkpoint"页
+    what_happens:
+      en: |-
+        The skill reads README.md as input context, generates 25 slides preserving every code block, and inserts checkpoint slides at positions 5/10/15/20/25 with a "✓ what you should know by now" pattern. You hand-edit the checkpoint copy if needed.
+      zh: |-
+        skill 把 README.md 作为输入,生成 25 页幻灯片(保留每个代码块),并在 5/10/15/20/25 页插入 checkpoint 页(模板:"✓ 到这一步你应该掌握了什么")。需要的话手改 checkpoint 文案。
+similar_repos:
+- slug: geekjourneyx--md2wechat-skill
+  shared_purpose:
+    en: |-
+      Both are atoms that take one input and produce one polished artifact for a specific publishing medium. Both lean on the LLM to handle the styling work users don't want to do by hand. If your end goal is "publish this in a specific channel without fighting the formatting", these are the same family.
+    zh: |-
+      都是 atom —— 一个输入,产出一份针对某个发布渠道的成品。都让 LLM 替你做不想手工干的排版工作。如果你的目标是"在某个特定渠道发出来,不想跟排版死磕",这两个属于同一类。
+  this_better_at:
+    en: |-
+      Topic-driven creation — start from a brief, get a 20-slide HTML deck. Output is browser-native, shareable as a link, and editable as plain HTML afterwards. Best when you don't yet have content drafted.
+    zh: |-
+      从主题创建 —— 给一个简介,出来一份 20 页的 HTML deck。浏览器原生,链接可分享,后续就是 HTML 可手改。适合你还没有现成内容的时候。
+  other_better_at:
+    en: |-
+      Existing-content adaptation — you already wrote markdown, md2wechat re-flows it into WeChat-styled HTML for the WeChat editor. Best when you already have written content and need the *channel* to look right, not the structure.
+    zh: |-
+      改造现有内容 —— 你已经写好 markdown,md2wechat 重新排版成微信风格的 HTML 贴到公众号编辑器。适合内容已经写好、只需要把*渠道排版*做对的场景。
+- slug: zarazhangrui--codebase-to-course
+  shared_purpose:
+    en: |-
+      Both are atom-level Claude Code skills from the same author that turn one input into a polished long-form output via internal phases. Both bet on the LLM to handle the layout/structure work the user doesn't want to.
+    zh: |-
+      都是同一个作者写的 atom 级 Claude Code skill,把一个输入通过内部多阶段变成一份长文产物。都让 LLM 替你处理不想干的排版/结构活。
+  this_better_at:
+    en: |-
+      Presentation-medium output — slide deck for talks, workshops, pitches. Visual rhythm matters more than depth. 10-30 slides, scan in 5 minutes.
+    zh: |-
+      演示型产物 —— 给讲座、workshop、pitch 的幻灯片 deck。视觉节奏比深度重要,10-30 页,5 分钟能扫完。
+  other_better_at:
+    en: |-
+      Multi-chapter educational course (markdown lessons + structured progression). Better when readers need depth and step-by-step progression, not a deck.
+    zh: |-
+      多章节教学课程(markdown 课件 + 结构化推进)。当读者需要深度 + 一步步学下来时合适,而不是想看一份 deck。
+workflow_diagram:
+  layout: io
+  why_layer:
+    en: |
+      Atom — single user-invocable capability with internal phases that the user does not orchestrate. You make one ask ("deck about X"), Phase 1-3 run inside the skill, you get one HTML deck back. No skill-level callouts, no LLM mid-stream rerouting.
+    zh: |
+      原子 —— 一个用户可调用的能力,内部分多个阶段但用户不需要编排。你说一次("做一份关于 X 的 deck"),Phase 1-3 在 skill 内部跑,你拿到一份 HTML deck。不调用其他 skill,运行时也没有 LLM 中途改路线。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Topic / brief
+      zh: |-
+        主题 / 简介
+  - id: skill
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        frontend-slides skill
+        (Phase 1 → 2 → 3)
+      zh: |-
+        frontend-slides skill
+        (三阶段内部)
+  - id: output
+    type: end
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        HTML deck
+        (browser-native, deployable)
+      zh: |-
+        HTML 演示稿
+        (浏览器原生,可部署)
+  edges:
+  - from: input
+    to: skill
+  - from: skill
+    to: output
 deployment:
   installable: true
   install_methods:

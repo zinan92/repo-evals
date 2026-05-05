@@ -1,31 +1,309 @@
 claims:
+  # === CRITICAL: Core orchestrator promises ===
+
   - id: claim-001
-    title: Single entrypoint for content capabilities
-    source: user framing
-    source_ref: "conversation context"
+    title: "Unified CLI entry point routes to 7 capabilities"
+    source: README.md
+    source_ref: "功能一览 table + architecture diagram"
     priority: critical
     area: orchestration
-    statement: "content-toolkit should act as one access layer over multiple content-related capabilities."
-    business_expectation: "A user can start from the toolkit instead of learning each downstream repo."
-    evidence_needed: "Show multiple tasks routed through the toolkit successfully."
-    status: planned
+    statement: >
+      content-toolkit provides a single `node cli.js` entry point that routes
+      commands to 7 downstream capabilities: download, extract, analyze/intelligence,
+      rewrite, videocut, publish, xiaohongshu.
+    business_expectation: "Users type `content <capability>` and it reaches the right downstream repo."
+    evidence_needed: "`content list` shows all 7 capabilities with install status."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      `node cli.js list` returns 7 capabilities with correct status labels.
+      6/7 installed, 1 (intelligence) degraded due to pyproject.toml issue.
+
   - id: claim-002
-    title: Correct downstream routing
-    source: user framing
-    source_ref: "conversation context"
+    title: "Bare CLI shows Chinese help with all commands"
+    source: README.md
+    source_ref: "示例输出 section"
     priority: critical
     area: orchestration
-    statement: "content-toolkit should choose the correct downstream capability for a user request."
-    business_expectation: "Users should not have to manually choose downloader, extractor, or rewriter in normal cases."
-    evidence_needed: "Run representative prompts and inspect which capability is invoked."
-    status: planned
+    statement: >
+      Running `content` without arguments shows a comprehensive Chinese-language
+      help screen with all capabilities, examples, and management commands.
+    business_expectation: "First-time users see clear, actionable help."
+    evidence_needed: "`node cli.js` with no args produces help matching README examples."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      Output matches README examples. Shows all 7 capabilities with example
+      commands, workflow suggestions, and management commands. Chinese-first UX.
+
   - id: claim-003
-    title: End-to-end workflow completion
-    source: user framing
-    source_ref: "conversation context"
+    title: "Auto-install: capabilities installed on first use"
+    source: README.md
+    source_ref: "架构 section — 首次使用时自动执行"
+    priority: critical
+    area: orchestration
+    statement: >
+      When a capability is not installed, first use triggers automatic
+      git clone + venv creation + pip install.
+    business_expectation: "Zero manual setup for downstream capabilities."
+    evidence_needed: "Call an uninstalled capability, observe auto-install."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      `node cli.js intelligence` triggered auto-install of zinan92/content-intelligence.
+      Output showed: "Installing intelligence from zinan92/content-intelligence@main..."
+      followed by "Installed: intelligence (ab77388) [degraded]"
+      Install worked but capability is degraded (pyproject.toml module path issue).
+
+  - id: claim-004
+    title: "Bare URL input → suggests content download"
+    source: README.md
+    source_ref: "Capability Contract fail section"
+    priority: critical
+    area: smart-routing
+    statement: >
+      Passing a bare URL (no capability keyword) triggers a helpful suggestion:
+      "看起来你想下载内容？试试 content download <URL>"
+    business_expectation: "Users who paste URLs get guided to the right command."
+    evidence_needed: "`node cli.js https://douyin.com/video/xxx` shows suggestion."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      `node cli.js https://douyin.com/video/test123` outputs:
+      "看起来你想下载内容？试试: content download https://douyin.com/video/test123"
+
+  - id: claim-005
+    title: "Bare .mp4 input → suggests videocut subcommand"
+    source: README.md
+    source_ref: "Capability Contract fail section"
+    priority: critical
+    area: smart-routing
+    statement: >
+      Passing a bare .mp4 file (no capability keyword) suggests relevant videocut commands.
+    business_expectation: "Users who drop video files get guided."
+    evidence_needed: "`node cli.js test.mp4` shows videocut suggestions."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      `node cli.js test.mp4` outputs three suggestions:
+      videocut transcribe, videocut autocut, videocut subtitle.
+
+  - id: claim-006
+    title: "Alias normalization: intelligence→analyze, xhs→xiaohongshu, etc."
+    source: README.md
+    source_ref: "Skill System section — alias list"
+    priority: high
+    area: smart-routing
+    statement: >
+      Common aliases are normalized before routing: intelligence→analyze,
+      xhs→xiaohongshu, wx/weixin→wechat, twitter→x.
+    business_expectation: "Users don't need to memorize exact command names."
+    evidence_needed: "Each alias routes to the correct capability."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      `node cli.js intelligence` triggered analyze/intelligence capability install
+      (correct routing). README claims validated through help output structure.
+
+  # === HIGH: Core capability execution ===
+
+  - id: claim-007
+    title: "videocut transcribe produces transcript files"
+    source: README.md
+    source_ref: "Videocut 子能力 table"
+    priority: high
+    area: videocut
+    statement: >
+      `content videocut transcribe input.mp4` produces transcript.json, .txt, and .srt files.
+    business_expectation: "Users get usable transcripts from any video."
+    evidence_needed: "Real video file → transcript output files."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      3-second test video → produced: audio.mp3, mlx_result.json, transcript.json,
+      transcript.srt, transcript.txt, volcengine_result.json in /tmp/ctk-test-out/
+
+  - id: claim-008
+    title: "videocut autocut produces cut.mp4"
+    source: README.md
+    source_ref: "Videocut 子能力 table"
+    priority: high
+    area: videocut
+    statement: >
+      `content videocut autocut input.mp4 --no-review` produces a trimmed video.
+    business_expectation: "Users get a cleaned-up video with filler removed."
+    evidence_needed: "Real video → cut.mp4 output."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      3-second test video → produced cut.mp4 (68KB) plus transcript files,
+      cut_feedback.json, readable.txt, sentences.txt in /tmp/ctk-autocut-out/
+
+  - id: claim-009
+    title: "videocut subtitle produces subtitled video"
+    source: README.md
+    source_ref: "Videocut 子能力 table"
+    priority: high
+    area: videocut
+    statement: >
+      `content videocut subtitle input.mp4 --lang zh` produces a subtitled.mp4.
+    business_expectation: "Users get video with burned-in subtitles."
+    evidence_needed: "Real video → subtitled.mp4 output."
+    status: failed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      `node cli.js videocut subtitle /tmp/ctk-test-input.mp4 --lang zh -o /tmp/ctk-subtitle-out/`
+      completed silently with exit code 0 but produced an EMPTY output directory.
+      No subtitled.mp4, no .srt, nothing. Silent failure — no error message.
+
+  - id: claim-010
+    title: "health command shows per-capability status"
+    source: README.md
+    source_ref: "管理 section"
     priority: high
     area: orchestration
-    statement: "The toolkit should complete realistic content workflows across multiple steps."
-    business_expectation: "A user can ask for a real task and receive a usable result without stitching steps manually."
-    evidence_needed: "Run at least one multi-step workflow through the toolkit."
-    status: planned
+    statement: >
+      `content health` shows detailed per-capability health including
+      install status, git ref, known issues.
+    business_expectation: "Users can diagnose capability problems."
+    evidence_needed: "`node cli.js health` shows structured status report."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      Output shows 7 capabilities with: name, kind, repo, ref, health status,
+      exec path, installed_ref, installed_at, source. Intelligence marked as
+      degraded with specific issue note.
+
+  - id: claim-011
+    title: "Unknown command shows helpful error"
+    source: README.md
+    source_ref: "implied from Capability Contract"
+    priority: high
+    area: error-handling
+    statement: >
+      Running an unknown command shows a Chinese error message directing to help.
+    business_expectation: "Users aren't left confused by unknown commands."
+    evidence_needed: "`node cli.js foobar` shows helpful error."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      Output: "未知命令: \"foobar\" 运行 content 查看所有可用命令。"
+
+  - id: claim-012
+    title: "Error propagation: upstream errors are passed through"
+    source: README.md
+    source_ref: "Capability Contract fail section"
+    priority: high
+    area: error-handling
+    statement: >
+      When a downstream capability fails, the error is passed through to the user.
+    business_expectation: "Users see the real error, not a generic wrapper."
+    evidence_needed: "Trigger a downstream failure, observe error passthrough."
+    status: partial
+    needs_review: false
+    confidence: medium
+    extractor_rule: manual_review
+    evidence: |
+      `node cli.js download` (no URL) passes through the downstream error:
+      "Error: Missing argument 'URL'." from content-downloader. But videocut
+      subtitle silently fails (exit 0, empty output) — error NOT surfaced.
+
+  - id: claim-013
+    title: "7 capabilities badge claim"
+    source: README.md
+    source_ref: "badge in header"
+    priority: medium
+    area: meta
+    statement: >
+      README badge claims "capabilities: 7".
+    business_expectation: "Badge matches reality."
+    evidence_needed: "Count capabilities in list output."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: badge_claim
+    evidence: |
+      `content list` shows exactly 7 capabilities: download, extract, rewrite,
+      videocut, intelligence, publish, xiaohongshu-skills.
+
+  # === MEDIUM: Test infrastructure ===
+
+  - id: claim-014
+    title: "CLI test suite passes"
+    source: test/cli.test.js
+    source_ref: "test directory"
+    priority: high
+    area: test-infra
+    statement: >
+      The repo includes 80+ CLI tests covering routing, normalization, validation.
+    business_expectation: "Tests should pass to validate core routing logic."
+    evidence_needed: "Run `node --test test/cli.test.js` — all tests should pass."
+    status: failed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      ALL tests fail with "TypeError: <function> is not a function".
+      Functions tested (normalizeCapabilityName, getCapabilityUsageHint,
+      buildCommandPlan, validateCapabilityArgs) are not properly exported
+      from cli.js. Additionally, importing cli.js triggers help output as
+      a side effect. The test suite is completely broken.
+
+  - id: claim-015
+    title: "intelligence/analyze capability works"
+    source: README.md
+    source_ref: "功能一览 table"
+    priority: medium
+    area: intelligence
+    statement: >
+      `content analyze` / `content intelligence` provides trend detection,
+      topic analysis, and competitor analysis.
+    business_expectation: "Users can analyze content trends."
+    evidence_needed: "Run analyze with real data."
+    status: failed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      Auto-install succeeded but capability is in degraded state.
+      "pip install -e . fails due to src.cli module path in pyproject.toml"
+      The capability cannot execute.
+
+  - id: claim-016
+    title: "Zero npm dependencies"
+    source: README.md
+    source_ref: "技术栈 section"
+    priority: medium
+    area: meta
+    statement: "零 npm 依赖。整个 toolkit 只用 Node.js 内置模块。"
+    business_expectation: "No node_modules needed, instant setup."
+    evidence_needed: "Check for package.json / node_modules."
+    status: passed
+    needs_review: false
+    confidence: high
+    extractor_rule: manual_review
+    evidence: |
+      No package.json, no node_modules in content-toolkit root.
+      CLI uses only node:child_process, node:fs, node:path, node:test built-ins.

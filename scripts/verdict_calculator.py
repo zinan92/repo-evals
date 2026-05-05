@@ -153,6 +153,38 @@ def tier_for_score(score: int) -> dict[str, object]:
     return TIERS[-1]
 
 
+# Top-level 4-category grouping (2026-05-05). 6 tiers were too many
+# for a one-pager — readers couldn't tell Self-use from Try at a glance.
+# These 4 categories are what filter pills + dashboard headers show.
+# The 0-100 score still lives underneath for fine-grained sorting.
+CATEGORIES: tuple[dict[str, object], ...] = (
+    {"min": 80, "key": "production", "emoji": "🏭",
+     "en": "Production-ready", "zh": "可用于生产",
+     "blurb_en": "Safe to depend on in team or production pipelines.",
+     "blurb_zh": "团队 / 生产 pipeline 可以依赖。"},
+    {"min": 50, "key": "available", "emoji": "🛠",
+     "en": "Available", "zh": "可使用",
+     "blurb_en": "Use it; not yet for production-critical paths.",
+     "blurb_zh": "可以用;还不到放进生产关键路径的程度。"},
+    {"min": 30, "key": "risky", "emoji": "⚠️",
+     "en": "Risky", "zh": "有风险",
+     "blurb_en": "Runs but has unverified critical issues; expect surprises.",
+     "blurb_zh": "跑得通但有未验证的关键问题,会有意外。"},
+    {"min": 0, "key": "dont_use", "emoji": "🛑",
+     "en": "Don't use", "zh": "不可使用",
+     "blurb_en": "Won't install / core feature broken / archived.",
+     "blurb_zh": "装不上 / 核心功能坏 / 已 archived。"},
+)
+
+
+def category_for_score(score: int) -> dict[str, object]:
+    """Look up the 4-category bucket for a given 0-100 score."""
+    for c in CATEGORIES:
+        if score >= c["min"]:  # type: ignore[operator]
+            return c
+    return CATEGORIES[-1]
+
+
 def _stars_band_points(stars: int) -> int:
     """Ecosystem validation from GitHub stars. Capped at +12.
 
@@ -297,9 +329,10 @@ def compute_score(inp: dict, claims: list[dict]) -> dict:
     breakdown["penalties"] = penalties
     score += penalties
 
-    # Clamp + tier
+    # Clamp + tier + category
     score = max(0, min(100, score))
     tier = tier_for_score(score)
+    cat = category_for_score(score)
 
     return {
         "score": score,
@@ -310,6 +343,12 @@ def compute_score(inp: dict, claims: list[dict]) -> dict:
         "tier_zh": tier["zh"],
         "tier_blurb_en": tier["blurb_en"],
         "tier_blurb_zh": tier["blurb_zh"],
+        "category_key": cat["key"],
+        "category_emoji": cat["emoji"],
+        "category_en": cat["en"],
+        "category_zh": cat["zh"],
+        "category_blurb_en": cat["blurb_en"],
+        "category_blurb_zh": cat["blurb_zh"],
     }
 
 
@@ -593,6 +632,12 @@ def compute_verdict(inp: dict) -> dict:
         "tier_zh": score_block["tier_zh"],
         "tier_blurb_en": score_block["tier_blurb_en"],
         "tier_blurb_zh": score_block["tier_blurb_zh"],
+        "category_key": score_block["category_key"],
+        "category_emoji": score_block["category_emoji"],
+        "category_en": score_block["category_en"],
+        "category_zh": score_block["category_zh"],
+        "category_blurb_en": score_block["category_blurb_en"],
+        "category_blurb_zh": score_block["category_blurb_zh"],
     }
 
 

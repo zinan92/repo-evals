@@ -45,58 +45,230 @@ notes: 'Python tool that uses Playwright browser automation to crawl 7
   '
 product_view:
   one_liner:
-    en: A Python crawler that uses Playwright browser automation to harvest public
-      posts, comments, creator pages, and search results from 7 Chinese platforms
-      (Xiaohongshu, Douyin, Kuaishou, Bilibili, Weibo, Tieba, Zhihu) — login by QR
-      / phone / cookie, store to 8 backends (CSV, JSON, JSONL, Excel, SQLite, MySQL,
-      PostgreSQL, MongoDB).
-    zh: 一个用 Playwright 浏览器自动化抓 7 个中文平台（小红书 / 抖音 / 快手 / B 站 / 微博 / 贴吧 / 知乎）公开帖子、评论、创作者主页和搜索结果的
-      Python 爬虫。支持二维码 / 手机 / cookie 三种登录，可写入 8 种存储（CSV / JSON / JSONL / Excel / SQLite
-      / MySQL / PostgreSQL / MongoDB）。
-  best_for:
-    en: Researchers and indie devs who already know Python and want a working baseline
-      crawler for these specific Chinese platforms — willing to maintain login state
-      by hand, willing to update the code when a platform breaks.
-    zh: 懂 Python、想要这 7 个中文平台开箱可跑爬虫的研究者 / 独立开发者。前提：愿意手动维护登录态，愿意在平台改版时自己改代码。
+    en: One Python CLI that crawls posts / comments / creators / search from 7 Chinese
+      platforms (Xiaohongshu, Douyin, Kuaishou, Bilibili, Weibo, Tieba, Zhihu) into
+      8 storage backends.
+    zh: 一个 Python CLI,把 7 个中文平台(小红书 / 抖音 / 快手 / B 站 / 微博 / 贴吧 / 知乎)的帖子 / 评论 / 创作者
+      / 搜索抓进 8 种存储后端。
+  persona:
+    en: A Python-comfortable researcher, content analyst, or trend tracker who needs
+      raw post / comment / creator data from one or more Chinese platforms for non-commercial
+      analysis. NOT for production scraping.
+    zh: 懂 Python 的研究者 / 内容分析师 / 趋势追踪人 —— 需要从某个或多个中文平台拿到原始的帖子 / 评论 / 创作者数据,用于非商用分析。不是给生产抓取用。
+  scenario:
+    en: You want this week's top Xiaohongshu posts under a tag, or all comments
+      on a Douyin video, or a creator's last 200 Weibo posts. You'll log in with
+      your real account once (QR / phone / cookie), let it run on your laptop, and
+      dump to CSV / SQLite for downstream analysis.
+    zh: 你想要本周小红书某个 tag 下的爆款,或者某个抖音视频的全量评论,或者某创作者在微博的最近 200 条帖子。准备真实账号登一次(扫码 / 短信 / cookie),挂在自己电脑上跑,导出
+      CSV / SQLite 给下游分析用。
+  without_this:
+    en: 'You write per-platform crawlers from scratch. Each platform''s anti-bot,
+      signing, login flow, pagination, comment threading is its own can of worms
+      — a serious solo build is weeks per platform. Or you pay a SaaS data vendor
+      (¥¥¥), or you scrape the open web (lower-quality data, no comments).
+
+      '
+    zh: '一个个平台从头写爬虫。每个平台的反爬 / 签名 / 登录 / 翻页 / 评论嵌套都是一堆坑 —— 单人认真写一个平台要好几周。要么花钱买 SaaS
+      数据(¥¥¥),要么爬公开 web(数据质量低 / 评论拿不到)。
+
+      '
+  with_this:
+    en: 'One CLI for 7 platforms. Login type (QR/phone/cookie), crawl type (search/detail/creator),
+      and storage backend (CSV/JSON/SQLite/Postgres/MongoDB) are all flags. Day-1
+      you have a working baseline. You''ll patch when a platform updates DOM/signing
+      — but you''re patching working code, not starting from a blank file.
+
+      '
+    zh: '一个 CLI 跑 7 个平台。登录方式(扫码 / 手机 / cookie)、抓取类型(搜索 / 详情 / 创作者)、存储后端(CSV / JSON
+      / SQLite / Postgres / MongoDB) 都是参数。第一天就有可跑的版本。平台改版你要打补丁,但起点是能跑的代码,不是空文件。
+
+      '
+  cost_summary:
+    en: OSS but custom non-commercial license — research / personal only. Need a
+      real account on each platform you want to crawl. Will break when platforms
+      update DOM / signing — budget ongoing maintenance time. Paid PRO version exists
+      (removes Playwright, adds resume / multi-account); not the same product.
+    zh: 开源但自定义非商用 license —— 只能用于研究 / 个人。每个想抓的平台需要真实账号。平台改版会导致代码失效,要预留持续维护时间。有付费 PRO
+      版本(去掉 Playwright,加断点续传 / 多账号),不是同一个东西。
   watch_out:
-    en: 'Custom non-commercial license — read it before any non-research use. Anti-bot
-      moves fast: per-platform pipelines break frequently when DOM or signing changes;
-      treat any green run as a snapshot of that day, not a permanent guarantee. README
-      promises "no need to reverse complex encryption algorithms" but the codebase
-      ships its own JS hooks (libs/) and signing helpers — encryption isn''t reversed
-      by you, but it is being handled, so updates to platform signing can still break
-      runs. The hosted PRO version (paid) explicitly removes the Playwright dependency;
-      the OSS version always needs a real browser.
-
-      Login state caches are local plain-text files; do not commit them. Use the IP
-      proxy pool config if you plan more than a handful of requests, and keep request
-      rates conservative — the disclaimer is explicit about "no large-scale crawling".
+    en: 'README promises "no need to reverse complex encryption algorithms" but the
+      codebase ships its own JS hooks (libs/) and signing helpers — encryption isn''t
+      reversed by you, but it''s being handled internally, so platform signing updates
+      still break runs. Login state caches are local plain-text files — don''t commit
+      them. Use the built-in IP proxy pool config if you plan more than a handful
+      of requests, and keep rates conservative — disclaimer is explicit about "no
+      large-scale crawling".
 
       '
-    zh: '自定义非商用 license — 任何非研究用途都要先读原文。反爬迭代很快：单平台流水线经常因为 DOM / 签名变化而坏掉，所以任何一次绿色跑通，只能当成「那一天的快照」，不是永久保障。README
-      说「无需逆向复杂加密」但仓库里自己带了一套 JS hook（libs/）和签名辅助 —— 不是你来逆向，但加密一直在被处理，所以平台签名一旦升级仍然会让跑批失败。付费的
-      PRO 版本明确去掉了 Playwright 依赖；开源版必须有真实浏览器。
-
-      登录态缓存以明文存到本地，别提交进 git。请求量超过几个就用自带的 IP 代理池配置，并保持保守频率 —— 免责声明里写得很清楚「不得用于大规模爬取」。
+    zh: 'README 说"无需逆向复杂加密"但仓库里自己带了一套 JS hook(libs/)和签名辅助 —— 不是你来逆向,但加密一直在被处理,所以平台签名一升级仍然会让跑批失败。登录态缓存以明文存本地,别提交进
+      git。请求量超过几个就用自带的 IP 代理池配置,频率保守一点 —— 免责声明很明确"不得用于大规模爬取"。
 
       '
-  use_for:
-  - en: Researchers and indie devs who already know Python and want a working baseline
-      crawler for the 7 supported Chinese platforms.
-    zh: 懂 Python、想要这 7 个中文平台开箱可跑爬虫的研究者 / 独立开发者。
-  - en: Willing to maintain login state by hand, willing to update code when a platform
-      breaks.
-    zh: 愿意手动维护登录态、愿意在平台改版时自己改代码。
-  dont_use_for:
-  - en: Don't use for any non-research purpose — custom non-commercial license (NOASSERTION);
-      read LICENSE before any non-research use.
-    zh: 任何非研究用途都不行 —— 自定义非商用 license（NOASSERTION），用前一定先读 LICENSE。
-  - en: Don't run at scale — README disclaimer + platforms' anti-bot will limit your
-      account.
-    zh: 不要大规模爬取 —— README 免责声明很明确，平台反爬也会限你的账号。
-  - en: Don't assume 'no encryption reversal' — signing lives in 3 places (libs/*.js,
-      xhshow pip, per-platform client.py); platform changes break runs.
-    zh: 别相信「无需逆向」—— 签名藏在 3 个地方（libs/*.js、xhshow pip、各平台 client.py），平台一升级就坏。
+  examples:
+  - context:
+      en: |-
+        A content analyst researching trends before Double-11 — needs the top 100 posts under #双十一美妆 on Xiaohongshu for keyword + engagement analysis
+      zh: |-
+        内容分析师调研双十一前小红书 #双十一美妆 话题下 top 100 帖子,要做关键词 + 互动度分析
+    you_say:
+      en: |-
+        python main.py --platform xhs --type search --keyword "双十一美妆" --start 0 --end 100 --save_data csv
+      zh: |-
+        python main.py --platform xhs --type search --keyword "双十一美妆" --start 0 --end 100 --save_data csv
+    what_happens:
+      en: |-
+        First run pops a QR code in your terminal — scan with Xiaohongshu app to authorise. Playwright then opens a real browser, runs the search, paginates through 100 results, and writes data/xhs/search_results.csv with title / author / engagement / publish_time columns. Total: ~6 minutes for 100 posts.
+      zh: |-
+        第一次跑会在终端弹一个二维码 —— 用小红书 App 扫码授权。Playwright 然后开真实浏览器,跑搜索,翻页 100 条,把数据写到 data/xhs/search_results.csv(标题 / 作者 / 互动量 / 发布时间)。100 条大约 6 分钟。
+  - context:
+      en: |-
+        A social-media researcher studying a Douyin influencer's content strategy — needs the last 200 videos from one creator with view counts
+      zh: |-
+        社交媒体研究者研究某抖音博主的内容策略 —— 需要某个创作者最近 200 条视频带播放量
+    you_say:
+      en: |-
+        python main.py --platform douyin --type creator --creator_id 12345678 --max_count 200 --save_data sqlite
+      zh: |-
+        python main.py --platform douyin --type creator --creator_id 12345678 --max_count 200 --save_data sqlite
+    what_happens:
+      en: |-
+        Login is cookie-based on first run (paste your douyin cookie into the config). Crawler iterates the creator's video list, hits the signing helper for each request, and writes 200 rows to data/douyin/creator_videos.sqlite. You query with SQL afterwards.
+      zh: |-
+        第一次跑用 cookie 登录(把你的抖音 cookie 贴到 config 里)。爬虫遍历创作者视频列表,每个请求都过签名辅助,写 200 行进 data/douyin/creator_videos.sqlite。之后用 SQL 查。
+  - context:
+      en: |-
+        An indie dev building a local "Weibo trends" dashboard — needs all comments under one viral post for sentiment analysis
+      zh: |-
+        独立开发者做一个本地"微博热搜"dashboard —— 需要某条爆款博文下的全部评论做情绪分析
+    you_say:
+      en: |-
+        python main.py --platform weibo --type detail --note_id 4901234567 --get_comment True --save_data jsonl
+      zh: |-
+        python main.py --platform weibo --type detail --note_id 4901234567 --get_comment True --save_data jsonl
+    what_happens:
+      en: |-
+        Crawler hits the post detail endpoint, then walks the comment tree (top-level comments → replies → replies-to-replies) until exhausted. Output goes to data/weibo/comments.jsonl, one comment per line — easy to stream into a sentiment classifier.
+      zh: |-
+        爬虫先打详情端点,然后遍历评论树(一级评论 → 回复 → 回复的回复)直到取完。输出到 data/weibo/comments.jsonl,每行一条评论 —— 容易喂给情绪分类器。
+similar_repos:
+- slug: zinan92--content-downloader
+  shared_purpose:
+    en: |-
+      Both are crawler/downloader pipelines for Chinese content platforms. Both have to handle login state + anti-bot signing per platform. Both store harvested content to local files for downstream analysis.
+    zh: |-
+      都是中国内容平台的爬虫/下载流水线。都要处理每个平台的登录态 + 反爬签名。都把抓到的内容存到本地文件给下游分析用。
+  this_better_at:
+    en: |-
+      Working today (48K stars, recently active) + 7 platforms in one tool + 8 storage backends. Battle-tested signing helpers (libs/*.js + xhshow) that are kept up to date when platforms change.
+    zh: |-
+      现在能用(48K stars,持续维护) + 一个工具覆盖 7 个平台 + 8 种存储后端。久经考验的签名辅助(libs/*.js + xhshow),平台改版时会同步更新。
+  other_better_at:
+    en: |-
+      Built specifically as a thin downloader (single-purpose, simpler API) — but currently broken on Douyin (signing failure → 0-byte output). When it works, simpler than MediaCrawler. When it doesn't, MediaCrawler is your only option.
+    zh: |-
+      专门做一个轻量下载器(单一目的,API 更简单) —— 但抖音目前签名失败导致 0 字节输出。能跑的时候比 MediaCrawler 简单;跑不通的时候 MediaCrawler 是你唯一的选择。
+- slug: Usagi-org--ai-goofish-monitor
+  shared_purpose:
+    en: |-
+      Both are Python crawlers for a Chinese platform with a "watch this thing for me" use case. Both handle login + scraping + storing under one CLI. Both ask you to maintain login state by hand.
+    zh: |-
+      都是中国平台的 Python 爬虫,做"帮我盯着这件事"的 use case。都把登录 + 抓取 + 存储放在一个 CLI 里。都要你自己维护登录态。
+  this_better_at:
+    en: |-
+      Breadth — 7 platforms × 4 crawl modes (search / detail / creator / comments) × 8 storage backends. When you need data from any of those 7 platforms, this is the reference implementation.
+    zh: |-
+      覆盖广 —— 7 个平台 × 4 种抓取模式(搜索 / 详情 / 创作者 / 评论) × 8 种存储后端。任何这 7 个平台想要数据,这是参考实现。
+  other_better_at:
+    en: |-
+      Single-platform deep-watch (Goofish/闲鱼 product monitoring). Continuous notification + price-change alerts that MediaCrawler doesn't have — MediaCrawler is one-shot scraping, not monitoring.
+    zh: |-
+      单平台深度监控(闲鱼商品价格 / 状态)。持续通知 + 降价提醒,MediaCrawler 没这些 —— MediaCrawler 是一次性抓取,不是监控。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — a fixed pipeline of atoms (CLI parse → login → per-platform crawler → signing helper → storage adapter → output file). The pipeline is the same on every run; no LLM decides at runtime which step to take or skip. You configure once via flags, then the pipeline executes deterministically.
+    zh: |
+      分子 —— 固定的原子流水线(CLI 解析 → 登录 → 各平台爬虫 → 签名辅助 → 存储适配器 → 输出文件)。每次跑都是同一条路;运行时没有 LLM 决定下一步走哪或跳哪一步。flag 配一次,流水线确定性地执行。
+  nodes:
+  - id: cli
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        CLI args
+        (platform / type / login)
+      zh: |-
+        CLI 参数
+        (平台 / 类型 / 登录)
+  - id: login
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Login atom
+        (QR / phone / cookie)
+      zh: |-
+        登录原子
+        (扫码 / 手机 / cookie)
+  - id: crawler
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Per-platform crawler
+        (Playwright)
+      zh: |-
+        各平台爬虫
+        (Playwright)
+  - id: signing
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Signing helper
+        (libs/*.js + xhshow)
+      zh: |-
+        签名辅助
+        (libs/*.js + xhshow)
+  - id: storage
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Storage adapter
+        (1 of 8 backends)
+      zh: |-
+        存储适配器
+        (8 选 1)
+  - id: output
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        CSV / JSON / SQLite
+        / Postgres / Mongo / ...
+      zh: |-
+        CSV / JSON / SQLite
+        / Postgres / Mongo / ...
+  edges:
+  - from: cli
+    to: login
+  - from: login
+    to: crawler
+  - from: crawler
+    to: signing
+  - from: signing
+    to: storage
+  - from: storage
+    to: output
 stars: 48809
 archived: false
 has_license: true

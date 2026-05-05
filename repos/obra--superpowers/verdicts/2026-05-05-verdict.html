@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bucket="usable">
+<html lang="en" data-bucket="usable" data-category="available">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,6 +53,367 @@ html[data-bucket="reusable"]      { --bucket:#60a5fa; --bucket-bg:rgba(96,165,25
 html[data-bucket="recommendable"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
 html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
 
+/* 4-category theming (2026-05-05). Replaces the per-tier accent
+   so the page color tracks the top-level category, not the fine
+   tier inside it. */
+html[data-category="production"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-category="available"]  { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-category="risky"]      { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+/* --- Category chip (above score number) --- */
+.category-chip {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 10px 18px; margin-bottom: 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: 999px;
+}
+.category-emoji { font-size: 22px; line-height: 1; }
+.category-text { display: flex; flex-direction: column; line-height: 1.25; }
+.category-name {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--bucket); font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.category-blurb { font-size: 13px; color: var(--text-2); }
+
+/* --- Cost chip (one-line cost summary near the score) --- */
+.cost-chip {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  font-size: 14px; line-height: 1.55; color: var(--text);
+}
+.cost-label {
+  display: block;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}
+.cost-body { color: var(--text-2); }
+
+/* --- Layer strip (atom · molecule · compound) ---------------------- */
+.layer-strip-section { margin-bottom: 40px; }
+.layer-strip {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 0;
+}
+@media (max-width: 720px) {
+  .layer-strip { grid-template-columns: 1fr; }
+  .layer-strip-arrow { display: none; }
+}
+.layer-strip-card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 22px 22px 24px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: opacity .15s, border-color .15s;
+}
+.layer-strip-card.is-dim { opacity: 0.42; }
+.layer-strip-card.is-active {
+  background: var(--bucket-bg);
+  border-color: var(--bucket-soft);
+  box-shadow: 0 0 0 2px var(--bucket-soft);
+}
+.layer-strip-card.layer-atom.is-active     { --bucket: #2d7866; --bucket-bg: rgba(45,120,102,0.10); --bucket-soft: rgba(45,120,102,0.4); }
+.layer-strip-card.layer-molecule.is-active { --bucket: #5a3aa1; --bucket-bg: rgba(192,132,252,0.10); --bucket-soft: rgba(192,132,252,0.4); }
+.layer-strip-card.layer-compound.is-active { --bucket: #a13d30; --bucket-bg: rgba(248,113,113,0.10); --bucket-soft: rgba(248,113,113,0.4); }
+.layer-strip-emoji { font-size: 32px; line-height: 1; }
+.layer-strip-name {
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text); font-weight: 700;
+}
+.layer-strip-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
+.layer-strip-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); color: var(--text-3);
+  padding: 0 8px;
+}
+
+/* --- Category strip (4-zone score bar with pointer) ---------------- */
+.category-strip-section { margin-bottom: 40px; }
+.cat-strip-wrap { position: relative; margin-bottom: 14px; }
+.cat-strip {
+  display: flex; gap: 4px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cat-zone {
+  padding: 14px 14px 16px;
+  text-align: center;
+  background: var(--surface-2);
+  opacity: 0.55;
+  transition: opacity .15s;
+}
+.cat-zone.is-active { opacity: 1; }
+.cat-zone-emoji { font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.cat-zone-name {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text); font-weight: 600;
+}
+.cat-zone-range { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }
+.cat-zone-dont_use.is-active   { background: rgba(248, 113, 113, 0.18); }
+.cat-zone-risky.is-active      { background: rgba(245, 158, 11, 0.18); }
+.cat-zone-available.is-active  { background: rgba(96, 165, 250, 0.18); }
+.cat-zone-production.is-active { background: rgba(74, 222, 128, 0.18); }
+
+.cat-pointer-lane {
+  position: relative; height: 32px;
+  margin-top: 6px;
+}
+.cat-pointer {
+  position: absolute; top: 0; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--font-mono);
+}
+.cat-pointer-arrow { color: var(--bucket); font-size: 14px; line-height: 1; }
+.cat-pointer-score { font-size: 13px; color: var(--bucket); font-weight: 700; line-height: 1.2; }
+
+.cat-summary {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}
+.cat-summary-headline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-summary-emoji { font-size: 18px; }
+.cat-summary-name { font-family: var(--font-mono); font-size: 12px; color: var(--bucket); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.cat-summary-score { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.cat-summary-blurb { font-size: 14px; color: var(--text-2); }
+.cat-summary-production { --bucket: #4ade80; }
+.cat-summary-available  { --bucket: #60a5fa; }
+.cat-summary-risky      { --bucket: #f59e0b; }
+.cat-summary-dont_use   { --bucket: #f87171; }
+
+/* --- Similar repos comparison ------------------------------------- */
+.similar-section { margin-bottom: 80px; }
+.similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
+.similar-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+.similar-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.similar-card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.similar-card-name { color: var(--text); font-size: 14px; text-decoration: none; }
+.similar-card-name:hover strong { text-decoration: underline; }
+.similar-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.similar-cat-pill {
+  font-family: var(--font-mono); font-size: 10.5px; padding: 3px 9px;
+  border-radius: 999px; background: var(--surface-2); color: var(--text-2);
+  letter-spacing: 0.06em; white-space: nowrap;
+}
+.similar-cat-pill.cat-production { color: #4ade80; }
+.similar-cat-pill.cat-available  { color: #60a5fa; }
+.similar-cat-pill.cat-risky      { color: #f59e0b; }
+.similar-cat-pill.cat-dont_use   { color: #f87171; }
+.similar-layer-pill {
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 8px;
+  border-radius: 4px; background: var(--surface-2); color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.similar-layer-pill.layer-atom     { color: #6cae9d; }
+.similar-layer-pill.layer-molecule { color: #c084fc; }
+.similar-layer-pill.layer-compound { color: #f87171; }
+
+.similar-row {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 12px; padding: 8px 0; border-top: 1px solid var(--border);
+}
+.similar-row:first-of-type { border-top: 0; }
+.similar-row-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); padding-top: 2px; line-height: 1.55;
+}
+.similar-row-body { font-size: 13px; line-height: 1.55; color: var(--text-2); white-space: pre-wrap; }
+.similar-row-this  .similar-row-label { color: var(--ok); }
+.similar-row-other .similar-row-label { color: #c084fc; }
+
+.similar-pending {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+.similar-pending-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.similar-pending-row {
+  font-size: 13.5px; line-height: 1.55;
+  color: var(--text-2); white-space: pre-wrap;
+}
+.similar-pending-row + .similar-pending-row { margin-top: 8px; }
+
+/* --- Workflow diagram (atom / molecule / compound) ----------------- */
+.workflow-diagram-section { margin-bottom: 80px; }
+.wd-why {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.wd-why-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 6px;
+}
+.wd-why-body { font-size: 14px; color: var(--text-2); line-height: 1.55; white-space: pre-wrap; }
+
+.wd-legend {
+  list-style: none; padding: 0; margin: 0 0 14px;
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.wd-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.wd-legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.wd-legend-atom     { background: rgba(96, 165, 250, 0.4); }
+.wd-legend-decision { background: rgba(251, 191, 36, 0.55); transform: rotate(45deg); }
+.wd-legend-start    { background: rgba(166, 153, 138, 0.5); border-radius: 5px; }
+
+.wd-canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  overflow-x: auto;
+}
+.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+
+.wd-shape { stroke-width: 1.5; }
+.wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
+.wd-molecule { fill: rgba(192, 132, 252, 0.10); stroke: rgba(192, 132, 252, 0.55); }
+.wd-decision { fill: rgba(251, 191, 36, 0.18); stroke: rgba(251, 191, 36, 0.85); stroke-width: 2; }
+.wd-start    { fill: rgba(166, 153, 138, 0.18); stroke: rgba(166, 153, 138, 0.65); }
+.wd-end      { fill: rgba(74, 222, 128, 0.14);  stroke: rgba(74, 222, 128, 0.6); }
+
+.wd-canvas svg { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+.wd-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-anchor: middle;
+  fill: var(--text);
+  letter-spacing: 0.01em;
+}
+/* SVG text language toggle — pseudo-elements don't work in SVG, so
+   we duplicate text in EN + ZH and toggle display based on <html lang>. */
+.wd-lang-en, .wd-lang-zh { display: none; }
+html[lang="en"] .wd-lang-en { display: block; }
+html[lang="zh"] .wd-lang-zh { display: block; }
+/* CJK gets a slightly smaller size + tighter tracking so 4-character
+   labels feel even-density next to 2-character labels. */
+html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
+.wd-edge { fill: none; stroke: rgba(166, 153, 138, 0.6); stroke-width: 1.6; }
+.wd-edge-dashed { stroke-dasharray: 5,4; }
+.wd-arrowhead { fill: rgba(166, 153, 138, 0.85); }
+
+.wd-edge-label-bg {
+  fill: var(--surface-1); stroke: var(--border); stroke-width: 1;
+}
+.wd-edge-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
+/* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
+.benefits-section { margin-bottom: 80px; }
+.benefits-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 720px) {
+  .benefits-grid { grid-template-columns: 1fr; }
+}
+.benefit-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.benefit-card.benefit-without {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.15);
+}
+.benefit-card.benefit-with {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}
+.benefit-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
+}
+.benefit-icon { font-size: 16px; }
+.benefit-body {
+  font-size: 15px; line-height: 1.62;
+  color: var(--text); white-space: pre-wrap;
+}
+
+/* Concrete usage examples (lives inside the benefits section) */
+.usex-block { margin-top: 28px; }
+.usex-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 12px;
+}
+.usex-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.usex-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.usex-row { display: flex; flex-direction: column; gap: 4px; }
+.usex-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+}
+.usex-body { font-size: 13.5px; line-height: 1.55; color: var(--text); }
+.usex-row.usex-quote .usex-body {
+  margin: 0; padding: 10px 14px;
+  border-left: 3px solid var(--bucket);
+  background: var(--bucket-bg);
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--text); border-radius: 0 4px 4px 0;
+  font-style: normal;
+}
+.usex-row.usex-quote .usex-body::before { content: "\201C"; color: var(--bucket); margin-right: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-quote .usex-body::after { content: "\201D"; color: var(--bucket); margin-left: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-what .usex-body { color: var(--text-2); }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
@@ -105,7 +466,7 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {
   background: var(--text); color: var(--bg);
 }
 
-.hero { padding: 24px 0 72px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }
+.hero { padding: 16px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
 
 .eyebrow {
   font-family: var(--font-mono); font-size: 11px;
@@ -133,7 +494,7 @@ h1.repo-title {
   font-size: clamp(18px, 2vw, 22px);
   line-height: 1.45; font-weight: 400;
   color: var(--text); max-width: 62ch;
-  margin: 0 0 72px;
+  margin: 0;
 }
 
 .verdict-block { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }
@@ -409,7 +770,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-section { margin-bottom: 96px; }
+section { margin-bottom: 56px; }
 
 .capabilities-grid {
   display: grid;
@@ -881,36 +1242,57 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
     <h1 class="repo-title">superpowers</h1>
     <div class="repo-slug">obra/superpowers</div>
 
-    <p class="tagline"><span class="i18n" data-en="A 14-skill methodology bundle for coding agents — brainstorming, planning, TDD, subagent-driven development, debugging, code review, git worktrees — auto-triggers when your agent starts work. Installs into 8 platforms (Claude Code official marketplace, Codex CLI/App, Cursor, OpenCode, Gemini CLI, Factory Droid, GitHub Copilot CLI). MIT, 179K stars, v5.1.0." data-zh="给 coding agent 的 14 个方法论 skill 合集 —— brainstorming / 写计划 / TDD / 子 agent 拆活 / 系统性 debug / 代码 review / git worktrees。agent 一开工就自动触发。装到 8 个平台（Claude Code 官方 marketplace / Codex CLI/App / Cursor / OpenCode / Gemini CLI / Factory Droid / GitHub Copilot CLI）。MIT，179K stars，v5.1.0。"></span></p>
+    <p class="tagline"><span class="i18n" data-en="A 14-skill methodology bundle that auto-triggers when your coding agent starts work — brainstorming, planning, TDD, subagent dispatch, debugging, code review, git worktrees." data-zh="给 coding agent 的 14 个方法论 skill 合集，agent 一开工就自动触发 —— brainstorming / 写计划 / TDD / 子 agent 拆活 / 系统性 debug / 代码 review / git worktrees。"></span></p>
 
-    <div class="verdict-block">
-      <div>
-        <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="score-hero tier-self"><div class="score-hero-row"><span class="score-emoji">🛠</span><span class="score-num">77</span><span class="score-denom">/ 100</span></div><div class="score-tier"><span class="i18n" data-en="Self-use OK" data-zh="自用 OK"></span></div><p class="score-blurb"><span class="i18n" data-en="Use it yourself; not yet ready to recommend to others." data-zh="你自己日常用没问题，还不到推荐给陌生人的程度。"></span></p></div>
-      </div>
-
-      <div class="verdict-meta">
-        <div class="layer-row"><span class="layer-pill layer-compound" title="compound"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Compound" data-zh="复合物"></span></span></div>
-
-        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 7 <span class="i18n" data-en="total" data-zh="共"></span></div>
-        <div class="stats-bar"><span class="s-pass" style="flex: 5"></span><span class="s-warn" style="flex: 1"></span><span class="s-skip" style="flex: 1"></span></div>
-        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">5</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">1</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
-
-        <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+18</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+10</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+12</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">-3</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
-      </div>
-    </div>
   </header>
 
-  <section class="scenarios-section"><div class="section-head"><h2><span class="i18n" data-en="Use it for / Don't use it for" data-zh="什么时候用 / 什么时候别用"></span></h2></div><ul class="scenarios"><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Have your coding agent ask you for a spec before writing code — `brainstorming` skill auto-triggers." data-zh="让 agent 写代码前先跟你聊需求 —— `brainstorming` skill 自动触发。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="TDD discipline — `test-driven-development` skill keeps the agent writing tests first." data-zh="TDD 纪律 —— `test-driven-development` skill 让 agent 先写测试。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Long autonomous work — `subagent-driven-development` lets one agent dispatch + review subagents." data-zh="长时间自主开发 —— `subagent-driven-development` 让一个 agent 分配并审核子 agent 的活。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Multi-platform — same 14 skills work across 8 different agent harnesses." data-zh="多平台一致 —— 14 个 skill 在 8 个不同 agent 平台上都能用。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t install if you want a &#x27;just code, don&#x27;t talk&#x27; agent — Superpowers makes the agent stop and consult the methodology before acting." data-zh="想要「闭嘴写代码」的 agent 别装 —— Superpowers 强制 agent 在动手前先走方法论。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t expect Claude-Code-level depth on Gemini / Codex right away — those plugin configs are thinner; check .codex-plugin / .opencode for what&#x27;s wired before relying on them." data-zh="Gemini / Codex 上别期待 Claude Code 级别的完整度 —— 那些平台的 plugin 配置更薄，依赖前先看 .codex-plugin / .opencode 里有啥。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t contribute without reading CLAUDE.md first — maintainer has a 94% PR rejection rate and closes &#x27;slop PRs&#x27; on sight." data-zh="想 contribute 先把 CLAUDE.md 读完 —— 维护者 PR 拒绝率 94%，看见 slop PR 直接关。"></span></li></ul></section>
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一层?"></span></h2></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-dim"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-active"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+
+  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:77%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">77</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 77 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div></section>
+
+  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-icon">👤</span><span class="i18n" data-en="Who this is for" data-zh="谁会用上它"></span></div><div class="benefit-body"><span class="i18n" data-en="A solo developer or small-team coder who uses Claude Code (or another agent) and feels the agent jumps to writing code without asking enough questions, skips writing tests, or produces code that &quot;looks done&quot; but isn&#x27;t. You don&#x27;t want to be the agent&#x27;s project manager." data-zh="用 Claude Code(或其他 agent) 的独立开发者 / 小团队 —— 觉得 agent 不问就动手、不写测试、写出的代码&quot;看起来像完成了但其实没完成&quot;。你不想自己当 agent 的 PM。"></span></div></article>
+<article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-icon">🎯</span><span class="i18n" data-en="When you'd reach for it" data-zh="什么时候用上"></span></div><div class="benefit-body"><span class="i18n" data-en="You&#x27;re about to ask your agent to build something non-trivial — a new auth flow, a DB migration, a refactor that touches 5 files. You want it to think it through first, not rush to a diff." data-zh="你要让 agent 做一个不是 5 行能搞定的活 —— 新加一套登录流程、改库表、重构跨 5 个文件的模块。你希望它先想清楚再动手,不是上来就直接 diff。"></span></div></article>
+<article class="benefit-card benefit-without"><div class="benefit-eyebrow"><span class="benefit-icon">😩</span><span class="i18n" data-en="What you'd do without it" data-zh="没它的时候怎么办"></span></div><div class="benefit-body"><span class="i18n" data-en="You manually prompt the agent at every stage: &quot;first brainstorm with me&quot;, &quot;now write the plan&quot;, &quot;now write tests first&quot;, &quot;now self-review subagent output&quot;. Each new conversation you re-explain the methodology. The step you forget to ask for is the step the agent skips.
+" data-zh="你得一步一步手动催 agent: &quot;先跟我 brainstorm&quot; → &quot;再写计划&quot; → &quot;再写测试&quot; → &quot;再自检子 agent 输出&quot;。每个新对话都要重讲一遍方法论。你忘记说的那一步,agent 就会跳过。
+"></span></div></article>
+<article class="benefit-card benefit-with"><div class="benefit-eyebrow"><span class="benefit-icon">✨</span><span class="i18n" data-en="What having it changes" data-zh="有它之后变化在哪"></span></div><div class="benefit-body"><span class="i18n" data-en="14 methodology skills auto-trigger at the right moment: brainstorming → writing-plans → TDD → subagent-driven-development → verification-before-completion → finishing-a-development-branch → receiving-code-review. You give the agent one feature ask, and the methodology fires itself. You stop being the PM and become the reviewer.
+" data-zh="14 个方法论 skill 在该触发的时刻自动起效: brainstorming → 写计划 → TDD → 子 agent 拆活 → 完成前自检 → 收尾 → 接 code review。你只丢一个功能需求,方法论会自己跑。你不再是 PM,只当 reviewer。
+"></span></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="An indie dev about to add OAuth login to a SaaS side project" data-zh="独立开发者准备给 SaaS 副业项目加 OAuth 登录"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Add GitHub OAuth login to my-saas — users should be able to sign in with their GitHub account" data-zh="给 my-saas 加上 GitHub OAuth 登录,用户可以用 GitHub 账号登入"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="brainstorming auto-fires first — agent asks: &quot;GitHub-only or multi-provider? Where do you want session tokens stored? Is sign-up the same flow as sign-in?&quot; After alignment, writing-plans drafts the implementation plan; TDD writes the failing tests; only then does the agent start writing the route handlers." data-zh="brainstorming 自动起 —— agent 先反问&quot;只 GitHub 还是多家?session token 存哪?注册和登录走同一流程吗?&quot;。聊清楚后,writing-plans 起草实现计划;TDD 先写失败的测试;然后 agent 才开始写路由 handler。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A small-team developer who&#x27;s been bitten by half-finished Claude features that &quot;looked done&quot;" data-zh="被 Claude 写出&quot;看起来像完成&quot;的半成品坑过的小团队开发者"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Refactor the inventory service to use the new pricing engine — touch the 5 files in src/inventory and make sure nothing else breaks" data-zh="把 inventory service 改造成用新的 pricing engine,改动 src/inventory 下 5 个文件,别影响其他地方"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="subagent-driven-development fires (decision: this work is big enough to split). The main agent dispatches per-file subagents for the 5 files, each subagent does its own TDD pass, then the main agent reviews each subagent&#x27;s output before integrating. verification-before-completion runs the full test suite + greps for orphaned references before declaring done." data-zh="subagent-driven-development 起作用(LLM 判断:这活够大,值得拆)。主 agent 给 5 个文件分别派子 agent,每个子 agent 独立做 TDD,然后主 agent 审核每个子 agent 的产出再合并。verification-before-completion 跑全量测试 + grep 找漏改的引用,通过了才宣布完成。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="Same person on Cursor instead of Claude Code, wanting the methodology to follow them" data-zh="同一个人换到 Cursor(不用 Claude Code),希望方法论也跟着过去"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Install superpowers in this Cursor workspace, then start a new feature for me" data-zh="在这个 Cursor 工作区装上 superpowers,然后给我开个新功能"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="The .cursor-plugin folder configures Cursor to load the same 14 skills. The agent recognises the new feature request and brainstorms with you the same way it would in Claude Code — but plugin depth on Cursor is 1 file vs Claude Code&#x27;s 2, so agent-side prompt prep is slightly thinner. You see the same flow, with a less polished trigger story." data-zh=".cursor-plugin 目录配置 Cursor 加载相同的 14 个 skill。agent 识别到新功能请求,跟你 brainstorm 的方式跟在 Claude Code 上一样 —— 但 Cursor 的 plugin 配置只有 1 个文件,Claude Code 有 2 个,所以触发提示稍薄。流程一致,触发故事略糙。"></span></span></div></article></div></div></section>
+
+  
+
+  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is compound" data-zh="为什么是复合物"></span></div><div class="wd-why-body"><span class="i18n" data-en="Compound (not molecule) — at two diamond-shaped nodes the agent decides at runtime which methodology skill fires next, based on the LLM&#x27;s read of your request. A molecule would be a fixed pipeline (every run takes the same path); a compound is a tree with branches the LLM picks live. Specifically: (1) &quot;Is the spec clear?&quot; decides whether brainstorming fires; (2) &quot;Is this work big enough to split?&quot; decides whether subagent-driven-development fires.
+" data-zh="复合物(不是分子) —— 在两个菱形节点上,agent 运行时根据 LLM 对你需求的判断决定下一步触发哪个方法论 skill。分子是固定流水线(每次都走同一条路);复合物是 LLM 现场选支路的树。具体两个决策点: (1)&quot;需求是否清晰?&quot;决定是否触发 brainstorming;(2)&quot;工作量是否需要拆分?&quot;决定是否触发 subagent-driven-development。
+"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 486 620" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M368.0,62 C368.0,70.0 368.0,70.0 368.0,78" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,122 C368.0,130.0 118.0,130.0 118.0,138" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="121.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="134.0" class="wd-edge-label wd-lang-en">no</text><text x="243.0" y="134.0" class="wd-edge-label wd-lang-zh">不清晰</text></g><path d="M368.0,122 C368.0,160.0 368.0,160.0 368.0,198" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="340.0" y="151.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="368.0" y="164.0" class="wd-edge-label wd-lang-en">yes</text><text x="368.0" y="164.0" class="wd-edge-label wd-lang-zh">清晰</text></g><path d="M118.0,182 C118.0,190.0 368.0,190.0 368.0,198" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,242 C368.0,250.0 368.0,250.0 368.0,258" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,302 C368.0,310.0 368.0,310.0 368.0,318" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,362 C368.0,370.0 118.0,370.0 118.0,378" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="361.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="374.0" class="wd-edge-label wd-lang-en">split</text><text x="243.0" y="374.0" class="wd-edge-label wd-lang-zh">拆</text></g><path d="M368.0,362 C368.0,400.0 368.0,400.0 368.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="340.0" y="391.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="368.0" y="404.0" class="wd-edge-label wd-lang-en">single</text><text x="368.0" y="404.0" class="wd-edge-label wd-lang-zh">不拆</text></g><path d="M118.0,422 C118.0,430.0 368.0,430.0 368.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,482 C368.0,490.0 368.0,490.0 368.0,498" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,542 C368.0,550.0 368.0,550.0 368.0,558" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="268" y="18" width="200" height="44" rx="22.0" class="wd-shape wd-start"/><text x="368.0" y="44.0" class="wd-label wd-lang-en">User feature request</text><text x="368.0" y="44.0" class="wd-label wd-lang-zh">用户提需求</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,78 468,100.0 368.0,122 268,100.0" class="wd-shape wd-decision"/><text x="368.0" y="97.0" class="wd-label wd-lang-en">Spec clear enough?</text><text x="368.0" y="97.0" class="wd-label wd-lang-zh">需求是否清晰?</text><text x="368.0" y="111.0" class="wd-label wd-lang-en">(LLM decides)</text><text x="368.0" y="111.0" class="wd-label wd-lang-zh">(LLM 决定)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="138" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="164.0" class="wd-label wd-lang-en">brainstorming</text><text x="118.0" y="164.0" class="wd-label wd-lang-zh">brainstorming</text></g><g class="wd-node wd-type-atom"><rect x="268" y="198" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="368.0" y="224.0" class="wd-label wd-lang-en">writing-plans</text><text x="368.0" y="224.0" class="wd-label wd-lang-zh">writing-plans</text></g><g class="wd-node wd-type-atom"><rect x="268" y="258" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="368.0" y="284.0" class="wd-label wd-lang-en">test-driven-development</text><text x="368.0" y="284.0" class="wd-label wd-lang-zh">test-driven-development</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,318 468,340.0 368.0,362 268,340.0" class="wd-shape wd-decision"/><text x="368.0" y="337.0" class="wd-label wd-lang-en">Big enough to split?</text><text x="368.0" y="337.0" class="wd-label wd-lang-zh">工作量需要拆分?</text><text x="368.0" y="351.0" class="wd-label wd-lang-en">(LLM decides)</text><text x="368.0" y="351.0" class="wd-label wd-lang-zh">(LLM 决定)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="378" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="404.0" class="wd-label wd-lang-en">subagent-driven-development</text><text x="118.0" y="404.0" class="wd-label wd-lang-zh">subagent-driven-development</text></g><g class="wd-node wd-type-atom"><rect x="268" y="438" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="368.0" y="464.0" class="wd-label wd-lang-en">verification-before-completion</text><text x="368.0" y="464.0" class="wd-label wd-lang-zh">verification-before-completion</text></g><g class="wd-node wd-type-atom"><rect x="268" y="498" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="368.0" y="524.0" class="wd-label wd-lang-en">finishing-a-development-branch</text><text x="368.0" y="524.0" class="wd-label wd-lang-zh">finishing-a-development-branch</text></g><g class="wd-node wd-type-end"><rect x="268" y="558" width="200" height="44" rx="22.0" class="wd-shape wd-end"/><text x="368.0" y="584.0" class="wd-label wd-lang-en">receiving-code-review</text><text x="368.0" y="584.0" class="wd-label wd-lang-zh">receiving-code-review</text></g></svg></div></section>
+
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-pending"><div class="similar-pending-eyebrow"><span class="i18n" data-en="↳ Closer peers we have not evaluated yet" data-zh="↳ 还没评测过的更接近的同类"></span></div><div class="similar-pending-row"><span class="i18n" data-en="Pending evaluation: G-Stack — same problem space (guide a non-developer or
+a developer-who-doesn&#x27;t-want-to-think-about-next-step through an
+end-to-end dev workflow). Need GitHub slug + claim-map before we can
+render a real comparison card here." data-zh="Pending evaluation: G-Stack — same problem space (guide a non-developer or
+a developer-who-doesn&#x27;t-want-to-think-about-next-step through an
+end-to-end dev workflow). Need GitHub slug + claim-map before we can
+render a real comparison card here."></span></div></div></section>
 
   <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>/plugin install superpowers@claude-plugins-official (Claude Code)</code></td><td>Claude Code</td><td><span class="badge complexity-easy">easy</span></td></tr><tr><td><code>Plugin marketplace (Codex CLI / Codex App / Factory Droid / Gemini CLI / OpenCode / Cursor / GitHub Copilot CLI)</code></td><td>8 agent platforms</td><td><span class="badge complexity-easy">easy</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">📡</span><span class="i18n" data-en="Works offline after install" data-zh="装完之后可离线运行"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">AI agent harness (Claude Code / Codex / Cursor / Gemini / OpenCode / Factory Droid / GH Copilot CLI)</div><div class="service-purpose">Host that loads + auto-triggers the skills</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-paid"><span class="i18n" data-en="💰 Paid API key" data-zh="💰 需付费 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Standard agent-side cost; auto-triggering 14 skills means more tokens consumed per task before any actual work happens</div></div></div></div></section>
 
   <div class="pull-quotes">
-    <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Anyone using a coding agent (Claude Code / Codex / Cursor etc) who wants the agent to follow real software-engineering methodology — TDD, planning before coding, brainstorming with you, doing code review on its own subagents — instead of jumping straight into writing code." data-zh="用 coding agent 的人，希望 agent 按真正的软件工程方法论干活（TDD、先写计划、跟你 brainstorm、自己给自己的子 agent 做 code review）—— 而不是上来就写代码。"></span></div></section>
-    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="Heavy: 14 skills auto-trigger means more agent overhead before each task. CLAUDE.md is 106 lines of strict contributor guidelines and the maintainer is famously blunt about closing &#x27;slop PRs&#x27; — be ready for that culture if you contribute. AGENTS.md is empty and GEMINI.md is 2 lines, so support across non-Claude platforms relies on platform-specific configs in .codex-plugin / .cursor-plugin / .opencode that are smaller (1-2 files each). On Claude Code it&#x27;s fully fleshed out; other platforms are more bare.
-" data-zh="重：14 个 skill 自动触发意味着每个任务前 agent 多走一遍方法论。CLAUDE.md 106 行严格的 contributor 规范 + 维护者以「关掉 slop PR」出名 —— 想 contribute 要做好心理准备。AGENTS.md 空 + GEMINI.md 只有 2 行，所以 Claude 之外的平台支持要靠各自的 .codex-plugin / .cursor-plugin / .opencode 配置（每家 1-2 个文件，比较薄）。Claude Code 上是齐活的，其他平台稍简。
+    
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="Claude Code is the first-class platform — AGENTS.md is empty and GEMINI.md is only 2 lines, so non-Claude installs rely on thinner platform-specific configs (.codex-plugin / .cursor-plugin / .opencode have 1-2 files each). Verify your platform&#x27;s plugin contract before relying on it. Maintainer is famously blunt about closing &quot;slop PRs&quot; — read CLAUDE.md before contributing.
+" data-zh="Claude Code 是一等公民 —— AGENTS.md 空 + GEMINI.md 只有 2 行,Claude 之外的平台靠各自薄一些的配置(.codex-plugin / .cursor-plugin / .opencode 每家 1-2 个文件)。依赖前先看你那个平台的 plugin 合约。维护者以&quot;关掉 slop PR&quot;出名,想 contribute 先读 CLAUDE.md。
 "></span></div></section>
   </div>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Score breakdown · how the 77 was computed" data-zh="分数明细 · 77 是怎么算的"></span></summary>
+    <div class="body">
+      <div class="claim-stats-row">
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 7 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 5"></span><span class="s-warn" style="flex: 1"></span><span class="s-skip" style="flex: 1"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">5</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">1</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+      </div>
+      <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+18</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+10</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+12</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">-3</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
+    </div>
+  </details>
 
   <section>
     <div class="section-head">
