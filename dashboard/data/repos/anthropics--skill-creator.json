@@ -1,0 +1,42 @@
+{
+  "slug": "anthropics--skill-creator",
+  "display_name": "skill-creator",
+  "owner": "anthropics",
+  "repo": "skill-creator",
+  "repo_url": "https://github.com/anthropics/skills/tree/main/skills/skill-creator",
+  "repo_type": "skill",
+  "archetype": "hybrid-skill",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Anthropic's official skill for creating, evaluating, and improving skills. Lives at github.com/anthropics/skills/tree/main/skills/ skill-creator. 485-line SKILL.md + 9 Python scripts (47-471 lines each) + 3 sub-agent prompts (analyzer / blind-comparator / grader) + 1,325-line ev…",
+  "repo_path": "repos/anthropics--skill-creator",
+  "claims_summary": {
+    "total": 7,
+    "passed": 6,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 4,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 3
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": "repos/anthropics--skill-creator/plans/2026-05-05-eval-plan.md",
+  "verdict_path": "repos/anthropics--skill-creator/verdicts/2026-05-05-final-verdict.md",
+  "attention_level": "high"
+}

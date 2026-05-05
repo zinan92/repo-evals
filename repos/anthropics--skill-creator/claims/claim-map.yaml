@@ -1,0 +1,151 @@
+claims:
+- id: claim-001
+  title: SKILL.md 是真实大体量文档（≥ 400 行）+ 标准 frontmatter
+  source: SKILL.md
+  source_ref: skills/skill-creator/SKILL.md
+  priority: critical
+  area: skill-shape
+  statement: 'SKILL.md ≥ 400 行，frontmatter 有 name + description；description 中
+
+    包含 trigger 短语足够覆盖「create / modify / optimize / eval / benchmark」
+
+    多个意图。
+
+    '
+  business_expectation: '用户说「make me a skill」、「optimize this skill」、「benchmark a skill」
+
+    任意一个都能触发这个 skill。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: SKILL.md is 485 lines with frontmatter; description covers create/modify/optimize/eval/benchmark
+    intents
+- id: claim-002
+  title: 9 个 Python 脚本每个都是真实非占位实现
+  source: scripts/
+  source_ref: skills/skill-creator/scripts/
+  priority: critical
+  area: tooling-completeness
+  statement: 'scripts/ 下存在以下 9 个文件：__init__.py + utils.py +
+
+    run_eval.py + run_loop.py + aggregate_benchmark.py +
+
+    improve_description.py + package_skill.py + quick_validate.py +
+
+    generate_report.py。除 __init__ 和 utils 外，每个非占位（≥ 100 行）。
+
+    '
+  business_expectation: '"evals + benchmark + iterative-improve" 不是 README 用语，每条命令背后
+
+    都有真实代码。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 7 non-utility scripts range 102-401 lines (run_eval 310, run_loop 328, aggregate_benchmark
+    401, generate_report 326, improve_description 247, package_skill 136, quick_validate
+    102)
+- id: claim-003
+  title: 3 个 sub-agent prompt 都是真实评测 / 对比 / 分析 prompt
+  source: agents/
+  source_ref: skills/skill-creator/agents/
+  priority: critical
+  area: eval-discipline
+  statement: 'agents/ 下存在 analyzer.md（post-hoc analyzer）+ comparator.md
+
+    （blind comparator）+ grader.md（grader）三个 prompt 文件，每个
+
+    ≥ 5 KB，明确定义角色、约束、输出格式。
+
+    '
+  business_expectation: '"blind comparison + grading + post-hoc analysis" 是真实可运行的评测
+
+    工序，不是 PR 段落。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: '3 sub-agents: analyzer 274 / comparator 202 / grader 223 lines; each with
+    role + constraints + output format'
+- id: claim-004
+  title: eval-viewer 是真实可工作的本地评测看板
+  source: eval-viewer/
+  source_ref: skills/skill-creator/eval-viewer/
+  priority: high
+  area: eval-tooling
+  statement: 'eval-viewer/ 下有 generate_review.py（≥ 300 行）+ viewer.html
+
+    （≥ 1000 行）。run_eval.py 跑完一轮后，generate_review.py 能从
+
+    runs/<eval-name>/ 生成可在浏览器打开的 HTML 报告。
+
+    '
+  business_expectation: '用户能可视化看 eval 结果，不只能读 JSON。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'eval-viewer/: generate_review.py 471 lines + viewer.html 1325 lines'
+- id: claim-005
+  title: schemas.md 提供清晰的 JSON schema 参考
+  source: references/schemas.md
+  source_ref: skills/skill-creator/references/schemas.md
+  priority: high
+  area: contract
+  statement: 'references/schemas.md ≥ 200 行，定义了 SKILL.md frontmatter / eval
+
+    input / eval output / benchmark 等核心数据结构的 JSON schema。
+
+    '
+  business_expectation: '用户写自定义 eval 时有清晰的契约可参考，不用读源码猜。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: references/schemas.md is 430 lines of JSON schemas
+- id: claim-006
+  title: 子目录自带 LICENSE，不依赖 parent
+  source: framework
+  source_ref: skills/skill-creator/LICENSE.txt
+  priority: high
+  area: licensing
+  statement: 'skills/skill-creator/LICENSE.txt 真实存在且为标准开源协议（Apache-2.0
+
+    / MIT 之类），用户可以放心 fork / 修改 / 转发本 skill。
+
+    '
+  business_expectation: '用户拷贝单个 skill 到自己 setup 也是合法的。
+
+    '
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: LICENSE.txt is Apache License 2.0 (201 lines) in skill subdir
+- id: claim-007
+  title: 端到端：用 skill-creator 创建一个新 skill 能跑出 eval 报告
+  source: SKILL.md "iterative process"
+  source_ref: 全链
+  priority: critical
+  area: end-to-end
+  statement: '装好 skill 后，在 Claude Code 中说「create a skill that does X」，agent
+
+    应：(a) 引导用户对话式定义 skill 范围 → (b) 写出草稿 SKILL.md →
+
+    (c) 生成测试 prompt + eval criteria → (d) 跑 run_eval.py 收集结果 →
+
+    (e) 用 generate_review.py 出 HTML 报告 → (f) 根据报告反馈迭代改写。
+
+    整链不需要用户自己接管 Python 调用。
+
+    '
+  business_expectation: '"create + eval + iterate" 不是 SKILL.md 上的词，真能跑通。
+
+    '
+  evidence_needed: 'molecule 级 — 需要 Claude Code session + 真实 Anthropic API key。建议
+
+    1 个 happy-path（创建一个简单 skill 并跑 eval）+ 1 个迭代场景
+
+    （用 run_loop.py 跑 2-3 轮迭代，验证收敛而非死循环）。
+
+    '
+  status: untested

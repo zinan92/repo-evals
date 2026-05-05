@@ -1,0 +1,64 @@
+run_id: run-static-checks
+date: 2026-05-05
+operator: repo-evals (claim-first, static-only)
+repo:
+  owner: anthropics
+  repo: skill-creator
+  parent_repo: anthropics/skills
+  path: skills/skill-creator/
+  branch: main
+
+scope: |
+  Static-checkable claims for SKILL.md, 9 Python scripts, 3 sub-agent
+  prompts, eval-viewer HTML+Python, schemas reference, and LICENSE.
+  Live e2e ("create a skill from scratch") deferred.
+
+claims_evaluated:
+  - id: claim-001
+    status: passed
+    note: "SKILL.md is 485 lines with name + description frontmatter; description covers create / modify / optimize / eval / benchmark intents"
+  - id: claim-002
+    status: passed
+    note: "9 scripts present; 7 non-utility ones range 102-401 lines (run_eval 310, run_loop 328, aggregate_benchmark 401, improve_description 247, package_skill 136, quick_validate 102, generate_report 326). utils.py is 47 lines (intentionally small)"
+  - id: claim-003
+    status: passed
+    note: "3 sub-agent prompts: analyzer.md (274 lines / 10 KB), comparator.md (202 / 7 KB), grader.md (223 / 9 KB) — all role + constraints + output-format defined"
+  - id: claim-004
+    status: passed
+    note: "eval-viewer/: generate_review.py (471 lines) + viewer.html (1,325 lines) — substantial in-browser report tool"
+  - id: claim-005
+    status: passed
+    note: "references/schemas.md is 430 lines — defines JSON schemas for SKILL.md frontmatter, eval input/output, benchmarks"
+  - id: claim-006
+    status: passed
+    note: "LICENSE.txt is Apache License 2.0 (201 lines, full Apache text)"
+
+claims_deferred:
+  - claim-007  # live "create a skill" + eval loop end-to-end
+
+artifacts:
+  - artifacts/SKILL.md
+  - artifacts/LICENSE.txt
+  - artifacts/schemas.md
+  - artifacts/agent-analyzer.md
+  - artifacts/agent-comparator.md
+  - artifacts/agent-grader.md
+  - artifacts/script-run_eval.py
+  - artifacts/script-run_loop.py
+  - artifacts/script-aggregate_benchmark.py
+  - artifacts/script-improve_description.py
+  - artifacts/script-package_skill.py
+  - artifacts/script-quick_validate.py
+  - artifacts/script-generate_report.py
+  - artifacts/script-utils.py
+  - artifacts/eval-generate-review.py
+  - artifacts/eval-viewer.html
+
+logs:
+  - logs/static-checks.txt
+
+provenance:
+  data_sources:
+    - "raw.githubusercontent.com/anthropics/skills/main/skills/skill-creator/{SKILL.md,LICENSE.txt,agents/*,scripts/*,eval-viewer/*,references/schemas.md}"
+  network_dependent: true
+  reproducible: yes

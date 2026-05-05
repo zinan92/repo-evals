@@ -1,0 +1,29 @@
+=== claim-001 SKILL.md ===
+       485 lines
+
+=== claim-002 scripts non-trivial ===
+  run_eval.py:      310 lines
+  run_loop.py:      328 lines
+  aggregate_benchmark.py:      401 lines
+  improve_description.py:      247 lines
+  package_skill.py:      136 lines
+  quick_validate.py:      102 lines
+  generate_report.py:      326 lines
+  utils.py:       47 lines
+
+=== claim-003 agents ===
+  analyzer.md:      274 lines /    10376 bytes
+  comparator.md:      202 lines /     7287 bytes
+  grader.md:      223 lines /     9049 bytes
+
+=== claim-004 eval-viewer ===
+  generate_review.py:      471 lines
+  viewer.html:     1325 lines
+
+=== claim-005 schemas ===
+  schemas.md:      430 lines
+
+=== claim-006 LICENSE ===
+
+                                 Apache License
+       201 lines

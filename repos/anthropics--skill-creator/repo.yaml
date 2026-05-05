@@ -1,0 +1,110 @@
+owner: anthropics
+repo: skill-creator
+display_name: skill-creator
+# Note: this is a *sub-directory* of github.com/anthropics/skills, not a
+# standalone repo. Eval slug deliberately uses `anthropics/skill-creator`
+# to make the dossier easy to find. repo_url points to the actual tree.
+repo_url: https://github.com/anthropics/skills/tree/main/skills/skill-creator
+repo_type: skill
+archetype: hybrid-skill
+# Layer: atom | molecule | compound. See docs/LAYERS.md.
+# Multiple distinct user-invocable capabilities (create / validate /
+# improve-description / package / run-eval / iterative-improve-loop /
+# aggregate-benchmark / generate-report) wired by predefined commands.
+# 3 sub-agents (analyzer/comparator/grader) for QA. Predefined
+# orchestration → molecule, not compound.
+layer: molecule
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-05"
+version_tested: "main@HEAD (in anthropics/skills monorepo, pushed 2026-05-03)"
+# Stars are the parent repo's (anthropics/skills, 128k) — this skill is one
+# entry in Anthropic's official skill catalog. The catalog stars are a fair
+# ecosystem signal because the catalog IS what people install.
+stars: 128303
+archived: false
+has_license: true   # Apache 2.0 in skills/skill-creator/LICENSE.txt
+multilingual_readme: false
+release_pipeline_score: 1
+# eval-discipline = 3: this skill ships a full eval harness (run_eval.py,
+# run_loop.py, 3 LLM grader/comparator/analyzer agents, eval-viewer/
+# with 1325-line HTML reviewer + Python report generator). Of all 19
+# repos evaluated, this is the only one that earns a 3 honestly.
+eval_discipline_score: 3
+recently_active: true
+notes: |
+  Anthropic's official skill for creating, evaluating, and improving
+  skills. Lives at github.com/anthropics/skills/tree/main/skills/
+  skill-creator. 485-line SKILL.md + 9 Python scripts (47-471 lines
+  each) + 3 sub-agent prompts (analyzer / blind-comparator / grader)
+  + 1,325-line eval-viewer HTML + 430-line schemas reference doc.
+  Apache 2.0.
+
+  This is the most evidence-rich skill in the entire eval batch:
+  the only one with a real LLM-output eval harness (eval_discipline=3).
+  Anthropic team eats their own dog food — they use it to build their
+  other official skills.
+
+  Workflow: user describes a skill they want → SKILL.md routes through
+  draft → quantitative + qualitative evals → iterate. The 3 sub-agents
+  do blind comparison of skill versions and grade transcripts against
+  expectations. eval-viewer generates HTML reports.
+
+product_view:
+  one_liner:
+    en: "Anthropic's official Claude Code skill for creating, evaluating, and iteratively improving skills — ships a full LLM-output eval harness (3 grader agents, blind-comparison, benchmark aggregation, HTML eval-viewer) so quality measurement is built into the workflow, not an afterthought."
+    zh: "Anthropic 官方的「写 skill 的 skill」：创建 / 评测 / 迭代改进 skill 一站式。自带完整的 LLM 输出评测工具链（3 个评测 agent、盲对比、benchmark 聚合、HTML 评测看板），把质量测量做成工作流的一部分，不是事后补的。"
+  best_for:
+    en: "Anyone serious about building Claude Code skills who wants Anthropic's own methodology — works whether you're starting from scratch, modifying an existing skill, or trying to optimize a skill's description for better auto-triggering."
+    zh: "认真在做 Claude Code skill、想用 Anthropic 自家方法论的人。从头建、改老 skill、优化 description 触发率，三种场景都覆盖。"
+  watch_out:
+    en: |
+      It's a sub-directory of anthropics/skills (catalog repo); to install you have to clone the whole catalog and copy this one folder, not `npm install`. The eval harness needs Anthropic API keys + can rack up token cost on iterative improvement loops. Sub-agents (analyzer / comparator / grader) each spawn additional LLM calls per eval round — budget accordingly. It's heavyweight: 485-line SKILL.md and 9 scripts means more surface to learn than a typical 100-line skill.
+    zh: |
+      这是 anthropics/skills（catalog 仓库）的子目录；要装得 clone 整个 catalog 然后把 skill-creator 这个文件夹拷出来，不能 `npm install`。评测工具链需要 Anthropic API key + 迭代改进 loop 烧 token 比较多。3 个 sub-agent（analyzer / comparator / grader）每轮评测都各自发 LLM 调用，要先做预算。skill 本身比较重：485 行 SKILL.md + 9 个脚本，比一般 100 行的 skill 学习量大。
+  use_for:
+    - en: "Designing a new Claude Code skill from scratch — let it walk you through draft → eval → iterate."
+      zh: "从零设计一个新的 Claude Code skill —— 让它带你走完「草稿 → 评测 → 迭代」全流程。"
+    - en: "Optimizing the description of an existing skill so auto-discovery picks it more reliably."
+      zh: "优化现有 skill 的 description，提升 auto-discovery 命中率。"
+    - en: "Running quantitative benchmarks (with variance analysis) on a skill before shipping."
+      zh: "skill 发布前跑量化 benchmark（带方差分析）确认稳定性。"
+    - en: "Blind-comparing two versions of a skill to decide which one to keep."
+      zh: "盲对比两个版本的 skill，决定保留哪个。"
+  dont_use_for:
+    - en: "Don't expect a quick install — you need to clone anthropics/skills and copy skill-creator/ into your skills directory yourself."
+      zh: "别期待一键装 —— 要 clone 整个 anthropics/skills 然后把 skill-creator/ 拷到自己的 skills 目录。"
+    - en: "Don't run iterative improvement loops without setting a token budget — each round multiplies LLM calls across grader/comparator/analyzer agents."
+      zh: "迭代改进 loop 不设 token 预算别跑 —— 每一轮 grader/comparator/analyzer 都会各自 LLM 调用，叠加很快。"
+    - en: "Don't use this for trivial 50-line skills — the overhead isn't worth it; just hand-write SKILL.md."
+      zh: "50 行小 skill 别动用这个 —— 学习成本不值得，直接手写 SKILL.md 更快。"
+
+deployment:
+  installable: true
+  install_methods:
+    - method: "git clone anthropics/skills + cp -r skills/skill-creator ~/.claude/skills/"
+      platform: any
+      complexity: moderate
+    - method: "Git sparse-checkout for just this one skill"
+      platform: any
+      complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false  # Calls Anthropic API
+  notes: "Sub-directory of a catalog repo — no `npm install` or single-line clone for just this skill."
+
+third_party_services:
+  - name: "Anthropic Claude API"
+    purpose: "LLM that runs the skill itself + powers all 3 sub-agents (analyzer/comparator/grader)"
+    required: true
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "Iterative improvement loop multiplies token cost per round (grader + comparator + analyzer all consume tokens). Budget accordingly."
+  - name: "Python 3 runtime"
+    purpose: "Runs the 9 scripts (eval / package / validate / report)"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Standard local Python — no extra cost"
