@@ -367,7 +367,9 @@ footer {{ margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--borde
     <span class="i18n-block zh-block">→ 工作流叠加层:</span>
     <a href="workflows/content.html">📝 <span class="i18n-block en-block inline">Content pipeline</span><span class="i18n-block zh-block inline">内容八步管线</span></a>
     <span class="dim"> · </span>
-    <span class="dim"><span class="i18n-block en-block">Trading + Development pipelines coming soon</span><span class="i18n-block zh-block">交易 + 开发管线开发中</span></span>
+    <a href="workflows/trading.html">💹 <span class="i18n-block en-block inline">Trading pipeline</span><span class="i18n-block zh-block inline">交易八步管线</span></a>
+    <span class="dim"> · </span>
+    <a href="workflows/development.html">🛠 <span class="i18n-block en-block inline">Development workflow</span><span class="i18n-block zh-block inline">开发工作流</span></a>
   </p>
   <p class="lead">
     <span class="i18n-block en-block">Master index of every repo evaluated under repo-evals. Click into any row for the full bilingual dossier — claims, evidence, score breakdown, deployment notes, and the full benefits block (who / when / without / with). Sort by clicking a column header; filter by category or search by name.</span>

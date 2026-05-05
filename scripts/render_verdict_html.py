@@ -1705,6 +1705,147 @@ def render_layer_strip(vd: VerdictData) -> str:
     )
 
 
+def _first_sentence(field: Any, lang: str = "en", max_chars: int = 220) -> str:
+    """Extract a short, first-sentence-ish summary from a free-text field.
+
+    Used by render_decision_card to compress long product_view paragraphs
+    (watch_out, next_step) into a single readable line for the snapshot.
+    """
+
+    if not field:
+        return ""
+    if isinstance(field, dict):
+        text = field.get(lang) or field.get("en") or field.get("zh") or ""
+    else:
+        text = str(field)
+    text = text.strip()
+    if not text:
+        return ""
+    # Find first sentence-ending punctuation (EN .!? or CN 。 ！ ？)
+    best = -1
+    for sep in [". ", "。", "！", "？", "! ", "? "]:
+        idx = text.find(sep)
+        if idx > 0 and (best < 0 or idx < best):
+            best = idx + len(sep)
+    if 0 < best <= max_chars:
+        return text[:best].strip()
+    if len(text) > max_chars:
+        return text[:max_chars].strip() + "…"
+    return text
+
+
+def render_decision_card(vd: VerdictData) -> str:
+    """Top-of-dossier synthesis card answering "should I use this?"
+
+    4 rows, all auto-derived from existing fields. Placed before the
+    layer strip so a 5-second skim gets the headline answer; everything
+    below the card is the audit trail.
+
+    Rows:
+      ✅ Use         — by category (production/available/risky/dont_use)
+      ⚠ Don't use   — first-sentence of watch_out
+      🎯 Next step   — first-sentence of next_step
+      ⚠ Main risk   — derived from biggest unsolved gap
+    """
+
+    score = int(vd.verdict_input.get("score", 0) or 0)
+    cat_key = vd.verdict_input.get("category_key", "available")
+    cat_emoji = vd.verdict_input.get("category_emoji", "")
+
+    pv = vd.repo.get("product_view") or {}
+    watch_out = pv.get("watch_out")
+    next_step = pv.get("next_step")
+
+    inputs = vd.verdict_input.get("inputs_summary") or {}
+    layer = str(vd.repo.get("layer", "") or "").lower()
+    has_license = bool(vd.repo.get("has_license", False))
+    crit_failed = int(inputs.get("critical_failed", 0) or 0)
+    crit_total = int(inputs.get("critical_total", 0) or 0)
+    crit_covered = int(inputs.get("critical_covered", 0) or 0)
+    crit_untested = max(0, crit_total - crit_covered - crit_failed)
+
+    # Row 1 — Use? (category-driven)
+    use_lines = {
+        "production": ("Yes, including team / production-critical paths.",
+                       "可以,包括团队 / 生产关键路径。"),
+        "available":  ("Yes for self-use; not yet for production-critical paths.",
+                       "自用可以;还不到放进生产关键路径的程度。"),
+        "risky":      ("Maybe — only after fixing the flagged defects.",
+                       "也许 —— 但要先修掉被标记的问题。"),
+        "dont_use":   ("Skip. Known broken or unmaintained core feature.",
+                       "跳过。核心功能已知坏掉或未维护。"),
+    }
+    use_en, use_zh = use_lines.get(cat_key, ("", ""))
+
+    # Row 2 — Don't use for (from watch_out)
+    dont_en = _first_sentence(watch_out, "en")
+    dont_zh = _first_sentence(watch_out, "zh")
+    if not dont_en and not dont_zh:
+        dont_en = "(no specific watch-out documented)"
+        dont_zh = "(没有特别注意事项)"
+
+    # Row 3 — Best next step (from next_step)
+    next_en = _first_sentence(next_step, "en")
+    next_zh = _first_sentence(next_step, "zh")
+    if not next_en and not next_zh:
+        # Fall back to a generic by category
+        next_en = "Run one logged live end-to-end scenario before depending on it."
+        next_zh = "依赖之前先跑一次有日志记录的真实端到端场景。"
+
+    # Row 4 — Main risk (derived)
+    if crit_failed > 0 and not has_license:
+        risk_en = f"Missing LICENSE plus {crit_failed} other failed critical claim(s)."
+        risk_zh = f"缺 LICENSE,加上 {crit_failed} 条其他关键 claim 失败。"
+    elif not has_license:
+        risk_en = "No LICENSE file — legal blocker for redistribution / company adoption."
+        risk_zh = "没有 LICENSE 文件 —— 再分发 / 企业采用的法律阻碍。"
+    elif crit_failed > 0:
+        risk_en = f"{crit_failed} critical claim(s) failed (e.g., broken core feature)."
+        risk_zh = f"{crit_failed} 条关键 claim 失败(比如核心功能坏掉)。"
+    elif layer == "compound":
+        risk_en = "Compound layer — runtime LLM decisions can't be statically verified; needs a logged scenario."
+        risk_zh = "复合物层 —— 运行时 LLM 决策无法静态验证;需要有日志的真实场景。"
+    elif crit_untested > 0:
+        risk_en = f"{crit_untested} critical claim(s) untested — likely needs a logged live run."
+        risk_zh = f"{crit_untested} 条关键 claim 未验证 —— 通常需要一次有日志的真实跑通。"
+    else:
+        risk_en = "Static-only eval; live end-to-end behaviour unverified."
+        risk_zh = "纯静态评测;实际端到端行为未验证。"
+
+    rows = [
+        ("✅", "dec-use",  "Use",            "用",         use_en,  use_zh),
+        ("⚠",  "dec-dont", "Don't use for",  "别用在",     dont_en, dont_zh),
+        ("🎯", "dec-next", "Best next step", "最佳下一步", next_en, next_zh),
+        ("⚠",  "dec-risk", "Main risk",      "主要风险",   risk_en, risk_zh),
+    ]
+
+    rendered_rows: list[str] = []
+    for icon, klass, label_en, label_zh, body_en, body_zh in rows:
+        rendered_rows.append(
+            f'<div class="dec-row {klass}">'
+            f'<div class="dec-icon">{icon}</div>'
+            f'<div class="dec-label">'
+            f'<span class="i18n" data-en="{_esc(label_en)}" data-zh="{_esc(label_zh)}"></span>'
+            f'</div>'
+            f'<div class="dec-body">'
+            f'<span class="i18n" data-en="{_esc(body_en)}" data-zh="{_esc(body_zh)}"></span>'
+            f'</div>'
+            f'</div>'
+        )
+
+    return (
+        '<section class="decision-card">'
+        '<div class="dec-eyebrow">'
+        f'<span class="dec-cat-emoji">{cat_emoji}</span>'
+        '<span class="i18n" data-en="Decision snapshot" '
+        'data-zh="决策快照"></span>'
+        f'<span class="dec-score">{score} / 100</span>'
+        '</div>'
+        f'{"".join(rendered_rows)}'
+        '</section>'
+    )
+
+
 def render_trust_strip(vd: VerdictData) -> str:
     """Trust strip — 5 ✓/⚪ rows showing which evidence we did and didn't gather.
 
@@ -2783,6 +2924,7 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     layer_strip_html = render_layer_strip(vd)
     category_strip_html = render_category_strip(vd)
     similar_repos_html = render_similar_repos(vd)
+    decision_card_html = render_decision_card(vd)
     category_key = vd.verdict_input.get("category_key", "available")
 
     verdict_md_escaped = _esc(vd.verdict_md)
@@ -2897,6 +3039,52 @@ html[data-category="dont_use"]   {{ --bucket:#f87171; --bucket-bg:rgba(248,113,1
   letter-spacing: 0.14em; margin-bottom: 4px;
 }}
 .cost-body {{ color: var(--text-2); }}
+
+/* --- Decision Card — top-of-dossier 5-second answer --------------- */
+.decision-card {{
+  margin: 0 0 36px;
+  padding: 16px 20px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 1px var(--bucket-soft);
+}}
+.dec-eyebrow {{
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--bucket); text-transform: uppercase;
+  letter-spacing: 0.16em; font-weight: 700;
+  padding-bottom: 12px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}}
+.dec-cat-emoji {{ font-size: 16px; }}
+.dec-score {{
+  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2); letter-spacing: 0.06em;
+}}
+.dec-row {{
+  display: grid; grid-template-columns: 24px 110px 1fr;
+  gap: 10px; align-items: baseline;
+  padding: 7px 0;
+}}
+.dec-row + .dec-row {{ border-top: 1px solid var(--border); }}
+.dec-icon {{ font-size: 14px; line-height: 1; text-align: center; }}
+.dec-label {{
+  font-family: var(--font-mono); font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--text-3);
+}}
+.dec-row.dec-use  .dec-label {{ color: var(--ok); }}
+.dec-row.dec-dont .dec-label {{ color: var(--warn); }}
+.dec-row.dec-next .dec-label {{ color: var(--bucket); }}
+.dec-row.dec-risk .dec-label {{ color: var(--bad); }}
+.dec-body {{ font-size: 14px; line-height: 1.55; color: var(--text); }}
+@media (max-width: 720px) {{
+  .dec-row {{ grid-template-columns: 24px 1fr; }}
+  .dec-label {{ grid-column: 2; padding-bottom: 2px; }}
+  .dec-body {{ grid-column: 2; }}
+}}
 
 /* --- Layer strip (atom · molecule · compound) ---------------------- */
 .layer-strip-section {{ margin-bottom: 40px; }}
@@ -4273,6 +4461,8 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
     <p class="tagline">{product_one_liner_html}</p>
 
   </header>
+
+  {decision_card_html}
 
   {layer_strip_html}
 

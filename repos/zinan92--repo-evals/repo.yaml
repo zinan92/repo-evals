@@ -244,3 +244,10 @@ third_party_services:
 business_category: development
 use_case_tags:
 - repo-evaluation
+workflow_placements:
+- workflow_id: park-development-v1
+  stage_id: 01_research
+  role: primary
+  reason:
+    en: '"Decide what to install" research — the dev-research bottleneck most often hits, and this addresses it directly.'
+    zh: '"该装什么"研究 —— 开发研究最常碰到的瓶颈,这个直接对症。'

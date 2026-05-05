@@ -96,6 +96,52 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
 }
 .cost-body { color: var(--text-2); }
 
+/* --- Decision Card — top-of-dossier 5-second answer --------------- */
+.decision-card {
+  margin: 0 0 36px;
+  padding: 16px 20px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 1px var(--bucket-soft);
+}
+.dec-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--bucket); text-transform: uppercase;
+  letter-spacing: 0.16em; font-weight: 700;
+  padding-bottom: 12px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.dec-cat-emoji { font-size: 16px; }
+.dec-score {
+  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2); letter-spacing: 0.06em;
+}
+.dec-row {
+  display: grid; grid-template-columns: 24px 110px 1fr;
+  gap: 10px; align-items: baseline;
+  padding: 7px 0;
+}
+.dec-row + .dec-row { border-top: 1px solid var(--border); }
+.dec-icon { font-size: 14px; line-height: 1; text-align: center; }
+.dec-label {
+  font-family: var(--font-mono); font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--text-3);
+}
+.dec-row.dec-use  .dec-label { color: var(--ok); }
+.dec-row.dec-dont .dec-label { color: var(--warn); }
+.dec-row.dec-next .dec-label { color: var(--bucket); }
+.dec-row.dec-risk .dec-label { color: var(--bad); }
+.dec-body { font-size: 14px; line-height: 1.55; color: var(--text); }
+@media (max-width: 720px) {
+  .dec-row { grid-template-columns: 24px 1fr; }
+  .dec-label { grid-column: 2; padding-bottom: 2px; }
+  .dec-body { grid-column: 2; }
+}
+
 /* --- Layer strip (atom · molecule · compound) ---------------------- */
 .layer-strip-section { margin-bottom: 40px; }
 .layer-strip-biz-row { margin: -8px 0 14px; }
@@ -1471,6 +1517,8 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
     <p class="tagline"><span class="i18n" data-en="A Playwright-based CLI that auto-uploads videos to 7 Chinese + international social platforms (抖音 / Bilibili / 小红书 / 快手 / 视频号 / 百家号 / TikTok) — login via cookie / QR code, schedule for later, drive from one config. 10.6K stars, MIT-implied (no LICENSE file), single-author / single-commit visible history." data-zh="一个基于 Playwright 的 CLI,把视频自动上传到 7 个中外社交平台(抖音 / B 站 / 小红书 / 快手 / 视频号 / 百家号 / TikTok) —— cookie / 扫码登录,可定时发布,一份配置驱动多平台。10.6K stars,MIT 暗示但实际无 LICENSE 文件,单作者 / git 仅 1 个 commit 可见。"></span></p>
 
   </header>
+
+  <section class="decision-card"><div class="dec-eyebrow"><span class="dec-cat-emoji">⚠️</span><span class="i18n" data-en="Decision snapshot" data-zh="决策快照"></span><span class="dec-score">42 / 100</span></div><div class="dec-row dec-use"><div class="dec-icon">✅</div><div class="dec-label"><span class="i18n" data-en="Use" data-zh="用"></span></div><div class="dec-body"><span class="i18n" data-en="Maybe — only after fixing the flagged defects." data-zh="也许 —— 但要先修掉被标记的问题。"></span></div></div><div class="dec-row dec-dont"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Don&#x27;t use for" data-zh="别用在"></span></div><div class="dec-body"><span class="i18n" data-en="No LICENSE file (claim-006 failed) — companies cannot legally adopt without legal review." data-zh="无 LICENSE 文件(claim-006 失败) —— 公司没法在不走 legal review 的情况下采用。"></span></div></div><div class="dec-row dec-next"><div class="dec-icon">🎯</div><div class="dec-label"><span class="i18n" data-en="Best next step" data-zh="最佳下一步"></span></div><div class="dec-body"><span class="i18n" data-en="Current score is 42 / ⚠️ Risky." data-zh="当前分数 42 / ⚠️ 有风险。"></span></div></div><div class="dec-row dec-risk"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Main risk" data-zh="主要风险"></span></div><div class="dec-body"><span class="i18n" data-en="Missing LICENSE plus 1 other failed critical claim(s)." data-zh="缺 LICENSE,加上 1 条其他关键 claim 失败。"></span></div></div></section>
 
   <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip-biz-row"><span class="biz-cat-pill biz-content"><span>📝</span><span class="i18n" data-en="Content" data-zh="内容类"></span></span></div><div class="use-case-row"><span class="use-case-eyebrow"><span class="i18n" data-en="I want to&nbsp;…" data-zh="想干嘛?"></span></span><span class="use-case-pill use-case-content-publishing"><span class="i18n" data-en="Content publishing" data-zh="内容发布"></span></span></div><div class="wp-section"><div class="wp-block"><div class="wp-eyebrow"><span class="wp-pin-emoji">🗺</span><span class="i18n" data-en="In this workflow:" data-zh="在这条工作流里:"></span><span class="wp-name"><span class="i18n" data-en="Content / Self-media 8-step pipeline" data-zh="内容 / 自媒体八步管线"></span></span></div><div class="wp-canvas"><svg viewBox="0 0 766 110" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wp-arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wp-arrowhead-path"/></marker></defs><path d="M94,44.0 L108,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M188,44.0 L202,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M282,44.0 L296,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M376,44.0 L390,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M470,44.0 L484,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M564,44.0 L578,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M658,44.0 L672,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><rect x="14" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="54.0" y="40" class="wp-stage-num">01</text><text x="54.0" y="60" class="wp-stage-name wp-lang-en">Signal scanning</text><text x="54.0" y="60" class="wp-stage-name wp-lang-zh">信号发现</text><rect x="108" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="148.0" y="40" class="wp-stage-num">02</text><text x="148.0" y="60" class="wp-stage-name wp-lang-en">Content acquisition</text><text x="148.0" y="60" class="wp-stage-name wp-lang-zh">内容获取</text><rect x="202" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="242.0" y="40" class="wp-stage-num">03</text><text x="242.0" y="60" class="wp-stage-name wp-lang-en">Content understanding</text><text x="242.0" y="60" class="wp-stage-name wp-lang-zh">内容理解</text><rect x="296" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="336.0" y="40" class="wp-stage-num">04</text><text x="336.0" y="60" class="wp-stage-name wp-lang-en">Topic curation</text><text x="336.0" y="60" class="wp-stage-name wp-lang-zh">选题决策</text><rect x="390" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="430.0" y="40" class="wp-stage-num">05</text><text x="430.0" y="60" class="wp-stage-name wp-lang-en">Content production</text><text x="430.0" y="60" class="wp-stage-name wp-lang-zh">内容生产</text><rect x="484" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="524.0" y="40" class="wp-stage-num">06</text><text x="524.0" y="60" class="wp-stage-name wp-lang-en">Creative assembly</text><text x="524.0" y="60" class="wp-stage-name wp-lang-zh">创意组装</text><rect x="578" y="14" width="80" height="60" rx="10" class="wp-stage wp-stage-active wp-primary"/><text x="618.0" y="40" class="wp-stage-num">07</text><text x="618.0" y="60" class="wp-stage-name wp-lang-en">Distribution &amp; feedback</text><text x="618.0" y="60" class="wp-stage-name wp-lang-zh">分发反馈</text><rect x="672" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="712.0" y="40" class="wp-stage-num">08</text><text x="712.0" y="60" class="wp-stage-name wp-lang-en">Learning</text><text x="712.0" y="60" class="wp-stage-name wp-lang-zh">学习</text></svg></div><div class="wp-callouts"><div class="wp-callout wp-primary"><div class="wp-callout-head"><span class="wp-callout-pin">📍</span><span class="wp-callout-stage"><span class="i18n" data-en="Distribution &amp; feedback" data-zh="分发反馈"></span></span><span class="wp-callout-role"><span class="i18n" data-en="Primary" data-zh="主要"></span></span></div><div class="wp-callout-reason"><span class="i18n" data-en="Multi-platform auto-upload to 7 CN + international platforms (douyin / bilibili / xhs / kuaishou / 视频号 / 百家号 / TikTok) from one CLI. Despite ⚠️ Risky tier, it&#x27;s the broadest distribution layer in the corpus." data-zh="一个 CLI 自动上传到 7 个中外平台(抖音 / B 站 / 小红书 / 快手 / 视频号 / 百家号 / TikTok)。虽然在 ⚠️ Risky 档,但它是 corpus 里覆盖最广的分发层。"></span></div></div></div></div></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
 

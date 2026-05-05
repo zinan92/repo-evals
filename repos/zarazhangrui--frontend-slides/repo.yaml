@@ -196,3 +196,9 @@ workflow_placements:
   reason:
     en: 'HTML deck assembly. Medium: presentation slides — browser-native, hostable, hand-editable HTML.'
     zh: 'HTML 演示稿组装。媒介: 幻灯片 —— 浏览器原生、可托管、可手改的 HTML。'
+- workflow_id: park-development-v1
+  stage_id: 02_plan_design
+  role: support
+  reason:
+    en: UI / pitch-deck design — for the design-deliverable side of plan/design.
+    zh: UI / pitch deck 设计 —— 计划与设计阶段的设计交付侧。

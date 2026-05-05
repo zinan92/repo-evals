@@ -251,3 +251,16 @@ third_party_services:
 business_category: development
 use_case_tags:
 - llm-routing
+workflow_placements:
+- workflow_id: park-development-v1
+  stage_id: 04_package
+  role: support
+  reason:
+    en: Deployment plumbing for AI tools — wraps existing CLI subscriptions as OpenAI-compatible endpoints for self-hosted dev infra.
+    zh: AI 工具的部署管道 —— 把已有 CLI 订阅包装成 OpenAI 兼容端点,给自托管 dev 基础设施用。
+- workflow_id: park-development-v1
+  stage_id: 05_maintain
+  role: support
+  reason:
+    en: Runtime AI-routing layer — keeps the agent dependencies running without per-tool API rewires.
+    zh: 运行时 AI 路由层 —— 让 agent 依赖跑起来,不用各家工具 API 重接线。

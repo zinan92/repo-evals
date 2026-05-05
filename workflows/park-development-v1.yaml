@@ -62,7 +62,7 @@ stages:
   description:
     en: The "how do strangers install / use this" wrapping. Quality of this
       step often gates adoption more than code quality does.
-    zh: "陌生人怎么装 / 怎么用"的包装。这一步质量决定采用率,比代码质量更重要。
+    zh: '"陌生人怎么装 / 怎么用"的包装。这一步质量决定采用率,比代码质量更重要。'
 - id: '05_maintain'
   name:
     en: Maintain

@@ -343,3 +343,22 @@ third_party_services:
 business_category: finance
 use_case_tags:
 - quant-trading
+workflow_placements:
+- workflow_id: park-trading-v1
+  stage_id: 05_backtest
+  role: primary
+  reason:
+    en: Backtest engine + variance analysis. Strong 05 anchor in the corpus.
+    zh: 回测引擎 + 方差分析。corpus 里 05 阶段的强锚点。
+- workflow_id: park-trading-v1
+  stage_id: 06_risk
+  role: primary
+  reason:
+    en: Manual-approval gate + position sizing + max-loss cap rules baked in.
+    zh: 人工审批闸门 + 仓位规模 + 最大损失上限规则内置。
+- workflow_id: park-trading-v1
+  stage_id: 07_execution
+  role: primary
+  reason:
+    en: IBKR + MT5 + crypto-exchange execution under one stack with the safety gate.
+    zh: IBKR + MT5 + 加密所执行,一套 stack,带安全闸门。

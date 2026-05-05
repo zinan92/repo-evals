@@ -96,6 +96,52 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
 }
 .cost-body { color: var(--text-2); }
 
+/* --- Decision Card — top-of-dossier 5-second answer --------------- */
+.decision-card {
+  margin: 0 0 36px;
+  padding: 16px 20px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 1px var(--bucket-soft);
+}
+.dec-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--bucket); text-transform: uppercase;
+  letter-spacing: 0.16em; font-weight: 700;
+  padding-bottom: 12px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.dec-cat-emoji { font-size: 16px; }
+.dec-score {
+  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2); letter-spacing: 0.06em;
+}
+.dec-row {
+  display: grid; grid-template-columns: 24px 110px 1fr;
+  gap: 10px; align-items: baseline;
+  padding: 7px 0;
+}
+.dec-row + .dec-row { border-top: 1px solid var(--border); }
+.dec-icon { font-size: 14px; line-height: 1; text-align: center; }
+.dec-label {
+  font-family: var(--font-mono); font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--text-3);
+}
+.dec-row.dec-use  .dec-label { color: var(--ok); }
+.dec-row.dec-dont .dec-label { color: var(--warn); }
+.dec-row.dec-next .dec-label { color: var(--bucket); }
+.dec-row.dec-risk .dec-label { color: var(--bad); }
+.dec-body { font-size: 14px; line-height: 1.55; color: var(--text); }
+@media (max-width: 720px) {
+  .dec-row { grid-template-columns: 24px 1fr; }
+  .dec-label { grid-column: 2; padding-bottom: 2px; }
+  .dec-body { grid-column: 2; }
+}
+
 /* --- Layer strip (atom · molecule · compound) ---------------------- */
 .layer-strip-section { margin-bottom: 40px; }
 .layer-strip-biz-row { margin: -8px 0 14px; }
@@ -1471,6 +1517,8 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
     <p class="tagline"><span class="i18n" data-en="Electron desktop AI workspace for Xiaohongshu (小红书) creators. Ships as" data-zh="Electron desktop AI workspace for Xiaohongshu (小红书) creators. Ships as"></span></p>
 
   </header>
+
+  <section class="decision-card"><div class="dec-eyebrow"><span class="dec-cat-emoji">🛠</span><span class="i18n" data-en="Decision snapshot" data-zh="决策快照"></span><span class="dec-score">58 / 100</span></div><div class="dec-row dec-use"><div class="dec-icon">✅</div><div class="dec-label"><span class="i18n" data-en="Use" data-zh="用"></span></div><div class="dec-body"><span class="i18n" data-en="Yes for self-use; not yet for production-critical paths." data-zh="自用可以;还不到放进生产关键路径的程度。"></span></div></div><div class="dec-row dec-dont"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Don&#x27;t use for" data-zh="别用在"></span></div><div class="dec-body"><span class="i18n" data-en="(no specific watch-out documented)" data-zh="(没有特别注意事项)"></span></div></div><div class="dec-row dec-next"><div class="dec-icon">🎯</div><div class="dec-label"><span class="i18n" data-en="Best next step" data-zh="最佳下一步"></span></div><div class="dec-body"><span class="i18n" data-en="Run one logged live end-to-end scenario before depending on it." data-zh="依赖之前先跑一次有日志记录的真实端到端场景。"></span></div></div><div class="dec-row dec-risk"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Main risk" data-zh="主要风险"></span></div><div class="dec-body"><span class="i18n" data-en="Compound layer — runtime LLM decisions can&#x27;t be statically verified; needs a logged scenario." data-zh="复合物层 —— 运行时 LLM 决策无法静态验证;需要有日志的真实场景。"></span></div></div></section>
 
   <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-dim"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-active"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
 

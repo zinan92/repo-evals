@@ -206,3 +206,10 @@ third_party_services:
 business_category: development
 use_case_tags:
 - skill-distribution
+workflow_placements:
+- workflow_id: park-development-v1
+  stage_id: 04_package
+  role: primary
+  reason:
+    en: Distribute the packaged skill across 28 AI coding tools — symlink-driven. Solves the "5 copies of one skill" problem.
+    zh: 把打包好的 skill 分发到 28 家 AI 编程工具 —— 软链驱动。解决"一个 skill 在 5 个目录"问题。

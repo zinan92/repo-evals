@@ -4,34 +4,16 @@ display_name: visual-explainer
 repo_url: https://github.com/nicobailon/visual-explainer
 repo_type: skill
 archetype: hybrid-skill
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
 layer: molecule
 complexity: medium
 uses_areas: false
 status: evaluated
 current_bucket: usable
-notes: |
-  Hybrid repo: Claude Code skill (8 LLM-driven slash commands + 4 HTML reference
-  templates + 1 install script + 1 share script). Evaluated under repo-evals
-  framework v21f90eb (provenance + hybrid-repo cap rule).
-
-  Support layer is strong: 9 SKILL.md cross-references all resolve, 8/8 commands
-  exist, all 4 HTML templates render in headless Chromium with zero JS errors,
-  share.sh has clean failure modes with exit 1.
-
-  Two real bugs found:
-  - install-pi.sh missing `mkdir -p` for parent of $SKILL_DIR — fresh installs
-    (where ~/.pi/agent/skills/ doesn't exist) fail at the cp -r line
-  - Version mismatch between .claude-plugin/marketplace.json (0.5.1) and
-    plugins/visual-explainer/.claude-plugin/plugin.json (0.6.3); SKILL.md
-    frontmatter agrees with plugin.json but not marketplace.json
-
-  One undocumented dependency:
-  - share.sh requires a separate `vercel-deploy` skill at
-    ~/.pi/agent/skills/vercel-deploy/scripts/deploy.sh that README never mentions
-
-  Core LLM-driven layer (8 slash commands) completely untested — same hybrid
-  cap as frontend-slides: overall verdict capped at `usable` per the framework's
-  hybrid-repo rule. Promotion to `reusable` requires running real Claude Code /
-  Pi / Codex sessions and inspecting the generated HTML against the SKILL.md
-  aesthetic contract.
+notes: "Hybrid repo: Claude Code skill (8 LLM-driven slash commands + 4 HTML reference\ntemplates + 1 install script + 1 share script). Evaluated under repo-evals\nframework v21f90eb (provenance + hybrid-repo cap rule).\n\nSupport layer is strong: 9 SKILL.md cross-references all resolve, 8/8 commands\nexist, all 4 HTML templates render in headless Chromium with zero JS errors,\nshare.sh has clean failure modes with exit 1.\n\nTwo real bugs found:\n- install-pi.sh missing `mkdir -p` for parent of $SKILL_DIR — fresh installs\n  (where ~/.pi/agent/skills/ doesn't exist) fail at the cp -r line\n- Version mismatch between .claude-plugin/marketplace.json (0.5.1) and\n  plugins/visual-explainer/.claude-plugin/plugin.json (0.6.3); SKILL.md\n  frontmatter agrees with plugin.json but not marketplace.json\n\nOne undocumented dependency:\n- share.sh requires a separate `vercel-deploy` skill at\n  ~/.pi/agent/skills/vercel-deploy/scripts/deploy.sh that README never mentions\n\nCore LLM-driven layer (8 slash commands) completely untested — same hybrid\ncap as frontend-slides: overall verdict capped at `usable` per the framework's\nhybrid-repo rule. Promotion to `reusable` requires running real Claude Code /\nPi / Codex sessions and inspecting the generated HTML against the SKILL.md\naesthetic contract.\n"
+workflow_placements:
+- workflow_id: park-development-v1
+  stage_id: 02_plan_design
+  role: support
+  reason:
+    en: HTML / slide-deck visualisation for diff reviews + plan audits — bridges design <-> review handoff.
+    zh: 做 diff review + plan audit 的 HTML / 幻灯片可视化 —— 设计 <-> 评审交接桥。

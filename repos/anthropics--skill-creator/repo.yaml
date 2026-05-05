@@ -248,3 +248,10 @@ third_party_services:
 business_category: development
 use_case_tags:
 - skill-authoring
+workflow_placements:
+- workflow_id: park-development-v1
+  stage_id: 04_package
+  role: primary
+  reason:
+    en: Skill authoring + eval harness — the meta-tool for shipping a skill cleanly. Production-ready (81 / 🏭) in our corpus.
+    zh: Skill 写作 + 评测流水线 —— 把 skill 干净地发出来的元工具。corpus 里 production-ready (81 / 🏭)。

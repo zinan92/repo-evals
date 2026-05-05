@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading / Finance 8-step pipeline · repo-evals</title>
+<style>
+:root {
+  /* Light theme */
+  --bg:        #fbf8f3;
+  --surface-1: #ffffff;
+  --surface-2: #f3eee5;
+  --surface-3: #ede5d4;
+  --border:    rgba(20, 18, 14, 0.10);
+  --border-strong: rgba(20, 18, 14, 0.18);
+  --text:   #1a1714;
+  --text-2: #5c5246;
+  --text-3: #8a7e6f;
+  --accent: #2563eb;
+  --layer-atom:     #2d7866;
+  --layer-molecule: #5a3aa1;
+  --layer-compound: #a13d30;
+  --cat-production: #16a34a;
+  --cat-available:  #2563eb;
+  --cat-risky:      #d97706;
+  --cat-dont_use:   #dc2626;
+  --ok: #16a34a; --warn: #d97706; --bad: #dc2626;
+  --font-sans: ui-sans-serif, system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-serif: ui-serif, Georgia, serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans); background: var(--bg); color: var(--text);
+  font-size: 13.5px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+.page-header { max-width: 1400px; margin: 0 auto; padding: 28px 24px 18px; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.crumb { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); margin-bottom: 6px; }
+.crumb a { color: var(--text-3); }
+.crumb a:hover { color: var(--text-2); }
+h1 { font-family: var(--font-serif); font-size: 32px; font-weight: 700; margin: 0 0 10px; line-height: 1.1; }
+.lead { color: var(--text-2); max-width: 90ch; margin: 0 0 18px; font-size: 14px; }
+
+.lang-toggle { position: fixed; top: 14px; right: 16px; display: inline-flex; gap: 4px; padding: 4px;
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px;
+  font-family: var(--font-mono); font-size: 11px; z-index: 100;
+  box-shadow: 0 2px 8px rgba(20,18,14,0.06); }
+.lang-toggle button { font: inherit; background: transparent; color: var(--text-3);
+  border: 0; padding: 4px 10px; border-radius: 999px; cursor: pointer; }
+.lang-toggle button.active { background: var(--text); color: var(--surface-1); }
+
+.i18n-block { display: none; }
+html[lang="en"] .en-block { display: block; }
+html[lang="en"] .en-block.inline { display: inline; }
+html[lang="zh"] .zh-block { display: block; }
+html[lang="zh"] .zh-block.inline { display: inline; }
+html[lang="en"] span.en-block.i18n-block { display: inline; }
+html[lang="zh"] span.zh-block.i18n-block { display: inline; }
+
+.summary-tiles { display: flex; gap: 10px; margin: 12px 0 20px; flex-wrap: wrap; }
+.tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; min-width: 140px; }
+.tile-label { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); margin-bottom: 4px; }
+.tile-value { font-family: var(--font-serif); font-size: 22px; font-weight: 700; line-height: 1; color: var(--text); }
+
+/* Main 8-column grid — horizontal scroll on narrow screens */
+.wf-scroll-wrap {
+  overflow-x: auto;
+  padding: 0 24px 24px;
+  background: var(--bg);
+}
+.wf-grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(280px, 1fr));
+  gap: 12px;
+  min-width: 2320px;
+  max-width: 1900px;
+  margin: 0 auto;
+}
+
+/* Per-stage column */
+.wf-col {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 14px 16px;
+  display: flex; flex-direction: column;
+}
+.wf-col-head {
+  display: grid; grid-template-columns: auto 1fr auto;
+  gap: 10px; align-items: start;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.wf-col-num {
+  font-family: var(--font-mono); font-size: 18px; font-weight: 700;
+  color: var(--accent); line-height: 1; padding-top: 2px;
+  background: var(--surface-2); padding: 4px 8px; border-radius: 4px;
+  min-width: 38px; text-align: center;
+}
+.wf-col-titles h2 {
+  font-family: var(--font-serif); font-size: 16px; font-weight: 700;
+  margin: 0 0 3px; line-height: 1.15; color: var(--text);
+}
+.wf-col-artifact {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); margin: 0; line-height: 1.4;
+}
+.wf-col-count {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); padding: 2px 8px;
+  background: var(--surface-2); border-radius: 999px;
+  white-space: nowrap; align-self: start;
+}
+.wf-col-body { display: flex; flex-direction: column; gap: 10px; }
+
+/* Repo card (used in both per-platform sections and direct stage stacks) */
+.wf-card {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  border-left: 3px solid var(--text-3);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.wf-card.wp-primary     { border-left-color: var(--ok); }
+.wf-card.wp-support     { border-left-color: var(--accent); }
+.wf-card.wp-alternative { border-left-color: var(--warn); }
+.wf-card.wp-reference   { border-left-color: var(--text-3); border-left-style: dashed; }
+.wf-card-link { display: block; padding: 10px 12px; color: var(--text); }
+.wf-card-link:hover { background: var(--surface-1); text-decoration: none; }
+.wf-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.wf-card-name { font-size: 12.5px; line-height: 1.3; }
+.wf-card-name strong { color: var(--text); }
+.wf-card-meta { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
+.wf-score-pill {
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
+  padding: 2px 7px; border-radius: 999px; background: var(--surface-1);
+  white-space: nowrap; border: 1px solid var(--border);
+}
+.wf-score-pill.cat-production { color: var(--cat-production); }
+.wf-score-pill.cat-available  { color: var(--cat-available); }
+.wf-score-pill.cat-risky      { color: var(--cat-risky); }
+.wf-score-pill.cat-dont_use   { color: var(--cat-dont_use); }
+.wf-layer-pill {
+  font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 6px; border-radius: 3px; background: var(--surface-1);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border: 1px solid var(--border);
+}
+.wf-layer-pill.layer-atom     { color: var(--layer-atom); }
+.wf-layer-pill.layer-molecule { color: var(--layer-molecule); }
+.wf-layer-pill.layer-compound { color: var(--layer-compound); }
+.wf-role-pill {
+  font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 6px; border-radius: 3px; background: var(--surface-1);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border: 1px solid var(--border); color: var(--text-2);
+}
+.wf-role-pill.wp-primary     { color: var(--ok); border-color: rgba(22, 163, 74, 0.2); }
+.wf-role-pill.wp-support     { color: var(--accent); border-color: rgba(37, 99, 235, 0.2); }
+.wf-role-pill.wp-alternative { color: var(--warn); border-color: rgba(217, 119, 6, 0.2); }
+.wf-medium-pill {
+  font-family: var(--font-mono); font-size: 9px;
+  padding: 2px 6px; border-radius: 3px; background: var(--surface-1);
+  color: var(--text-3); border: 1px solid var(--border);
+}
+.wf-card-oneliner {
+  font-size: 11.5px; color: var(--text-2); line-height: 1.45;
+  margin-top: 6px;
+}
+
+/* Per-platform sub-sections (inside 02 + 07) */
+.wf-platform-section { margin: 0; }
+.wf-platform-section + .wf-platform-section { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+.wf-platform-header {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-2); font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.wf-platform-logo { font-size: 14px; }
+.wf-platform-name { flex: 1; }
+.wf-platform-count {
+  font-size: 10px; padding: 1px 6px; border-radius: 999px;
+  background: var(--surface-3); color: var(--text-3);
+}
+.wf-platform-cards { display: flex; flex-direction: column; gap: 8px; }
+
+.wf-stage-gap {
+  font-size: 11.5px; color: var(--text-3);
+  padding: 14px; background: var(--surface-2);
+  border: 1px dashed var(--border-strong); border-radius: 6px;
+  text-align: center;
+}
+.wf-gap-icon { color: var(--warn); margin-right: 4px; font-size: 13px; }
+
+footer {
+  max-width: 1400px; margin: 24px auto 0; padding: 18px 24px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-3);
+}
+</style>
+</head>
+<body>
+<div class="lang-toggle">
+  <button data-lang="en" class="active">EN</button>
+  <button data-lang="zh">中文</button>
+</div>
+
+<header class="page-header">
+  <div class="crumb">
+    <a href="../all-evals.html">repo-evals</a> ·
+    <span class="i18n-block en-block">workflow overlay</span>
+    <span class="i18n-block zh-block">workflow overlay (工作流叠加层)</span>
+  </div>
+  <h1>
+    <span class="i18n-block en-block">Trading / Finance 8-step pipeline</span>
+    <span class="i18n-block zh-block">交易 / 金融八步管线</span>
+  </h1>
+  <p class="lead">
+    <span class="i18n-block en-block">8-stage pipeline view. Stages 02 (acquisition) and 07 (distribution &amp; feedback) are broken out per-platform — X / 抖音 / 小红书 / 微信公众号 / etc. Empty stages are roadmap gaps. Click any card to open the per-repo dossier.</span>
+    <span class="i18n-block zh-block">8 阶段流水线视图。02(内容获取) 和 07(分发反馈) 按平台拆开 —— X / 抖音 / 小红书 / 微信公众号 等。空阶段是路线图缺口。点任意卡片进入 repo 详细 dossier。</span>
+  </p>
+
+  <div class="summary-tiles">
+    <div class="tile">
+      <div class="tile-label"><span class="i18n-block en-block">Total stages</span><span class="i18n-block zh-block">总阶段数</span></div>
+      <div class="tile-value">8</div>
+    </div>
+    <div class="tile">
+      <div class="tile-label"><span class="i18n-block en-block">Stages filled</span><span class="i18n-block zh-block">已填充阶段</span></div>
+      <div class="tile-value">5 / 8</div>
+    </div>
+    <div class="tile">
+      <div class="tile-label"><span class="i18n-block en-block">Repos placed</span><span class="i18n-block zh-block">已放置 repo</span></div>
+      <div class="tile-value">7</div>
+    </div>
+  </div>
+</header>
+
+<div class="wf-scroll-wrap">
+  <div class="wf-grid">
+    <section class="wf-col" id="01_market_data"><div class="wf-col-head"><div class="wf-col-num">01</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Market data</span><span class="i18n-block zh-block">行情数据</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ clean kline / OHLCV time series for instruments under watch</span><span class="i18n-block zh-block">→ 已清洗的 kline / OHLCV 时序数据,覆盖你关注的标的</span></p></div><div class="wf-col-count">0</div></div><div class="wf-col-body"><div class="wf-stage-gap"><span class="wf-gap-icon">⚠</span><div class="i18n-block en-block">No evaluated repo here yet — roadmap gap.</div><div class="i18n-block zh-block">这一阶段还没有评测过的 repo —— 路线图缺口。</div></div></div></section><section class="wf-col" id="02_intel"><div class="wf-col-head"><div class="wf-col-num">02</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Intel collection</span><span class="i18n-block zh-block">情报采集</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ dated intel ledger (news / filings / social / disclosure summaries)</span><span class="i18n-block zh-block">→ 带日期的情报账本(新闻 / 公告 / 社交 / 监管披露摘要)</span></p></div><div class="wf-col-count">1</div></div><div class="wf-col-body"><article class="wf-card wp-support"><a class="wf-card-link" href="../../repos/RKiding--Awesome-finance-skills/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>RKiding/Awesome-finance-skills</strong></div><span class="wf-score-pill cat-available">🛠 59</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-molecule">molecule</span><span class="wf-role-pill wp-support"><span class="i18n-block en-block inline">Support</span><span class="i18n-block zh-block inline">辅助</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A 10-skill bundle for Antigravity / OpenCode / OpenClaw that turns your AI agent into a finance analyst — fetches multi-source news (Cailian</span><span class="i18n-block zh-block">一组 10 个金融分析 skill，适配 Antigravity / OpenCode / OpenClaw —— 把 AI agent 变成金融分析员：拉多源新闻（财联社、Polymarket 等）、A 股 / 港股 / 美股行情、FinBERT 情绪打分、画市场传导链图（dr</span></div></a></article></div></section><section class="wf-col" id="03_signal_synthesis"><div class="wf-col-head"><div class="wf-col-num">03</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Signal synthesis</span><span class="i18n-block zh-block">信号合成</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ signal table — composite scores / direction / conviction per instrument</span><span class="i18n-block zh-block">→ 信号表 —— 每个标的的合成分数 / 方向 / 信心度</span></p></div><div class="wf-col-count">0</div></div><div class="wf-col-body"><div class="wf-stage-gap"><span class="wf-gap-icon">⚠</span><div class="i18n-block en-block">No evaluated repo here yet — roadmap gap.</div><div class="i18n-block zh-block">这一阶段还没有评测过的 repo —— 路线图缺口。</div></div></div></section><section class="wf-col" id="04_methodology_routing"><div class="wf-col-head"><div class="wf-col-num">04</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Methodology routing</span><span class="i18n-block zh-block">方法论路由</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ strategy assignment — which methodology for which signal</span><span class="i18n-block zh-block">→ 策略分配 —— 哪条信号走哪个方法论</span></p></div><div class="wf-col-count">2</div></div><div class="wf-col-body"><article class="wf-card wp-primary"><a class="wf-card-link" href="../../repos/tukuaiai--tradecat/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>tukuaiai/tradecat</strong></div><span class="wf-score-pill cat-available">🛠 66</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-molecule">molecule</span><span class="wf-role-pill wp-primary"><span class="i18n-block en-block inline">Primary</span><span class="i18n-block zh-block inline">主要</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A local-only Python CLI/TUI that pulls 4 public market-data snapshots from Google Sheets, caches them as JSON, and lets you browse them in a</span><span class="i18n-block zh-block">一个完全本地的 Python CLI/TUI 工具：从 Google Sheets 拉 4 个公开行情和事件流快照，存为本地 JSON 缓存，在终端面板里浏览。不要 API key，不要服务端，不要数据库，一条命令装完。</span></div></a></article><article class="wf-card wp-support"><a class="wf-card-link" href="../../repos/RKiding--Awesome-finance-skills/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>RKiding/Awesome-finance-skills</strong></div><span class="wf-score-pill cat-available">🛠 59</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-molecule">molecule</span><span class="wf-role-pill wp-support"><span class="i18n-block en-block inline">Support</span><span class="i18n-block zh-block inline">辅助</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A 10-skill bundle for Antigravity / OpenCode / OpenClaw that turns your AI agent into a finance analyst — fetches multi-source news (Cailian</span><span class="i18n-block zh-block">一组 10 个金融分析 skill，适配 Antigravity / OpenCode / OpenClaw —— 把 AI agent 变成金融分析员：拉多源新闻（财联社、Polymarket 等）、A 股 / 港股 / 美股行情、FinBERT 情绪打分、画市场传导链图（dr</span></div></a></article></div></section><section class="wf-col" id="05_backtest"><div class="wf-col-head"><div class="wf-col-num">05</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Backtest validation</span><span class="i18n-block zh-block">回测验证</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ backtest report — Sharpe / drawdown / trade count + variance analysis</span><span class="i18n-block zh-block">→ 回测报告 —— Sharpe / 回撤 / 交易次数 + 方差分析</span></p></div><div class="wf-col-count">1</div></div><div class="wf-col-body"><article class="wf-card wp-primary"><a class="wf-card-link" href="../../repos/brokermr810--QuantDinger/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>brokermr810/QuantDinger</strong></div><span class="wf-score-pill cat-available">🛠 76</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-compound">compound</span><span class="wf-role-pill wp-primary"><span class="i18n-block en-block inline">Primary</span><span class="i18n-block zh-block inline">主要</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A self-hosted Docker Compose stack for AI-assisted quantitative trading: charting, indicator and strategy generation, backtesting, and live </span><span class="i18n-block zh-block">一个自托管的 AI 量化交易 Docker Compose 平台：行情图表、AI 辅助生成指标和策略、回测、加密货币 / IBKR 美股 / MT5 外汇实盘下单都在一套 stack 里。通过 MCP server 接你的 AI Agent，自带 Postgres + Redis</span></div></a></article></div></section><section class="wf-col" id="06_risk"><div class="wf-col-head"><div class="wf-col-num">06</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Risk management</span><span class="i18n-block zh-block">风控决策</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ position sizing / max-loss caps / kill-switch rules</span><span class="i18n-block zh-block">→ 仓位规模 / 最大损失上限 / kill-switch 规则</span></p></div><div class="wf-col-count">1</div></div><div class="wf-col-body"><article class="wf-card wp-primary"><a class="wf-card-link" href="../../repos/brokermr810--QuantDinger/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>brokermr810/QuantDinger</strong></div><span class="wf-score-pill cat-available">🛠 76</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-compound">compound</span><span class="wf-role-pill wp-primary"><span class="i18n-block en-block inline">Primary</span><span class="i18n-block zh-block inline">主要</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A self-hosted Docker Compose stack for AI-assisted quantitative trading: charting, indicator and strategy generation, backtesting, and live </span><span class="i18n-block zh-block">一个自托管的 AI 量化交易 Docker Compose 平台：行情图表、AI 辅助生成指标和策略、回测、加密货币 / IBKR 美股 / MT5 外汇实盘下单都在一套 stack 里。通过 MCP server 接你的 AI Agent，自带 Postgres + Redis</span></div></a></article></div></section><section class="wf-col" id="07_execution"><div class="wf-col-head"><div class="wf-col-num">07</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Execution engine</span><span class="i18n-block zh-block">执行引擎</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ filled orders + execution receipts on the broker</span><span class="i18n-block zh-block">→ broker 端的成交单 + 执行回执</span></p></div><div class="wf-col-count">2</div></div><div class="wf-col-body"><article class="wf-card wp-primary"><a class="wf-card-link" href="../../repos/brokermr810--QuantDinger/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>brokermr810/QuantDinger</strong></div><span class="wf-score-pill cat-available">🛠 76</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-compound">compound</span><span class="wf-role-pill wp-primary"><span class="i18n-block en-block inline">Primary</span><span class="i18n-block zh-block inline">主要</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A self-hosted Docker Compose stack for AI-assisted quantitative trading: charting, indicator and strategy generation, backtesting, and live </span><span class="i18n-block zh-block">一个自托管的 AI 量化交易 Docker Compose 平台：行情图表、AI 辅助生成指标和策略、回测、加密货币 / IBKR 美股 / MT5 外汇实盘下单都在一套 stack 里。通过 MCP server 接你的 AI Agent，自带 Postgres + Redis</span></div></a></article><article class="wf-card wp-alternative"><a class="wf-card-link" href="../../repos/tukuaiai--tradecat/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>tukuaiai/tradecat</strong></div><span class="wf-score-pill cat-available">🛠 66</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-molecule">molecule</span><span class="wf-role-pill wp-alternative"><span class="i18n-block en-block inline">Alternative</span><span class="i18n-block zh-block inline">替代</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A local-only Python CLI/TUI that pulls 4 public market-data snapshots from Google Sheets, caches them as JSON, and lets you browse them in a</span><span class="i18n-block zh-block">一个完全本地的 Python CLI/TUI 工具：从 Google Sheets 拉 4 个公开行情和事件流快照，存为本地 JSON 缓存，在终端面板里浏览。不要 API key，不要服务端，不要数据库，一条命令装完。</span></div></a></article></div></section><section class="wf-col" id="08_journal"><div class="wf-col-head"><div class="wf-col-num">08</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Journal &amp; review</span><span class="i18n-block zh-block">复盘学习</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ post-trade journal — what happened, what worked, what to fix</span><span class="i18n-block zh-block">→ 交易后复盘 —— 发生了什么 / 哪招管用 / 还要修什么</span></p></div><div class="wf-col-count">0</div></div><div class="wf-col-body"><div class="wf-stage-gap"><span class="wf-gap-icon">⚠</span><div class="i18n-block en-block">No evaluated repo here yet — roadmap gap.</div><div class="i18n-block zh-block">这一阶段还没有评测过的 repo —— 路线图缺口。</div></div></div></section>
+  </div>
+</div>
+
+<footer>
+  <span class="i18n-block en-block">Generated by scripts/build_workflow_dashboard.py from workflows/park-trading-v1.yaml + repos/*/repo.yaml.workflow_placements.</span>
+  <span class="i18n-block zh-block">由 scripts/build_workflow_dashboard.py 从 workflows/park-trading-v1.yaml + repos/*/repo.yaml.workflow_placements 生成。</span>
+</footer>
+
+<script>
+const buttons = document.querySelectorAll('.lang-toggle button');
+const setLang = (lang) => {
+  document.documentElement.lang = lang;
+  buttons.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  try { localStorage.setItem('repo-evals-master-lang', lang); } catch (e) {}
+};
+buttons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+let _lang = 'en';
+try {
+  const stored = localStorage.getItem('repo-evals-master-lang');
+  if (stored === 'zh' || stored === 'en') _lang = stored;
+  else if ((navigator.language || '').toLowerCase().startsWith('zh')) _lang = 'zh';
+} catch (e) {}
+setLang(_lang);
+</script>
+</body>
+</html>
