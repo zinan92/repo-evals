@@ -1,0 +1,312 @@
+owner: dreammis
+repo: social-auto-upload
+display_name: social-auto-upload
+repo_url: https://github.com/dreammis/social-auto-upload
+repo_type: tool
+archetype: adapter
+layer: molecule
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-05-05'
+version_tested: main@HEAD (pyproject v0.1.0)
+stars: 10660
+archived: false
+has_license: false
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 1
+recently_active: true
+business_category: content
+use_case_tags:
+- content-publishing
+notes: |
+  A Playwright-based CLI + backend that auto-uploads video content to
+  7 Chinese + international social platforms (抖音 / Bilibili /
+  小红书 / 快手 / 视频号 / 百家号 / TikTok). 10.6K stars, started
+  2023-12, pushed 2026-04-24 (~11 days ago). Single visible commit
+  in git log ("ok") suggests history was force-pushed / squashed.
+
+  Architecture: each platform has its own uploader module under
+  uploader/<name>/main.py. sau_cli.py (745 LoC) is the CLI entry;
+  sau_backend.py (717 LoC) the backend. utils/ has the standard
+  Playwright stealth setup (puppeteer-extra-stealth file
+  auto-generated 2024-06-10) + Chrome flags. examples/ has 7 cookie
+  scripts + 8 upload scripts (one per platform, plus a duplicate
+  for xiaohongshu).
+
+  Three real defects flagged by static eval: (1) no LICENSE file
+  despite 10K+ stars (legal blocker for company adoption);
+  (2) tests don't collect from a clean clone — uploader/__init__.py
+  imports `from conf import BASE_DIR` and conf.py must be created
+  from conf.example.py first; (3) two parallel xiaohongshu uploaders
+  (xhs_uploader vs xiaohongshu_uploader) coexist without a clear
+  deprecation marker, and there are matching duplicate examples
+  (upload_video_to_xhs.py + upload_video_to_xiaohongshu.py).
+
+  Molecule layer: each uploader is an atom; the CLI orchestrates
+  them in a fixed pipeline (config → cookie → schedule → upload).
+  No LLM-runtime decisions; the platform is selected by a flag,
+  not by a model.
+product_view:
+  one_liner:
+    en: |-
+      A Playwright-based CLI that auto-uploads videos to 7 Chinese + international social platforms (抖音 / Bilibili / 小红书 / 快手 / 视频号 / 百家号 / TikTok) — login via cookie / QR code, schedule for later, drive from one config. 10.6K stars, MIT-implied (no LICENSE file), single-author / single-commit visible history.
+    zh: |-
+      一个基于 Playwright 的 CLI,把视频自动上传到 7 个中外社交平台(抖音 / B 站 / 小红书 / 快手 / 视频号 / 百家号 / TikTok) —— cookie / 扫码登录,可定时发布,一份配置驱动多平台。10.6K stars,MIT 暗示但实际无 LICENSE 文件,单作者 / git 仅 1 个 commit 可见。
+  persona:
+    en: |-
+      A Chinese content creator (KOL / MCN ops / matrix-account operator) who produces video and needs to publish the same asset to 5+ platforms each round. Currently spends 30-60 minutes uploading to each platform manually with their own platform-specific gotchas (Douyin's signing, B 站's two-step encode, 小红书's mobile-first quirks, 视频号's WeChat coupling).
+    zh: |-
+      产视频内容、每一轮要把同一份素材发到 5+ 个平台的中文创作者(KOL / MCN 运营 / 矩阵号操作员)。当前每个平台手工上传花 30-60 分钟,每家还有自己的小坑(抖音签名、B 站二次编码、小红书移动端嫌弃 PC、视频号绑微信)。
+  scenario:
+    en: |-
+      You finished a video. You want to push it to 抖音 / Bilibili / 小红书 / 快手 / 视频号 / 百家号 / TikTok with a single command, ideally with platform-specific tweaks (different titles, thumbnails, schedule times). You want to do this every week, repeatedly, without re-learning each platform's UI.
+    zh: |-
+      视频做完了。你想一行命令推到 抖音 / B 站 / 小红书 / 快手 / 视频号 / 百家号 / TikTok,理想情况下每个平台还能微调(不同标题、缩略图、定时)。你想每周重复一次,不用每次重新摸每家平台的 UI。
+  without_this:
+    en: |-
+      Three options, each painful. (1) Upload manually 7 times — kills 4-5 hours per video, and platform UIs change without warning. (2) Hand-build per-platform Playwright scripts yourself — every platform has unique anti-automation + signing + cookie quirks; weeks of work per platform, ongoing maintenance. (3) Pay a SaaS multi-platform publisher — costs ¥/month forever + your videos route through a third party.
+    zh: |-
+      三条路,每条都烦。(1) 手工上传 7 次 —— 一个视频 4-5 小时,平台 UI 还会突然改。(2) 自己写每个平台的 Playwright 脚本 —— 反爬 / 签名 / cookie 各家都不同,单平台开发要几周加持续维护。(3) 买一站式 SaaS 多平台发布 —— 持续付费 + 视频要绕过第三方。
+  with_this:
+    en: |-
+      One CLI command per platform (sau_cli) or call examples/upload_<platform>.py from your own automation. Cookie-based login (one-off interactive QR / phone), schedule for later, upload completes. 7 platforms covered out of the box. The hard part — per-platform browser-automation quirks — already solved.
+    zh: |-
+      一个 CLI 命令对一个平台(sau_cli),或者从自己的自动化里调 examples/upload_<平台>.py。cookie 登录(一次性扫码 / 手机),定时发布,自动完成。7 个平台开箱即用。每个平台浏览器自动化的脏活已经做完。
+  cost_summary:
+    en: |-
+      Free OSS but unlicensed (no LICENSE file at repo root despite 10K+ stars). Need Python 3.10+ + Playwright. You bring your own real account on each target platform (cookie / QR login). No LLM cost — purely browser automation. Anti-bot risk: aggressive scheduling can get an account limited; the included stealth.min.js was last regenerated 2024-06-10 (~16 months stale).
+    zh: |-
+      免费开源但 license 缺失(10K+ stars 但无 LICENSE 文件)。需要 Python 3.10+ + Playwright。每个目标平台带自己的真实账号(cookie / 扫码)。不需要 LLM —— 纯浏览器自动化。反爬风险: 频次过高账号会被限;自带的 stealth.min.js 上次更新 2024-06-10(~16 个月没更新)。
+  how:
+    en: |-
+      Clone + `pip install -e .` (or use uv). Copy `conf.example.py` to `conf.py` and edit paths. For each platform you want: run `python3 examples/get_<platform>_cookie.py` once to log in interactively (QR / phone). Then `sau` CLI or `python3 examples/upload_<platform>.py` to upload. Schedule by passing future timestamps in your config. Plug into your own pipeline: a cron job that watches a "ready-to-publish" folder calls sau_cli for each platform.
+    zh: |-
+      Clone + `pip install -e .`(或 uv)。把 `conf.example.py` 复制成 `conf.py` 改路径。对每个想用的平台: 跑一次 `python3 examples/get_<平台>_cookie.py` 交互式登录(扫码 / 手机)。然后用 `sau` CLI 或 `python3 examples/upload_<平台>.py` 上传。定时发布: 在配置里传未来时间戳。接到自己 pipeline: 一个 cron 任务盯着"待发布"文件夹,调 sau_cli 推到每个平台。
+  watch_out:
+    en: |-
+      No LICENSE file (claim-006 failed) — companies cannot legally adopt without legal review. Tests fail to collect from a clean clone (claim-004 failed) — needs `cp conf.example.py conf.py` first. Two parallel xiaohongshu uploaders (xhs_uploader vs xiaohongshu_uploader) with no deprecation marker — pick xiaohongshu_uploader per README hints, but read both before depending. README has prominent paid-sponsor blocks (ClawPower / WeChat sponsor) which can read like project features at a glance. Single-commit visible git history is unusual for a 10K-star project — history was likely force-pushed.
+    zh: |-
+      无 LICENSE 文件(claim-006 失败) —— 公司没法在不走 legal review 的情况下采用。测试在 clean clone 下不能 collect(claim-004 失败) —— 需要先 `cp conf.example.py conf.py`。两个并行的小红书 uploader(xhs_uploader vs xiaohongshu_uploader),没有 deprecation 标记 —— 按 README 暗示挑 xiaohongshu_uploader,但用之前两个都读一下。README 有显眼的付费赞助块(ClawPower / 微信赞助),粗看容易当成项目功能。git 仅 1 个 commit 可见,对 10K-star 项目不太正常 —— 历史很可能被强推过。
+  examples:
+  - context:
+      en: |-
+        A solo creator who finishes one weekly video and needs it on 抖音 + B 站 + 小红书 + 视频号 by Monday morning
+      zh: |-
+        每周一更视频的独立创作者,周一早上要让视频出现在抖音 + B 站 + 小红书 + 视频号
+    you_say:
+      en: |-
+        For each platform once: python3 examples/get_douyin_cookie.py (then xiaohongshu, bilibili, tencent). Then weekly: sau --platform douyin --video weekly-2026-W18.mp4 --schedule "2026-05-05 09:00"
+      zh: |-
+        每个平台先跑一次: python3 examples/get_douyin_cookie.py(然后 xiaohongshu / bilibili / tencent)。之后每周: sau --platform douyin --video weekly-2026-W18.mp4 --schedule "2026-05-05 09:00"
+    what_happens:
+      en: |-
+        First-time: each cookie script opens a browser, you scan QR / log in with phone, cookie persists to disk. Weekly: sau loads the cookie, uploads the video, sets the schedule. Repeat per platform with the same flags. Total weekly time drops from ~3 hours of manual UI clicking to ~5 minutes of CLI runs.
+      zh: |-
+        第一次: 每个 cookie 脚本开浏览器,你扫码 / 手机登录,cookie 存到磁盘。之后每周: sau 加载 cookie,上传视频,设定时。每个平台用同样 flag 重复一次。每周总耗时从 ~3 小时手工点 UI 降到 ~5 分钟 CLI 跑。
+  - context:
+      en: |-
+        An MCN ops manager handling 5 matrix accounts × 5 platforms = 25 weekly uploads
+      zh: |-
+        管 5 个矩阵号 × 5 个平台 = 每周 25 次上传的 MCN 运营
+    you_say:
+      en: |-
+        Wire sau_backend into our existing video-CMS so each "ready" task automatically calls sau across all 5 platforms × 5 accounts
+      zh: |-
+        把 sau_backend 接进我们现有的视频 CMS,每个"待发"任务自动调 sau 推到 5 平台 × 5 账号
+    what_happens:
+      en: |-
+        sau_backend.py is the integration surface — run it, your CMS posts video metadata + path, backend dispatches to the per-platform uploader. Matrix accounts handled by separate cookie files in cookies/<account>/. 25-upload weekly batch becomes a single CMS approval click + a 30-minute background job.
+      zh: |-
+        sau_backend.py 是集成面 —— 跑起来,你的 CMS 推视频元数据 + 路径,backend 分发到各平台 uploader。矩阵号靠 cookies/<账号>/ 各自分开 cookie 文件。25 次上传的每周批次变成 CMS 一次审批 + 一次 30 分钟后台任务。
+  - context:
+      en: |-
+        A startup founder who wants TikTok + Bilibili from the same release pipeline, but doesn't want to maintain two scripts
+      zh: |-
+        创业者想 TikTok + B 站从同一个发布 pipeline 出来,但又不想维护两个脚本
+    you_say:
+      en: |-
+        After cookie setup, just call: python3 examples/upload_video_to_tiktok.py path/to/video.mp4 && python3 examples/upload_video_to_bilibili.py path/to/video.mp4
+      zh: |-
+        cookie 弄好之后,直接: python3 examples/upload_video_to_tiktok.py path/to/video.mp4 && python3 examples/upload_video_to_bilibili.py path/to/video.mp4
+    what_happens:
+      en: |-
+        Each example script is self-contained — call from your build pipeline. TikTok handles login + multi-region nuance. Bilibili runs the bundled biliup at upload time (README "运行时自动准备 biliup"). Pipeline emits → both platforms get the video. Same release artifact, different platform metadata + thumbnails (you customise per script).
+      zh: |-
+        每个 example 脚本都是自洽的 —— 从你的 build pipeline 里直接调。TikTok 处理登录 + 多区差异。Bilibili 上传时自动准备 biliup(README"运行时自动准备 biliup")。pipeline 发布 → 两边都拿到视频。同一份发布产物,不同的平台元数据 + 缩略图(每个脚本里自己定制)。
+  next_step:
+    en: |-
+      Current score is 42 / ⚠️ Risky. Three highest-leverage actions, in order. (1) Add a LICENSE file (one commit) — closes claim-006, swings ~+20 (failed-critical −10 → passed +5 = +15 in static_eval, plus +5 from removing the LICENSE penalty). (2) Fix `from conf import` so tests collect from a clean clone — either auto-create conf.py from conf.example.py at test setup, or move config out of import-time. Closes claim-004 (~+6). (3) Decide between xhs_uploader and xiaohongshu_uploader — deprecate one with a clear marker. Closes claim-010 (~+6). Together those move 42 → ~74 → 🛠 Available. Live e2e (claim-009) gets it to 80+ Production-ready.
+    zh: |-
+      当前分数 42 / ⚠️ 有风险。三个最高 ROI 动作,按顺序。(1) 加一个 LICENSE 文件(一个 commit) —— 关掉 claim-006,~+20 摆动(failed-critical −10 → passed +5 = static_eval +15,加上去掉 LICENSE 罚分 +5)。(2) 修 `from conf import` 让测试在 clean clone 下能 collect —— 要么测试启动时自动从 conf.example.py 生成 conf.py,要么把配置移出 import-time。关掉 claim-004(~+6)。(3) 在 xhs_uploader 和 xiaohongshu_uploader 之间做决定 —— 给其中一个加 deprecation 标记。关掉 claim-010(~+6)。这三件加起来 42 → ~74 → 🛠 可使用。再加 live e2e(claim-009) 到 80+ 可用于生产。
+similar_repos:
+- slug: NanmiCoder--MediaCrawler
+  shared_purpose:
+    en: |-
+      Both are Playwright-based Python tools for Chinese-platform automation, both cover 7+ platforms, both rely on real-account cookies, both vulnerable to platform anti-bot when scheduled aggressively. Same family of "bring your account, we handle the browser quirks". Wendy already evaluated MediaCrawler — direct peer.
+    zh: |-
+      都是 Playwright + Python,做中国平台自动化,都覆盖 7+ 平台,都靠真实账号 cookie,频次高都会撞反爬。同一类"自带账号,我们搞定浏览器脏活"。MediaCrawler 已经评测过 —— 直接同类对比。
+  this_better_at:
+    en: |-
+      Outbound — pushes content TO platforms (upload). Real CLI + backend + cookie scripts per platform + Dockerfile + 16 example scripts. Targets the publish side of content workflow.
+    zh: |-
+      出向 —— 把内容推到平台(上传)。真 CLI + backend + 每平台 cookie 脚本 + Dockerfile + 16 个 example。瞄准内容工作流的发布侧。
+  other_better_at:
+    en: |-
+      Inbound — pulls content FROM platforms (scrape). Better engineering hygiene: tests run from clean clone, custom non-commercial license is at least documented, no parallel-uploader migration debt. 48K stars (4.5x more validation).
+    zh: |-
+      入向 —— 从平台拉数据(抓取)。工程卫生更好: 测试在 clean clone 下能跑,自定义非商用 license 至少有文档,没有并行 uploader 的迁移债。48K stars(4.5 倍验证)。
+- slug: Usagi-org--ai-goofish-monitor
+  shared_purpose:
+    en: |-
+      Both target a Chinese-platform automation use case with one repo per ops-style task. Both ask you to bring your own platform credentials. Both have a frontend dashboard / CLI surface.
+    zh: |-
+      都瞄准中国平台自动化的 ops 类场景,每个 repo 一个任务。都让你带自己的平台凭证。都有前端 dashboard / CLI 面。
+  this_better_at:
+    en: |-
+      Multi-platform breadth (7 publish targets vs 1 monitor target). Production-tested by 10K stars vs ai-goofish 11K — similar tier. Outbound publishing is the harder anti-bot problem; the fact this works speaks to engineering depth.
+    zh: |-
+      多平台广度(7 个发布目标 vs 1 个监控目标)。10K stars 验证 vs ai-goofish 11K —— 同一档。出向发布反爬比入向更难,能跑通说明工程深度够。
+  other_better_at:
+    en: |-
+      Single-platform depth (XianYu listing monitoring) + LLM-driven smart filtering (multi-modal LLM analysing photos vs criteria) + 6-channel notifications. Different shape — monitoring vs publishing. Cleaner setup (docker-compose works as-is).
+    zh: |-
+      单平台深度(闲鱼挂牌监控) + LLM 智能过滤(多模态读照片对比条件) + 6 渠道通知。形态不同 —— 监控 vs 发布。安装更干净(docker-compose 直接能跑)。
+- slug: zinan92--content-downloader
+  shared_purpose:
+    en: |-
+      Both deal with Chinese-platform content + Playwright + signing/anti-bot gymnastics. Same family of "social platform automation in Python".
+    zh: |-
+      都处理中国平台内容 + Playwright + 签名/反爬体操。同一类"Python 做社交平台自动化"。
+  this_better_at:
+    en: |-
+      Working today (10K+ stars, recently active, multi-platform). Production-tested by adoption, even with the engineering gaps surfaced in this eval.
+    zh: |-
+      现在能用(10K+ stars,持续维护,多平台)。即使本次评测暴露了工程缺口,被采用的事实证明能跑。
+  other_better_at:
+    en: |-
+      Different direction (downloading vs uploading). Currently broken on Douyin signing — when Douyin upload works here but download fails there, social-auto-upload looks structurally healthier in the publishing direction.
+    zh: |-
+      方向不同(下载 vs 上传)。抖音签名当前坏了 —— 当上传能跑但下载坏掉时,social-auto-upload 在发布方向上结构更健康。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — fixed pipeline (config → cookie load → optional schedule → per-platform upload). Each platform module is an atom; the CLI orchestrates them but no LLM decides which platform fires next — it's a flag the user sets. The 7 uploader modules are siblings, not a runtime tree.
+    zh: |
+      分子 —— 固定流水线(配置 → cookie 加载 → 可选定时 → 各平台上传)。每个平台模块是一个原子;CLI 编排但没有 LLM 运行时决定下一个推哪家 —— 是用户设的 flag。7 个 uploader 模块是平级兄弟,不是运行时树。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Video file + config
+        + target platform flag
+      zh: |-
+        视频文件 + 配置
+        + 目标平台 flag
+  - id: cookie
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Cookie loader
+        (per-platform persisted login)
+      zh: |-
+        Cookie 加载器
+        (各平台持久化登录)
+  - id: stealth
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Playwright + stealth
+        (browser_hook + stealth.min.js)
+      zh: |-
+        Playwright + stealth
+        (browser_hook + stealth.min.js)
+  - id: uploader
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Platform uploader
+        (1 of 7 platforms)
+      zh: |-
+        平台 uploader
+        (7 选 1)
+  - id: schedule
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Schedule + submit
+        (now or future timestamp)
+      zh: |-
+        定时 + 提交
+        (即时或未来时间戳)
+  - id: out
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        Video on platform
+        (or scheduled, or queued)
+      zh: |-
+        视频上线
+        (或排队 / 定时)
+  edges:
+  - from: input
+    to: cookie
+  - from: cookie
+    to: stealth
+  - from: stealth
+    to: uploader
+  - from: uploader
+    to: schedule
+  - from: schedule
+    to: out
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + pip install -e .
+    platform: any (Python 3.10+)
+    complexity: moderate
+  - method: docker build + run
+    platform: any (Docker)
+    complexity: moderate
+  - method: uv sync (with uv.lock)
+    platform: any (uv)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: Real account on each platform (douyin / bilibili / xhs / kuaishou / 视频号 / 百家号 / TikTok)
+  purpose: Cookie-based login for upload
+  required: true
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: One real account per platform you want to publish to; aggressive scheduling risks account limits
+- name: Per-platform anti-bot ecosystem (signing / stealth)
+  purpose: Internal — handled via stealth.min.js + per-platform module quirks
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: stealth.min.js was generated 2024-06-10 (~16 months stale); platforms iterate fast
+- name: ClawPower / sponsor LLM gateway (mentioned in README)
+  purpose: Sponsor mention only — not a project dependency
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Sponsorship block in README; the project itself doesn't call any LLM

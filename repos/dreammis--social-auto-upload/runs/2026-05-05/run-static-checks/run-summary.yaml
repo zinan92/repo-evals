@@ -1,0 +1,37 @@
+run:
+  id: run-static-checks
+  date: '2026-05-05'
+  evaluator: static-eval
+  target_commit: '34a3b3b (single visible commit — "ok")'
+  notes: |
+    Static layer only on a fresh clone of dreammis/social-auto-upload.
+
+    Three real defects flagged: (1) no LICENSE file at root despite
+    10K+ stars (claim-006 failed) — same defect we caught on autoresearch
+    and earlier on the author's own repo-evals; (2) tests fail to
+    collect from a clean clone because uploader/__init__.py imports
+    `from conf import BASE_DIR` and conf.py has to be created from
+    conf.example.py first (claim-004 failed_partial); (3) two parallel
+    xiaohongshu uploaders coexist without a clear deprecation marker
+    (claim-010 failed_partial).
+
+    Live e2e (claim-009) untested — that's a real account on a real
+    platform doing a real upload. Not attempted in static eval.
+metrics:
+  pass_rate: 0.65
+  total_claims: 9
+  passed: 6
+  failed: 1
+  failed_partial: 2
+  untested: 1
+results_by_claim:
+  claim-001: passed             # 7 uploader modules
+  claim-002: passed             # CLI + backend (745+717 LoC)
+  claim-003: passed             # 7 cookie + 8 upload examples
+  claim-004: failed_partial     # tests don't collect on clean clone
+  claim-005: passed             # docs/ comprehensive
+  claim-006: failed             # no LICENSE file
+  claim-007: passed             # stealth.min.js + browser_hook real
+  claim-008: passed             # pyproject + uv.lock + Dockerfile
+  claim-009: untested           # live upload to a real platform
+  claim-010: failed_partial     # parallel xhs uploaders, no deprecation marker

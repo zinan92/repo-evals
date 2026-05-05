@@ -1,0 +1,181 @@
+claims:
+- id: claim-001
+  title: 7 platform uploader modules exist (douyin / xhs / bilibili / kuaishou / tencent / baijiahao / tiktok)
+  source: README "功能特性" table
+  source_ref: uploader/
+  priority: critical
+  area: platform-coverage
+  statement: |
+    uploader/ contains module directories for: douyin_uploader,
+    xhs_uploader (legacy) + xiaohongshu_uploader (newer),
+    bilibili_uploader, ks_uploader, tencent_uploader (视频号),
+    baijiahao_uploader, tk_uploader. Each is a real Python package
+    with at least __init__.py + main.py, not a placeholder.
+  business_expectation: |
+    The 7 platforms the README headline + table promise correspond
+    to actual uploader code, not a "wishlist".
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 7 platforms confirmed (douyin / kuaishou / bilibili / 视频号 / 百家号 / TikTok / xhs+xiaohongshu). Two parallel xiaohongshu uploaders (xhs_uploader with accounts.ini + login script, xiaohongshu_uploader newer + slimmer) — surface this in watch_out.
+- id: claim-002
+  title: CLI + backend are substantive
+  source: README "🤖 AI Agent" + sau_cli.py
+  source_ref: sau_cli.py + sau_backend.py
+  priority: critical
+  area: cli-implementation
+  statement: |
+    sau_cli.py and sau_backend.py both exist at the repo root and
+    each is non-trivial (≥ 500 lines). pyproject.toml declares the
+    `sau` console script entry point.
+  business_expectation: |
+    "Install once, drive any platform from one CLI" is real code,
+    not just a roadmap.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: sau_cli.py 745 lines + sau_backend.py 717 lines = 1462 LoC. pyproject names the package "social-auto-upload" v0.1.0.
+- id: claim-003
+  title: Per-platform examples (cookie + upload) exist for every supported platform
+  source: examples/
+  source_ref: examples/get_*_cookie.py, examples/upload_*.py
+  priority: high
+  area: example-completeness
+  statement: |
+    examples/ has at least one get_<platform>_cookie.py + one
+    upload_<platform>*.py for every platform claimed in README.
+  business_expectation: |
+    A new user can copy an example, change a few paths, and run.
+    No "good luck figuring out the API surface from CLI flags" tax.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 7 cookie scripts + 8 upload scripts (xhs duplicates because of the legacy/new uploader pair). All 7 platforms covered.
+- id: claim-004
+  title: Tests collect + run from a clean clone
+  source: tests/
+  source_ref: tests/test_*.py
+  priority: high
+  area: test-discipline
+  statement: |
+    `python3 -m pytest tests/` collects and runs without import
+    errors on a clean clone of the repo, after standard setup
+    (pip install + cp conf.example.py conf.py).
+  business_expectation: |
+    Refactoring the uploader internals can't silently break the
+    test suite. CI will catch regressions.
+  status: failed_partial
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'pytest --collect-only fails on clean clone with `ModuleNotFoundError: No module named ''conf''` because conf.py must be created from conf.example.py before any import works (uploader/__init__.py imports `from conf import BASE_DIR`). 4 tests / 4 collection errors. Tests *can* run after manual conf.py setup but not from a clean checkout.'
+- id: claim-005
+  title: Documentation includes install / CLI / agent-bootstrap / skill-distribution
+  source: README + docs/
+  source_ref: docs/install.md, docs/CLI.md, docs/agent-bootstrap.md, docs/skill-distribution.md
+  priority: high
+  area: documentation
+  statement: |
+    docs/ contains separate files for installation (docs/install.md),
+    CLI usage (docs/CLI.md), agent integration (agent-bootstrap.md),
+    and the skill-distribution roadmap (skill-distribution.md).
+    Plus update.md + legacy-web.md for migration paths.
+  business_expectation: |
+    Both human users and agent clients (Claude Code / Codex /
+    OpenClaw) get explicit setup + usage docs. Not "read the
+    code, figure it out yourself".
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 6 docs (install / CLI / agent-bootstrap / skill-distribution / update / legacy-web) + CLAUDE.md. agent-bootstrap.md explicitly lists which platforms are agent-ready (bilibili / douyin / kuaishou / xiaohongshu) — honest about uneven coverage.
+- id: claim-006
+  title: Repository has a LICENSE file
+  source: framework
+  source_ref: LICENSE
+  priority: critical
+  area: licensing
+  statement: |
+    LICENSE file exists at repo root. With 10K+ stars, missing
+    LICENSE is a real legal liability for adopters — many corp
+    policies forbid integrating unlicensed code.
+  business_expectation: |
+    Anyone adopting the framework knows under what terms; companies
+    can include it in their stack without legal review escalation.
+  status: failed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'No LICENSE / COPYING file at repo root. GitHub API confirms licenseInfo: null. README does have a "📜 许可证" section but no LICENSE file at the canonical path. With 10K+ stars this triggers the larger -5 penalty (10K+ tier).'
+- id: claim-007
+  title: Anti-bot stealth setup exists for browser automation
+  source: utils/stealth.min.js + utils/browser_hook.py
+  source_ref: utils/
+  priority: high
+  area: anti-bot-resilience
+  statement: |
+    utils/stealth.min.js is the real puppeteer-extra-stealth bundle
+    (auto-generated 2024-06-10 from
+    berstend/puppeteer-extra/extract-stealth-evasions). browser_hook.py
+    sets the standard Chrome flags for automation evasion
+    (--disable-blink-features=AutomationControlled, no-sandbox, etc.).
+  business_expectation: |
+    Each platform's anti-automation detection is at least addressed.
+    Whether it actually evades today's anti-bot is not provable
+    statically, but the structure is in place.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: 'stealth.min.js is the canonical puppeteer-stealth file (auto-generated 2024-06-10). browser_hook.py 17 lines — tiny but applies the standard 6-flag setup. Note: stealth.min.js was last regenerated mid-2024; platforms iterate anti-bot frequently, so the protection has aged ~16 months.'
+- id: claim-008
+  title: Build/distribution metadata complete (pyproject + uv.lock + Dockerfile)
+  source: framework
+  source_ref: pyproject.toml + uv.lock + Dockerfile
+  priority: medium
+  area: distribution
+  statement: |
+    pyproject.toml declares the package name + version + console
+    script. uv.lock pins dependencies for reproducible installs.
+    Dockerfile exists for containerized deployment.
+  business_expectation: |
+    Contributors can install reproducibly; users can deploy in a
+    container without deps-hell.
+  status: passed
+  last_run: runs/2026-05-05/run-static-checks
+  note: pyproject.toml + uv.lock + Dockerfile + .dockerignore + start-win.bat + conf.example.py. Multiple install paths covered.
+- id: claim-009
+  title: Live end-to-end upload to one of the 7 platforms succeeds
+  source: README "💡功能特性" promises live uploads
+  source_ref: examples/upload_*.py
+  priority: critical
+  area: end-to-end
+  statement: |
+    Pick one platform with a real account, run the relevant
+    examples/upload_*.py against a real video, verify the upload
+    lands on the platform (visible in the platform's content list)
+    + the script exits cleanly. Repeat once per platform claimed
+    in the README "✅" column.
+  business_expectation: |
+    "✅ 视频上传" in the platform table is not a wishlist —
+    it actually pushes a video this week without manual
+    intervention.
+  evidence_needed: |
+    molecule level — needs a real account on at least one platform
+    + a test video + a logged session. Recommend douyin first
+    (README says "当前主线重构最完整"). Save the script output +
+    a screenshot of the uploaded video on the platform.
+  status: untested
+- id: claim-010
+  title: Two parallel xiaohongshu uploaders are not a partial-migration trap
+  source: uploader/xhs_uploader vs uploader/xiaohongshu_uploader
+  source_ref: uploader/
+  priority: high
+  area: code-hygiene
+  statement: |
+    Either (a) one xiaohongshu uploader is documented as the
+    canonical one and the other is marked deprecated/legacy in
+    code or docs, OR (b) both are intentional and serve different
+    use cases (e.g., browser-version vs API-version) with clear
+    docs explaining when to use which.
+  business_expectation: |
+    A new user picking which xhs uploader to import doesn't need
+    to read both modules + their git history to figure it out.
+  status: failed_partial
+  last_run: runs/2026-05-05/run-static-checks
+  note: |
+    Both uploader/xhs_uploader/ and uploader/xiaohongshu_uploader/ exist with main.py.
+    xhs_uploader has accounts.ini + xhs_login_qrcode.py (more elaborate);
+    xiaohongshu_uploader is slimmer. README implies xiaohongshu is the active path
+    ("浏览器自动化，CLI/Skill 已接入") but neither folder has a clear
+    deprecation marker. Plus: the example scripts have BOTH upload_video_to_xhs.py
+    AND upload_video_to_xiaohongshu.py — confusing. Real code-hygiene gap.
