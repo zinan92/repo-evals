@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bucket="usable">
+<html lang="en" data-bucket="usable" data-category="available">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,6 +53,367 @@ html[data-bucket="reusable"]      { --bucket:#60a5fa; --bucket-bg:rgba(96,165,25
 html[data-bucket="recommendable"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
 html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
 
+/* 4-category theming (2026-05-05). Replaces the per-tier accent
+   so the page color tracks the top-level category, not the fine
+   tier inside it. */
+html[data-category="production"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-category="available"]  { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-category="risky"]      { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+/* --- Category chip (above score number) --- */
+.category-chip {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 10px 18px; margin-bottom: 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: 999px;
+}
+.category-emoji { font-size: 22px; line-height: 1; }
+.category-text { display: flex; flex-direction: column; line-height: 1.25; }
+.category-name {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--bucket); font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.category-blurb { font-size: 13px; color: var(--text-2); }
+
+/* --- Cost chip (one-line cost summary near the score) --- */
+.cost-chip {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  font-size: 14px; line-height: 1.55; color: var(--text);
+}
+.cost-label {
+  display: block;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}
+.cost-body { color: var(--text-2); }
+
+/* --- Layer strip (atom · molecule · compound) ---------------------- */
+.layer-strip-section { margin-bottom: 40px; }
+.layer-strip {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 0;
+}
+@media (max-width: 720px) {
+  .layer-strip { grid-template-columns: 1fr; }
+  .layer-strip-arrow { display: none; }
+}
+.layer-strip-card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 22px 22px 24px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: opacity .15s, border-color .15s;
+}
+.layer-strip-card.is-dim { opacity: 0.42; }
+.layer-strip-card.is-active {
+  background: var(--bucket-bg);
+  border-color: var(--bucket-soft);
+  box-shadow: 0 0 0 2px var(--bucket-soft);
+}
+.layer-strip-card.layer-atom.is-active     { --bucket: #2d7866; --bucket-bg: rgba(45,120,102,0.10); --bucket-soft: rgba(45,120,102,0.4); }
+.layer-strip-card.layer-molecule.is-active { --bucket: #5a3aa1; --bucket-bg: rgba(192,132,252,0.10); --bucket-soft: rgba(192,132,252,0.4); }
+.layer-strip-card.layer-compound.is-active { --bucket: #a13d30; --bucket-bg: rgba(248,113,113,0.10); --bucket-soft: rgba(248,113,113,0.4); }
+.layer-strip-emoji { font-size: 32px; line-height: 1; }
+.layer-strip-name {
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text); font-weight: 700;
+}
+.layer-strip-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
+.layer-strip-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); color: var(--text-3);
+  padding: 0 8px;
+}
+
+/* --- Category strip (4-zone score bar with pointer) ---------------- */
+.category-strip-section { margin-bottom: 40px; }
+.cat-strip-wrap { position: relative; margin-bottom: 14px; }
+.cat-strip {
+  display: flex; gap: 4px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cat-zone {
+  padding: 14px 14px 16px;
+  text-align: center;
+  background: var(--surface-2);
+  opacity: 0.55;
+  transition: opacity .15s;
+}
+.cat-zone.is-active { opacity: 1; }
+.cat-zone-emoji { font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.cat-zone-name {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text); font-weight: 600;
+}
+.cat-zone-range { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }
+.cat-zone-dont_use.is-active   { background: rgba(248, 113, 113, 0.18); }
+.cat-zone-risky.is-active      { background: rgba(245, 158, 11, 0.18); }
+.cat-zone-available.is-active  { background: rgba(96, 165, 250, 0.18); }
+.cat-zone-production.is-active { background: rgba(74, 222, 128, 0.18); }
+
+.cat-pointer-lane {
+  position: relative; height: 32px;
+  margin-top: 6px;
+}
+.cat-pointer {
+  position: absolute; top: 0; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--font-mono);
+}
+.cat-pointer-arrow { color: var(--bucket); font-size: 14px; line-height: 1; }
+.cat-pointer-score { font-size: 13px; color: var(--bucket); font-weight: 700; line-height: 1.2; }
+
+.cat-summary {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}
+.cat-summary-headline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-summary-emoji { font-size: 18px; }
+.cat-summary-name { font-family: var(--font-mono); font-size: 12px; color: var(--bucket); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.cat-summary-score { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.cat-summary-blurb { font-size: 14px; color: var(--text-2); }
+.cat-summary-production { --bucket: #4ade80; }
+.cat-summary-available  { --bucket: #60a5fa; }
+.cat-summary-risky      { --bucket: #f59e0b; }
+.cat-summary-dont_use   { --bucket: #f87171; }
+
+/* --- Similar repos comparison ------------------------------------- */
+.similar-section { margin-bottom: 80px; }
+.similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
+.similar-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+.similar-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.similar-card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.similar-card-name { color: var(--text); font-size: 14px; text-decoration: none; }
+.similar-card-name:hover strong { text-decoration: underline; }
+.similar-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.similar-cat-pill {
+  font-family: var(--font-mono); font-size: 10.5px; padding: 3px 9px;
+  border-radius: 999px; background: var(--surface-2); color: var(--text-2);
+  letter-spacing: 0.06em; white-space: nowrap;
+}
+.similar-cat-pill.cat-production { color: #4ade80; }
+.similar-cat-pill.cat-available  { color: #60a5fa; }
+.similar-cat-pill.cat-risky      { color: #f59e0b; }
+.similar-cat-pill.cat-dont_use   { color: #f87171; }
+.similar-layer-pill {
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 8px;
+  border-radius: 4px; background: var(--surface-2); color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.similar-layer-pill.layer-atom     { color: #6cae9d; }
+.similar-layer-pill.layer-molecule { color: #c084fc; }
+.similar-layer-pill.layer-compound { color: #f87171; }
+
+.similar-row {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 12px; padding: 8px 0; border-top: 1px solid var(--border);
+}
+.similar-row:first-of-type { border-top: 0; }
+.similar-row-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); padding-top: 2px; line-height: 1.55;
+}
+.similar-row-body { font-size: 13px; line-height: 1.55; color: var(--text-2); white-space: pre-wrap; }
+.similar-row-this  .similar-row-label { color: var(--ok); }
+.similar-row-other .similar-row-label { color: #c084fc; }
+
+.similar-pending {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+.similar-pending-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.similar-pending-row {
+  font-size: 13.5px; line-height: 1.55;
+  color: var(--text-2); white-space: pre-wrap;
+}
+.similar-pending-row + .similar-pending-row { margin-top: 8px; }
+
+/* --- Workflow diagram (atom / molecule / compound) ----------------- */
+.workflow-diagram-section { margin-bottom: 80px; }
+.wd-why {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.wd-why-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 6px;
+}
+.wd-why-body { font-size: 14px; color: var(--text-2); line-height: 1.55; white-space: pre-wrap; }
+
+.wd-legend {
+  list-style: none; padding: 0; margin: 0 0 14px;
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.wd-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.wd-legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.wd-legend-atom     { background: rgba(96, 165, 250, 0.4); }
+.wd-legend-decision { background: rgba(251, 191, 36, 0.55); transform: rotate(45deg); }
+.wd-legend-start    { background: rgba(166, 153, 138, 0.5); border-radius: 5px; }
+
+.wd-canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  overflow-x: auto;
+}
+.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+
+.wd-shape { stroke-width: 1.5; }
+.wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
+.wd-molecule { fill: rgba(192, 132, 252, 0.10); stroke: rgba(192, 132, 252, 0.55); }
+.wd-decision { fill: rgba(251, 191, 36, 0.18); stroke: rgba(251, 191, 36, 0.85); stroke-width: 2; }
+.wd-start    { fill: rgba(166, 153, 138, 0.18); stroke: rgba(166, 153, 138, 0.65); }
+.wd-end      { fill: rgba(74, 222, 128, 0.14);  stroke: rgba(74, 222, 128, 0.6); }
+
+.wd-canvas svg { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+.wd-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-anchor: middle;
+  fill: var(--text);
+  letter-spacing: 0.01em;
+}
+/* SVG text language toggle — pseudo-elements don't work in SVG, so
+   we duplicate text in EN + ZH and toggle display based on <html lang>. */
+.wd-lang-en, .wd-lang-zh { display: none; }
+html[lang="en"] .wd-lang-en { display: block; }
+html[lang="zh"] .wd-lang-zh { display: block; }
+/* CJK gets a slightly smaller size + tighter tracking so 4-character
+   labels feel even-density next to 2-character labels. */
+html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
+.wd-edge { fill: none; stroke: rgba(166, 153, 138, 0.6); stroke-width: 1.6; }
+.wd-edge-dashed { stroke-dasharray: 5,4; }
+.wd-arrowhead { fill: rgba(166, 153, 138, 0.85); }
+
+.wd-edge-label-bg {
+  fill: var(--surface-1); stroke: var(--border); stroke-width: 1;
+}
+.wd-edge-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
+/* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
+.benefits-section { margin-bottom: 80px; }
+.benefits-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 720px) {
+  .benefits-grid { grid-template-columns: 1fr; }
+}
+.benefit-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.benefit-card.benefit-without {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.15);
+}
+.benefit-card.benefit-with {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}
+.benefit-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
+}
+.benefit-icon { font-size: 16px; }
+.benefit-body {
+  font-size: 15px; line-height: 1.62;
+  color: var(--text); white-space: pre-wrap;
+}
+
+/* Concrete usage examples (lives inside the benefits section) */
+.usex-block { margin-top: 28px; }
+.usex-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 12px;
+}
+.usex-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.usex-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.usex-row { display: flex; flex-direction: column; gap: 4px; }
+.usex-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+}
+.usex-body { font-size: 13.5px; line-height: 1.55; color: var(--text); }
+.usex-row.usex-quote .usex-body {
+  margin: 0; padding: 10px 14px;
+  border-left: 3px solid var(--bucket);
+  background: var(--bucket-bg);
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--text); border-radius: 0 4px 4px 0;
+  font-style: normal;
+}
+.usex-row.usex-quote .usex-body::before { content: "\201C"; color: var(--bucket); margin-right: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-quote .usex-body::after { content: "\201D"; color: var(--bucket); margin-left: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-what .usex-body { color: var(--text-2); }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
@@ -105,7 +466,7 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {
   background: var(--text); color: var(--bg);
 }
 
-.hero { padding: 24px 0 72px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }
+.hero { padding: 16px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
 
 .eyebrow {
   font-family: var(--font-mono); font-size: 11px;
@@ -133,7 +494,7 @@ h1.repo-title {
   font-size: clamp(18px, 2vw, 22px);
   line-height: 1.45; font-weight: 400;
   color: var(--text); max-width: 62ch;
-  margin: 0 0 72px;
+  margin: 0;
 }
 
 .verdict-block { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }
@@ -409,7 +770,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-section { margin-bottom: 96px; }
+section { margin-bottom: 56px; }
 
 .capabilities-grid {
   display: grid;
@@ -883,34 +1244,49 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
     <p class="tagline"><span class="i18n" data-en="The official @remotion/skills package — one Claude/Codex/Cursor skill (`remotion-best-practices`, 340 lines) plus 35 deep-dive markdown rules covering audio, captions, ffmpeg, fonts, lottie, mapbox, and more. Lives inside the Remotion monorepo; not published on npm; consumed by Remotion&#x27;s own tooling." data-zh="Remotion 官方 @remotion/skills 包：一个 Claude/Codex/Cursor skill（remotion-best-practices，340 行）+ 35 个细分规则文档（audio/captions/ffmpeg/fonts/lottie/mapbox 等）。在 Remotion monorepo 里维护，没发到 npm，由 Remotion 自家工具链消费。"></span></p>
 
-    <div class="verdict-block">
-      <div>
-        <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="score-hero tier-self"><div class="score-hero-row"><span class="score-emoji">🛠</span><span class="score-num">72</span><span class="score-denom">/ 100</span></div><div class="score-tier"><span class="i18n" data-en="Self-use OK" data-zh="自用 OK"></span></div><p class="score-blurb"><span class="i18n" data-en="Use it yourself; not yet ready to recommend to others." data-zh="你自己日常用没问题，还不到推荐给陌生人的程度。"></span></p></div>
-      </div>
-
-      <div class="verdict-meta">
-        <div class="layer-row"><span class="layer-pill layer-atom" title="atom"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Atom" data-zh="原子"></span></span></div>
-
-        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 5 <span class="i18n" data-en="total" data-zh="共"></span></div>
-        <div class="stats-bar"><span class="s-pass" style="flex: 4"></span><span class="s-skip" style="flex: 1"></span></div>
-        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">4</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">1</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
-
-        <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+9</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+15</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+3</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">+5</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
-      </div>
-    </div>
   </header>
 
-  <section class="scenarios-section"><div class="section-head"><h2><span class="i18n" data-en="Use it for / Don't use it for" data-zh="什么时候用 / 什么时候别用"></span></h2></div><ul class="scenarios"><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Anyone using Remotion to make videos in React who wants their AI agent (Claude Code / Cursor / Codex) to follow official Remotion best practices." data-zh="用 Remotion 在 React 里做视频、并希望 AI agent 跟着官方最佳实践走的开发者。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Want curated guidance on specific Remotion sub-topics (audio, captions, ffmpeg, fonts, lottie, mapbox)." data-zh="想要 Remotion 各子主题（audio / captions / ffmpeg / fonts / lottie / mapbox）的精选规则参考。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t try to `npm install @remotion/skills` — it&#x27;s a private package, registry returns 404." data-zh="别试图 `npm install @remotion/skills` —— private 包，npm registry 返 404。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t expect a polished public README; the value is inside SKILL.md and rules/, not the front page." data-zh="别期待公开 README 写得好 —— 价值在 SKILL.md 和 rules/ 里，不在仓库门面。"></span></li></ul></section>
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一层?"></span></h2></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-active"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-dim"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+
+  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:72%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">72</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 72 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div></section>
+
+  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-icon">👤</span><span class="i18n" data-en="Who this is for" data-zh="谁会用上它"></span></div><div class="benefit-body"><span class="i18n" data-en="A React developer using Remotion to programmatically generate videos (product demos, automated marketing clips, data-driven visualisations) — and using an AI coding agent (Claude Code / Cursor / Codex) to write the Remotion code. You want the agent to follow the official idioms, not invent its own." data-zh="用 Remotion 在 React 里做程序化视频(产品演示 / 自动化营销片 / 数据可视化)的开发者,同时让 AI 编程 agent(Claude Code / Cursor / Codex)写 Remotion 代码。你希望 agent 走官方惯例,不要自由发挥。"></span></div></article>
+<article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-icon">🎯</span><span class="i18n" data-en="When you'd reach for it" data-zh="什么时候用上"></span></div><div class="benefit-body"><span class="i18n" data-en="You&#x27;re about to ask the agent to write a non-trivial Remotion component — captions on a clip, a Lottie animation embed, a custom ffmpeg pre-process, or a font-loading setup. You don&#x27;t want to spend 20 minutes correcting it after, and you don&#x27;t want to read 35 doc pages yourself." data-zh="你准备让 agent 写一个非平凡的 Remotion 组件 —— 视频字幕、嵌入 Lottie 动画、自定义 ffmpeg 预处理、字体加载。你不想 agent 写完再花 20 分钟修,也不想自己读 35 页文档。"></span></div></article>
+<article class="benefit-card benefit-without"><div class="benefit-eyebrow"><span class="benefit-icon">😩</span><span class="i18n" data-en="What you'd do without it" data-zh="没它的时候怎么办"></span></div><div class="benefit-body"><span class="i18n" data-en="Two options. (1) Let the agent invent its own approach — it&#x27;ll usually pick a generic React pattern that works in dev but breaks at render time (timing off, audio out of sync, fonts not loaded by frame 0). (2) Read the relevant 3-5 markdown rules manually before each task and inject them as context. Tedious; you forget which rules you&#x27;ve already loaded." data-zh="两条路。(1) 让 agent 自由发挥 —— 通常会写一个 dev 模式能跑、render 时坏掉的通用 React 写法(时序对不上 / 音频不同步 / 字体在第 0 帧没加载好)。(2) 每次任务前自己读 3-5 个相关规则文档手动塞进上下文。烦,而且忘了哪些已经塞过。"></span></div></article>
+<article class="benefit-card benefit-with"><div class="benefit-eyebrow"><span class="benefit-icon">✨</span><span class="i18n" data-en="What having it changes" data-zh="有它之后变化在哪"></span></div><div class="benefit-body"><span class="i18n" data-en="The skill auto-fires when the agent recognises a Remotion task and pulls in `remotion-best-practices` (340 lines) plus the matching deep-dive rule from `rules/` (35 markdown files: 3d, audio, captions, ffmpeg, fonts, lottie, mapbox, ...). Total reference surface ≈ 110 KB of curated, official guidance. Agent writes Remotion code that renders correctly the first time." data-zh="agent 识别到 Remotion 任务时自动触发,加载 `remotion-best-practices`(340 行)加上 `rules/` 里对应的细分文档(35 个: 3d / audio / captions / ffmpeg / fonts / lottie / mapbox 等)。总参考资料 ≈ 110 KB 官方精选指引。agent 写出来的 Remotion 代码第一次 render 就能正确出片。"></span></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A startup founder programmatically generating product-demo videos for inside-sales follow-ups" data-zh="创业者程序化生成产品演示视频给销售跟进用"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Add captions synced to the voiceover audio for this 60-second product demo Remotion composition" data-zh="给这个 60 秒的产品演示 Remotion composition 加和配音同步的字幕"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Agent loads the captions rule (rules/captions.md) + the audio rule (rules/audio.md). Writes the caption component using Remotion&#x27;s recommended SRT-to-frame conversion, ensures useAudioData syncs correctly with frame timing. Renders correctly the first time — captions don&#x27;t drift relative to voice." data-zh="agent 加载 captions 规则(rules/captions.md) + audio 规则(rules/audio.md)。用 Remotion 推荐的 SRT-to-frame 写法做字幕组件,确保 useAudioData 跟帧时间正确同步。第一次 render 就出片,字幕不会跟人声错位。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A motion designer wanting a Lottie animation embedded in a Remotion video for a campaign asset" data-zh="动效设计师想把 Lottie 动画嵌进 Remotion 视频,做活动素材"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Embed this Lottie file at frames 60-180 with a fade-out — make sure it renders correctly in production, not just dev" data-zh="把这个 Lottie 嵌进第 60-180 帧,带渐隐效果 —— 要在生产 render 也对,不只是 dev 模式"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Agent loads rules/lottie.md, picks @lottiefiles/react-lottie-player with the documented frame-driven control pattern (not autoplay), uses interpolate() for the fade. Production render works because the Lottie player is wrapped per the official pattern, not the generic React import." data-zh="agent 加载 rules/lottie.md,选 @lottiefiles/react-lottie-player 用文档里推荐的&quot;按帧控制&quot;模式(不是 autoplay),用 interpolate() 做渐隐。生产 render 能跑通,因为 Lottie player 包了官方推荐的 wrapper,不是通用 React import。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A data-viz developer building a recurring &quot;weekly stats&quot; video using ffmpeg for source-clip preprocessing" data-zh="数据可视化开发者做周度&quot;weekly stats&quot;视频,用 ffmpeg 预处理素材"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Pre-process these 4 clips with ffmpeg before feeding into the Remotion compositor — strip audio, normalize fps, output to /tmp" data-zh="4 个片段用 ffmpeg 预处理一下再喂给 Remotion —— 去音频、统一帧率、输出到 /tmp"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Agent loads rules/ffmpeg.md, writes a Node script using @remotion/renderer&#x27;s bundled ffmpeg path (not system ffmpeg, which can have different feature flags), strips audio with -an + sets fps with -r. The Remotion render then accepts these clips correctly because they match Remotion&#x27;s expected frame-rate." data-zh="agent 加载 rules/ffmpeg.md,写 Node 脚本用 @remotion/renderer 内置的 ffmpeg 路径(不是系统 ffmpeg,后者特性 flag 可能不同),用 -an 去音频 + -r 设帧率。Remotion render 因为这些片段匹配预期帧率所以能接受。"></span></span></div></article></div></div></section>
+
+  
+
+  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is atom" data-zh="为什么是原子"></span></div><div class="wd-why-body"><span class="i18n" data-en="Atom — one user-invocable capability that the agent triggers when
+the task involves Remotion. Internally the skill loads the right
+sub-rule from rules/ but the user doesn&#x27;t orchestrate that — they
+write a Remotion task, the skill picks the relevant rules.
+" data-zh="Atom — one user-invocable capability that the agent triggers when
+the task involves Remotion. Internally the skill loads the right
+sub-rule from rules/ but the user doesn&#x27;t orchestrate that — they
+write a Remotion task, the skill picks the relevant rules.
+"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 748 104" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M204,52.0 C244.0,52.0 244.0,52.0 284,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M464,52.0 C504.0,52.0 504.0,52.0 544,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="24" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-start"/><text x="114.0" y="49.0" class="wd-label wd-lang-en">Remotion task</text><text x="114.0" y="49.0" class="wd-label wd-lang-zh">Remotion 任务</text><text x="114.0" y="63.0" class="wd-label wd-lang-en">(write a component / scene / asset)</text><text x="114.0" y="63.0" class="wd-label wd-lang-zh">(写组件 / 场景 / 素材)</text></g><g class="wd-node wd-type-atom"><rect x="284" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="374.0" y="49.0" class="wd-label wd-lang-en">@remotion/skills</text><text x="374.0" y="49.0" class="wd-label wd-lang-zh">@remotion/skills</text><text x="374.0" y="63.0" class="wd-label wd-lang-en">(SKILL.md + 35 rule docs)</text><text x="374.0" y="63.0" class="wd-label wd-lang-zh">(SKILL.md + 35 个规则)</text></g><g class="wd-node wd-type-end"><rect x="544" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-end"/><text x="634.0" y="49.0" class="wd-label wd-lang-en">Render-correct Remotion code</text><text x="634.0" y="49.0" class="wd-label wd-lang-zh">render 一次过的代码</text><text x="634.0" y="63.0" class="wd-label wd-lang-en">(first try)</text><text x="634.0" y="63.0" class="wd-label wd-lang-zh">(first try 通过)</text></g></svg></div></section>
+
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/anthropics--skill-creator/verdicts/2026-05-05-verdict.html"><strong>anthropics/skill-creator</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-production">🏭 <span class="i18n" data-en="Production-ready" data-zh="可用于生产"></span> · 81</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both are atom-shaped methodology skills — single user-invocable capability with deep guidance inside, no LLM-runtime branching. Both teach an AI agent how to do a specific kind of work the right way." data-zh="都是 atom 形态的方法论 skill —— 单一可调用能力,内部含深度指引,运行时不让 LLM 分支。都教 AI agent 用正确方式做特定工作。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="@remotion/skills wins at" data-zh="@remotion/skills 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Domain depth — 110 KB of curated, official Remotion guidance across 36 documents. When you&#x27;re writing Remotion code, this is the most concentrated source of &quot;how to do it right&quot; that exists." data-zh="领域深度 —— 36 个文档共 110 KB 的官方 Remotion 精选指引。你写 Remotion 代码时,这是&quot;怎么做对&quot;最集中的来源。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="skill-creator wins at" data-zh="skill-creator 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Domain breadth — teaches you to write *new* skills with correct frontmatter, scoped descriptions, proper script gating. Necessary tool when you need a skill for a domain that doesn&#x27;t have one yet." data-zh="领域广度 —— 教你怎么写&quot;新&quot;skill(frontmatter 正确、描述精准、script 触发合理)。当某个领域还没现成 skill 时你需要它。"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/gooseworks-ai--goose-skills/verdicts/2026-05-04-verdict.html"><strong>gooseworks-ai/goose-skills</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 68</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both are domain-specific skill bundles maintained by the same team that builds the underlying tool — Remotion bundles skills for the Remotion video framework, Goose bundles skills for the Goose agent runtime." data-zh="都是底层工具开发团队维护的领域特定 skill 合集 —— Remotion 给 Remotion 视频框架捆 skill,Goose 给 Goose agent 运行时捆 skill。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="@remotion/skills wins at" data-zh="@remotion/skills 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Single-domain depth (just video / Remotion). When that&#x27;s your domain, this is more useful than a multi-domain catalog." data-zh="单领域深度(只 Remotion 视频)。如果这是你的领域,比多领域合集更管用。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="goose-skills wins at" data-zh="goose-skills 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Multi-domain breadth + actively published distribution. Remotion&#x27;s package is `private: true` and not on npm; Goose-skills is conventionally distributed." data-zh="多领域 + 正常发布渠道。Remotion 的包是 `private: true` 不上 npm;goose-skills 走常规分发。"></span></div></div></article></div></section>
 
   <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>git clone + copy skills/remotion/ to ~/.claude/skills/</code></td><td>any</td><td><span class="badge complexity-moderate">moderate</span></td></tr><tr><td><code>Inside Remotion monorepo (intended path)</code></td><td>any</td><td><span class="badge complexity-easy">easy</span> <span class="badge"><span class="i18n" data-en="internal" data-zh="内部用法"></span></span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">📡</span><span class="i18n" data-en="Works offline after install" data-zh="装完之后可离线运行"></span></li><li><span class="flag-icon">🔒</span><span class="i18n" data-en="Private npm package — not on registry" data-zh="私有 npm 包 —— 不在公开 registry 上"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">Anthropic Claude / Cursor / Codex</div><div class="service-purpose">LLM that consumes the skill</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-paid"><span class="i18n" data-en="💰 Paid API key" data-zh="💰 需付费 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Standard agent-side cost</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Google Fonts CDN</div><div class="service-purpose">Font loading at course render time</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Optional — only used if rendered course imports fonts</div></div></div></div></section>
 
   <div class="pull-quotes">
-    <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Anyone using Remotion to make videos in React who wants their AI agent (Claude Code / Cursor / Codex) to follow the official Remotion best practices, not invent its own." data-zh="用 Remotion 在 React 里做视频、并且让 AI agent（Claude Code / Cursor / Codex）跟着官方最佳实践走、不要自由发挥的人。"></span></div></section>
-    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="The repo&#x27;s public README is one sentence (&quot;internal package, no documentation&quot;); the value lives inside SKILL.md and rules/. Because the package is `private: true`, you can&#x27;t `npm install @remotion/skills` — to use it standalone you&#x27;d need to clone the repo and copy SKILL.md + rules/ into your AI agent&#x27;s skills directory. The Root.tsx inside src/ is a Remotion studio test-harness, not a delivery surface.
-" data-zh="仓库公开 README 只有一句话（&quot;internal package, no documentation&quot;），真正的内容在 SKILL.md 和 rules/。因为 package 标了 private: true，npm 装不到 `@remotion/skills`；想单独用就得 clone 仓库把 SKILL.md + rules/ 复制到自己的 AI agent skills 目录。src/Root.tsx 是个 Remotion studio 的自测台，不是对外的产品入口。
-"></span></div></section>
+    
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="Public README is one sentence (&quot;internal package, no documentation&quot;) — value lives inside SKILL.md and rules/, not the front page. Package is `private: true` on npm, so registry returns 404 if you try `npm install @remotion/skills`. Standalone use means manual clone + copy. The Root.tsx inside src/ is a Remotion studio test-harness, not a delivery surface — don&#x27;t be confused by it." data-zh="公开 README 只有一句话(&quot;internal package, no documentation&quot;) —— 内容在 SKILL.md 和 rules/ 里,不在仓库门面。package 是 `private: true`(npm 装不到),试 `npm install @remotion/skills` 会 404。单独用就得手工 clone + 复制。src/Root.tsx 是 Remotion studio 自测台,不是对外产品入口。"></span></div></section>
   </div>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Score breakdown · how the 72 was computed" data-zh="分数明细 · 72 是怎么算的"></span></summary>
+    <div class="body">
+      <div class="claim-stats-row">
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 5 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 4"></span><span class="s-skip" style="flex: 1"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">4</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">1</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+      </div>
+      <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+9</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+15</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+3</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">+5</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
+    </div>
+  </details>
 
   <section>
     <div class="section-head">

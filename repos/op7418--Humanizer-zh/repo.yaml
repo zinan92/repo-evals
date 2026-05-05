@@ -32,35 +32,144 @@ product_view:
       on a 50-point rubric.
     zh: 一个 Claude Code 技能，把中文 AI 生成文本改写得像人说的话 — 识别并修掉 24 种 AI 味（三段式法则 / 否定式排比 / AI
       词汇 / 破折号滥用），改完还给 1-50 分打分。
-  best_for:
-    en: Writers / editors / marketers who need to clean Chinese AI-generated copy
-      before publishing, and don't already have their own style guide loaded into
-      Claude.
-    zh: 需要把中文 AI 稿件改得自然再发的写作者、编辑和运营。尤其适合还没有把自己那套风格约束塞进 Claude 的用户。
+  persona:
+    en: |-
+      A Chinese content creator who uses AI to draft articles / posts / marketing copy and now has a draft that smells of "AI 味" — predictable rhythm, "深入"/"本质"/"赋能" word choices, em-dash overuse. Typical: WeChat editor, KOL, indie blogger, Bilibili copywriter.
+    zh: |-
+      用 AI 起草中文内容(文章 / 帖子 / 营销文案),拿到草稿一看明显有"AI 味"(节奏死板 / "深入""本质""赋能"高频 / 破折号滥用)的中文创作者。典型: 公众号编辑、KOL、独立 blogger、B 站文案。
+  scenario:
+    en: |-
+      You have an 800-2000-char Chinese draft. Bones are right but the prose reads like a machine wrote it. You need it human-sounding before publishing — without losing the structure or argument.
+    zh: |-
+      你手里一份 800-2000 字的中文初稿。骨架对的,但读起来像机器写的。发出去前要让它"像人说的话",同时不丢结构和观点。
+  without_this:
+    en: |-
+      Three options, each painful. (1) Re-read for 30 minutes hunting AI tells by hand, rewrite paragraph-by-paragraph. (2) Paste into another AI saying "make this natural" — usually makes it MORE generic. (3) Skip cleanup, publish, audience clocks AI smell on the first paragraph.
+    zh: |-
+      三条路,每条都不爽。(1) 自己花 30 分钟逐段读 / 找 AI 痕迹 / 一段段重写。(2) 扔进另一个 AI 说"改自然点" —— 通常变得更俗套。(3) 不改直接发,读者第一段就闻到 AI 味。
+  with_this:
+    en: |-
+      Skill auto-fires when you paste Chinese AI-suspect text. Identifies which of 24 specific tells appear (三段式法则 / 否定式排比 / AI 词汇 / 破折号滥用 / etc.), rewrites them inline, scores the result on a 5-dim 50-point rubric so you see whether one pass is enough.
+    zh: |-
+      你贴一段中文 AI 嫌疑文本,skill 自动触发。识别出现的 24 种 AI 痕迹(三段式法则 / 否定式排比 / AI 词汇 / 破折号滥用 等),原地改写,然后用 5 维 50 分量化打分,告诉你一遍够不够。
+  cost_summary:
+    en: |-
+      Free skill (MIT). Needs Claude Code subscription. `npx skills add` install depends on an external CLI; fall back to `git clone` into ~/.claude/skills/humanizer-zh if that fails. No external API beyond Claude.
+    zh: |-
+      skill 免费(MIT)。需要 Claude Code 订阅。`npx skills add` 依赖外部 CLI,跑不通就 `git clone` 到 ~/.claude/skills/humanizer-zh。除 Claude 外不需要其他 API。
   watch_out:
-    en: It rewrites content, not just style — the humanized output is always shorter
-      and often drops claims the original invented. That's the point, but re-check
-      facts before publishing. Also, the npx install path (`npx skills add`) depends
-      on an external CLI that's not bundled; if it doesn't work, fall back to `git
-      clone` into ~/.claude/skills/humanizer-zh.
-    zh: '它改的不只是文风 — 去痕之后内容往往会变短，原文里「看起来很对但其实是 AI 编的」部分会直接被删掉。这是设计意图，但发稿前还是要自己核一下事实。另外
-      README 里的 `npx skills add` 依赖外部 CLI，不保证在你机器上能跑；跑不通就 `git clone` 到 ~/.claude/skills/humanizer-zh。
-
-      '
-  use_for:
-  - en: Writers / editors / marketers who need to clean Chinese AI-generated copy
-      before publishing.
-    zh: 需要把中文 AI 稿件改得自然再发的写作者、编辑、运营。
-  - en: Don't already have your own style-guide loaded into Claude — this gives you
-      a 24-tell humanizer + 50-point quality rubric.
-    zh: 还没把自己那套风格约束塞进 Claude —— 这个 skill 提供 24 种 AI 味识别 + 50 分质量打分。
-  dont_use_for:
-  - en: Don't trust the rewritten output without a fact-check — it drops claims the
-      original AI invented (intentional, but verify).
-    zh: 改完别直接发 —— 它会删掉原文里 AI 编的「看起来对其实是编」内容（设计如此，但发稿前自己再核一下事实）。
-  - en: Don't rely on `npx skills add` install path; if it fails, fall back to `git
-      clone` into ~/.claude/skills/humanizer-zh.
-    zh: 别只依赖 `npx skills add` —— 失败的话 `git clone` 到 ~/.claude/skills/humanizer-zh。
+    en: |-
+      It rewrites content, not just style — the humanized output is usually shorter, and the AI-fabricated claims in the original ("看起来对但是编的") get dropped on purpose. Re-check facts before publishing. Don't trust the 50-point score blindly — it grades surface tells, not the truth or persuasion.
+    zh: |-
+      它改的不止是文风 —— 去痕之后内容通常变短,原文里 AI 编的"看起来对其实是编"部分会被故意删掉。发稿前自己核事实。50 分打分别盲信 —— 它打的是表面痕迹,不是真实性或说服力。
+  examples:
+  - context:
+      en: |-
+        A WeChat editor whose contributor submitted a 1500-char article that looks suspiciously AI-edited
+      zh: |-
+        公众号编辑收到投稿,1500 字看起来像被 AI 重度加工过
+    you_say:
+      en: |-
+        Scan this article for AI tells, tell me which 24 patterns hit, rewrite the worst three paragraphs
+      zh: |-
+        扫一下这篇文章有哪些 AI 痕迹,告诉我 24 种里中了哪几条,然后帮我改最严重的三段
+    what_happens:
+      en: |-
+        Skill reads the draft, lists which patterns are present (e.g., "三段式法则: 4 occurrences; 否定式排比: 2"), rewrites flagged paragraphs inline with deltas highlighted, gives a before/after score on the 50-point rubric (e.g., 22 → 38).
+      zh: |-
+        skill 读完草稿,列出中了哪些痕迹(比如"三段式法则: 4 处;否定式排比: 2 处"),把命中段落原地改写,改前/改后高亮 diff,给一份 50 分量表的前后打分(比如 22 → 38)。
+  - context:
+      en: |-
+        A self-publishing dev who drafted a 1200-char tech blog post with Claude and wants natural Chinese voice
+      zh: |-
+        独立开发者用 Claude 起草了一篇 1200 字的中文技术博客,想让它读起来像人说的话
+    you_say:
+      en: |-
+        改完这篇博客的 AI 味,改完打分给我看
+      zh: |-
+        改完这篇博客的 AI 味,改完打分给我看
+    what_happens:
+      en: |-
+        Skill rewrites the whole thing in one pass, drops 2-3 invented "其实" / "本质上" hedges, returns the humanized version + 5-dim score (语言自然度 / 语气真诚 / 信息密度 / 情感真实 / 个性表达). You decide if a second pass is worth it.
+      zh: |-
+        skill 一遍跑完整篇,删掉 2-3 处编出来的"其实" / "本质上"虚词,给出去痕版本 + 5 维打分(语言自然度 / 语气真诚 / 信息密度 / 情感真实 / 个性表达)。你决定要不要再跑一遍。
+  - context:
+      en: |-
+        A Xiaohongshu / Bilibili KOL whose AI-drafted script feels too stiff for the platform's casual tone
+      zh: |-
+        小红书 / B 站 KOL,AI 起的脚本太板正,跟平台日常调性不搭
+    you_say:
+      en: |-
+        Rewrite this for Xiaohongshu's chatty tone — keep the structure, dump the AI vocabulary
+      zh: |-
+        按小红书的随性调性改写一下 —— 结构留着,AI 词汇全去掉
+    what_happens:
+      en: |-
+        Skill applies humanizer rules biased toward shorter sentences + casual punctuation. The 24-tell list is the same; rubric scoring still applies; output is platform-ready instead of generic-natural.
+      zh: |-
+        skill 仍按 24 痕迹规则跑,但偏向短句 + 随意标点。打分指标不变,输出是平台可用文本而不是泛泛"自然"。
+similar_repos:
+- slug: geekjourneyx--md2wechat-skill
+  shared_purpose:
+    en: |-
+      Both are atom-level Claude Code skills aimed at Chinese-content publishing — one input, one polished output, no LLM-runtime decisions. Both bet that the LLM can do the medium-specific work users don't want to do by hand.
+    zh: |-
+      都是面向中文内容发布的 atom 级 Claude Code skill —— 一个输入,一份成品,运行时 LLM 不做决策。
+  this_better_at:
+    en: |-
+      Quality / authenticity — fixes the words inside the article so it doesn't sound machine-written. Works on any Chinese content destined for any channel.
+    zh: |-
+      质量 / 真实感 —— 改文章里的字句,让它读起来不像机器写的。任何要发的中文内容都能用,不挑渠道。
+  other_better_at:
+    en: |-
+      Channel adaptation — takes already-written markdown and styles it for WeChat editor specifically. Solves "格式不像样" not "字句像 AI".
+    zh: |-
+      渠道适配 —— 拿已写好的 markdown 改成微信公众号编辑器格式。解决"排版不像样",不是"字句像 AI"。
+workflow_diagram:
+  layout: io
+  why_layer: |
+    Atom — single user-invocable capability (rewrite Chinese AI-suspect text).
+    Internally has 3 implicit phases (detect tells → rewrite → score) but the
+    user doesn't orchestrate them — one ask, one polished result.
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Chinese AI-suspect draft
+        (800-2000 chars)
+      zh: |-
+        中文 AI 嫌疑草稿
+        (800-2000 字)
+  - id: skill
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Humanizer-zh skill
+        (detect → rewrite → score)
+      zh: |-
+        Humanizer-zh skill
+        (识别 → 改写 → 打分)
+  - id: output
+    type: end
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Humanized text
+        + 50-point score
+      zh: |-
+        去 AI 味文本
+        + 50 分打分
+  edges:
+  - from: input
+    to: skill
+  - from: skill
+    to: output
 stars: 6916
 archived: false
 has_license: true

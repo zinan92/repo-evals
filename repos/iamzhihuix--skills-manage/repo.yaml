@@ -37,18 +37,187 @@ product_view:
       never observed end-to-end in this eval.
     zh: 还不到 1.0（v0.9.1）。macOS 版本未签名（首次启动需要手动运行 xattr 命令一次）。API key 在 ~/.skillsmanage/db.sqlite
       里明文存储。本次评测没有真的打开 app 跑完整流程。
-  use_for:
-  - en: Users who juggle multiple AI coding tools (Claude Code / Cursor / Codex /
-      Gemini CLI / Trae...) and haven't already adopted another skill manager.
-    zh: 同时在用多个 AI 编程工具，且还没有其它技能管理方案的用户。
-  - en: Want to edit a skill once and sync it to every tool.
-    zh: 想要一次编辑 skill、同步到所有工具。
-  dont_use_for:
-  - en: Don't store production API keys here — they go cleartext into ~/.skillsmanage/db.sqlite.
-    zh: 别在这里存生产 API key —— 明文存进 ~/.skillsmanage/db.sqlite。
-  - en: Don't expect signed macOS builds yet (pre-1.0); first launch needs a one-time
-      `xattr` workaround.
-    zh: 别期待 macOS 签名（还没到 1.0）—— 第一次启动需要手动跑一次 `xattr`。
+  persona:
+    en: |-
+      A heavy AI-coding-tool user who's installed Claude Code + Cursor + Codex + maybe Gemini CLI + Trae + 2 others — and now has the same skill folder duplicated 5 times in 5 different paths. Edit one, the others go stale. Typical: indie polyglot dev, internal-tools dev who supports multiple teams' tool choices.
+    zh: |-
+      重度 AI 编程工具用户,装了 Claude Code + Cursor + Codex + 可能还有 Gemini CLI + Trae + 2 个别的 —— 现在同一个 skill 文件夹在 5 个不同路径下复制了 5 份。改一个,其他的就过期。典型: 多栈独立开发者、给多个团队不同工具选择做内部工具的开发者。
+  scenario:
+    en: |-
+      You wrote a useful skill (or installed someone else's). You want it active in every tool you use. You don't want to maintain 5 copies, hand-update each one when you tweak the SKILL.md, or forget which copy is the latest.
+    zh: |-
+      你写了个好用的 skill(或者装了别人的)。你想让它在所有用到的工具里都生效。你不想维护 5 份副本,每次改 SKILL.md 都手动同步,或者搞不清哪份是最新的。
+  without_this:
+    en: |-
+      Two options. (1) Manually `cp -r` the skill into each tool's directory; remember to do that every edit; live with stale copies forever. (2) Pick one tool to be the "primary" and live without the skill in your other tools — you bought 5 tools, you use 1 for skills. Both lose the multi-tool-fluency value.
+    zh: |-
+      两条路。(1) 手动 `cp -r` 把 skill 复制到每家工具目录;每次改记得同步;永远跟过时副本共存。(2) 挑一家工具当"主"用,其他工具不用 skill —— 5 家工具买了,只有 1 家能装 skill。两条路都让多工具流畅性的价值丢了。
+  with_this:
+    en: |-
+      One Tauri desktop app keeps your skill catalog in `~/.agents/skills/` and symlinks each entry into every tool's expected directory. Edit once, every tool sees the change. 28 tools supported (Claude Code, Cursor, Codex, Gemini CLI, Trae, more). v0.9.1 — pre-1.0, but the central-storage + symlink design is sound.
+    zh: |-
+      一个 Tauri 桌面 app,把你的 skill catalog 存在 `~/.agents/skills/`,然后软链到每家工具期待的目录。改一次,所有工具看到。支持 28 家工具(Claude Code / Cursor / Codex / Gemini CLI / Trae 等)。v0.9.1 —— 还没到 1.0,但中心存储 + 符号链接的架构是对的。
+  cost_summary:
+    en: |-
+      Free desktop app (MIT). macOS DMG is unsigned at v0.9.1 — first launch needs `xattr -dr com.apple.quarantine ~/Applications/skills-manage.app`. No external services; doesn't talk to upstream LLM providers itself.
+    zh: |-
+      免费桌面 app(MIT)。v0.9.1 的 macOS DMG 未签名 —— 首次启动需要手动跑 `xattr -dr com.apple.quarantine ~/Applications/skills-manage.app`。不调外部服务,不跟上游 LLM provider 通信。
+  watch_out:
+    en: |-
+      Pre-1.0 (v0.9.1). API keys stored cleartext in `~/.skillsmanage/db.sqlite` — don't put your production keys there until they fix the storage format. Runtime workflow not observed in our eval (we couldn't open the app on a clean machine because the tester's `~/.agents/skills/` is in active use). Treat as beta.
+    zh: |-
+      还在 pre-1.0(v0.9.1)。API key 在 `~/.skillsmanage/db.sqlite` 明文存 —— 修好存储格式之前别放生产 key。我们评测时没真的打开 app(测试机的 `~/.agents/skills/` 在用,清空后再装会有冲突风险)。当 beta 用。
+  examples:
+  - context:
+      en: |-
+        A polyglot dev who switches between Claude Code (for big refactors) and Cursor (for quick edits) every day
+      zh: |-
+        多工具开发者每天在 Claude Code(大重构)和 Cursor(快速改)之间来回切
+    you_say:
+      en: |-
+        Add my "code-review" skill to skills-manage and sync it to Claude Code + Cursor + Codex
+      zh: |-
+        把我的 "code-review" skill 加进 skills-manage,同步到 Claude Code + Cursor + Codex
+    what_happens:
+      en: |-
+        skills-manage stores the SKILL.md at `~/.agents/skills/code-review/`, then symlinks it into `~/.claude/skills/`, `~/.cursor/skills/`, `~/.codex/skills/`. You edit the source once; all three tools pick up changes immediately.
+      zh: |-
+        skills-manage 把 SKILL.md 存到 `~/.agents/skills/code-review/`,然后软链到 `~/.claude/skills/`、`~/.cursor/skills/`、`~/.codex/skills/`。你改一次源文件,3 家工具立刻看到。
+  - context:
+      en: |-
+        A team lead distributing the company's "writing-style" skill to 8 engineers who use various AI tools
+      zh: |-
+        团队 lead 给 8 个工程师(用不同 AI 工具)分发公司的"写作规范"skill
+    you_say:
+      en: |-
+        Export this skill bundle so my team can import it into skills-manage and have it sync to whichever tool they use
+      zh: |-
+        把这个 skill 合集 export 出来,让团队 import 到 skills-manage,然后自动同步到他们各自用的工具
+    what_happens:
+      en: |-
+        Each engineer imports the bundle through the Tauri GUI, picks which tools to enable for. The same SKILL.md lands wherever they configured. Updating the bundle = re-import + re-sync; engineers don't manually maintain 5 copies.
+      zh: |-
+        每个工程师在 Tauri GUI 里 import 合集,选要启用到哪些工具。相同 SKILL.md 落到他们配的位置。更新合集 = 再 import + 再同步;工程师不用手工维护 5 份副本。
+  - context:
+      en: |-
+        A skill author iterating on their public skill bundle, testing each version across multiple tools
+      zh: |-
+        skill 作者迭代自己的公开合集,在多家工具里测每个版本
+    you_say:
+      en: |-
+        Switch the active version of "humanizer-zh" from v1.2 to v1.3 across all my tools
+      zh: |-
+        把所有工具里的 "humanizer-zh" 从 v1.2 切到 v1.3
+    what_happens:
+      en: |-
+        Toggle in skills-manage GUI; symlinks update; next time you open Claude Code or Cursor, v1.3 is what's loaded. Roll back is the same toggle.
+      zh: |-
+        在 skills-manage GUI 切一下;软链更新;下次开 Claude Code 或 Cursor 时加载的是 v1.3。回滚也是切一下。
+similar_repos:
+- slug: anthropics--skill-creator
+  shared_purpose:
+    en: |-
+      Both target the skill-developer / heavy-skill-user audience — anyone who maintains a skill catalog beyond a one-off SKILL.md. Both came out of the 2026 skill-packaging maturation moment.
+    zh: |-
+      都瞄准 skill 开发者 / 重度用户 —— 任何维护超过一份 SKILL.md 的人。都是 2026 年 skill 打包成熟的产物。
+  this_better_at:
+    en: |-
+      Distribution / synchronisation across tools. Solves the "5 copies of one skill in 5 directories" problem. Multi-tool symlink design, GUI for non-CLI users.
+    zh: |-
+      跨工具的分发 / 同步。解决"一个 skill 在 5 个目录有 5 份副本"问题。多工具符号链接架构,GUI 给非命令行用户。
+  other_better_at:
+    en: |-
+      Authoring + measurement. skill-creator helps you write a single great skill with quality measurement; skills-manage helps you distribute that skill across tools. Pair them.
+    zh: |-
+      写作 + 测量。skill-creator 帮你带质量测量地写好一个 skill;skills-manage 帮你把它分发到各家工具。配对用。
+- slug: obra--superpowers
+  shared_purpose:
+    en: |-
+      Both deal with the "many skills" problem at different scales. Superpowers ships a 14-skill methodology bundle; skills-manage helps you maintain whatever skill catalog you accumulate (including superpowers, qiushi-skill, your own).
+    zh: |-
+      都处理"很多 skill"问题,但尺度不同。Superpowers 发一个 14-skill 方法论合集;skills-manage 帮你管理你积攒下来的所有 skill(包括 superpowers / qiushi-skill / 你自己的)。
+  this_better_at:
+    en: |-
+      Catalog management — your library of skills, not someone else's bundle. Cross-tool synchronisation. Lifecycle (enable / disable / version-switch).
+    zh: |-
+      Catalog 管理 —— 你自己的 skill 库,不是别人的合集。跨工具同步。生命周期(启用 / 停用 / 切版本)。
+  other_better_at:
+    en: |-
+      Bundled methodology (TDD / brainstorming / etc.) — install once, your agent immediately has 14 skills. Different layer: superpowers is content, skills-manage is logistics.
+    zh: |-
+      捆好的方法论(TDD / brainstorming 等) —— 装一次 agent 立刻有 14 个 skill。不同层: superpowers 是内容,skills-manage 是物流。
+workflow_diagram:
+  layout: linear
+  why_layer: |
+    Molecule — a fixed pipeline (skill registered → stored centrally
+    → symlinked to each enabled tool → tool reads). User picks which
+    tools to enable but inside a registration the steps are fixed
+    and deterministic. No LLM decisions at runtime.
+  nodes:
+  - id: register
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Register / import skill
+        (via Tauri GUI)
+      zh: |-
+        注册 / 导入 skill
+        (Tauri GUI)
+  - id: store
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        Central storage
+        (~/.agents/skills/)
+      zh: |-
+        中心存储
+        (~/.agents/skills/)
+  - id: select
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Pick target tools
+        (Claude / Cursor / Codex / ...)
+      zh: |-
+        选目标工具
+        (Claude / Cursor / Codex / ...)
+  - id: symlink
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Create symlinks
+        (per-tool dir)
+      zh: |-
+        创建符号链接
+        (各家工具目录)
+  - id: out
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Skill active in every tool
+        (edit-once, sync-many)
+      zh: |-
+        所有工具里都生效
+        (改一次 / 多处同步)
+  edges:
+  - from: register
+    to: store
+  - from: store
+    to: select
+  - from: select
+    to: symlink
+  - from: symlink
+    to: out
 stars: 1551
 archived: false
 has_license: true

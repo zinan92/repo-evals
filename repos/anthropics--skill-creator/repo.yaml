@@ -55,30 +55,202 @@ product_view:
   one_liner:
     en: "Anthropic's official Claude Code skill for creating, evaluating, and iteratively improving skills — ships a full LLM-output eval harness (3 grader agents, blind-comparison, benchmark aggregation, HTML eval-viewer) so quality measurement is built into the workflow, not an afterthought."
     zh: "Anthropic 官方的「写 skill 的 skill」：创建 / 评测 / 迭代改进 skill 一站式。自带完整的 LLM 输出评测工具链（3 个评测 agent、盲对比、benchmark 聚合、HTML 评测看板），把质量测量做成工作流的一部分，不是事后补的。"
-  best_for:
-    en: "Anyone serious about building Claude Code skills who wants Anthropic's own methodology — works whether you're starting from scratch, modifying an existing skill, or trying to optimize a skill's description for better auto-triggering."
-    zh: "认真在做 Claude Code skill、想用 Anthropic 自家方法论的人。从头建、改老 skill、优化 description 触发率，三种场景都覆盖。"
+  persona:
+    en: |-
+      A skill author who has built a few Claude Code skills the seat-of-the-pants way and now realises "is my skill actually good?" can only be answered by something that grades the LLM output, not by reading the SKILL.md. Typical: developer building internal-team skills, indie author shipping a public skill bundle, methodology consultant systematising their playbook.
+    zh: |-
+      已经凭直觉写过几个 Claude Code skill 的作者,意识到"我这 skill 到底好不好"必须靠评测 LLM 输出才答得上,光看 SKILL.md 没用。典型: 给内部团队写 skill 的开发者、发公开 skill 合集的独立作者、系统化自己 playbook 的方法论顾问。
+  scenario:
+    en: |-
+      You're about to ship a new skill (or a v2 of an old one). You don't want to find out it's worse than v1 from user complaints — you want to A/B test now, with quantitative evidence, against the old version on a benchmark of real prompts.
+    zh: |-
+      你准备发一个新 skill(或者老 skill 的 v2)。你不想等用户抱怨才发现 v2 比 v1 还差 —— 你想现在就 A/B 测,用量化证据,在一组真实 prompt 上跟老版本对比。
+  without_this:
+    en: |-
+      Two options. (1) Ship and pray — discover the regression after deployment when users complain. (2) Hand-author your own eval harness: write 3 grader prompts, build a blind-comparison script, run it against your benchmark, aggregate variance — that's an afternoon to a week of plumbing per skill, before any actual evaluation happens.
+    zh: |-
+      两条路。(1) 发了再说 —— 上线后用户抱怨才发现 v2 不如 v1。(2) 自己写一套评测: 3 个评分 prompt + 盲对比脚本 + 跑你的 benchmark + 聚合方差 —— 单 skill 下午到一周的接管道工时间,真正评测还没开始呢。
+  with_this:
+    en: |-
+      You describe the skill, the harness handles draft → quantitative + qualitative evals → iterate. Three sub-agents (analyzer / blind-comparator / grader) run blind A/B between versions and grade transcripts against your expectations. eval-viewer renders 1325-line HTML report for human review. Anthropic eats their own dog food building official skills with this.
+    zh: |-
+      你描述要的 skill,流水线自动跑 草稿 → 量化 + 定性评测 → 迭代。3 个子 agent(analyzer / 盲对比 / grader) 在版本之间跑盲 A/B,按你的期望给 transcript 评分。eval-viewer 出 1325 行的 HTML 报告给人审。Anthropic 自己造官方 skill 都用这一套。
+  cost_summary:
+    en: |-
+      Apache 2.0, free skill itself. Cost is on the API side — every eval round multiplies LLM calls across grader + comparator + analyzer sub-agents. Budget: a 20-prompt benchmark with 3 graders + 1 comparator over 5 iterations is ~300 LLM calls. Setup labour: clone anthropics/skills (a catalog repo) and copy skill-creator/ into your skills dir; not a one-line install.
+    zh: |-
+      Apache 2.0,skill 本身免费。成本在 API 侧 —— 每一轮评测会多发 LLM 调用(grader + comparator + analyzer 三个子 agent)。预算: 20 条 prompt 的 benchmark × 3 grader + 1 comparator × 5 轮 ≈ 300 次 LLM 调用。安装手工成本: clone 整个 anthropics/skills(catalog 仓库)再把 skill-creator/ 拷到你的 skills 目录;不是一行命令。
   watch_out:
-    en: |
-      It's a sub-directory of anthropics/skills (catalog repo); to install you have to clone the whole catalog and copy this one folder, not `npm install`. The eval harness needs Anthropic API keys + can rack up token cost on iterative improvement loops. Sub-agents (analyzer / comparator / grader) each spawn additional LLM calls per eval round — budget accordingly. It's heavyweight: 485-line SKILL.md and 9 scripts means more surface to learn than a typical 100-line skill.
-    zh: |
-      这是 anthropics/skills（catalog 仓库）的子目录；要装得 clone 整个 catalog 然后把 skill-creator 这个文件夹拷出来，不能 `npm install`。评测工具链需要 Anthropic API key + 迭代改进 loop 烧 token 比较多。3 个 sub-agent（analyzer / comparator / grader）每轮评测都各自发 LLM 调用，要先做预算。skill 本身比较重：485 行 SKILL.md + 9 个脚本，比一般 100 行的 skill 学习量大。
-  use_for:
-    - en: "Designing a new Claude Code skill from scratch — let it walk you through draft → eval → iterate."
-      zh: "从零设计一个新的 Claude Code skill —— 让它带你走完「草稿 → 评测 → 迭代」全流程。"
-    - en: "Optimizing the description of an existing skill so auto-discovery picks it more reliably."
-      zh: "优化现有 skill 的 description，提升 auto-discovery 命中率。"
-    - en: "Running quantitative benchmarks (with variance analysis) on a skill before shipping."
-      zh: "skill 发布前跑量化 benchmark（带方差分析）确认稳定性。"
-    - en: "Blind-comparing two versions of a skill to decide which one to keep."
-      zh: "盲对比两个版本的 skill，决定保留哪个。"
-  dont_use_for:
-    - en: "Don't expect a quick install — you need to clone anthropics/skills and copy skill-creator/ into your skills directory yourself."
-      zh: "别期待一键装 —— 要 clone 整个 anthropics/skills 然后把 skill-creator/ 拷到自己的 skills 目录。"
-    - en: "Don't run iterative improvement loops without setting a token budget — each round multiplies LLM calls across grader/comparator/analyzer agents."
-      zh: "迭代改进 loop 不设 token 预算别跑 —— 每一轮 grader/comparator/analyzer 都会各自 LLM 调用，叠加很快。"
-    - en: "Don't use this for trivial 50-line skills — the overhead isn't worth it; just hand-write SKILL.md."
-      zh: "50 行小 skill 别动用这个 —— 学习成本不值得，直接手写 SKILL.md 更快。"
+    en: |-
+      Sub-directory of anthropics/skills (catalog repo) — `npm install` doesn't work. Heavyweight: 485-line SKILL.md and 9 Python scripts to learn. Don't run iterative loops without a token budget — costs multiply per round. Not worth it for trivial 50-line skills; just hand-write those.
+    zh: |-
+      anthropics/skills(catalog 仓库)的子目录 —— `npm install` 装不了。比较重: 485 行 SKILL.md + 9 个 Python 脚本要学。不设 token 预算别跑迭代 loop —— 每轮成本翻倍。50 行的小 skill 别动这个,直接手写更快。
+  examples:
+  - context:
+      en: |-
+        A skill author shipping v2 of a domain-specific skill (say, an SQL-writing skill) and worried v2's broader description hurt auto-trigger precision
+      zh: |-
+        准备发某领域 skill v2(比如 SQL 写作 skill)的作者,担心 v2 更宽的 description 反而让 auto-trigger 精度下降
+    you_say:
+      en: |-
+        Run skill-creator's blind-compare on my SQL skill v1 vs v2 against a benchmark of 30 SQL-related prompts + 20 unrelated prompts; tell me which version has better trigger precision
+      zh: |-
+        用 skill-creator 的盲对比跑我 SQL skill v1 vs v2,benchmark 30 个 SQL 相关 prompt + 20 个不相关 prompt;告诉我哪个版本 trigger 精度更高
+    what_happens:
+      en: |-
+        Comparator agent runs each prompt blind through both versions, grader scores each transcript on did-it-trigger + answer-quality, analyzer aggregates 50 prompts × 2 versions × 3 trial runs into a variance-aware HTML report. You see "v2 lost 12% on unrelated prompts due to broader description; v1 wins on trigger precision."
+      zh: |-
+        comparator agent 把每条 prompt 盲跑两个版本,grader 给每个 transcript 按"是否触发 + 回答质量"打分,analyzer 把 50 prompt × 2 版本 × 3 重复 聚合成带方差的 HTML 报告。你看到"v2 因为 description 更宽,在不相关 prompt 上多触发 12%;v1 trigger 精度更高"。
+  - context:
+      en: |-
+        A team lead reviewing a junior's first skill submission to the company skill registry
+      zh: |-
+        团队 lead 审核新人提交到公司 skill 注册表的第一个 skill
+    you_say:
+      en: |-
+        Use skill-creator to grade this submitted skill on draft-quality, trigger-fitness, and output-faithfulness; flag concrete improvements
+      zh: |-
+        用 skill-creator 给这个提交的 skill 打分(草稿质量 / trigger 合理度 / 输出忠实度),列出具体改进项
+    what_happens:
+      en: |-
+        Analyzer dissects SKILL.md (frontmatter checks, description-vs-trigger-pattern alignment), grader runs 10 sample prompts and scores transcript faithfulness, eval-viewer renders the result. You hand back the report with concrete "fix L42, your description triggers on Q3 but not Q9" feedback instead of "looks fine."
+      zh: |-
+        analyzer 拆解 SKILL.md(frontmatter 检查 / description 与 trigger 是否对齐),grader 跑 10 条样本 prompt 给 transcript 忠实度打分,eval-viewer 出报告。你给新人的反馈是具体的"修第 42 行,你的 description 在 Q3 触发但 Q9 不触发",不是"看起来还行"。
+  - context:
+      en: |-
+        An indie skill author preparing the first public release of a skill bundle on GitHub
+      zh: |-
+        独立作者准备在 GitHub 第一次公开发布一个 skill 合集
+    you_say:
+      en: |-
+        Run a 50-prompt eval on each of my 5 skills + dump a benchmark report I can include in the README so users see why this is calibrated
+      zh: |-
+        给我 5 个 skill 各跑一次 50 条 prompt 的 evaluation,出一份 benchmark 报告我能贴进 README,让用户看到这套是经过校准的
+    what_happens:
+      en: |-
+        Harness runs all 5 skills × 50 prompts, generates per-skill HTML eval-viewer reports + a markdown summary table. You drop the table in README's "evidence" section. Public users now have a real reason to trust your bundle vs the random 100-skill catalogs out there.
+      zh: |-
+        流水线跑完 5 个 skill × 50 条 prompt,出每个 skill 的 HTML eval-viewer 报告 + 一份 markdown 汇总表。你贴到 README 的 evidence 段。读者从此有真凭实据信你这个合集,而不是跟那些随便 100 个 skill 的 catalog 一样。
+similar_repos:
+- slug: obra--superpowers
+  shared_purpose:
+    en: |-
+      Both are about making AI agents work better — but at different layers. skill-creator is meta (the tool to author skills correctly); superpowers is concrete (14 ready-made methodology skills). Often used together: superpowers for daily methodology, skill-creator when you need to write a new domain skill.
+    zh: |-
+      都是让 AI agent 工作得更好 —— 但层级不同。skill-creator 是元工具(教你正确地写 skill);superpowers 是具体方法论(14 个现成的)。经常一起用: 日常方法论用 superpowers,需要给某领域写新 skill 时用 skill-creator。
+  this_better_at:
+    en: |-
+      Quality measurement and iteration. The eval harness (3 sub-agents, blind comparison, benchmark aggregation) is the differentiator — superpowers and other skill bundles ship without one.
+    zh: |-
+      质量测量 + 迭代。评测流水线(3 子 agent / 盲对比 / benchmark 聚合) 是差异点 —— superpowers 等其他 skill 合集不带这个。
+  other_better_at:
+    en: |-
+      Ready-to-use methodology — install once, your agent immediately follows TDD / brainstorming / planning. No skill-authoring step required.
+    zh: |-
+      可以直接用的方法论 —— 装上 agent 立刻按 TDD / brainstorm / 写计划干活。不用你自己写 skill。
+- slug: HughYau--qiushi-skill
+  shared_purpose:
+    en: |-
+      Both are skill-shaped methodology — install and let the agent work according to a defined approach. Both came out of the 2026 Anthropic-skills-catalog moment when "skill packaging" matured into a real format.
+    zh: |-
+      都是 skill 形态的方法论 —— 装上让 agent 按既定方式干活。都赶上了 2026 年 Anthropic skill catalog 让"skill 打包"成熟的时刻。
+  this_better_at:
+    en: |-
+      Tooling for measurement. Anthropic's own production-grade pipeline; lets you prove your skill works, not just claim it.
+    zh: |-
+      测量工具链。Anthropic 自家生产级流水线;能让你证明 skill 真有效,不是光说。
+  other_better_at:
+    en: |-
+      Ready-to-use methodology bundle (10 skills covering contradiction analysis, investigation-first, mass-line, etc.). Different audience: when you need a methodology not when you need to author one.
+    zh: |-
+      可以直接用的方法论合集(10 个 skill 覆盖矛盾分析 / 调研优先 / 群众路线 等)。不同受众: 你需要"用"方法论,而不是"写"方法论。
+workflow_diagram:
+  layout: linear
+  why_layer: |
+    Molecule — fixed pipeline of skill-authoring atoms (analyze →
+    generate draft → run evals → compare versions → iterate). The
+    user picks the entry mode (new skill / improve / benchmark) but
+    inside the chosen mode, the pipeline is deterministic. Sub-agents
+    (analyzer / comparator / grader) are atoms wired by the harness;
+    the LLM doesn't decide which sub-agent fires — the script does.
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Skill brief
+        (or existing skill to improve)
+      zh: |-
+        skill 简介
+        (或要优化的现成 skill)
+  - id: draft
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        SKILL.md draft
+        (auto + human review)
+      zh: |-
+        SKILL.md 草稿
+        (自动 + 人工 review)
+  - id: analyzer
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Analyzer agent
+        (frontmatter / trigger fit)
+      zh: |-
+        Analyzer agent
+        (frontmatter / trigger 拟合度)
+  - id: grader
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Grader + comparator
+        (blind A/B on benchmark)
+      zh: |-
+        Grader + comparator
+        (benchmark 盲 A/B)
+  - id: viewer
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        eval-viewer
+        (1325-line HTML report)
+      zh: |-
+        eval-viewer
+        (1325 行 HTML 报告)
+  - id: out
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        Published skill
+        + auditable benchmarks
+      zh: |-
+        正式发布的 skill
+        + 可审计的 benchmark
+  edges:
+  - from: input
+    to: draft
+  - from: draft
+    to: analyzer
+  - from: analyzer
+    to: grader
+  - from: grader
+    to: viewer
+  - from: viewer
+    to: out
 
 deployment:
   installable: true

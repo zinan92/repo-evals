@@ -52,45 +52,201 @@ product_view:
     zh: 一个自建的 FastAPI + Vue 闲鱼监控看板：用自然语言写「我想要什么」，多任务并发跑 Playwright 抓页面 + 多模态 LLM 筛选，命中就推
       6 种渠道（ntfy / Bark / 企微 / Telegram / Gotify / Webhook）。一行 docker compose，SQLite，镜像自带
       Chromium。
-  best_for:
-    en: Mainland-China secondhand buyers who want a 24/7 monitor for 闲鱼 listings on
-      specific gear (cameras, MacBooks, vintage), comfortable running a Docker host
-      and pasting their own XianYu login cookie.
-    zh: 想 24/7 蹲特定型号商品（相机、MacBook、复古件）的咸鱼买家。前提：能跑 Docker，能用配套 Chrome 扩展把自己闲鱼登录 cookie
-      粘进来，自己付 LLM 账单。
+  persona:
+    en: |-
+      A Mainland-China secondhand-market buyer who wants 24/7 alerts when specific gear (vintage cameras, used MacBooks, rare collectibles) shows up at the right price on 闲鱼 (XianYu, China's biggest C2C secondhand). Comfortable running Docker, comfortable pasting their own login cookie, willing to pay LLM-call costs.
+    zh: |-
+      在中国大陆蹲二手货的买家,想 24/7 等特定商品(老相机、二手 MacBook、收藏品)在闲鱼上以合适价格出现就立刻通知。会跑 Docker,愿意贴自己的登录 cookie,自己出 LLM 调用费。
+  scenario:
+    en: |-
+      You're hunting a specific item — say a Sony A7R III in good condition under ¥8000, or a 16-inch MacBook Pro M2 Max with battery cycles under 200. New listings appear on XianYu every minute. You can't refresh the app every 10 minutes for weeks.
+    zh: |-
+      你在蹲特定货 —— 比如成色不错的 Sony A7R III 8K 以下,或者 16 寸 MacBook Pro M2 Max 循环数 200 以下。闲鱼上每分钟有新挂牌。你不可能每 10 分钟手动刷一次,刷几周。
+  without_this:
+    en: |-
+      Three options. (1) Refresh the app every 10 minutes manually for weeks; sleep through the listing that arrives at 3am for the right price. (2) Set up XianYu's built-in saved-search alerts — fires too often (false positives) or not at all (it doesn't read photos). (3) Hire a someone in your network or buy a SaaS service — costs money, gives someone else your search criteria.
+    zh: |-
+      三条路。(1) 每 10 分钟手动刷一次,刷几周;凌晨 3 点出货睡着错过。(2) 用闲鱼自带的"我想要"提醒 —— 要么误报太多(没看图),要么完全不报。(3) 让朋友帮蹲或买代蹲服务 —— 花钱 + 把搜索条件给别人。
+  with_this:
+    en: |-
+      One docker-compose. You write criteria in natural language ("Sony A7R III, body only, less than 5000 shutter actuations, under ¥8000, in Beijing or Shanghai"). Multi-task scheduler runs Playwright, the LLM analyses listing photos + descriptions against your criteria, push notifications to ntfy / Bark / WeChat Work / Telegram / Gotify / Webhook fire only on true matches. SQLite logs everything seen.
+    zh: |-
+      一个 docker-compose。你用自然语言写蹲货条件("Sony A7R III 单机身,快门 5000 次以下,8000 以内,北京或上海")。多任务调度跑 Playwright,LLM 把挂牌照片 + 描述跟你的条件对比,只在真实命中时推送 ntfy / Bark / 企微 / Telegram / Gotify / Webhook。SQLite 记录所有见过的挂牌。
+  cost_summary:
+    en: |-
+      MIT, free. You pay LLM costs (default OpenAI-compatible endpoint is modelscope.cn — China-friendly but data goes to a 3rd-party gateway; change `OPENAI_BASE_URL` if you want your own). Real XianYu account needed (cookie from companion Chrome extension). Self-hosted; Docker required.
+    zh: |-
+      MIT 免费。你付 LLM 费(默认 OpenAI 兼容端点是 modelscope.cn —— 国内友好但数据过第三方网关;介意就换 `OPENAI_BASE_URL` 到自己 endpoint)。需要真实闲鱼账号(用配套 Chrome 扩展导 cookie)。自托管,要 Docker。
   watch_out:
-    en: 'Driving a real XianYu account is the same anti-bot risk as MediaCrawler /
-      xiaohongshu-skills — XianYu does run anti-automation, and a too-aggressive task
-      can get the account limited. The default Web UI password is `admin/admin123`;
-      change it before exposing port 8000 to anything beyond localhost. The OpenAI-compatible
-      BASE_URL points at modelscope.cn by default, which is China-friendly but means
-      Wendy''s data is going to a 3rd-party model gateway unless you change it. SQLite
-      is OK for single-host; if you want HA you''d need to fork.
-
-      '
-    zh: '用真实闲鱼账号跑爬取，反风险和 MediaCrawler / xiaohongshu-skills 一样：闲鱼有反自动化检测，跑得太凶账号会被限。Web
-      UI 默认密码是 `admin/admin123`，对外暴露 8000 端口前一定改掉。`OPENAI_BASE_URL` 默认是 modelscope.cn
-      — 国内友好但你的数据会过一遍第三方模型网关，介意的话自己换 endpoint。SQLite 单机够用，要高可用得自己 fork。
-
-      '
-  use_for:
-  - en: Mainland-China secondhand buyers who want a 24/7 monitor for 闲鱼 (XianYu) listings
-      on specific gear.
-    zh: 想 24/7 蹲特定型号商品（相机、MacBook、复古件）的咸鱼买家。
-  - en: Comfortable running Docker, pasting your own XHS login cookie, paying your
-      own LLM bills.
-    zh: 能跑 Docker、能用扩展导出真实闲鱼 cookie、自己付 LLM 账单。
-  - en: Want multi-channel notifications (ntfy / Bark / 企微 / Telegram / Gotify / Webhook).
-    zh: 想要多渠道推送（ntfy / Bark / 企微 / Telegram / Gotify / Webhook）。
-  dont_use_for:
-  - en: Don't deploy to a public VPS without changing WEB_PASSWORD from default `admin123`
-      and binding port to 127.0.0.1.
-    zh: 公网 VPS 上一定先改 WEB_PASSWORD（默认是 admin123）+ 端口绑到 127.0.0.1，别裸暴。
-  - en: Don't keep OPENAI_BASE_URL on the default modelscope.cn endpoint if you mind
-      your prompts going to a third-party model gateway.
-    zh: 介意 prompt 经过第三方模型网关的话别用默认 modelscope.cn endpoint。
-  - en: Don't run aggressive monitoring — XHS anti-automation can limit your account.
-    zh: 监控频率别太激进 —— 闲鱼反自动化会限你的账号。
+    en: |-
+      Same anti-bot risk as MediaCrawler — XianYu runs anti-automation, too-aggressive scheduling gets the account limited. Default `WEB_PASSWORD=admin123` + binds 0.0.0.0:8000 — change before public exposure. Default `OPENAI_BASE_URL` is modelscope.cn (your prompts go through a third-party model gateway). SQLite single-host only; HA needs a fork.
+    zh: |-
+      跟 MediaCrawler 一样的反爬风险 —— 闲鱼有反自动化,跑太凶账号会被限。默认 `WEB_PASSWORD=admin123` + 绑 0.0.0.0:8000 —— 公网暴露前一定改。默认 `OPENAI_BASE_URL` 是 modelscope.cn(prompt 走第三方模型网关)。SQLite 单机,HA 要 fork。
+  examples:
+  - context:
+      en: |-
+        A photographer hunting a Sony A7R III for under ¥8000 with low shutter count
+      zh: |-
+        摄影师蹲 Sony A7R III,8000 以下、快门次数低的
+    you_say:
+      en: |-
+        Add task: "Sony A7R III camera body only, less than 5000 shutter actuations, under ¥8000, in Beijing or Shanghai", schedule every 5 minutes
+      zh: |-
+        加任务:"Sony A7R III 相机单机身,快门次数 5000 以下,价格 8000 以下,北京或上海",每 5 分钟跑一次
+    what_happens:
+      en: |-
+        Scheduler queues the task. Playwright opens XianYu, searches "Sony A7R III", paginates new listings. For each, LLM reads listing photos + description, decides if it meets your shutter / price / location criteria. Match → ntfy push to your phone with the listing URL. SQLite stores everything seen. False matches drop to ~0% after a day of LLM-rule tightening.
+      zh: |-
+        调度排队。Playwright 打开闲鱼搜"Sony A7R III",翻页新挂牌。每条 LLM 读照片 + 描述,判断是否符合你的快门 / 价格 / 地点条件。命中 → ntfy 推送到手机带链接。SQLite 存所有见过的。LLM 规则跑一天后误报基本降到 0%。
+  - context:
+      en: |-
+        A dev hunting a 16-inch MacBook Pro M2 Max with battery cycles under 200
+      zh: |-
+        开发者蹲 16 寸 MacBook Pro M2 Max,循环数 200 以下
+    you_say:
+      en: |-
+        Add task: "MacBook Pro 16-inch M2 Max, battery cycles under 200, no obvious dents, under ¥18000", notify via WeChat Work
+      zh: |-
+        加任务:"MacBook Pro 16 寸 M2 Max,电池循环数 200 以下,没有明显磕碰,18000 以下",企微推送
+    what_happens:
+      en: |-
+        Multi-modal LLM reads photos for dent detection — listings with visible damage get filtered out even if seller claims "九成新". Battery cycles get parsed from screenshots if seller pasted them. WeChat Work message arrives within 5 min of a true match listing being posted.
+      zh: |-
+        多模态 LLM 读照片找磕碰 —— 卖家说"九成新"但照片有明显磕痕的会被过滤。电池循环数从卖家贴的截图里解析。真命中后 5 分钟内企微通知到。
+  - context:
+      en: |-
+        A vintage-watch collector watching for specific Seiko references at the right price
+      zh: |-
+        老表收藏家在等特定型号的精工以合适价格出现
+    you_say:
+      en: |-
+        Set up 3 parallel tasks for Seiko 6309 / Seiko Pogue / Seiko Captain Willard, all in original condition, all push to Telegram
+      zh: |-
+        3 个并行任务: Seiko 6309 / Seiko Pogue / Seiko Captain Willard,都要原装状态,全部推到 Telegram
+    what_happens:
+      en: |-
+        APScheduler runs all 3 tasks concurrently. LLM filters non-original modifications (replaced bezels / aftermarket dials common on these references). 3 separate Telegram channels for the 3 tasks; you tap-to-buy as soon as a real match comes in, beating other collectors who refresh manually.
+      zh: |-
+        APScheduler 并行跑 3 个任务。LLM 过滤非原装改动(这几款常被换圈口 / 换副厂表盘)。3 个 Telegram 频道分开推送;真命中你立刻点开下单,比手动刷的藏家快一步。
+similar_repos:
+- slug: NanmiCoder--MediaCrawler
+  shared_purpose:
+    en: |-
+      Both are Python crawlers for Chinese platforms with single-platform deep-watch use case. Both ask for real account login (cookie / QR), both Playwright-driven, both vulnerable to anti-bot when scheduled aggressively.
+    zh: |-
+      都是中国平台的 Python 爬虫,做单平台深度监控。都要真实账号(cookie / 扫码),都用 Playwright,频次高都会被反爬限。
+  this_better_at:
+    en: |-
+      Single-platform deep-monitor with multi-modal LLM filtering + 6-channel notifications. The LLM analysis on listing photos is the differentiator — it filters out "looks new but actually beaten up" cases MediaCrawler can't.
+    zh: |-
+      单平台深度监控 + 多模态 LLM 过滤 + 6 渠道通知。LLM 看照片是差异点 —— 能过滤"卖家说九成新但照片磕痕明显"的 case,MediaCrawler 做不到。
+  other_better_at:
+    en: |-
+      Breadth — 7 platforms × multiple crawl modes × 8 storage backends. When you need cross-platform data analysis (not just watching one), MediaCrawler is the right tool. Larger ecosystem (48K vs 11K stars).
+    zh: |-
+      覆盖广 —— 7 平台 × 多种抓取模式 × 8 存储后端。需要跨平台数据分析(不是只盯一个)时,MediaCrawler 更合适。生态更大(48K 对 11K stars)。
+- slug: zinan92--content-downloader
+  shared_purpose:
+    en: |-
+      Both target single-platform watching/downloading with Playwright + Python. Both are personal-toolkit scope rather than full SaaS.
+    zh: |-
+      都是 Playwright + Python 单平台监控/下载。都是个人工具箱定位,不是 SaaS。
+  this_better_at:
+    en: |-
+      Production-grade implementation: Docker bundle + multi-task scheduler + multi-modal LLM + 6 notification channels + battle-tested. 11K stars validates the approach.
+    zh: |-
+      生产级实现: Docker 镜像 + 多任务调度 + 多模态 LLM + 6 渠道通知 + 久经实战。11K stars 验证可行性。
+  other_better_at:
+    en: |-
+      Different platform (Douyin) and different mode (downloading clips, not monitoring listings). Currently broken on Douyin signing. ai-goofish takes the same Playwright pattern and applies it correctly to XianYu.
+    zh: |-
+      不同平台(抖音)不同模式(下载视频,不是监控挂牌)。抖音签名当前坏了。ai-goofish 用同样 Playwright 模式但落到闲鱼,而且能跑通。
+workflow_diagram:
+  layout: linear
+  why_layer: |
+    Molecule — fixed pipeline (criteria → scheduler → Playwright →
+    LLM filter → notification). LLM is invoked at criteria-generation
+    + product-analysis stages but not for runtime routing — the
+    pipeline is the same for every listing seen. User picks tasks
+    + criteria; the engine runs them deterministically.
+  nodes:
+  - id: setup
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Natural-language criteria
+        (via Vue dashboard)
+      zh: |-
+        自然语言条件
+        (Vue dashboard 输入)
+  - id: schedule
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        APScheduler
+        (multi-task runs)
+      zh: |-
+        APScheduler
+        (多任务调度)
+  - id: scrape
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Playwright crawler
+        (cookie login → search)
+      zh: |-
+        Playwright 爬虫
+        (cookie 登录 → 搜索)
+  - id: filter
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Multi-modal LLM
+        (photos + text vs criteria)
+      zh: |-
+        多模态 LLM
+        (照片 + 文字 比对条件)
+  - id: notify
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Notification dispatch
+        (ntfy / Bark / WeChat / TG / ...)
+      zh: |-
+        推送分发
+        (ntfy / Bark / 企微 / TG / ...)
+  - id: out
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        Push to your phone
+        (only true matches)
+      zh: |-
+        推到你手机
+        (只有真命中)
+  edges:
+  - from: setup
+    to: schedule
+  - from: schedule
+    to: scrape
+  - from: scrape
+    to: filter
+  - from: filter
+    to: notify
+  - from: notify
+    to: out
 stars: 11561
 archived: false
 has_license: true

@@ -51,43 +51,202 @@ product_view:
     zh: 一个 Go 代理服务器：把你已经登录的 Gemini CLI / Antigravity / ChatGPT Codex / Claude Code
       会话包装成 OpenAI / Gemini / Claude / Codex 兼容的 HTTP API。多账号轮询、函数调用、多模态、流式、还有可嵌入的
       Go SDK。8 平台二进制，MIT，更新非常活跃。
-  best_for:
-    en: Developers who already pay for Claude Code / Codex / Gemini and want their
-      existing OAuth sessions reusable as OpenAI-compatible API endpoints — comfortable
-      running a Go binary locally.
-    zh: 已经在用 Claude Code / Codex / Gemini，想把订阅复用成 OpenAI 兼容 API 接口给自己其它工具调的开发者；本机能跑
-      Go 二进制。
+  persona:
+    en: |-
+      A developer who already pays for Claude Code / Codex / Gemini CLI and wants those subscriptions reusable as OpenAI-compatible HTTP endpoints — for their own local tools, a custom dashboard, automation scripts, or a self-hosted IDE plugin. Comfortable running a Go binary locally.
+    zh: |-
+      已经在为 Claude Code / Codex / Gemini CLI 付订阅费的开发者,想把这些订阅复用成 OpenAI 兼容的 HTTP 端点 —— 给自己本地工具 / 定制 dashboard / 自动化脚本 / 自托管 IDE 插件用。本机能跑 Go 二进制。
+  scenario:
+    en: |-
+      You have a working CLI subscription. Your other code wants to call "Claude" but expects the OpenAI API shape. Or your token expired. Or you want round-robin across 3 personal accounts so heavy work doesn't burn one quota. You don't want to write a wrapper for each provider.
+    zh: |-
+      你有可用的 CLI 订阅。但你别的代码想调"Claude",而它期待 OpenAI API 形状。或者 token 过期了。或者你想 3 个个人账号轮询,不让重活把一个配额烧光。你不想给每家 provider 写一遍 wrapper。
+  without_this:
+    en: |-
+      Three options. (1) Buy each provider's API access separately (Anthropic API + OpenAI API + Google AI), pay double for the same models you already pay CLI subscriptions for. (2) Hand-write a wrapper per provider per app — every CLI session expiry breaks something. (3) Use third-party relay services (Packy / AICodeMirror / etc.) — costs money + gives them your traffic.
+    zh: |-
+      三条路。(1) 各家 API 单独再买一次(Anthropic API + OpenAI API + Google AI),已经在付 CLI 订阅,这相当于付双份。(2) 每家 provider 每个应用各写一份 wrapper —— CLI session 一过期就坏一处。(3) 用第三方中继服务(Packy / AICodeMirror 等) —— 要钱 + 流量给他们。
+  with_this:
+    en: |-
+      One Go binary. Run it locally on your machine, point your other tools at `localhost:8317`, they think they're talking to OpenAI. Behind it: round-robin across your CLI sessions (Claude Code / Codex / Gemini / Antigravity), token refresh, function calling, multimodal, streaming. 8 OS/arch binaries pre-built; MIT; v6.10.4, 30K stars, very actively maintained.
+    zh: |-
+      一个 Go 二进制。本机跑,把其他工具指向 `localhost:8317`,它们以为自己在跟 OpenAI 说话。后面是: CLI session 轮询(Claude Code / Codex / Gemini / Antigravity)、token 刷新、function calling、多模态、流式。8 OS/arch 预编译二进制;MIT;v6.10.4,30K stars,持续维护。
+  cost_summary:
+    en: |-
+      MIT, free. Reuses CLI subscriptions you already pay for — no new API keys for the wrapped providers. Optional providers (Kimi / Vertex) need their own keys. No external services required at runtime. Token storage at `./auths/` — keep local. Self-hosted, no telemetry.
+    zh: |-
+      MIT 免费。复用你已经在付的 CLI 订阅 —— 包装的 provider 不需要新 API key。可选的 Kimi / Vertex 走它们自己的 key。运行时不需要外部服务。Token 存 `./auths/` —— 本地保管。自托管 / 无遥测。
   watch_out:
-    en: 'The repo''s README leans heavily on sponsored relay services (PackyCode,
-      AICodeMirror, BmoPlus, Poixe AI, VisionCoder, Z.ai); the OSS proxy itself is
-      independent of those, but a casual reader can mistake the sponsorship section
-      for project features. The repo runs your authenticated CLI sessions through
-      a process you don''t fully understand line-by-line — fine for local-only use,
-      but pin the version + audit before piping production traffic. Token storage
-      lives in `auths/` at runtime; keep it local.
-
-      '
-    zh: 'README 大段是赞助内容（PackyCode / AICodeMirror / BmoPlus / Poixe AI / VisionCoder
-      / Z.ai），开源代理本身和这些服务无关，但粗读时容易把广告当成功能。这个工具会代为转发你已登录的 CLI 会话 —— 本机自用够用，要给生产流量代理前一定锁版本
-      + 审计代码。运行时 token 存到 `auths/`，不要泄漏到云端。
-
-      '
-  use_for:
-  - en: Developers who already pay for Claude Code / Codex / Gemini and want their
-      existing OAuth sessions reusable as OpenAI-compatible APIs.
-    zh: 已经在用 Claude Code / Codex / Gemini，想把订阅复用成 OpenAI 兼容 API 给自己其它工具调的开发者。
-  - en: Want to embed a proxy into your own Go service via the reusable SDK (9 packages,
-      EN+CN docs).
-    zh: 想把代理嵌入自己的 Go 服务 —— 自带 9 包 SDK + 中英文文档。
-  - en: Want multi-account round-robin load balancing across Claude / Codex / Gemini.
-    zh: 想要 Claude / Codex / Gemini 多账号轮询负载均衡。
-  dont_use_for:
-  - en: Don't proxy production public traffic without auditing the code first — your
-      authenticated CLI sessions flow through it.
-    zh: 不要给生产公网流量代理 —— 它转发的是你已登录的 CLI 会话，上前先审计代码。
-  - en: Don't leak the `auths/` directory — it stores runtime OAuth tokens; keep it
-      local.
-    zh: 别把 `auths/` 目录泄漏到云盘 —— 里面存运行时 OAuth token。
+    en: |-
+      README is heavy on sponsored relay services (PackyCode / AICodeMirror / BmoPlus / Poixe AI / VisionCoder / Z.ai) — those are sponsorships, not features. The OSS proxy itself is independent. The proxy forwards your authenticated CLI sessions through code you don't fully audit line-by-line — fine for localhost; pin the version + audit before piping production traffic. `auths/` directory contains live OAuth tokens — don't sync to cloud.
+    zh: |-
+      README 大段是赞助内容(PackyCode / AICodeMirror / BmoPlus / Poixe AI / VisionCoder / Z.ai)—— 那是赞助,不是功能。开源代理本身跟这些服务无关。代理转发你已登录的 CLI session,代码你不会逐行审 —— 本机自用没问题;给生产流量代理前要锁版本 + 审代码。`auths/` 目录有活的 OAuth token —— 别同步到云盘。
+  examples:
+  - context:
+      en: |-
+        An indie dev with Claude Code subscription building a custom code-review CLI that expects OpenAI's API
+      zh: |-
+        有 Claude Code 订阅的独立开发者,在做一个自用代码 review CLI,但它期待 OpenAI API
+    you_say:
+      en: |-
+        Run cliproxy on localhost:8317 forwarding to my Claude Code session, then point my code-review CLI at OPENAI_BASE_URL=http://localhost:8317
+      zh: |-
+        在 localhost:8317 跑 cliproxy 转发到我的 Claude Code session,然后把代码 review CLI 的 OPENAI_BASE_URL 指过去
+    what_happens:
+      en: |-
+        cliproxy listens on :8317. Your code-review CLI sends OpenAI-shaped chat completion requests. cliproxy translates to Claude protocol, forwards through your CLI auth, returns OpenAI-shaped responses. Your CLI works without knowing anything changed.
+      zh: |-
+        cliproxy 监听 :8317。你的代码 review CLI 发 OpenAI 形状的 chat completion 请求。cliproxy 翻译成 Claude 协议,通过 CLI 鉴权转发,返回 OpenAI 形状的响应。你的 CLI 不知道有任何变化照常工作。
+  - context:
+      en: |-
+        A heavy user who has 3 personal Claude accounts (work / personal / experimentation) and wants automatic round-robin so no single account hits its rate limit
+      zh: |-
+        重度用户有 3 个个人 Claude 账号(工作 / 个人 / 实验),想自动轮询,任何一个都不要先撞 rate limit
+    you_say:
+      en: |-
+        Configure cliproxy with all 3 Claude OAuth sessions, round-robin mode
+      zh: |-
+        把 3 个 Claude OAuth session 都配进 cliproxy,启用 round-robin
+    what_happens:
+      en: |-
+        cliproxy round-robins each request to a different account. When one account hits rate limit, it auto-skips. Aggregate throughput is 3x; no client code change.
+      zh: |-
+        cliproxy 把每个请求轮流分给不同账号。某个账号撞 rate limit 时自动跳过。总吞吐 3 倍;客户端代码不改。
+  - context:
+      en: |-
+        A Go developer building a self-hosted SaaS that needs LLM calls, but doesn't want to bake provider-specific code into the product
+      zh: |-
+        Go 开发者做自托管 SaaS,需要调 LLM,不想把 provider 相关代码塞进产品代码
+    you_say:
+      en: |-
+        Embed the cliproxy SDK inside my Go service so I can swap providers via config
+      zh: |-
+        在我的 Go 服务里嵌入 cliproxy SDK,通过配置切 provider
+    what_happens:
+      en: |-
+        9-package Go SDK is imported. Your service exposes a single LLM interface to its own code; under the hood the SDK routes to whichever provider's CLI session is configured. Provider switch is a config change, not a code change.
+      zh: |-
+        引入 9 个 package 的 Go SDK。你的服务对自己代码暴露单一 LLM 接口;底下 SDK 根据配置路由到对应 provider 的 CLI session。换 provider 改配置,不改代码。
+similar_repos:
+- slug: zinan92--repo-evals
+  shared_purpose:
+    en: |-
+      Both are personal-toolkit Go/Python plumbing — author runs them locally, they translate / aggregate / surface things from existing systems. Both are MIT, both maintained primarily for the author's own daily use.
+    zh: |-
+      都是个人工具箱型的 Go/Python 管道 —— 作者本机跑,把已有系统的东西翻译 / 聚合 / 露出来。都是 MIT,主要为作者自己日常用。
+  this_better_at:
+    en: |-
+      Production-grade Go binary with 8 OS/arch builds and v6.10.4 release pipeline. 30K stars validates ecosystem demand. Real provider-translation work happening every minute it's running.
+    zh: |-
+      生产级 Go 二进制,8 OS/arch 构建,v6.10.4 发布流水线。30K stars 验证生态需求。运行时每分钟都在做 provider 翻译。
+  other_better_at:
+    en: |-
+      Different domain — repo-evals is for evaluating *what to install*, cliproxy is *what to run after you install everything*. Useful pair, not a comparable peer.
+    zh: |-
+      不同领域 —— repo-evals 是评测"装什么",cliproxy 是"装完之后跑什么"。配对用,不是直接同类对比。
+- slug: anthropics--skill-creator
+  shared_purpose:
+    en: |-
+      Both are author-grade tooling — official-quality (Anthropic / well-maintained CN open-source) infrastructure that the developer reaches for to make daily AI work efficient.
+    zh: |-
+      都是高质量的开发者工具 —— 官方级(Anthropic / 持续维护的中国开源)基础设施,开发者用来让日常 AI 工作更高效。
+  this_better_at:
+    en: |-
+      Plumbing layer — wraps existing CLI subscriptions into a network endpoint. Solves "how do I call my Claude session from a non-Claude tool" infrastructure problem.
+    zh: |-
+      管道层 —— 把已有 CLI 订阅包装成网络端点。解决"怎么用非 Claude 工具调我的 Claude session"这个基础设施问题。
+  other_better_at:
+    en: |-
+      Methodology layer — teaches you how to author skills with quality measurement. Different problem space; pair them when you're building tooling that needs both.
+    zh: |-
+      方法论层 —— 教你带质量测量地写 skill。不同问题空间;做工具时两个一起用。
+workflow_diagram:
+  layout: linear
+  why_layer: |
+    Molecule — fixed pipeline of (incoming HTTP request → protocol
+    translation → CLI session forwarding → response translation →
+    HTTP response). The user picks providers + accounts via config;
+    inside the pipeline, no LLM decides routing — the proxy follows
+    the config strictly. Round-robin / failover is deterministic
+    rule-based, not LLM-decided.
+  nodes:
+  - id: client
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Your tool / IDE
+        (OpenAI-shaped request)
+      zh: |-
+        你的工具 / IDE
+        (OpenAI 形状请求)
+  - id: parse
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        HTTP listener + parse
+        (OpenAI / Gemini / Claude)
+      zh: |-
+        HTTP 监听 + 解析
+        (OpenAI / Gemini / Claude)
+  - id: rotate
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Account rotator
+        (round-robin / failover)
+      zh: |-
+        账号调度
+        (轮询 / 故障切换)
+  - id: forward
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Provider forward
+        (Claude / Codex / Gemini CLI)
+      zh: |-
+        Provider 转发
+        (Claude / Codex / Gemini CLI)
+  - id: translate
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Response translator
+        (back to client format)
+      zh: |-
+        响应翻译
+        (转回客户端格式)
+  - id: out
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: |-
+        OpenAI-shaped response
+        (your tool consumes)
+      zh: |-
+        OpenAI 形状响应
+        (你的工具消费)
+  edges:
+  - from: client
+    to: parse
+  - from: parse
+    to: rotate
+  - from: rotate
+    to: forward
+  - from: forward
+    to: translate
+  - from: translate
+    to: out
 stars: 30502
 archived: false
 has_license: true

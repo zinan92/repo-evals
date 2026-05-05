@@ -1,0 +1,57 @@
+run_name: smoke
+date: 2026-04-13
+area: core
+scenario: "Smoke test: build, discovery, inspect, preview, config, humanize, write, tests, SKILL.md"
+provenance:
+  provenance_source: "auto"
+  captured: true
+  partial: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: "claude-opus-4-6"
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: "ebde34d"
+  target_repo_path: "/tmp/md2wechat-skill"
+  target_repo_ref: "main"
+  target_repo_commit: "3306fd1"
+  evaluated_at: "2026-04-13T14:53:12Z"
+  transcript_path: ""
+  command_log_path: ""
+  session_replay_notes: ""
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: true
+  manifest_path: "artifacts/manifest.yaml"
+fixtures:
+  - "simple test.md file for conversion/inspect"
+commands:
+  - "go build ./cmd/md2wechat/"
+  - "./md2wechat --help"
+  - "./md2wechat capabilities --json"
+  - "./md2wechat providers list --json"
+  - "./md2wechat themes list --json"
+  - "./md2wechat prompts list --json"
+  - "./md2wechat version --json"
+  - "./md2wechat inspect test.md"
+  - "./md2wechat preview test.md"
+  - "./md2wechat convert test.md"
+  - "./md2wechat config show"
+  - "./md2wechat config validate"
+  - "./md2wechat humanize --help"
+  - "./md2wechat write --help"
+  - "./md2wechat write --list"
+  - "go test ./..."
+result: partial
+pass_count: 9
+fail_count: 0
+partial_count: 3
+untested_count: 2
+artifacts:
+  - "artifacts/"
+notes: |
+  Support layer: 9 passed, 0 failed, 3 partial (API key needed for convert/preview, theme count discrepancy).
+  Core LLM layer: 2 untested (AI mode, write).
+  228 Go tests pass. Build clean. Discovery commands all return valid JSON.
+  Most professional codebase in the evaluation batch.

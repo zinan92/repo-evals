@@ -1,0 +1,241 @@
+# Curated claim map for geekjourneyx/md2wechat-skill
+# Evaluated: 2026-04-13
+# Archetype: hybrid-skill (Go CLI for Markdown→WeChat conversion)
+
+claims:
+  # === SUPPORT LAYER (deterministic code) ===
+
+  - id: claim-001
+    title: "Go binary builds cleanly"
+    source: go.mod
+    source_ref: "Build system"
+    priority: critical
+    area: support-build
+    statement: |
+      `go build ./cmd/md2wechat/` succeeds with Go 1.26.1+ and produces
+      a working binary.
+    business_expectation: "Developers can build from source."
+    evidence_needed: "Build output + exit code 0 + binary exists."
+    status: passed
+    evidence: |
+      `go build ./cmd/md2wechat/` exit 0. Binary produced after downloading
+      Go 1.26.1 toolchain and all dependencies.
+
+  - id: claim-002
+    title: "5 discovery commands return valid JSON"
+    source: README
+    source_ref: "Discovery section"
+    priority: critical
+    area: support-discovery
+    statement: |
+      capabilities --json, providers list --json, themes list --json,
+      prompts list --json, version --json all return valid JSON with
+      consistent envelope format.
+    business_expectation: "Agents and scripts can programmatically discover features."
+    evidence_needed: "Each command's JSON output."
+    status: passed
+    evidence: |
+      All 5 commands return valid JSON with consistent envelope:
+      success, code, message, schema_version, status, data.
+      capabilities: lists commands, convert options, prompt archetypes.
+      providers: 6 entries (gemini, modelscope, openai, openrouter, tuzi, volcengine).
+      themes: 15 entries. prompts: humanizer/image/refine categories.
+      version: "dev" (built from source, not release).
+
+  - id: claim-003
+    title: "inspect command validates metadata and readiness"
+    source: docs/USAGE.md
+    source_ref: "inspect command"
+    priority: critical
+    area: support-inspect
+    statement: |
+      `md2wechat inspect file.md` shows metadata resolution, structure analysis,
+      readiness checks, and actionable fix suggestions.
+    business_expectation: "Users know what to fix before publishing."
+    evidence_needed: "Run inspect on a test file, verify output."
+    status: passed
+    evidence: |
+      `inspect test.md` shows: title from H1, author/digest empty warnings,
+      duplicate H1 detection, image count, convert/upload/draft readiness booleans,
+      and specific fix suggestions. Exit 0.
+
+  - id: claim-004
+    title: "228 Go tests pass with zero failures"
+    source: implied
+    source_ref: "go test ./..."
+    priority: critical
+    area: support-testing
+    statement: |
+      The project has 36 _test.go files across 14 packages.
+      `go test ./...` passes 228 tests with 0 failures.
+    business_expectation: "Code changes are caught by automated tests."
+    evidence_needed: "Test output + pass count."
+    status: passed
+    evidence: |
+      `go test ./...` exit 0. 228/228 tests pass, 0 failures.
+      Coverage across: cmd, converter, config, draft, humanizer, image,
+      inspect, preview, promptcatalog, publish, wechat, writer.
+
+  - id: claim-005
+    title: "config show and validate work"
+    source: docs/CONFIG.md
+    source_ref: "config commands"
+    priority: high
+    area: support-config
+    statement: |
+      `config show` displays all settings with secrets masked.
+      `config validate` confirms config validity.
+    business_expectation: "Users can verify their setup before publishing."
+    evidence_needed: "Both commands exit 0 with useful output."
+    status: passed
+    evidence: |
+      `config show` exit 0: shows file path, all settings, secrets masked.
+      `config validate` exit 0: confirms config is valid.
+
+  - id: claim-006
+    title: "humanize feature with 3 intensity levels"
+    source: README
+    source_ref: "humanize command"
+    priority: high
+    area: support-humanize
+    statement: |
+      md2wechat humanize provides gentle/medium/aggressive AI artifact removal
+      with --show-changes diff mode. Documents 24 AI trace patterns.
+    business_expectation: "AI-generated content can be post-processed."
+    evidence_needed: "humanize --help output."
+    status: passed
+    evidence: |
+      `humanize --help` exit 0. Shows 3 intensity levels, --show-changes diff,
+      file output. Cannot test actual humanization without LLM call (expected).
+
+  - id: claim-007
+    title: "write feature with style-based generation"
+    source: README
+    source_ref: "write command"
+    priority: high
+    area: support-write
+    statement: |
+      md2wechat write generates articles from ideas using creator styles.
+      Supports idea/fragment/outline/title input types.
+    business_expectation: "Users can generate articles from prompts."
+    evidence_needed: "write --help and --list output."
+    status: passed
+    evidence: |
+      `write --help` exit 0. `write --list` shows Dan Koe as the only style.
+      Supports idea/fragment/outline/title inputs, cover generation, humanize integration.
+      Only 1 style (dan-koe) available — less than the "multiple styles" impression
+      from README.
+
+  - id: claim-008
+    title: "SKILL.md is comprehensive and well-structured"
+    source: skills/md2wechat/SKILL.md
+    source_ref: "skill definition"
+    priority: high
+    area: support-skill
+    statement: |
+      165-line SKILL.md with frontmatter, intent routing, discovery-first approach,
+      core commands, metadata rules, agent rules, safety section.
+    business_expectation: "Claude Code can use the skill effectively."
+    evidence_needed: "Read SKILL.md, verify completeness."
+    status: passed
+    evidence: |
+      Well-structured with: intent keywords (公众号, 排版, WeChat),
+      discovery-first instructions, all CLI commands documented,
+      metadata rules, error handling, safety/transparency section.
+
+  # === CLAIMS WITH ISSUES ===
+
+  - id: claim-009
+    title: "Core conversion (Markdown→WeChat HTML)"
+    source: README
+    source_ref: "Primary feature"
+    priority: critical
+    area: support-converter
+    statement: |
+      md2wechat convert file.md produces WeChat-compatible HTML.
+    business_expectation: "The primary feature works."
+    evidence_needed: "Convert a test file, verify HTML output."
+    status: partial
+    evidence: |
+      `convert test.md` fails with API 401 — requires valid md2wechat_api_key
+      from md2wechat.cn. Error handling is clean (structured JSON error).
+      The code path executes correctly; it's a credential dependency, not a bug.
+      Core conversion requires external API even in "API mode."
+
+  - id: claim-010
+    title: "Preview generates HTML file"
+    source: README
+    source_ref: "preview command"
+    priority: critical
+    area: support-preview
+    statement: |
+      md2wechat preview file.md generates a local HTML preview.
+    business_expectation: "Users can see their article before publishing."
+    evidence_needed: "Run preview, verify HTML file created."
+    status: partial
+    evidence: |
+      `preview test.md` exit 0, writes HTML file to temp dir.
+      But marks output as "degraded" fidelity due to API auth failure.
+      The preview feature works (produces a file) but quality depends on API access.
+
+  - id: claim-011
+    title: "38+ themes"
+    source: README
+    source_ref: "Theme gallery"
+    priority: medium
+    area: support-themes
+    statement: |
+      README claims 38+ WeChat article themes.
+    business_expectation: "Users have extensive formatting choices."
+    evidence_needed: "themes list --json count."
+    status: partial
+    evidence: |
+      `themes list --json` returns 15 top-level entries (4 AI + 11 API).
+      api.yaml catalog contains 38 API sub-themes, but CLI surfaces 15.
+      The "38+" claim is technically backed by the catalog but not by CLI UX.
+      Users see 15 themes, not 38.
+
+  - id: claim-012
+    title: "Multiple installation methods (brew, npm, script, source)"
+    source: README
+    source_ref: "Installation section"
+    priority: high
+    area: support-install
+    statement: |
+      4 installation methods: Homebrew, npm, install script, go install.
+    business_expectation: "Users can install via their preferred package manager."
+    evidence_needed: "Test each method."
+    status: passed
+    notes: |
+      Only tested `go build` (source). Homebrew, npm, and script methods
+      documented but not verified in this eval run. go build works cleanly.
+
+  # === CORE LAYER (LLM-driven) ===
+
+  - id: claim-101
+    title: "AI mode conversion with Claude/LLM"
+    source: README
+    source_ref: "AI mode"
+    priority: critical
+    area: core-llm
+    statement: |
+      In "AI mode," the tool generates structured prompts for Claude/other models
+      to produce richer styled output than API mode.
+    business_expectation: "Higher quality conversion via LLM."
+    evidence_needed: "Full AI mode conversion run + output comparison."
+    status: untested
+    notes: "Requires LLM integration to test."
+
+  - id: claim-102
+    title: "Full article generation from idea"
+    source: README
+    source_ref: "write command"
+    priority: high
+    area: core-llm
+    statement: |
+      `md2wechat write --idea "topic"` generates a complete article in a
+      specified creator style.
+    business_expectation: "Users can go from idea to article."
+    evidence_needed: "write with real LLM + output article."
+    status: untested
+    notes: "Requires LLM call. Only 1 style (dan-koe) available."

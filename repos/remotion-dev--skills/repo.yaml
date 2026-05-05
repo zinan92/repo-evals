@@ -58,40 +58,161 @@ product_view:
     zh: Remotion 官方 @remotion/skills 包：一个 Claude/Codex/Cursor skill（remotion-best-practices，340
       行）+ 35 个细分规则文档（audio/captions/ffmpeg/fonts/lottie/mapbox 等）。在 Remotion monorepo
       里维护，没发到 npm，由 Remotion 自家工具链消费。
-  best_for:
-    en: Anyone using Remotion to make videos in React who wants their AI agent (Claude
-      Code / Cursor / Codex) to follow the official Remotion best practices, not invent
-      its own.
-    zh: 用 Remotion 在 React 里做视频、并且让 AI agent（Claude Code / Cursor / Codex）跟着官方最佳实践走、不要自由发挥的人。
+  persona:
+    en: |-
+      A React developer using Remotion to programmatically generate videos (product demos, automated marketing clips, data-driven visualisations) — and using an AI coding agent (Claude Code / Cursor / Codex) to write the Remotion code. You want the agent to follow the official idioms, not invent its own.
+    zh: |-
+      用 Remotion 在 React 里做程序化视频(产品演示 / 自动化营销片 / 数据可视化)的开发者,同时让 AI 编程 agent(Claude Code / Cursor / Codex)写 Remotion 代码。你希望 agent 走官方惯例,不要自由发挥。
+  scenario:
+    en: |-
+      You're about to ask the agent to write a non-trivial Remotion component — captions on a clip, a Lottie animation embed, a custom ffmpeg pre-process, or a font-loading setup. You don't want to spend 20 minutes correcting it after, and you don't want to read 35 doc pages yourself.
+    zh: |-
+      你准备让 agent 写一个非平凡的 Remotion 组件 —— 视频字幕、嵌入 Lottie 动画、自定义 ffmpeg 预处理、字体加载。你不想 agent 写完再花 20 分钟修,也不想自己读 35 页文档。
+  without_this:
+    en: |-
+      Two options. (1) Let the agent invent its own approach — it'll usually pick a generic React pattern that works in dev but breaks at render time (timing off, audio out of sync, fonts not loaded by frame 0). (2) Read the relevant 3-5 markdown rules manually before each task and inject them as context. Tedious; you forget which rules you've already loaded.
+    zh: |-
+      两条路。(1) 让 agent 自由发挥 —— 通常会写一个 dev 模式能跑、render 时坏掉的通用 React 写法(时序对不上 / 音频不同步 / 字体在第 0 帧没加载好)。(2) 每次任务前自己读 3-5 个相关规则文档手动塞进上下文。烦,而且忘了哪些已经塞过。
+  with_this:
+    en: |-
+      The skill auto-fires when the agent recognises a Remotion task and pulls in `remotion-best-practices` (340 lines) plus the matching deep-dive rule from `rules/` (35 markdown files: 3d, audio, captions, ffmpeg, fonts, lottie, mapbox, ...). Total reference surface ≈ 110 KB of curated, official guidance. Agent writes Remotion code that renders correctly the first time.
+    zh: |-
+      agent 识别到 Remotion 任务时自动触发,加载 `remotion-best-practices`(340 行)加上 `rules/` 里对应的细分文档(35 个: 3d / audio / captions / ffmpeg / fonts / lottie / mapbox 等)。总参考资料 ≈ 110 KB 官方精选指引。agent 写出来的 Remotion 代码第一次 render 就能正确出片。
+  cost_summary:
+    en: |-
+      Free skill (MIT). Needs your AI agent harness (Claude Code / Cursor / Codex) plus the agent's standard token cost. Package is `private: true` on npm — install means cloning + copying SKILL.md + rules/ into your agent's skills directory; not one command.
+    zh: |-
+      skill 免费(MIT)。需要 AI agent 平台(Claude Code / Cursor / Codex) + 标准 agent token 成本。包标了 `private: true`(npm 装不到) —— 安装方式是 clone + 把 SKILL.md + rules/ 复制到 agent skills 目录;不是一行命令。
   watch_out:
-    en: 'The repo''s public README is one sentence ("internal package, no documentation");
-      the value lives inside SKILL.md and rules/. Because the package is `private:
-      true`, you can''t `npm install @remotion/skills` — to use it standalone you''d
-      need to clone the repo and copy SKILL.md + rules/ into your AI agent''s skills
-      directory. The Root.tsx inside src/ is a Remotion studio test-harness, not a
-      delivery surface.
-
-      '
-    zh: '仓库公开 README 只有一句话（"internal package, no documentation"），真正的内容在 SKILL.md 和
-      rules/。因为 package 标了 private: true，npm 装不到 `@remotion/skills`；想单独用就得 clone 仓库把
-      SKILL.md + rules/ 复制到自己的 AI agent skills 目录。src/Root.tsx 是个 Remotion studio
-      的自测台，不是对外的产品入口。
-
-      '
-  use_for:
-  - en: Anyone using Remotion to make videos in React who wants their AI agent (Claude
-      Code / Cursor / Codex) to follow official Remotion best practices.
-    zh: 用 Remotion 在 React 里做视频、并希望 AI agent 跟着官方最佳实践走的开发者。
-  - en: Want curated guidance on specific Remotion sub-topics (audio, captions, ffmpeg,
-      fonts, lottie, mapbox).
-    zh: 想要 Remotion 各子主题（audio / captions / ffmpeg / fonts / lottie / mapbox）的精选规则参考。
-  dont_use_for:
-  - en: Don't try to `npm install @remotion/skills` — it's a private package, registry
-      returns 404.
-    zh: 别试图 `npm install @remotion/skills` —— private 包，npm registry 返 404。
-  - en: Don't expect a polished public README; the value is inside SKILL.md and rules/,
-      not the front page.
-    zh: 别期待公开 README 写得好 —— 价值在 SKILL.md 和 rules/ 里，不在仓库门面。
+    en: |-
+      Public README is one sentence ("internal package, no documentation") — value lives inside SKILL.md and rules/, not the front page. Package is `private: true` on npm, so registry returns 404 if you try `npm install @remotion/skills`. Standalone use means manual clone + copy. The Root.tsx inside src/ is a Remotion studio test-harness, not a delivery surface — don't be confused by it.
+    zh: |-
+      公开 README 只有一句话("internal package, no documentation") —— 内容在 SKILL.md 和 rules/ 里,不在仓库门面。package 是 `private: true`(npm 装不到),试 `npm install @remotion/skills` 会 404。单独用就得手工 clone + 复制。src/Root.tsx 是 Remotion studio 自测台,不是对外产品入口。
+  examples:
+  - context:
+      en: |-
+        A startup founder programmatically generating product-demo videos for inside-sales follow-ups
+      zh: |-
+        创业者程序化生成产品演示视频给销售跟进用
+    you_say:
+      en: |-
+        Add captions synced to the voiceover audio for this 60-second product demo Remotion composition
+      zh: |-
+        给这个 60 秒的产品演示 Remotion composition 加和配音同步的字幕
+    what_happens:
+      en: |-
+        Agent loads the captions rule (rules/captions.md) + the audio rule (rules/audio.md). Writes the caption component using Remotion's recommended SRT-to-frame conversion, ensures useAudioData syncs correctly with frame timing. Renders correctly the first time — captions don't drift relative to voice.
+      zh: |-
+        agent 加载 captions 规则(rules/captions.md) + audio 规则(rules/audio.md)。用 Remotion 推荐的 SRT-to-frame 写法做字幕组件,确保 useAudioData 跟帧时间正确同步。第一次 render 就出片,字幕不会跟人声错位。
+  - context:
+      en: |-
+        A motion designer wanting a Lottie animation embedded in a Remotion video for a campaign asset
+      zh: |-
+        动效设计师想把 Lottie 动画嵌进 Remotion 视频,做活动素材
+    you_say:
+      en: |-
+        Embed this Lottie file at frames 60-180 with a fade-out — make sure it renders correctly in production, not just dev
+      zh: |-
+        把这个 Lottie 嵌进第 60-180 帧,带渐隐效果 —— 要在生产 render 也对,不只是 dev 模式
+    what_happens:
+      en: |-
+        Agent loads rules/lottie.md, picks @lottiefiles/react-lottie-player with the documented frame-driven control pattern (not autoplay), uses interpolate() for the fade. Production render works because the Lottie player is wrapped per the official pattern, not the generic React import.
+      zh: |-
+        agent 加载 rules/lottie.md,选 @lottiefiles/react-lottie-player 用文档里推荐的"按帧控制"模式(不是 autoplay),用 interpolate() 做渐隐。生产 render 能跑通,因为 Lottie player 包了官方推荐的 wrapper,不是通用 React import。
+  - context:
+      en: |-
+        A data-viz developer building a recurring "weekly stats" video using ffmpeg for source-clip preprocessing
+      zh: |-
+        数据可视化开发者做周度"weekly stats"视频,用 ffmpeg 预处理素材
+    you_say:
+      en: |-
+        Pre-process these 4 clips with ffmpeg before feeding into the Remotion compositor — strip audio, normalize fps, output to /tmp
+      zh: |-
+        4 个片段用 ffmpeg 预处理一下再喂给 Remotion —— 去音频、统一帧率、输出到 /tmp
+    what_happens:
+      en: |-
+        Agent loads rules/ffmpeg.md, writes a Node script using @remotion/renderer's bundled ffmpeg path (not system ffmpeg, which can have different feature flags), strips audio with -an + sets fps with -r. The Remotion render then accepts these clips correctly because they match Remotion's expected frame-rate.
+      zh: |-
+        agent 加载 rules/ffmpeg.md,写 Node 脚本用 @remotion/renderer 内置的 ffmpeg 路径(不是系统 ffmpeg,后者特性 flag 可能不同),用 -an 去音频 + -r 设帧率。Remotion render 因为这些片段匹配预期帧率所以能接受。
+similar_repos:
+- slug: anthropics--skill-creator
+  shared_purpose:
+    en: |-
+      Both are atom-shaped methodology skills — single user-invocable capability with deep guidance inside, no LLM-runtime branching. Both teach an AI agent how to do a specific kind of work the right way.
+    zh: |-
+      都是 atom 形态的方法论 skill —— 单一可调用能力,内部含深度指引,运行时不让 LLM 分支。都教 AI agent 用正确方式做特定工作。
+  this_better_at:
+    en: |-
+      Domain depth — 110 KB of curated, official Remotion guidance across 36 documents. When you're writing Remotion code, this is the most concentrated source of "how to do it right" that exists.
+    zh: |-
+      领域深度 —— 36 个文档共 110 KB 的官方 Remotion 精选指引。你写 Remotion 代码时,这是"怎么做对"最集中的来源。
+  other_better_at:
+    en: |-
+      Domain breadth — teaches you to write *new* skills with correct frontmatter, scoped descriptions, proper script gating. Necessary tool when you need a skill for a domain that doesn't have one yet.
+    zh: |-
+      领域广度 —— 教你怎么写"新"skill(frontmatter 正确、描述精准、script 触发合理)。当某个领域还没现成 skill 时你需要它。
+- slug: gooseworks-ai--goose-skills
+  shared_purpose:
+    en: |-
+      Both are domain-specific skill bundles maintained by the same team that builds the underlying tool — Remotion bundles skills for the Remotion video framework, Goose bundles skills for the Goose agent runtime.
+    zh: |-
+      都是底层工具开发团队维护的领域特定 skill 合集 —— Remotion 给 Remotion 视频框架捆 skill,Goose 给 Goose agent 运行时捆 skill。
+  this_better_at:
+    en: |-
+      Single-domain depth (just video / Remotion). When that's your domain, this is more useful than a multi-domain catalog.
+    zh: |-
+      单领域深度(只 Remotion 视频)。如果这是你的领域,比多领域合集更管用。
+  other_better_at:
+    en: |-
+      Multi-domain breadth + actively published distribution. Remotion's package is `private: true` and not on npm; Goose-skills is conventionally distributed.
+    zh: |-
+      多领域 + 正常发布渠道。Remotion 的包是 `private: true` 不上 npm;goose-skills 走常规分发。
+workflow_diagram:
+  layout: io
+  why_layer: |
+    Atom — one user-invocable capability that the agent triggers when
+    the task involves Remotion. Internally the skill loads the right
+    sub-rule from rules/ but the user doesn't orchestrate that — they
+    write a Remotion task, the skill picks the relevant rules.
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Remotion task
+        (write a component / scene / asset)
+      zh: |-
+        Remotion 任务
+        (写组件 / 场景 / 素材)
+  - id: skill
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        @remotion/skills
+        (SKILL.md + 35 rule docs)
+      zh: |-
+        @remotion/skills
+        (SKILL.md + 35 个规则)
+  - id: output
+    type: end
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Render-correct Remotion code
+        (first try)
+      zh: |-
+        render 一次过的代码
+        (first try 通过)
+  edges:
+  - from: input
+    to: skill
+  - from: skill
+    to: output
 stars: 2999
 archived: false
 has_license: true

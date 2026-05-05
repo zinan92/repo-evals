@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bucket="usable">
+<html lang="en" data-bucket="usable" data-category="available">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,6 +53,367 @@ html[data-bucket="reusable"]      { --bucket:#60a5fa; --bucket-bg:rgba(96,165,25
 html[data-bucket="recommendable"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
 html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
 
+/* 4-category theming (2026-05-05). Replaces the per-tier accent
+   so the page color tracks the top-level category, not the fine
+   tier inside it. */
+html[data-category="production"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-category="available"]  { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-category="risky"]      { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+/* --- Category chip (above score number) --- */
+.category-chip {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 10px 18px; margin-bottom: 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: 999px;
+}
+.category-emoji { font-size: 22px; line-height: 1; }
+.category-text { display: flex; flex-direction: column; line-height: 1.25; }
+.category-name {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--bucket); font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.category-blurb { font-size: 13px; color: var(--text-2); }
+
+/* --- Cost chip (one-line cost summary near the score) --- */
+.cost-chip {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  font-size: 14px; line-height: 1.55; color: var(--text);
+}
+.cost-label {
+  display: block;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}
+.cost-body { color: var(--text-2); }
+
+/* --- Layer strip (atom · molecule · compound) ---------------------- */
+.layer-strip-section { margin-bottom: 40px; }
+.layer-strip {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 0;
+}
+@media (max-width: 720px) {
+  .layer-strip { grid-template-columns: 1fr; }
+  .layer-strip-arrow { display: none; }
+}
+.layer-strip-card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 22px 22px 24px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: opacity .15s, border-color .15s;
+}
+.layer-strip-card.is-dim { opacity: 0.42; }
+.layer-strip-card.is-active {
+  background: var(--bucket-bg);
+  border-color: var(--bucket-soft);
+  box-shadow: 0 0 0 2px var(--bucket-soft);
+}
+.layer-strip-card.layer-atom.is-active     { --bucket: #2d7866; --bucket-bg: rgba(45,120,102,0.10); --bucket-soft: rgba(45,120,102,0.4); }
+.layer-strip-card.layer-molecule.is-active { --bucket: #5a3aa1; --bucket-bg: rgba(192,132,252,0.10); --bucket-soft: rgba(192,132,252,0.4); }
+.layer-strip-card.layer-compound.is-active { --bucket: #a13d30; --bucket-bg: rgba(248,113,113,0.10); --bucket-soft: rgba(248,113,113,0.4); }
+.layer-strip-emoji { font-size: 32px; line-height: 1; }
+.layer-strip-name {
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text); font-weight: 700;
+}
+.layer-strip-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
+.layer-strip-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); color: var(--text-3);
+  padding: 0 8px;
+}
+
+/* --- Category strip (4-zone score bar with pointer) ---------------- */
+.category-strip-section { margin-bottom: 40px; }
+.cat-strip-wrap { position: relative; margin-bottom: 14px; }
+.cat-strip {
+  display: flex; gap: 4px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cat-zone {
+  padding: 14px 14px 16px;
+  text-align: center;
+  background: var(--surface-2);
+  opacity: 0.55;
+  transition: opacity .15s;
+}
+.cat-zone.is-active { opacity: 1; }
+.cat-zone-emoji { font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.cat-zone-name {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text); font-weight: 600;
+}
+.cat-zone-range { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }
+.cat-zone-dont_use.is-active   { background: rgba(248, 113, 113, 0.18); }
+.cat-zone-risky.is-active      { background: rgba(245, 158, 11, 0.18); }
+.cat-zone-available.is-active  { background: rgba(96, 165, 250, 0.18); }
+.cat-zone-production.is-active { background: rgba(74, 222, 128, 0.18); }
+
+.cat-pointer-lane {
+  position: relative; height: 32px;
+  margin-top: 6px;
+}
+.cat-pointer {
+  position: absolute; top: 0; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--font-mono);
+}
+.cat-pointer-arrow { color: var(--bucket); font-size: 14px; line-height: 1; }
+.cat-pointer-score { font-size: 13px; color: var(--bucket); font-weight: 700; line-height: 1.2; }
+
+.cat-summary {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}
+.cat-summary-headline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-summary-emoji { font-size: 18px; }
+.cat-summary-name { font-family: var(--font-mono); font-size: 12px; color: var(--bucket); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.cat-summary-score { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.cat-summary-blurb { font-size: 14px; color: var(--text-2); }
+.cat-summary-production { --bucket: #4ade80; }
+.cat-summary-available  { --bucket: #60a5fa; }
+.cat-summary-risky      { --bucket: #f59e0b; }
+.cat-summary-dont_use   { --bucket: #f87171; }
+
+/* --- Similar repos comparison ------------------------------------- */
+.similar-section { margin-bottom: 80px; }
+.similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
+.similar-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+.similar-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.similar-card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.similar-card-name { color: var(--text); font-size: 14px; text-decoration: none; }
+.similar-card-name:hover strong { text-decoration: underline; }
+.similar-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.similar-cat-pill {
+  font-family: var(--font-mono); font-size: 10.5px; padding: 3px 9px;
+  border-radius: 999px; background: var(--surface-2); color: var(--text-2);
+  letter-spacing: 0.06em; white-space: nowrap;
+}
+.similar-cat-pill.cat-production { color: #4ade80; }
+.similar-cat-pill.cat-available  { color: #60a5fa; }
+.similar-cat-pill.cat-risky      { color: #f59e0b; }
+.similar-cat-pill.cat-dont_use   { color: #f87171; }
+.similar-layer-pill {
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 8px;
+  border-radius: 4px; background: var(--surface-2); color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.similar-layer-pill.layer-atom     { color: #6cae9d; }
+.similar-layer-pill.layer-molecule { color: #c084fc; }
+.similar-layer-pill.layer-compound { color: #f87171; }
+
+.similar-row {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 12px; padding: 8px 0; border-top: 1px solid var(--border);
+}
+.similar-row:first-of-type { border-top: 0; }
+.similar-row-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); padding-top: 2px; line-height: 1.55;
+}
+.similar-row-body { font-size: 13px; line-height: 1.55; color: var(--text-2); white-space: pre-wrap; }
+.similar-row-this  .similar-row-label { color: var(--ok); }
+.similar-row-other .similar-row-label { color: #c084fc; }
+
+.similar-pending {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+.similar-pending-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.similar-pending-row {
+  font-size: 13.5px; line-height: 1.55;
+  color: var(--text-2); white-space: pre-wrap;
+}
+.similar-pending-row + .similar-pending-row { margin-top: 8px; }
+
+/* --- Workflow diagram (atom / molecule / compound) ----------------- */
+.workflow-diagram-section { margin-bottom: 80px; }
+.wd-why {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.wd-why-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 6px;
+}
+.wd-why-body { font-size: 14px; color: var(--text-2); line-height: 1.55; white-space: pre-wrap; }
+
+.wd-legend {
+  list-style: none; padding: 0; margin: 0 0 14px;
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.wd-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.wd-legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.wd-legend-atom     { background: rgba(96, 165, 250, 0.4); }
+.wd-legend-decision { background: rgba(251, 191, 36, 0.55); transform: rotate(45deg); }
+.wd-legend-start    { background: rgba(166, 153, 138, 0.5); border-radius: 5px; }
+
+.wd-canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  overflow-x: auto;
+}
+.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+
+.wd-shape { stroke-width: 1.5; }
+.wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
+.wd-molecule { fill: rgba(192, 132, 252, 0.10); stroke: rgba(192, 132, 252, 0.55); }
+.wd-decision { fill: rgba(251, 191, 36, 0.18); stroke: rgba(251, 191, 36, 0.85); stroke-width: 2; }
+.wd-start    { fill: rgba(166, 153, 138, 0.18); stroke: rgba(166, 153, 138, 0.65); }
+.wd-end      { fill: rgba(74, 222, 128, 0.14);  stroke: rgba(74, 222, 128, 0.6); }
+
+.wd-canvas svg { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+.wd-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-anchor: middle;
+  fill: var(--text);
+  letter-spacing: 0.01em;
+}
+/* SVG text language toggle — pseudo-elements don't work in SVG, so
+   we duplicate text in EN + ZH and toggle display based on <html lang>. */
+.wd-lang-en, .wd-lang-zh { display: none; }
+html[lang="en"] .wd-lang-en { display: block; }
+html[lang="zh"] .wd-lang-zh { display: block; }
+/* CJK gets a slightly smaller size + tighter tracking so 4-character
+   labels feel even-density next to 2-character labels. */
+html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
+.wd-edge { fill: none; stroke: rgba(166, 153, 138, 0.6); stroke-width: 1.6; }
+.wd-edge-dashed { stroke-dasharray: 5,4; }
+.wd-arrowhead { fill: rgba(166, 153, 138, 0.85); }
+
+.wd-edge-label-bg {
+  fill: var(--surface-1); stroke: var(--border); stroke-width: 1;
+}
+.wd-edge-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
+/* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
+.benefits-section { margin-bottom: 80px; }
+.benefits-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 720px) {
+  .benefits-grid { grid-template-columns: 1fr; }
+}
+.benefit-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.benefit-card.benefit-without {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.15);
+}
+.benefit-card.benefit-with {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}
+.benefit-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
+}
+.benefit-icon { font-size: 16px; }
+.benefit-body {
+  font-size: 15px; line-height: 1.62;
+  color: var(--text); white-space: pre-wrap;
+}
+
+/* Concrete usage examples (lives inside the benefits section) */
+.usex-block { margin-top: 28px; }
+.usex-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 12px;
+}
+.usex-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.usex-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.usex-row { display: flex; flex-direction: column; gap: 4px; }
+.usex-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+}
+.usex-body { font-size: 13.5px; line-height: 1.55; color: var(--text); }
+.usex-row.usex-quote .usex-body {
+  margin: 0; padding: 10px 14px;
+  border-left: 3px solid var(--bucket);
+  background: var(--bucket-bg);
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--text); border-radius: 0 4px 4px 0;
+  font-style: normal;
+}
+.usex-row.usex-quote .usex-body::before { content: "\201C"; color: var(--bucket); margin-right: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-quote .usex-body::after { content: "\201D"; color: var(--bucket); margin-left: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-what .usex-body { color: var(--text-2); }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
@@ -105,7 +466,7 @@ html[lang="zh"] .lang-toggle button[data-lang="zh"] {
   background: var(--text); color: var(--bg);
 }
 
-.hero { padding: 24px 0 72px; border-bottom: 1px solid var(--border); margin-bottom: 72px; }
+.hero { padding: 16px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
 
 .eyebrow {
   font-family: var(--font-mono); font-size: 11px;
@@ -133,7 +494,7 @@ h1.repo-title {
   font-size: clamp(18px, 2vw, 22px);
   line-height: 1.45; font-weight: 400;
   color: var(--text); max-width: 62ch;
-  margin: 0 0 72px;
+  margin: 0;
 }
 
 .verdict-block { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }
@@ -409,7 +770,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-section { margin-bottom: 96px; }
+section { margin-bottom: 56px; }
 
 .capabilities-grid {
   display: grid;
@@ -883,34 +1244,51 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
     <p class="tagline"><span class="i18n" data-en="A self-hosted FastAPI + Vue dashboard for monitoring 闲鱼 (XianYu, China&#x27;s biggest secondhand market) — natural-language criteria, multi-task scheduling, Playwright scraping, multi-modal LLM filtering, and 6 notification channels (ntfy/Bark/WeWork/Telegram/Gotify/Webhook). One docker-compose, SQLite, Chromium bundled." data-zh="一个自建的 FastAPI + Vue 闲鱼监控看板：用自然语言写「我想要什么」，多任务并发跑 Playwright 抓页面 + 多模态 LLM 筛选，命中就推 6 种渠道（ntfy / Bark / 企微 / Telegram / Gotify / Webhook）。一行 docker compose，SQLite，镜像自带 Chromium。"></span></p>
 
-    <div class="verdict-block">
-      <div>
-        <div class="eyebrow" style="margin-bottom:12px"><span class="i18n" data-en="Final verdict" data-zh="最终判定"></span></div>
-        <div class="score-hero tier-self"><div class="score-hero-row"><span class="score-emoji">🛠</span><span class="score-num">69</span><span class="score-denom">/ 100</span></div><div class="score-tier"><span class="i18n" data-en="Self-use OK" data-zh="自用 OK"></span></div><p class="score-blurb"><span class="i18n" data-en="Use it yourself; not yet ready to recommend to others." data-zh="你自己日常用没问题，还不到推荐给陌生人的程度。"></span></p></div>
-      </div>
-
-      <div class="verdict-meta">
-        <div class="layer-row"><span class="layer-pill layer-molecule" title="molecule"><span class="layer-pill-eyebrow i18n" data-en="layer" data-zh="层级"></span><span class="i18n" data-en="Molecule" data-zh="分子"></span></span></div>
-
-        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 8 <span class="i18n" data-en="total" data-zh="共"></span></div>
-        <div class="stats-bar"><span class="s-pass" style="flex: 6"></span><span class="s-warn" style="flex: 1"></span><span class="s-skip" style="flex: 1"></span></div>
-        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">6</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">1</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
-
-        <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+14</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+12</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+6</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">-3</td></tr></tbody></table></details>
-      </div>
-    </div>
   </header>
 
-  <section class="scenarios-section"><div class="section-head"><h2><span class="i18n" data-en="Use it for / Don't use it for" data-zh="什么时候用 / 什么时候别用"></span></h2></div><ul class="scenarios"><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Mainland-China secondhand buyers who want a 24/7 monitor for 闲鱼 (XianYu) listings on specific gear." data-zh="想 24/7 蹲特定型号商品（相机、MacBook、复古件）的咸鱼买家。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Comfortable running Docker, pasting your own XHS login cookie, paying your own LLM bills." data-zh="能跑 Docker、能用扩展导出真实闲鱼 cookie、自己付 LLM 账单。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Want multi-channel notifications (ntfy / Bark / 企微 / Telegram / Gotify / Webhook)." data-zh="想要多渠道推送（ntfy / Bark / 企微 / Telegram / Gotify / Webhook）。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t deploy to a public VPS without changing WEB_PASSWORD from default `admin123` and binding port to 127.0.0.1." data-zh="公网 VPS 上一定先改 WEB_PASSWORD（默认是 admin123）+ 端口绑到 127.0.0.1，别裸暴。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t keep OPENAI_BASE_URL on the default modelscope.cn endpoint if you mind your prompts going to a third-party model gateway." data-zh="介意 prompt 经过第三方模型网关的话别用默认 modelscope.cn endpoint。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t run aggressive monitoring — XHS anti-automation can limit your account." data-zh="监控频率别太激进 —— 闲鱼反自动化会限你的账号。"></span></li></ul></section>
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一层?"></span></h2></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+
+  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:69%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">69</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 69 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div></section>
+
+  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-icon">👤</span><span class="i18n" data-en="Who this is for" data-zh="谁会用上它"></span></div><div class="benefit-body"><span class="i18n" data-en="A Mainland-China secondhand-market buyer who wants 24/7 alerts when specific gear (vintage cameras, used MacBooks, rare collectibles) shows up at the right price on 闲鱼 (XianYu, China&#x27;s biggest C2C secondhand). Comfortable running Docker, comfortable pasting their own login cookie, willing to pay LLM-call costs." data-zh="在中国大陆蹲二手货的买家,想 24/7 等特定商品(老相机、二手 MacBook、收藏品)在闲鱼上以合适价格出现就立刻通知。会跑 Docker,愿意贴自己的登录 cookie,自己出 LLM 调用费。"></span></div></article>
+<article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-icon">🎯</span><span class="i18n" data-en="When you'd reach for it" data-zh="什么时候用上"></span></div><div class="benefit-body"><span class="i18n" data-en="You&#x27;re hunting a specific item — say a Sony A7R III in good condition under ¥8000, or a 16-inch MacBook Pro M2 Max with battery cycles under 200. New listings appear on XianYu every minute. You can&#x27;t refresh the app every 10 minutes for weeks." data-zh="你在蹲特定货 —— 比如成色不错的 Sony A7R III 8K 以下,或者 16 寸 MacBook Pro M2 Max 循环数 200 以下。闲鱼上每分钟有新挂牌。你不可能每 10 分钟手动刷一次,刷几周。"></span></div></article>
+<article class="benefit-card benefit-without"><div class="benefit-eyebrow"><span class="benefit-icon">😩</span><span class="i18n" data-en="What you'd do without it" data-zh="没它的时候怎么办"></span></div><div class="benefit-body"><span class="i18n" data-en="Three options. (1) Refresh the app every 10 minutes manually for weeks; sleep through the listing that arrives at 3am for the right price. (2) Set up XianYu&#x27;s built-in saved-search alerts — fires too often (false positives) or not at all (it doesn&#x27;t read photos). (3) Hire a someone in your network or buy a SaaS service — costs money, gives someone else your search criteria." data-zh="三条路。(1) 每 10 分钟手动刷一次,刷几周;凌晨 3 点出货睡着错过。(2) 用闲鱼自带的&quot;我想要&quot;提醒 —— 要么误报太多(没看图),要么完全不报。(3) 让朋友帮蹲或买代蹲服务 —— 花钱 + 把搜索条件给别人。"></span></div></article>
+<article class="benefit-card benefit-with"><div class="benefit-eyebrow"><span class="benefit-icon">✨</span><span class="i18n" data-en="What having it changes" data-zh="有它之后变化在哪"></span></div><div class="benefit-body"><span class="i18n" data-en="One docker-compose. You write criteria in natural language (&quot;Sony A7R III, body only, less than 5000 shutter actuations, under ¥8000, in Beijing or Shanghai&quot;). Multi-task scheduler runs Playwright, the LLM analyses listing photos + descriptions against your criteria, push notifications to ntfy / Bark / WeChat Work / Telegram / Gotify / Webhook fire only on true matches. SQLite logs everything seen." data-zh="一个 docker-compose。你用自然语言写蹲货条件(&quot;Sony A7R III 单机身,快门 5000 次以下,8000 以内,北京或上海&quot;)。多任务调度跑 Playwright,LLM 把挂牌照片 + 描述跟你的条件对比,只在真实命中时推送 ntfy / Bark / 企微 / Telegram / Gotify / Webhook。SQLite 记录所有见过的挂牌。"></span></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A photographer hunting a Sony A7R III for under ¥8000 with low shutter count" data-zh="摄影师蹲 Sony A7R III,8000 以下、快门次数低的"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Add task: &quot;Sony A7R III camera body only, less than 5000 shutter actuations, under ¥8000, in Beijing or Shanghai&quot;, schedule every 5 minutes" data-zh="加任务:&quot;Sony A7R III 相机单机身,快门次数 5000 以下,价格 8000 以下,北京或上海&quot;,每 5 分钟跑一次"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Scheduler queues the task. Playwright opens XianYu, searches &quot;Sony A7R III&quot;, paginates new listings. For each, LLM reads listing photos + description, decides if it meets your shutter / price / location criteria. Match → ntfy push to your phone with the listing URL. SQLite stores everything seen. False matches drop to ~0% after a day of LLM-rule tightening." data-zh="调度排队。Playwright 打开闲鱼搜&quot;Sony A7R III&quot;,翻页新挂牌。每条 LLM 读照片 + 描述,判断是否符合你的快门 / 价格 / 地点条件。命中 → ntfy 推送到手机带链接。SQLite 存所有见过的。LLM 规则跑一天后误报基本降到 0%。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A dev hunting a 16-inch MacBook Pro M2 Max with battery cycles under 200" data-zh="开发者蹲 16 寸 MacBook Pro M2 Max,循环数 200 以下"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Add task: &quot;MacBook Pro 16-inch M2 Max, battery cycles under 200, no obvious dents, under ¥18000&quot;, notify via WeChat Work" data-zh="加任务:&quot;MacBook Pro 16 寸 M2 Max,电池循环数 200 以下,没有明显磕碰,18000 以下&quot;,企微推送"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Multi-modal LLM reads photos for dent detection — listings with visible damage get filtered out even if seller claims &quot;九成新&quot;. Battery cycles get parsed from screenshots if seller pasted them. WeChat Work message arrives within 5 min of a true match listing being posted." data-zh="多模态 LLM 读照片找磕碰 —— 卖家说&quot;九成新&quot;但照片有明显磕痕的会被过滤。电池循环数从卖家贴的截图里解析。真命中后 5 分钟内企微通知到。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A vintage-watch collector watching for specific Seiko references at the right price" data-zh="老表收藏家在等特定型号的精工以合适价格出现"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Set up 3 parallel tasks for Seiko 6309 / Seiko Pogue / Seiko Captain Willard, all in original condition, all push to Telegram" data-zh="3 个并行任务: Seiko 6309 / Seiko Pogue / Seiko Captain Willard,都要原装状态,全部推到 Telegram"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="APScheduler runs all 3 tasks concurrently. LLM filters non-original modifications (replaced bezels / aftermarket dials common on these references). 3 separate Telegram channels for the 3 tasks; you tap-to-buy as soon as a real match comes in, beating other collectors who refresh manually." data-zh="APScheduler 并行跑 3 个任务。LLM 过滤非原装改动(这几款常被换圈口 / 换副厂表盘)。3 个 Telegram 频道分开推送;真命中你立刻点开下单,比手动刷的藏家快一步。"></span></span></div></article></div></div></section>
+
+  
+
+  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is molecule" data-zh="为什么是分子"></span></div><div class="wd-why-body"><span class="i18n" data-en="Molecule — fixed pipeline (criteria → scheduler → Playwright →
+LLM filter → notification). LLM is invoked at criteria-generation
++ product-analysis stages but not for runtime routing — the
+pipeline is the same for every listing seen. User picks tasks
++ criteria; the engine runs them deterministically.
+" data-zh="Molecule — fixed pipeline (criteria → scheduler → Playwright →
+LLM filter → notification). LLM is invoked at criteria-generation
++ product-analysis stages but not for runtime routing — the
+pipeline is the same for every listing seen. User picks tasks
++ criteria; the engine runs them deterministically.
+"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 1528 104" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M204,52.0 C244.0,52.0 244.0,52.0 284,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M464,52.0 C504.0,52.0 504.0,52.0 544,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M724,52.0 C764.0,52.0 764.0,52.0 804,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M984,52.0 C1024.0,52.0 1024.0,52.0 1064,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M1244,52.0 C1284.0,52.0 1284.0,52.0 1324,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="24" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-start"/><text x="114.0" y="49.0" class="wd-label wd-lang-en">Natural-language criteria</text><text x="114.0" y="49.0" class="wd-label wd-lang-zh">自然语言条件</text><text x="114.0" y="63.0" class="wd-label wd-lang-en">(via Vue dashboard)</text><text x="114.0" y="63.0" class="wd-label wd-lang-zh">(Vue dashboard 输入)</text></g><g class="wd-node wd-type-atom"><rect x="284" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="374.0" y="49.0" class="wd-label wd-lang-en">APScheduler</text><text x="374.0" y="49.0" class="wd-label wd-lang-zh">APScheduler</text><text x="374.0" y="63.0" class="wd-label wd-lang-en">(multi-task runs)</text><text x="374.0" y="63.0" class="wd-label wd-lang-zh">(多任务调度)</text></g><g class="wd-node wd-type-atom"><rect x="544" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="634.0" y="49.0" class="wd-label wd-lang-en">Playwright crawler</text><text x="634.0" y="49.0" class="wd-label wd-lang-zh">Playwright 爬虫</text><text x="634.0" y="63.0" class="wd-label wd-lang-en">(cookie login → search)</text><text x="634.0" y="63.0" class="wd-label wd-lang-zh">(cookie 登录 → 搜索)</text></g><g class="wd-node wd-type-atom"><rect x="804" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="894.0" y="49.0" class="wd-label wd-lang-en">Multi-modal LLM</text><text x="894.0" y="49.0" class="wd-label wd-lang-zh">多模态 LLM</text><text x="894.0" y="63.0" class="wd-label wd-lang-en">(photos + text vs criteria)</text><text x="894.0" y="63.0" class="wd-label wd-lang-zh">(照片 + 文字 比对条件)</text></g><g class="wd-node wd-type-atom"><rect x="1064" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="1154.0" y="49.0" class="wd-label wd-lang-en">Notification dispatch</text><text x="1154.0" y="49.0" class="wd-label wd-lang-zh">推送分发</text><text x="1154.0" y="63.0" class="wd-label wd-lang-en">(ntfy / Bark / WeChat / TG / ...)</text><text x="1154.0" y="63.0" class="wd-label wd-lang-zh">(ntfy / Bark / 企微 / TG / ...)</text></g><g class="wd-node wd-type-end"><rect x="1324" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-end"/><text x="1414.0" y="49.0" class="wd-label wd-lang-en">Push to your phone</text><text x="1414.0" y="49.0" class="wd-label wd-lang-zh">推到你手机</text><text x="1414.0" y="63.0" class="wd-label wd-lang-en">(only true matches)</text><text x="1414.0" y="63.0" class="wd-label wd-lang-zh">(只有真命中)</text></g></svg></div></section>
+
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/NanmiCoder--MediaCrawler/verdicts/2026-05-04-verdict.html"><strong>NanmiCoder/MediaCrawler</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 75</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both are Python crawlers for Chinese platforms with single-platform deep-watch use case. Both ask for real account login (cookie / QR), both Playwright-driven, both vulnerable to anti-bot when scheduled aggressively." data-zh="都是中国平台的 Python 爬虫,做单平台深度监控。都要真实账号(cookie / 扫码),都用 Playwright,频次高都会被反爬限。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="ai-goofish-monitor wins at" data-zh="ai-goofish-monitor 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Single-platform deep-monitor with multi-modal LLM filtering + 6-channel notifications. The LLM analysis on listing photos is the differentiator — it filters out &quot;looks new but actually beaten up&quot; cases MediaCrawler can&#x27;t." data-zh="单平台深度监控 + 多模态 LLM 过滤 + 6 渠道通知。LLM 看照片是差异点 —— 能过滤&quot;卖家说九成新但照片磕痕明显&quot;的 case,MediaCrawler 做不到。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="MediaCrawler wins at" data-zh="MediaCrawler 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Breadth — 7 platforms × multiple crawl modes × 8 storage backends. When you need cross-platform data analysis (not just watching one), MediaCrawler is the right tool. Larger ecosystem (48K vs 11K stars)." data-zh="覆盖广 —— 7 平台 × 多种抓取模式 × 8 存储后端。需要跨平台数据分析(不是只盯一个)时,MediaCrawler 更合适。生态更大(48K 对 11K stars)。"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zinan92--content-downloader/verdicts/2026-04-09-verdict.html"><strong>zinan92/content-downloader</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-dont_use">🛑 <span class="i18n" data-en="Don&#x27;t use" data-zh="不可使用"></span> · 29</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both target single-platform watching/downloading with Playwright + Python. Both are personal-toolkit scope rather than full SaaS." data-zh="都是 Playwright + Python 单平台监控/下载。都是个人工具箱定位,不是 SaaS。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="ai-goofish-monitor wins at" data-zh="ai-goofish-monitor 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Production-grade implementation: Docker bundle + multi-task scheduler + multi-modal LLM + 6 notification channels + battle-tested. 11K stars validates the approach." data-zh="生产级实现: Docker 镜像 + 多任务调度 + 多模态 LLM + 6 渠道通知 + 久经实战。11K stars 验证可行性。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="content-downloader wins at" data-zh="content-downloader 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Different platform (Douyin) and different mode (downloading clips, not monitoring listings). Currently broken on Douyin signing. ai-goofish takes the same Playwright pattern and applies it correctly to XianYu." data-zh="不同平台(抖音)不同模式(下载视频,不是监控挂牌)。抖音签名当前坏了。ai-goofish 用同样 Playwright 模式但落到闲鱼,而且能跑通。"></span></div></div></article></div></section>
 
   <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>docker compose up -d</code></td><td>any (Docker)</td><td><span class="badge complexity-easy">easy</span></td></tr><tr><td><code>Pre-built ghcr image</code></td><td>any (Docker)</td><td><span class="badge complexity-easy">easy</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li><li><span class="flag-icon">🚨</span>WEB_PASSWORD=admin123 + 0.0.0.0:8000 default — change before public exposure</li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">Xianyu / 闲鱼 (real account)</div><div class="service-purpose">Cookie-based session for crawling listings</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-signup"><span class="i18n" data-en="📝 Signup needed" data-zh="📝 需要注册账号"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Use companion Chrome extension to export login cookie</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">OpenAI-compatible LLM (default: modelscope.cn)</div><div class="service-purpose">Multi-modal product analysis</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-free"><span class="i18n" data-en="🆓 Free tier API key" data-zh="🆓 免费版 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Defaults to modelscope.cn (CN-friendly); change OPENAI_BASE_URL for own gateway</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">ntfy / Bark / 企业微信 / Telegram / Gotify / Webhook</div><div class="service-purpose">Notification delivery</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-free"><span class="i18n" data-en="🆓 Free tier API key" data-zh="🆓 免费版 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Pick at least one channel; ntfy.sh is fully free</div></div></div></div></section>
 
   <div class="pull-quotes">
-    <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Mainland-China secondhand buyers who want a 24/7 monitor for 闲鱼 listings on specific gear (cameras, MacBooks, vintage), comfortable running a Docker host and pasting their own XianYu login cookie." data-zh="想 24/7 蹲特定型号商品（相机、MacBook、复古件）的咸鱼买家。前提：能跑 Docker，能用配套 Chrome 扩展把自己闲鱼登录 cookie 粘进来，自己付 LLM 账单。"></span></div></section>
-    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="Driving a real XianYu account is the same anti-bot risk as MediaCrawler / xiaohongshu-skills — XianYu does run anti-automation, and a too-aggressive task can get the account limited. The default Web UI password is `admin/admin123`; change it before exposing port 8000 to anything beyond localhost. The OpenAI-compatible BASE_URL points at modelscope.cn by default, which is China-friendly but means Wendy&#x27;s data is going to a 3rd-party model gateway unless you change it. SQLite is OK for single-host; if you want HA you&#x27;d need to fork.
-" data-zh="用真实闲鱼账号跑爬取，反风险和 MediaCrawler / xiaohongshu-skills 一样：闲鱼有反自动化检测，跑得太凶账号会被限。Web UI 默认密码是 `admin/admin123`，对外暴露 8000 端口前一定改掉。`OPENAI_BASE_URL` 默认是 modelscope.cn — 国内友好但你的数据会过一遍第三方模型网关，介意的话自己换 endpoint。SQLite 单机够用，要高可用得自己 fork。
-"></span></div></section>
+    
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="Same anti-bot risk as MediaCrawler — XianYu runs anti-automation, too-aggressive scheduling gets the account limited. Default `WEB_PASSWORD=admin123` + binds 0.0.0.0:8000 — change before public exposure. Default `OPENAI_BASE_URL` is modelscope.cn (your prompts go through a third-party model gateway). SQLite single-host only; HA needs a fork." data-zh="跟 MediaCrawler 一样的反爬风险 —— 闲鱼有反自动化,跑太凶账号会被限。默认 `WEB_PASSWORD=admin123` + 绑 0.0.0.0:8000 —— 公网暴露前一定改。默认 `OPENAI_BASE_URL` 是 modelscope.cn(prompt 走第三方模型网关)。SQLite 单机,HA 要 fork。"></span></div></section>
   </div>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Score breakdown · how the 69 was computed" data-zh="分数明细 · 69 是怎么算的"></span></summary>
+    <div class="body">
+      <div class="claim-stats-row">
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 8 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 6"></span><span class="s-warn" style="flex: 1"></span><span class="s-skip" style="flex: 1"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">6</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">1</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+      </div>
+      <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+14</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+12</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+6</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">-3</td></tr></tbody></table></details>
+    </div>
+  </details>
 
   <section>
     <div class="section-head">

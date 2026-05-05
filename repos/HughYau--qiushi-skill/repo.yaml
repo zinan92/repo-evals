@@ -47,30 +47,189 @@ product_view:
   one_liner:
     en: "10 dialectical-materialism methodology skills (contradiction analysis, investigation-first, mass-line, criticism, protracted strategy, etc.) packaged as installable AI agent skills for Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode. Each skill grounds itself in classical-text excerpts. MIT, multilingual (中文 + EN)."
     zh: "10 个唯物辩证法 + 实践哲学方法论 AI agent skill（矛盾分析、调查在先、群众路线、批评与自我批评、持久战、集中兵力 ……），适配 Claude Code / Codex / Cursor / Hermes / NanoBot / OpenClaw / OpenCode 7 个平台。每条方法论都引用经典著作原文。MIT，中英双语。"
-  best_for:
-    en: "Anyone whose AI agent feels like a yes-machine — give it a methodology to push back, dig deeper, and stick with hard problems. Use the 'investigation first' skill before letting the agent give answers; use 'contradiction analysis' for complex tradeoffs."
-    zh: "想让自己的 AI agent 不再像「点头机器」的人 —— 给它一套方法论，让它先调查、抓主要矛盾、坚持把活做完。复杂问题前用「调查研究」+「矛盾分析」，做战略前用「集中兵力」。"
+  persona:
+    en: |-
+      Someone whose AI agent feels too compliant — gives confident answers without investigating, gives up on hard problems, settles for the first approach instead of weighing trade-offs. Typical: a thinker / strategist / consultant who uses AI for research-style work, not just code completion.
+    zh: |-
+      觉得自己的 AI agent 太顺从的人 —— 没调查就给自信答案、难题就放弃、第一种方案就拍板,不权衡 trade-off。典型: 思考者 / 策略者 / 咨询师,用 AI 做研究类工作,不是补代码。
+  scenario:
+    en: |-
+      You're about to ask the agent to do something hard — analyse a complex business decision, investigate an ambiguous bug, plan a multi-month strategy. You want it to push back when your framing is wrong, dig before answering, and stick with the problem when the easy answer fails.
+    zh: |-
+      你准备让 agent 做难事 —— 分析一个复杂商业决策、调查一个模糊 bug、规划几个月的战略。你希望它在你的提问框架不对时反问、给答案前先挖一下、容易答案失败时不放弃。
+  without_this:
+    en: |-
+      The agent typically (1) gives a fluent answer based on training-data-recall instead of investigating your specific case, (2) when the first approach fails, switches to a different surface-level approach instead of going deeper, (3) when problems are ambiguous, picks the safest-sounding direction without telling you it picked.
+    zh: |-
+      agent 通常会(1) 凭训练数据 recall 给一个流畅答案,不调查你的具体情况;(2) 第一种方法不奏效就换另一个表面方法,不深入;(3) 问题模糊时悄悄选最安全方向,不告诉你它选了。
+  with_this:
+    en: |-
+      Pick 2-3 skills matching your workflow. `investigation-first` forces the agent to explore before answering. `contradiction-analysis` makes it identify the principal vs secondary contradiction in trade-offs. `protracted-strategy` keeps it from quitting halfway. Each skill is one user-invocable atom; you say "用调查研究分析这件事" and the methodology fires.
+    zh: |-
+      挑 2-3 条匹配你工作流的 skill。`investigation-first` 强制 agent 给答案前先探索。`contradiction-analysis` 让它在 trade-off 里区分主要 / 次要矛盾。`protracted-strategy` 让它不中途放弃。每条 skill 是一个可调用的原子;你说"用调查研究分析这件事",方法论触发。
+  cost_summary:
+    en: |-
+      Free skill (MIT). `npx qiushi-skill install <platform>` installs into one of 7 supported agent platforms. No API keys beyond your existing agent's. Pure markdown skills — no extra LLM calls beyond what your agent normally does.
+    zh: |-
+      skill 免费(MIT)。`npx qiushi-skill install <platform>` 装到 7 家支持的 agent 平台之一。除已有 agent 外无需 API key。纯 markdown skill —— 不会比你 agent 平常多调 LLM。
   watch_out:
-    en: |
-      The methodologies are derived from Mao-era Chinese dialectical materialism — the README explicitly says "this is methodology, not politics", but you should be aware of the cultural register before installing in a corporate skill catalog. Each skill is independent — installing all 10 may be more than you need; pick the 2-3 that match your actual workflow. The 7-platform installer is per-platform unique paths; verify the right one writes to your tool.
-    zh: |
-      方法论提炼自毛时代的唯物辩证法 —— README 明确说「这是方法论不是政治」，但放进企业级 skill catalog 之前要清楚这层文化基调。10 条 skill 互相独立 —— 一次装 10 条可能太多，挑 2-3 条匹配自己工作流的就够。7 平台安装路径每家不一样，确认你那家工具对应的位置写对了。
-  use_for:
-    - en: "Force the agent to investigate a problem before answering — 'investigation-first' skill."
-      zh: "在 agent 给答案前强制让它先调查 —— 用 investigation-first skill。"
-    - en: "Disciplined trade-off analysis — 'contradiction-analysis' identifies the principal contradiction."
-      zh: "面对多重矛盾时找主要矛盾 —— 用 contradiction-analysis skill。"
-    - en: "Long-running difficult tasks — 'protracted-strategy' keeps the agent from quitting halfway."
-      zh: "长期复杂任务（不让 agent 中途放弃）—— 用 protracted-strategy skill。"
-    - en: "Multi-platform skill installs — same 10 skills work in Claude Code / Cursor / Codex / Hermes / NanoBot / OpenClaw / OpenCode."
-      zh: "跨平台 skill 安装 —— 同一套 10 条在 7 个 agent 平台都能装。"
-  dont_use_for:
-    - en: "Don't install all 10 at once for a small project — pick 2-3 that match your real workflow."
-      zh: "小项目别一次装 10 条 —— 挑 2-3 条与自己工作流匹配的就够。"
-    - en: "Don't deploy in environments where the political register of the source texts would be a problem — methodology is general but the original quotations carry their own context."
-      zh: "对方法论原文政治色彩敏感的部署环境（如某些企业 catalog）先想清楚 —— 方法论本身通用，但原文引用带自身语境。"
-    - en: "Don't expect one skill to teach the agent — these are reflexes that need to be invoked at the right moment in a workflow."
-      zh: "别指望装一个 skill 就让 agent 自己懂方法论 —— 这是工作流里特定节点要主动触发的反射，不是常驻人格。"
+    en: |-
+      The methodologies are derived from Mao-era Chinese dialectical materialism — README explicitly says "methodology, not politics", but check the cultural register before installing in a corporate skill catalog. Don't install all 10 for a small project; pick 2-3 matching your real workflow. Each skill needs explicit invocation — these are reflexes for specific moments, not persistent persona.
+    zh: |-
+      方法论提炼自毛时代唯物辩证法 —— README 明确"方法论不是政治",但企业 catalog 部署前要明白这层文化基调。小项目别一次装 10 条,挑 2-3 条匹配你工作流的。每条 skill 需要主动触发 —— 是特定时刻的反射,不是常驻人格。
+  examples:
+  - context:
+      en: |-
+        A consultant analysing whether their client should expand to a new market or double down on the current one
+      zh: |-
+        咨询师在分析客户该开新市场还是深耕老市场
+    you_say:
+      en: |-
+        用矛盾分析法和调查研究 skill 分析这家公司该不该进军东南亚 —— 不要直接给建议,先列出证据和主要矛盾
+      zh: |-
+        用矛盾分析法和调查研究 skill 分析这家公司该不该进军东南亚 —— 不要直接给建议,先列出证据和主要矛盾
+    what_happens:
+      en: |-
+        investigation-first skill auto-fires: agent asks clarifying questions about resources, current-market saturation, leadership bandwidth before giving any opinion. contradiction-analysis then surfaces "the principal contradiction is leadership bandwidth vs market opportunity, not capital vs market." You get a structured analysis; the agent doesn't jump to a recommendation.
+      zh: |-
+        investigation-first skill 自动起: agent 先反问资源、老市场饱和度、leadership 带宽,再给意见。contradiction-analysis 然后浮现"主要矛盾是 leadership 带宽 vs 市场机会,不是资本 vs 市场"。你得到结构化分析,agent 不急着拍板。
+  - context:
+      en: |-
+        A product manager debugging why a feature has 80% adoption but only 20% retention
+      zh: |-
+        PM 在调查为什么某功能有 80% adoption 但 retention 只有 20%
+    you_say:
+      en: |-
+        Investigate before opining — what data should I gather? What hypotheses fit? Use the investigation-first skill
+      zh: |-
+        先调查再下结论 —— 我该收集什么数据?有哪些假设?用 investigation-first skill
+    what_happens:
+      en: |-
+        Agent doesn't immediately suggest "the feature is too complex" or any other generic answer. Instead it lists 6 hypotheses (onboarding gap, competitor switching, feature wasn't actually solving the stated problem, etc.) + the data you'd need to discriminate between them. You go gather, come back with data, agent narrows hypotheses.
+      zh: |-
+        agent 不会立刻说"功能太复杂"之类的通用答案。而是列 6 个假设(onboarding 不到位 / 竞品切走 / 功能其实没解决声称的问题 等) + 区分这些假设需要的数据。你去收集数据,回来,agent 收敛假设。
+  - context:
+      en: |-
+        A founder mid-way through a 6-month rebuild who's tempted to scrap and start over because progress feels slow
+      zh: |-
+        创业者在 6 个月重构的中段,因为进度慢想推倒重来
+    you_say:
+      en: |-
+        Use protracted-strategy skill — talk me out of scrapping this if there's no good reason
+      zh: |-
+        用 protracted-strategy skill —— 没有好理由的话别让我推倒重来
+    what_happens:
+      en: |-
+        Skill applies the "long-protracted-task" framing. Agent reviews progress vs original plan, distinguishes "actually stuck" from "slower than my optimistic estimate", points out which features are 80% done. You realise you're 4 weeks from done, not 4 months. You don't scrap.
+      zh: |-
+        skill 套用"持久战"框架。agent 对比进度和原计划,区分"真卡住"和"比我乐观估计慢",指出哪些功能其实 80% 完成了。你意识到自己离完工还有 4 周不是 4 个月,不推倒。
+similar_repos:
+- slug: obra--superpowers
+  shared_purpose:
+    en: |-
+      Both are methodology-skill bundles installed into agent platforms. Both bet that the right pre-set methodology installed once changes how the agent operates daily.
+    zh: |-
+      都是装到 agent 平台的方法论 skill 合集。都押注"装好正确的方法论会改变 agent 日常工作方式"。
+  this_better_at:
+    en: |-
+      Cognitive-style methodologies — investigation, contradiction analysis, protracted strategy. Better when the bottleneck is "agent answers too fast / too superficially", not "agent doesn't write tests".
+    zh: |-
+      认知层方法论 —— 调研、矛盾分析、持久战。当瓶颈是"agent 回答太快 / 太浅"时更合适,不是"agent 不写测试"那种。
+  other_better_at:
+    en: |-
+      Software-engineering methodologies — TDD, brainstorming, subagent dispatch, code review. Better when the bottleneck is engineering discipline, not analysis depth. Bigger maintainer team + 8-platform reach.
+    zh: |-
+      软件工程方法论 —— TDD / brainstorm / 子 agent 调度 / code review。当瓶颈是工程纪律时更合适,不是分析深度。维护团队更大 + 8 平台覆盖。
+- slug: gooseworks-ai--goose-skills
+  shared_purpose:
+    en: |-
+      Both are skill bundles in 2026's "skill packaging" wave — installable, multi-skill, opinionated about how to work.
+    zh: |-
+      都是 2026 年"skill 打包"浪潮里的 skill 合集 —— 可安装、多 skill、对工作方式有偏好。
+  this_better_at:
+    en: |-
+      Methodology depth + classical-text grounding. Each skill cites original-text excerpts so you can audit where the methodology came from.
+    zh: |-
+      方法论深度 + 经典原文引用。每条 skill 引用原文,让你审计方法论来源。
+  other_better_at:
+    en: |-
+      Tool-specific (Goose agent) skill catalog. Different audience: when you use Goose, goose-skills is the canonical bundle.
+    zh: |-
+      Goose 工具专属 skill 合集。不同受众: 你用 Goose 时,goose-skills 是规范合集。
+workflow_diagram:
+  layout: linear
+  why_layer: |
+    Molecule — the user picks which methodology skill(s) to invoke at
+    a given moment, but inside each invocation the skill follows a
+    fixed structure (define question → investigate → analyse →
+    conclude). The methodology itself is determined by which skill
+    fired, not by LLM at runtime. Multiple user-invocable atoms,
+    no compound decisions.
+  nodes:
+  - id: ask
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Hard question
+        (analysis / strategy / debug)
+      zh: |-
+        难题
+        (分析 / 战略 / 调试)
+  - id: pick
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        User picks methodology
+        (investigation / contradiction / ...)
+      zh: |-
+        用户选方法论
+        (调查 / 矛盾 / ...)
+  - id: invoke
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        Skill fires
+        (questions / framework)
+      zh: |-
+        skill 触发
+        (反问 / 框架)
+  - id: cite
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: |-
+        Original-text citations
+        (per skill)
+      zh: |-
+        原文引用
+        (每个 skill 自带)
+  - id: out
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: |-
+        Structured analysis
+        (not flat answer)
+      zh: |-
+        结构化分析
+        (不是平铺答案)
+  edges:
+  - from: ask
+    to: pick
+  - from: pick
+    to: invoke
+  - from: invoke
+    to: cite
+  - from: cite
+    to: out
 
 deployment:
   installable: true

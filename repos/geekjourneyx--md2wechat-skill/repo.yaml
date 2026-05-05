@@ -3,13 +3,237 @@ repo: md2wechat-skill
 display_name: md2wechat-skill
 repo_url: https://github.com/geekjourneyx/md2wechat-skill
 repo_type: skill
-# Archetype drives scaffolding and verdict-calculator ceiling rules.
-# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
 archetype: hybrid-skill
-# Layer: atom | molecule | compound. See docs/LAYERS.md.
 layer: atom
 complexity: simple
 uses_areas: false
 status: evaluated
-current_bucket: reusable
-notes: ""
+last_evaluated: '2026-04-13'
+version_tested: main@HEAD (built from source, "dev" version label)
+stars: 2005
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 2
+eval_discipline_score: 3
+recently_active: true
+notes: |
+  Go CLI for converting Markdown to WeChat-formatted HTML. 2K stars, MIT,
+  pushed 2026-04-30. The deterministic support layer is unusually strong:
+  228 passing Go tests, 36 test files, 14 packages, 5 discovery commands
+  returning consistent JSON envelopes (capabilities / providers / themes
+  / prompts / version), inspect command with actionable fix suggestions,
+  multi-platform distribution (Homebrew, npm, script, source build).
+
+  Core conversion is API-mediated (md2wechat.cn) so the user-facing
+  rendering happens server-side; the CLI is the polished interface +
+  pre-flight validation + post-flight error envelope. The optional
+  "humanize" + "write from idea" modes call an LLM (gemini /
+  modelscope / openai / openrouter / tuzi / volcengine) — those are
+  the hybrid bits.
+
+  Atom layer: from the user's perspective it's "one input (markdown
+  file) → one output (WeChat HTML / draft)". Internal phases (parse →
+  validate → convert → upload) aren't user-orchestrated.
+product_view:
+  one_liner:
+    en: |-
+      A Go CLI that converts Markdown to WeChat-editor-ready HTML in one command — 228-test polished support layer, 5 discovery commands returning consistent JSON, multi-provider LLM hooks for "humanize" + "write from idea" modes.
+    zh: |-
+      一个 Go CLI,把 Markdown 一行命令转成微信公众号编辑器可用的 HTML —— 228 个测试覆盖的成熟支撑层,5 个 discovery 命令统一返回 JSON,可选多家 LLM 接入"humanize" + "从想法直接写"两种模式。
+  persona:
+    en: |-
+      A Chinese tech-content publisher who writes in Markdown (because that's how their codebase / notes / blog work) but has to publish to WeChat (because that's where the audience is). Typical: indie tech blogger, internal-tool documenter, course author, weekly newsletter writer.
+    zh: |-
+      用 Markdown 写作的中文技术内容创作者(因为 codebase / 笔记 / 博客都是 markdown),但又必须把内容发到微信公众号(因为读者都在那)。典型: 独立技术 blogger、内部工具文档作者、课程作者、周更 newsletter 写手。
+  scenario:
+    en: |-
+      You finished an article in Markdown — code blocks, images, lists, footnotes. WeChat editor doesn't accept Markdown. You need clean styled HTML you can paste into the editor and hit publish.
+    zh: |-
+      你写完一篇 Markdown(代码块、图片、列表、脚注都齐),但是公众号编辑器不认 Markdown。你需要一份干净有调性的 HTML,贴进编辑器一键发布。
+  without_this:
+    en: |-
+      Three options, each terrible. (1) Paste Markdown into WeChat editor — code blocks lose syntax highlighting, lists lose indentation, headings look generic. (2) Use a SaaS converter on the web (mdnice / md2wechat.cn directly) — fine for one-off but you give up reproducibility, version control, and pre-flight validation. (3) Hand-roll your own conversion script — afternoon of layout fighting, then maintenance forever.
+    zh: |-
+      三条路,每条都差。(1) Markdown 直接贴进公众号编辑器 —— 代码块丢高亮,列表丢缩进,标题样式难看。(2) 用网页版 SaaS 转换器(mdnice / md2wechat.cn 直连) —— 一次性能用,但失去可复现性、版本控制、和发布前自检。(3) 自己写脚本 —— 一下午在调样式,然后永远在维护。
+  with_this:
+    en: |-
+      One CLI command. `inspect` first checks readiness (title from H1, author / digest warnings, duplicate-H1 detection, image counts, fixable issues listed). Then `convert` produces editor-ready HTML. 15 themes available, 6 LLM providers if you want "humanize" or "write from idea". JSON envelopes mean you can wire it into any pipeline.
+    zh: |-
+      一行 CLI 命令。先 `inspect` 自检(从 H1 取标题、author / digest 警告、重复 H1 检测、图片数、列出可修问题),然后 `convert` 出来就是公众号编辑器可贴的 HTML。15 个主题、6 家 LLM provider 可选(你要 humanize 或"从想法直接写"的话)。JSON 信封意味着可以拼到任何 pipeline。
+  cost_summary:
+    en: |-
+      MIT-licensed CLI is free. Core conversion calls md2wechat.cn (free tier exists; check for API key requirement). LLM modes (humanize / write from idea) need YOUR provider API key (gemini / modelscope / openai / openrouter / tuzi / volcengine). Build from source needs Go 1.26.1+; precompiled via Homebrew / npm / install script.
+    zh: |-
+      MIT 许可的 CLI 免费。核心转换调 md2wechat.cn(有免费档,API key 视情况而定)。LLM 模式(humanize / 从想法直接写)需要你自己的 provider API key(gemini / modelscope / openai / openrouter / tuzi / volcengine)。从源码编译需要 Go 1.26.1+;Homebrew / npm / 安装脚本可拿预编译版本。
+  watch_out:
+    en: |-
+      Core conversion depends on md2wechat.cn — if that service has an outage, conversion stalls (preview still works locally). The "humanize" + "write from idea" modes are LLM-driven and were not exercised in our static eval — the rest of the tool is exceptionally well-tested (228 tests) but those modes are the ceiling. Treat as production-grade for API-mode markdown→HTML, beta for the LLM modes.
+    zh: |-
+      核心转换依赖 md2wechat.cn —— 那家服务一挂转换就卡住(本地预览还能跑)。"humanize"和"从想法直接写"是 LLM 驱动的,我们的静态评测没跑过 —— 工具其他部分非常成熟(228 个测试),但这两个模式是天花板。API 模式的 markdown→HTML 当生产级用,LLM 模式当 beta 用。
+  examples:
+  - context:
+      en: |-
+        A weekly tech blogger publishing every Friday morning to WeChat
+      zh: |-
+        每周五早上更新公众号的独立技术 blogger
+    you_say:
+      en: |-
+        md2wechat inspect this-week.md && md2wechat convert this-week.md --theme dark --output draft.html
+      zh: |-
+        md2wechat inspect this-week.md && md2wechat convert this-week.md --theme dark --output draft.html
+    what_happens:
+      en: |-
+        inspect surfaces 2 issues (missing digest field, 1 image without alt-text). You fix those in markdown. convert produces draft.html using the dark theme. Open it in browser, copy-paste into WeChat editor, hit publish. Total: ~90 seconds versus ~15 minutes hand-fixing.
+      zh: |-
+        inspect 发现 2 个问题(缺 digest、1 张图没 alt 文字)。你在 markdown 里修。convert 用 dark 主题生成 draft.html。浏览器打开,复制粘贴进公众号编辑器,发布。总耗时约 90 秒,而不是手工调整 15 分钟。
+  - context:
+      en: |-
+        A newsletter author with code-heavy content publishing twice a month
+      zh: |-
+        每月发两期、代码量大的 newsletter 作者
+    you_say:
+      en: |-
+        md2wechat convert issue-23.md --theme code-clean --upload-images --create-draft
+      zh: |-
+        md2wechat convert issue-23.md --theme code-clean --upload-images --create-draft
+    what_happens:
+      en: |-
+        Tool uploads referenced images to WeChat material library, replaces image refs with WeChat URLs in the HTML, creates a draft directly in your WeChat backend (not just HTML on disk). You log into WeChat, find the draft, review, publish. Image-by-image manual upload is now zero clicks.
+      zh: |-
+        工具把引用的图片上传到公众号素材库,把 HTML 里的图片引用换成公众号 URL,直接在公众号后台创建草稿(不只是本地 HTML)。你登公众号后台,找到草稿,审核,发布。原来一张张手工上传的步骤现在零点击。
+  - context:
+      en: |-
+        A startup founder turning a half-finished idea draft into a polished article
+      zh: |-
+        创业者把一份半成品想法稿改成成稿
+    you_say:
+      en: |-
+        md2wechat write --idea idea.md --provider openrouter --theme business
+      zh: |-
+        md2wechat write --idea idea.md --provider openrouter --theme business
+    what_happens:
+      en: |-
+        Tool reads your half-finished idea + writes a full article via OpenRouter LLM, applies the business theme, produces editor-ready HTML. Untested mode in our eval — works for them, but treat output as a draft to fact-check, not finished copy.
+      zh: |-
+        工具读你的半成品想法,通过 OpenRouter LLM 写一篇完整文章,用 business 主题排版,出来公众号编辑器可贴的 HTML。我们没静态测过这个模式,作者反馈能用,但请把输出当草稿核事实,不要当成稿直接发。
+similar_repos:
+- slug: op7418--Humanizer-zh
+  shared_purpose:
+    en: |-
+      Both are atom-level skills aimed at Chinese-content publishing — one input → one polished output, no LLM-runtime decisions. Both bet that the LLM/CLI can do the medium-specific work users don't want to do by hand.
+    zh: |-
+      都是面向中文内容发布的 atom 级 skill —— 一个输入 → 一份成品,运行时不让 LLM 决策。都让 LLM/CLI 替你做不想手工干的渠道相关工作。
+  this_better_at:
+    en: |-
+      Channel-specific HTML rendering — does the WeChat formatting work that's invisible until you see WeChat publishing without it. 228 Go tests + multi-provider LLM hooks + 15 themes + draft-creation API.
+    zh: |-
+      渠道相关的 HTML 排版 —— 做的是没装它发公众号才知道有多麻烦的事。228 个 Go 测试 + 多家 LLM + 15 个主题 + 直接创建草稿。
+  other_better_at:
+    en: |-
+      Quality / authenticity — fixes the actual prose so it doesn't sound machine-written. Channel-agnostic; you take its output and feed it to md2wechat-skill or anywhere else.
+    zh: |-
+      质量 / 真实感 —— 改字句让它读起来不像机器写的。不挑渠道;它的输出可以接到 md2wechat-skill 或任何地方。
+- slug: oaker-io--wewrite
+  shared_purpose:
+    en: |-
+      Both target the WeChat-publishing workflow specifically. Both convert from a friendlier source format (markdown) into WeChat-ecosystem outputs.
+    zh: |-
+      都专门做公众号发布工作流。都把更友好的源格式(markdown)转成公众号生态产物。
+  this_better_at:
+    en: |-
+      CLI-first, scriptable, JSON envelopes for pipelines. 228-test support layer makes it the right pick when you publish on a schedule or wire it into CI.
+    zh: |-
+      CLI 优先,可脚本化,JSON 信封方便接 pipeline。228 个测试的支撑层让它成为定时发布或 CI 集成的首选。
+  other_better_at:
+    en: |-
+      Broader WeChat workflow tooling — covers post management beyond just markdown→HTML conversion. If you also need editorial-side workflow (not just rendering), wewrite covers more of the journey.
+    zh: |-
+      公众号工作流工具更全 —— 不只 markdown→HTML 转换,还覆盖文章管理。如果你需要编辑侧工作流(不只是渲染),wewrite 覆盖更广。
+workflow_diagram:
+  layout: io
+  why_layer: |
+    Atom — one user-invocable capability (markdown → WeChat HTML).
+    Internal phases (parse → inspect → convert → optional image
+    upload → optional draft creation) aren't user-orchestrated; you
+    say "convert this", the tool runs the pipeline, you get HTML.
+    The optional LLM modes (humanize / write-from-idea) are still
+    atom-shaped — one input, one polished output.
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: |-
+        Markdown article
+        (.md file)
+      zh: |-
+        Markdown 文章
+        (.md 文件)
+  - id: skill
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: |-
+        md2wechat skill
+        (inspect → convert → optional upload)
+      zh: |-
+        md2wechat skill
+        (inspect → 转换 → 可选上传)
+  - id: output
+    type: end
+    rank: 2
+    lane: 0
+    label:
+      en: |-
+        WeChat editor-ready HTML
+        (or direct draft)
+      zh: |-
+        公众号可贴 HTML
+        (或直接草稿)
+  edges:
+  - from: input
+    to: skill
+  - from: skill
+    to: output
+deployment:
+  installable: true
+  install_methods:
+  - method: brew install md2wechat
+    platform: macOS
+    complexity: easy
+  - method: npm install -g @md2wechat/cli
+    platform: any (Node.js)
+    complexity: easy
+  - method: install script (curl ... | bash)
+    platform: any
+    complexity: easy
+  - method: go build ./cmd/md2wechat (from source)
+    platform: any (Go 1.26.1+)
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: md2wechat.cn (core conversion)
+  purpose: Server-side Markdown → WeChat HTML conversion
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Free tier sufficient for normal blogger volumes; service availability dependency
+- name: WeChat Material Library API
+  purpose: Optional image upload + draft creation
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Need WeChat official-account credentials for upload-images / create-draft modes
+- name: LLM provider (gemini / modelscope / openai / openrouter / tuzi / volcengine)
+  purpose: Optional "humanize" + "write from idea" modes
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: BYOK for whichever provider you pick; per-request pricing
