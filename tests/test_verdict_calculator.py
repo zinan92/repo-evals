@@ -268,7 +268,7 @@ def test_score_base_is_40_for_empty_eval():
 
 
 def test_score_clean_static_eval_lifts_above_pass_line():
-    """All-passed critical claims should land above 60 (the 'try' line)."""
+    """All-passed critical claims should clear the new 50 'try' line."""
 
     out = compute_verdict({
         "repo": "x/y", "archetype": "pure-cli", "core_layer_tested": False,
@@ -280,11 +280,11 @@ def test_score_clean_static_eval_lifts_above_pass_line():
         ],
         "stars": 0, "has_license": True,
     })
-    # 40 base + 5+5+5 critical + 2 high = 57 — below 60 (try) line.
-    # A 4-claim pass shouldn't be enough to clear 60 alone — need
-    # ecosystem or maintainer evidence too.
+    # 40 base + 5+5+5 critical + 2 high = 57.
+    # New thresholds (2026-05-05 calibration): try starts at 50, so
+    # 57 is solidly in 🧪 try.
     assert out["score"] == 57
-    assert out["tier_key"] == "risky"
+    assert out["tier_key"] == "try"
 
 
 def test_score_with_ecosystem_clears_try_line():
@@ -402,21 +402,25 @@ def test_confidence_high_when_critical_failure_or_full_evidence():
 
 
 def test_score_tier_thresholds():
-    """Tier boundaries match docs: 90/80/70/60/40/0."""
+    """Tier boundaries (2026-05-05 calibration): 90/80/65/50/30/0."""
     from verdict_calculator import tier_for_score
     assert tier_for_score(95)["key"] == "recommend"
     assert tier_for_score(85)["key"] == "team"
     assert tier_for_score(75)["key"] == "self"
-    assert tier_for_score(65)["key"] == "try"
-    assert tier_for_score(50)["key"] == "risky"
+    assert tier_for_score(60)["key"] == "try"
+    assert tier_for_score(40)["key"] == "risky"
     assert tier_for_score(20)["key"] == "broken"
-    # Boundary checks
+    # Boundary checks under new thresholds
     assert tier_for_score(90)["key"] == "recommend"
     assert tier_for_score(89)["key"] == "team"
-    assert tier_for_score(60)["key"] == "try"
-    assert tier_for_score(59)["key"] == "risky"
-    assert tier_for_score(40)["key"] == "risky"
-    assert tier_for_score(39)["key"] == "broken"
+    assert tier_for_score(80)["key"] == "team"
+    assert tier_for_score(79)["key"] == "self"
+    assert tier_for_score(65)["key"] == "self"
+    assert tier_for_score(64)["key"] == "try"
+    assert tier_for_score(50)["key"] == "try"
+    assert tier_for_score(49)["key"] == "risky"
+    assert tier_for_score(30)["key"] == "risky"
+    assert tier_for_score(29)["key"] == "broken"
 
 
 # --- Ad-hoc runner (so tests work without pytest) --------------------------

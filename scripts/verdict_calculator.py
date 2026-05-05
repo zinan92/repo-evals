@@ -113,6 +113,10 @@ SCORE_MAINTAINER_CAP = 15
 SCORE_ECOSYSTEM_CAP = 15
 
 # Tier thresholds + bilingual labels.
+# Calibrated 2026-05-05: lowered thresholds because most static evals
+# can't reach 90+ even with strong evidence (live e2e is always missing
+# without a real run). The new bands reflect what static evidence
+# realistically buys you.
 TIERS: tuple[dict[str, object], ...] = (
     {"min": 90, "key": "recommend", "emoji": "⭐",
      "en": "Recommend", "zh": "公开推荐",
@@ -122,15 +126,15 @@ TIERS: tuple[dict[str, object], ...] = (
      "en": "Team-ready", "zh": "团队就绪",
      "blurb_en": "Safe to depend on in team / production pipelines.",
      "blurb_zh": "团队 / 生产 pipeline 可以依赖。"},
-    {"min": 70, "key": "self", "emoji": "🛠",
+    {"min": 65, "key": "self", "emoji": "🛠",
      "en": "Self-use OK", "zh": "自用 OK",
      "blurb_en": "Use it yourself; not yet ready to recommend to others.",
      "blurb_zh": "你自己日常用没问题，还不到推荐给陌生人的程度。"},
-    {"min": 60, "key": "try", "emoji": "🧪",
+    {"min": 50, "key": "try", "emoji": "🧪",
      "en": "Try once", "zh": "试一下",
      "blurb_en": "Install and try; do not put in your critical path yet.",
      "blurb_zh": "装上玩一下行；别让生产环境 / 工作流依赖它。"},
-    {"min": 40, "key": "risky", "emoji": "⚠️",
+    {"min": 30, "key": "risky", "emoji": "⚠️",
      "en": "Risky", "zh": "慎用",
      "blurb_en": "Runs but has unverified critical issues; expect surprises.",
      "blurb_zh": "跑得通但有未验证的关键问题，会有意外。"},
@@ -205,7 +209,12 @@ def compute_score(inp: dict, claims: list[dict]) -> dict:
             elif status in FAIL_STATUSES:
                 static_delta -= 10
             elif status in UNTESTED_STATUSES:
-                static_delta -= 3
+                # Calibrated 2026-05-05: was -3. A critical claim
+                # that's "untested" usually means it's a deferred
+                # live e2e — penalising heavily double-counted with
+                # the layer_bonus which already discounts unvalidated
+                # runtime behaviour.
+                static_delta -= 2
         elif prio == "high":
             if status in PASS_STATUSES and status not in WITH_CONCERNS_STATUSES:
                 static_delta += 2
@@ -255,12 +264,13 @@ def compute_score(inp: dict, claims: list[dict]) -> dict:
     #   molecule — static checks validate the structure but not the
     #              orchestration; +0
     #   compound — static checks miss most of the runtime LLM-driven
-    #              behaviour; -5
+    #              behaviour; -3 (calibrated 2026-05-05, was -5;
+    #              compound is harder to validate but not crippling)
     layer = str(inp.get("layer", "") or "").strip().lower()
     if layer == "atom":
         layer_bonus = 5
     elif layer == "compound":
-        layer_bonus = -5
+        layer_bonus = -3
     else:
         layer_bonus = 0
     breakdown["layer_bonus"] = layer_bonus
