@@ -98,3 +98,39 @@ multilingual_readme: true
 release_pipeline_score: 3
 eval_discipline_score: 1
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: docker compose up -d
+    platform: any (Docker)
+    complexity: easy
+  - method: Pre-built ghcr image
+    platform: any (Docker)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: false
+  default_password_warning: WEB_PASSWORD=admin123 + 0.0.0.0:8000 default — change
+    before public exposure
+third_party_services:
+- name: Xianyu / 闲鱼 (real account)
+  purpose: Cookie-based session for crawling listings
+  required: true
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: Use companion Chrome extension to export login cookie
+- name: 'OpenAI-compatible LLM (default: modelscope.cn)'
+  purpose: Multi-modal product analysis
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Defaults to modelscope.cn (CN-friendly); change OPENAI_BASE_URL for own
+    gateway
+- name: ntfy / Bark / 企业微信 / Telegram / Gotify / Webhook
+  purpose: Notification delivery
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Pick at least one channel; ntfy.sh is fully free

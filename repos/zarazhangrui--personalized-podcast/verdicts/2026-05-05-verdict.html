@@ -254,6 +254,103 @@ details.score-breakdown[open] > summary::after { content: "−"; }
 .scenario-yes { border-left: 3px solid #4ade80; }
 .scenario-no  { border-left: 3px solid #f87171; color: var(--text-2); }
 
+/* --- Deployment + 3rd-party services section ------------------------ */
+
+.deployment-section { margin: 24px 0 48px; }
+.deploy-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 12px;
+}
+@media (max-width: 720px) { .deploy-grid { grid-template-columns: 1fr; } }
+
+.deploy-card, .services-card {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+}
+.card-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 10px;
+}
+.card-headline { margin-bottom: 14px; }
+
+.deploy-status {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}
+.deploy-status.status-good { color: #4ade80; }
+.deploy-status.status-bad { color: #f87171; }
+
+.install-table {
+  width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 14px;
+}
+.install-table th, .install-table td {
+  padding: 8px 10px; border-top: 1px solid var(--border);
+  text-align: left; vertical-align: top; font-size: 13px;
+}
+.install-table th {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-weight: 600;
+}
+.install-table td code { font-size: 12px; word-break: break-word; }
+
+.install-table .badge {
+  display: inline-block; padding: 1px 7px; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.install-table .complexity-easy { color: #4ade80; border-color: rgba(74,222,128,.3); }
+.install-table .complexity-moderate { color: #f59e0b; border-color: rgba(245,158,11,.3); }
+.install-table .complexity-hard { color: #f87171; border-color: rgba(248,113,113,.3); }
+
+.deploy-flags { list-style: none; padding: 0; margin: 8px 0 0; }
+.deploy-flags li {
+  padding: 6px 0; font-size: 13px; color: var(--text-2);
+  display: flex; gap: 10px; align-items: baseline;
+}
+.flag-icon { flex-shrink: 0; }
+
+.service-card {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px;
+  background: var(--surface-2);
+}
+.service-card:last-child { margin-bottom: 0; }
+.service-head {
+  display: flex; justify-content: space-between;
+  gap: 12px; align-items: flex-start;
+}
+.service-name { font-weight: 600; color: var(--text); font-size: 14px; }
+.service-purpose {
+  font-size: 12px; color: var(--text-2);
+  margin-top: 2px; line-height: 1.45;
+}
+.service-pills {
+  display: flex; flex-direction: column;
+  gap: 4px; flex-shrink: 0; align-items: flex-end;
+}
+.service-pill {
+  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.service-pill.status-must  { background: rgba(248,113,113,.14); color: #f87171; }
+.service-pill.status-opt   { background: var(--surface-1); color: var(--text-3); }
+.service-pill.status-paid  { background: rgba(245,158,11,.14); color: #f59e0b; }
+.service-pill.status-free  { background: rgba(96,165,250,.14); color: #60a5fa; }
+.service-pill.status-signup { background: rgba(192,132,252,.14); color: #c084fc; }
+.service-pill.status-easy  { background: rgba(74,222,128,.14); color: #4ade80; }
+
+.service-cost {
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px; color: var(--text-2); line-height: 1.5;
+}
+
 .stats-bar {
   display: flex; height: 10px; border-radius: 999px;
   overflow: hidden; background: var(--surface-1);
@@ -805,6 +902,8 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
   </header>
 
   <section class="scenarios-section"><div class="section-head"><h2><span class="i18n" data-en="Use it for / Don't use it for" data-zh="什么时候用 / 什么时候别用"></span></h2></div><ul class="scenarios"><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Convert long-form content (newsletters / research papers / Twitter threads) into audio you can listen to on a walk." data-zh="把长文（newsletter / 研究论文 / 推特长帖）变成走路 / 通勤时能听的音频。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Self-reflection — feed it your own writing / meeting transcripts / resume; have the hosts &#x27;eavesdrop&#x27; on you." data-zh="自我反思 —— 把自己的写作 / 会议录音 / 简历喂进去，让主持人「在你不在场时」点评你。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Subscribe via RSS to your generated feed so episodes appear in Apple Podcasts / Spotify next to real subscriptions." data-zh="订阅自己生成的 RSS feed，episode 会和真订阅的节目一起出现在 Apple Podcasts / Spotify 里。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t upload sensitive personal content blindly — it goes to Anthropic + Fish Audio." data-zh="敏感个人内容别盲目上传 —— 内容会经过 Anthropic + Fish Audio 两家服务。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t expect production-grade audio — Fish Audio quality is good but not studio-level, and pacing is automated." data-zh="音频质量别期待录音棚级别 —— Fish Audio 不错但还不到专业水准，节奏也是自动化的。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t redistribute generated episodes commercially — no LICENSE; voice IP is its own consideration." data-zh="生成的 episode 别商用分发 —— 没 LICENSE；声音 IP 也是独立考量。"></span></li></ul></section>
+
+  <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>gh repo clone into ~/.claude/skills/personalized-podcast</code></td><td>any</td><td><span class="badge complexity-easy">easy</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">Anthropic Claude (Claude Code)</div><div class="service-purpose">LLM writes the 2-host conversation script</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-paid"><span class="i18n" data-en="💰 Paid API key" data-zh="💰 需付费 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Per-episode cost depends on length (~$0.10 for a 10-min episode)</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Fish Audio</div><div class="service-purpose">TTS — generates voice for each host</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-free"><span class="i18n" data-en="🆓 Free tier API key" data-zh="🆓 免费版 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Free tier sufficient for personal use; default voices pre-configured</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">GitHub (for RSS hosting)</div><div class="service-purpose">Optional — host RSS feed for Apple Podcasts / Spotify</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-signup"><span class="i18n" data-en="📝 Signup needed" data-zh="📝 需要注册账号"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Use GitHub Pages; only needed if you want podcast app delivery</div></div></div></div></section>
 
   <div class="pull-quotes">
     <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="Long-read consumers who&#x27;d rather listen on a walk / commute. Also: introspection — feed it your own writing / journal / resume and have the hosts &#x27;eavesdrop&#x27; on you." data-zh="更想在通勤 / 散步时用耳朵消费长文的人。另外还有意外用法：把自己的写作 / 日记 / 简历喂进去，让两位主持人「在你不在场」时点评你。"></span></div></section>

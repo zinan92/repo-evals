@@ -95,3 +95,32 @@ multilingual_readme: true
 release_pipeline_score: 3
 eval_discipline_score: 1
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: Download release binary (8 OS/arch combinations)
+    platform: macOS / Linux / Windows / FreeBSD × aarch64+amd64
+    complexity: easy
+  - method: go install / go build
+    platform: any (Go 1.26+)
+    complexity: moderate
+  - method: Embed via Go SDK
+    platform: any Go service
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: Claude Code / ChatGPT Codex / Gemini CLI / Antigravity
+  purpose: Upstream OAuth sessions to wrap
+  required: true
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: Wraps existing CLI subscriptions — no new keys needed
+- name: Kimi / Vertex (extra OAuth flows)
+  purpose: Additional model providers
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Optional providers

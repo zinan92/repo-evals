@@ -94,3 +94,61 @@ multilingual_readme: true
 release_pipeline_score: 3
 eval_discipline_score: 1
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: docker compose up -d --build
+    platform: any (Docker)
+    complexity: moderate
+  - method: AWS Marketplace AMI
+    platform: AWS EC2
+    complexity: easy
+    paid: true
+  - method: git clone + manual setup
+    platform: any
+    complexity: hard
+  requires_compile: true
+  works_offline_after_install: false
+third_party_services:
+- name: OpenAI API
+  purpose: LLM for AI strategy / indicator generation
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: One of three LLM providers — pick at least one
+- name: DeepSeek API
+  purpose: Alternative LLM provider
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Cheaper alternative; CN-friendly
+- name: Grok API (x.ai)
+  purpose: Alternative LLM provider
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Third LLM option
+- name: Interactive Brokers (IBKR)
+  purpose: US stock execution
+  required: false
+  api_key_needed: false
+  signup_needed: true
+  free_tier: false
+  cost_note: Brokerage account; paper trading available for free
+- name: MetaTrader 5
+  purpose: Forex execution (Windows-only)
+  required: false
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: Windows host required; Linux not supported
+- name: Crypto exchanges (via ccxt)
+  purpose: Crypto execution
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: ccxt supports many exchanges; trading fees apply

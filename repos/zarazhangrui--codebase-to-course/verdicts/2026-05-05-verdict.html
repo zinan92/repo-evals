@@ -254,6 +254,103 @@ details.score-breakdown[open] > summary::after { content: "−"; }
 .scenario-yes { border-left: 3px solid #4ade80; }
 .scenario-no  { border-left: 3px solid #f87171; color: var(--text-2); }
 
+/* --- Deployment + 3rd-party services section ------------------------ */
+
+.deployment-section { margin: 24px 0 48px; }
+.deploy-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 12px;
+}
+@media (max-width: 720px) { .deploy-grid { grid-template-columns: 1fr; } }
+
+.deploy-card, .services-card {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+}
+.card-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 10px;
+}
+.card-headline { margin-bottom: 14px; }
+
+.deploy-status {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}
+.deploy-status.status-good { color: #4ade80; }
+.deploy-status.status-bad { color: #f87171; }
+
+.install-table {
+  width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 14px;
+}
+.install-table th, .install-table td {
+  padding: 8px 10px; border-top: 1px solid var(--border);
+  text-align: left; vertical-align: top; font-size: 13px;
+}
+.install-table th {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-weight: 600;
+}
+.install-table td code { font-size: 12px; word-break: break-word; }
+
+.install-table .badge {
+  display: inline-block; padding: 1px 7px; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.install-table .complexity-easy { color: #4ade80; border-color: rgba(74,222,128,.3); }
+.install-table .complexity-moderate { color: #f59e0b; border-color: rgba(245,158,11,.3); }
+.install-table .complexity-hard { color: #f87171; border-color: rgba(248,113,113,.3); }
+
+.deploy-flags { list-style: none; padding: 0; margin: 8px 0 0; }
+.deploy-flags li {
+  padding: 6px 0; font-size: 13px; color: var(--text-2);
+  display: flex; gap: 10px; align-items: baseline;
+}
+.flag-icon { flex-shrink: 0; }
+
+.service-card {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px;
+  background: var(--surface-2);
+}
+.service-card:last-child { margin-bottom: 0; }
+.service-head {
+  display: flex; justify-content: space-between;
+  gap: 12px; align-items: flex-start;
+}
+.service-name { font-weight: 600; color: var(--text); font-size: 14px; }
+.service-purpose {
+  font-size: 12px; color: var(--text-2);
+  margin-top: 2px; line-height: 1.45;
+}
+.service-pills {
+  display: flex; flex-direction: column;
+  gap: 4px; flex-shrink: 0; align-items: flex-end;
+}
+.service-pill {
+  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.service-pill.status-must  { background: rgba(248,113,113,.14); color: #f87171; }
+.service-pill.status-opt   { background: var(--surface-1); color: var(--text-3); }
+.service-pill.status-paid  { background: rgba(245,158,11,.14); color: #f59e0b; }
+.service-pill.status-free  { background: rgba(96,165,250,.14); color: #60a5fa; }
+.service-pill.status-signup { background: rgba(192,132,252,.14); color: #c084fc; }
+.service-pill.status-easy  { background: rgba(74,222,128,.14); color: #4ade80; }
+
+.service-cost {
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px; color: var(--text-2); line-height: 1.5;
+}
+
 .stats-bar {
   display: flex; height: 10px; border-radius: 999px;
   overflow: hidden; background: var(--surface-1);
@@ -805,6 +902,8 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
   </header>
 
   <section class="scenarios-section"><div class="section-head"><h2><span class="i18n" data-en="Use it for / Don't use it for" data-zh="什么时候用 / 什么时候别用"></span></h2></div><ul class="scenarios"><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Vibe coders who built or forked a codebase and want to actually understand how it works — without sitting through a CS course." data-zh="自己写了或者 fork 了一个项目、想搞懂它怎么工作的「vibe coder」—— 不想去上 CS 课。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Onboarding a non-technical teammate to a small/medium codebase you maintain." data-zh="把一个你维护的中小型代码库讲给一个不懂技术的同事 / 合作者。"></span></li><li class="scenario scenario-yes"><span class="scenario-mark">✅</span><span class="i18n" data-en="Turn an open-source repo you depend on into a teaching artefact for your team." data-zh="把团队依赖的某个开源项目做成内部教学资料。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t use on a giant monorepo or polyglot codebase without scoping a sub-directory first — the 5-7 module template won&#x27;t survive." data-zh="别直接对着大 monorepo 或多语言混合代码库跑 —— 5-7 模块模板撑不住，先框一个子目录。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t redistribute the generated course in a commercial context yet — repo has no LICENSE; legal status is unclear." data-zh="生成的课程暂时别商用 / 公开转发 —— 仓库没 LICENSE，法律状态不明。"></span></li><li class="scenario scenario-no"><span class="scenario-mark">❌</span><span class="i18n" data-en="Don&#x27;t expect a polished course out of a half-finished prototype — quality of the analysis ≤ quality of the codebase." data-zh="半成品原型别指望出精品课 —— 分析质量 ≤ 代码库本身的质量。"></span></li></ul></section>
+
+  <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>Copy codebase-to-course/ to ~/.claude/skills/</code></td><td>any</td><td><span class="badge complexity-easy">easy</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">📡</span><span class="i18n" data-en="Works offline after install" data-zh="装完之后可离线运行"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">Anthropic Claude (Claude Code)</div><div class="service-purpose">LLM analyzes codebase + writes module briefs</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-paid"><span class="i18n" data-en="💰 Paid API key" data-zh="💰 需付费 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Standard Claude Code cost; per-course token cost depends on codebase size</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Google Fonts CDN</div><div class="service-purpose">Course typography</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Optional; course works offline if fonts are cached</div></div></div></div></section>
 
   <div class="pull-quotes">
     <section class="best-for"><div class="best-for-label"><span class="i18n" data-en="Best for" data-zh="最适合谁用"></span></div><div class="best-for-body"><span class="i18n" data-en="&#x27;Vibe coders&#x27; who already build software with AI tools but want to actually understand a codebase they shipped or forked, without taking a CS course." data-zh="已经在用 AI 工具写代码，但想真正搞懂自己已部署 / fork 的代码库的「vibe coder」—— 不想去读 CS 课。"></span></div></section>

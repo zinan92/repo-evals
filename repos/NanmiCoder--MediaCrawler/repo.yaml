@@ -104,3 +104,33 @@ multilingual_readme: true
 release_pipeline_score: 1
 eval_discipline_score: 2
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + uv pip install + uv run main.py
+    platform: any (Python 3.11+)
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: Real account on each platform
+  purpose: Login cookies to access each platform
+  required: true
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: QR / phone / cookie login; aggressive scraping risks account limits
+- name: Per-platform anti-bot ecosystem
+  purpose: Internal — handled via libs/*.js + xhshow + per-platform client.py
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Project handles signing internally; breaks when platforms change
+- name: MediaCrawlerPro (paid)
+  purpose: Removes Playwright dependency, adds resume + multi-account
+  required: false
+  api_key_needed: false
+  signup_needed: true
+  free_tier: false
+  cost_note: Commercial upgrade — separate from this OSS repo

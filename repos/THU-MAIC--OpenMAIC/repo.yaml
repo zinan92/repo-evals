@@ -105,3 +105,34 @@ multilingual_readme: true
 release_pipeline_score: 2
 eval_discipline_score: 3
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: Vercel one-click deploy
+    platform: Vercel
+    complexity: easy
+  - method: docker compose up
+    platform: any (Docker)
+    complexity: moderate
+  - method: Hosted demo at open.maic.chat
+    platform: any browser
+    complexity: easy
+    no_install: true
+  requires_compile: true
+  works_offline_after_install: false
+third_party_services:
+- name: OpenAI / Anthropic / Google / DeepSeek / Grok
+  purpose: LLM for classroom generation
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Per-classroom token cost can be substantial — pick a model + lock spend
+    before opening to non-tech users
+- name: OpenAI / Azure / GLM / Qwen / MiniMax TTS
+  purpose: Voice synthesis for AI teachers
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Optional — disable TTS for text-only mode; self-hosted VoxCPM2 is free

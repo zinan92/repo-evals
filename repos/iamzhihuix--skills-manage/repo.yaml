@@ -56,3 +56,22 @@ multilingual_readme: true
 release_pipeline_score: 2
 eval_discipline_score: 1
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: Download Tauri DMG (unsigned — needs xattr workaround)
+    platform: macOS
+    complexity: moderate
+  - method: Build from source (Tauri / Rust)
+    platform: any
+    complexity: hard
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: AI coding tools (Claude Code, Cursor, Codex, Gemini CLI, Trae, +24 more)
+  purpose: Target tools whose skill folders are managed
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Manages local skill folders; doesn't talk to upstream APIs itself

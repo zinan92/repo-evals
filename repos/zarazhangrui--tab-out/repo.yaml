@@ -87,3 +87,20 @@ multilingual_readme: false
 release_pipeline_score: 0
 eval_discipline_score: 0
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: Chrome 'Load unpacked' from extension/
+    platform: Chrome / Edge / Brave
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: Google favicon service (s2/favicons)
+  purpose: Render favicons next to each tab
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: 'Privacy concern: every open-tab domain leaks to Google. Graceful fallback
+    exists if blocked.'

@@ -99,3 +99,31 @@ multilingual_readme: false
 release_pipeline_score: 2
 eval_discipline_score: 2
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + copy skills/remotion/ to ~/.claude/skills/
+    platform: any
+    complexity: moderate
+  - method: Inside Remotion monorepo (intended path)
+    platform: any
+    complexity: easy
+    internal: true
+  requires_compile: false
+  works_offline_after_install: true
+  private_npm: true
+third_party_services:
+- name: Anthropic Claude / Cursor / Codex
+  purpose: LLM that consumes the skill
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Standard agent-side cost
+- name: Google Fonts CDN
+  purpose: Font loading at course render time
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Optional — only used if rendered course imports fonts

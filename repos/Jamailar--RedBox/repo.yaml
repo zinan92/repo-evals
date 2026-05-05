@@ -60,3 +60,26 @@ product_view:
   - en: Don't run RedClaw automation on a real account without verifying it on a test
       account first.
     zh: 别在真实账号上直接跑 RedClaw 自动化 —— 先在小号验证。
+deployment:
+  installable: true
+  install_methods:
+  - method: Download signed DMG / EXE / DEB
+    platform: macOS / Windows / Linux × aarch64+amd64+x86
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: OpenAI / Anthropic / Google (any compatible)
+  purpose: LLM for content generation + analysis
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Configure endpoint + key + model in Settings
+- name: Xiaohongshu (real account)
+  purpose: RedClaw automation drives user's session
+  required: false
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: Use companion browser extension

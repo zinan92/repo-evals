@@ -87,3 +87,27 @@ product_view:
   - en: Don't expect a polished course out of a half-finished prototype — quality
       of the analysis ≤ quality of the codebase.
     zh: 半成品原型别指望出精品课 —— 分析质量 ≤ 代码库本身的质量。
+deployment:
+  installable: true
+  install_methods:
+  - method: Copy codebase-to-course/ to ~/.claude/skills/
+    platform: any
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: Anthropic Claude (Claude Code)
+  purpose: LLM analyzes codebase + writes module briefs
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Standard Claude Code cost; per-course token cost depends on codebase
+    size
+- name: Google Fonts CDN
+  purpose: Course typography
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Optional; course works offline if fonts are cached

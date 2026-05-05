@@ -88,3 +88,26 @@ multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 2
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: curl|sh one-liner installer
+    platform: macOS / Linux / WSL / Git Bash
+    complexity: easy
+  - method: PowerShell irm|iex
+    platform: Windows
+    complexity: easy
+  - method: git clone + pip install -e .
+    platform: any
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+  auto_update: true
+third_party_services:
+- name: Google Sheets (public read)
+  purpose: Hosts the 4 datasets read at runtime
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Free; project owners can rename/delete sheets — single point of failure

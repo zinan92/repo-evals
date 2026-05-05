@@ -1208,6 +1208,202 @@ def render_scenarios(vd: VerdictData) -> str:
     )
 
 
+def render_deployment_section(vd: VerdictData) -> str:
+    """Prominent dossier section: deployment status + third-party services.
+
+    Two cards:
+      1. **Deploy** — Can you install? How? Online needed? Compile needed?
+      2. **Third-party services** — what API keys / signups / costs are
+         actually required to use the repo, with traffic-light status
+         per service.
+
+    Renders nothing if neither field is populated in repo.yaml.
+    """
+
+    deployment = vd.repo.get("deployment") or {}
+    services = vd.repo.get("third_party_services") or []
+    if not deployment and not services:
+        return ""
+
+    # --- Deployment card ----
+    deploy_html = ""
+    if deployment:
+        installable = deployment.get("installable", False)
+        install_status = (
+            ('<span class="deploy-status status-good">'
+             '<span class="i18n" data-en="✅ Installable now" '
+             'data-zh="✅ 现在就能装"></span></span>')
+            if installable
+            else ('<span class="deploy-status status-bad">'
+                  '<span class="i18n" data-en="❌ Not directly installable" '
+                  'data-zh="❌ 不能直接安装"></span></span>')
+        )
+
+        methods = deployment.get("install_methods") or []
+        methods_rows: list[str] = []
+        for m in methods:
+            method_name = _esc(m.get("method", ""))
+            platform = _esc(m.get("platform", ""))
+            complexity = m.get("complexity", "")
+            paid = m.get("paid", False)
+            internal = m.get("internal", False)
+            no_install = m.get("no_install", False)
+            badges = []
+            if complexity:
+                cls = {"easy": "complexity-easy", "moderate": "complexity-moderate",
+                       "hard": "complexity-hard"}.get(complexity, "")
+                badges.append(f'<span class="badge {cls}">{_esc(complexity)}</span>')
+            if paid:
+                badges.append('<span class="badge complexity-hard"><span class="i18n" data-en="paid" data-zh="付费"></span></span>')
+            if internal:
+                badges.append('<span class="badge"><span class="i18n" data-en="internal" data-zh="内部用法"></span></span>')
+            if no_install:
+                badges.append('<span class="badge complexity-easy"><span class="i18n" data-en="no install" data-zh="免安装"></span></span>')
+            methods_rows.append(
+                f'<tr><td><code>{method_name}</code></td>'
+                f'<td>{platform}</td>'
+                f'<td>{" ".join(badges)}</td></tr>'
+            )
+
+        flags: list[str] = []
+        if deployment.get("requires_compile"):
+            flags.append(
+                '<li><span class="flag-icon">🛠</span><span class="i18n" '
+                'data-en="Requires compile / build step" '
+                'data-zh="需要编译 / build 步骤"></span></li>'
+            )
+        if deployment.get("works_offline_after_install"):
+            flags.append(
+                '<li><span class="flag-icon">📡</span><span class="i18n" '
+                'data-en="Works offline after install" '
+                'data-zh="装完之后可离线运行"></span></li>'
+            )
+        else:
+            flags.append(
+                '<li><span class="flag-icon">🌐</span><span class="i18n" '
+                'data-en="Needs network at runtime" '
+                'data-zh="运行时需要网络"></span></li>'
+            )
+        if deployment.get("auto_update"):
+            flags.append(
+                '<li><span class="flag-icon">🔄</span><span class="i18n" '
+                'data-en="Auto-updates by default" '
+                'data-zh="默认自动更新"></span></li>'
+            )
+        if deployment.get("private_npm"):
+            flags.append(
+                '<li><span class="flag-icon">🔒</span><span class="i18n" '
+                'data-en="Private npm package — not on registry" '
+                'data-zh="私有 npm 包 —— 不在公开 registry 上"></span></li>'
+            )
+        if deployment.get("windows_unsupported"):
+            flags.append(
+                '<li><span class="flag-icon">⚠️</span><span class="i18n" '
+                'data-en="Windows not supported" '
+                'data-zh="不支持 Windows"></span></li>'
+            )
+        warn = deployment.get("default_password_warning")
+        if warn:
+            flags.append(
+                f'<li><span class="flag-icon">🚨</span>{_esc(warn)}</li>'
+            )
+
+        deploy_html = (
+            '<div class="deploy-card">'
+            '<div class="card-eyebrow"><span class="i18n" '
+            'data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div>'
+            f'<div class="card-headline">{install_status}</div>'
+            + (
+                '<table class="install-table">'
+                '<thead><tr>'
+                '<th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th>'
+                '<th><span class="i18n" data-en="Platform" data-zh="平台"></span></th>'
+                '<th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th>'
+                '</tr></thead>'
+                f'<tbody>{"".join(methods_rows)}</tbody>'
+                '</table>' if methods_rows else ''
+            )
+            + (
+                f'<ul class="deploy-flags">{"".join(flags)}</ul>'
+                if flags else ''
+            )
+            + '</div>'
+        )
+
+    # --- Third-party services card ----
+    services_html = ""
+    if services:
+        rows: list[str] = []
+        for s in services:
+            name = _esc(s.get("name", ""))
+            purpose = _esc(s.get("purpose", ""))
+            required = s.get("required", False)
+            api_key = s.get("api_key_needed", False)
+            signup = s.get("signup_needed", False)
+            free_tier = s.get("free_tier", False)
+            cost_note = _esc(s.get("cost_note", ""))
+
+            # Status pills (each clickable when any policy fails)
+            req_class = "status-must" if required else "status-opt"
+            req_label_en = "Required" if required else "Optional"
+            req_label_zh = "必需" if required else "可选"
+
+            # Cost ladder: free + no signup = green; signup needed = yellow;
+            # paid api key needed = orange.
+            if api_key and not free_tier:
+                cost_class, cost_en, cost_zh = "status-paid", "💰 Paid API key", "💰 需付费 API key"
+            elif api_key and free_tier:
+                cost_class, cost_en, cost_zh = "status-free", "🆓 Free tier API key", "🆓 免费版 API key"
+            elif signup:
+                cost_class, cost_en, cost_zh = "status-signup", "📝 Signup needed", "📝 需要注册账号"
+            else:
+                cost_class, cost_en, cost_zh = "status-easy", "🟢 Just install", "🟢 装上就能用"
+
+            rows.append(
+                f'<div class="service-card">'
+                f'<div class="service-head">'
+                f'<div>'
+                f'<div class="service-name">{name}</div>'
+                f'<div class="service-purpose">{purpose}</div>'
+                f'</div>'
+                f'<div class="service-pills">'
+                f'<span class="service-pill {req_class}">'
+                f'<span class="i18n" data-en="{req_label_en}" data-zh="{req_label_zh}"></span></span>'
+                f'<span class="service-pill {cost_class}">'
+                f'<span class="i18n" data-en="{cost_en}" data-zh="{cost_zh}"></span></span>'
+                f'</div>'
+                f'</div>'
+                + (f'<div class="service-cost"><span class="i18n" '
+                   f'data-en="Cost note: " data-zh="成本说明："></span>'
+                   f'{cost_note}</div>' if cost_note else '')
+                + '</div>'
+            )
+
+        services_html = (
+            '<div class="services-card">'
+            '<div class="card-eyebrow"><span class="i18n" '
+            'data-en="Third-party services it touches" '
+            'data-zh="会用到哪些第三方服务"></span></div>'
+            + "".join(rows) +
+            '</div>'
+        )
+
+    if not deploy_html and not services_html:
+        return ""
+
+    return (
+        '<section class="deployment-section">'
+        '<div class="section-head">'
+        '<h2><span class="i18n" '
+        'data-en="Deploy &amp; cost" '
+        'data-zh="部署与成本"></span></h2></div>'
+        '<div class="deploy-grid">'
+        f'{deploy_html}{services_html}'
+        '</div>'
+        '</section>'
+    )
+
+
 def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     """Editorial dossier template — dark warm palette, zero external
     dependencies (no Chart.js, Mermaid, or Google Fonts), bucket-driven
@@ -1245,6 +1441,7 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     score_block_html = render_score_block(vd)
     score_breakdown_html = render_score_breakdown(vd)
     scenarios_html = render_scenarios(vd)
+    deployment_html = render_deployment_section(vd)
 
     verdict_md_escaped = _esc(vd.verdict_md)
 
@@ -1516,6 +1713,103 @@ details.score-breakdown[open] > summary::after {{ content: "−"; }}
 .scenario-mark {{ font-size: 18px; flex-shrink: 0; }}
 .scenario-yes {{ border-left: 3px solid #4ade80; }}
 .scenario-no  {{ border-left: 3px solid #f87171; color: var(--text-2); }}
+
+/* --- Deployment + 3rd-party services section ------------------------ */
+
+.deployment-section {{ margin: 24px 0 48px; }}
+.deploy-grid {{
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 12px;
+}}
+@media (max-width: 720px) {{ .deploy-grid {{ grid-template-columns: 1fr; }} }}
+
+.deploy-card, .services-card {{
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+}}
+.card-eyebrow {{
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 10px;
+}}
+.card-headline {{ margin-bottom: 14px; }}
+
+.deploy-status {{
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}}
+.deploy-status.status-good {{ color: #4ade80; }}
+.deploy-status.status-bad {{ color: #f87171; }}
+
+.install-table {{
+  width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 14px;
+}}
+.install-table th, .install-table td {{
+  padding: 8px 10px; border-top: 1px solid var(--border);
+  text-align: left; vertical-align: top; font-size: 13px;
+}}
+.install-table th {{
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-weight: 600;
+}}
+.install-table td code {{ font-size: 12px; word-break: break-word; }}
+
+.install-table .badge {{
+  display: inline-block; padding: 1px 7px; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}}
+.install-table .complexity-easy {{ color: #4ade80; border-color: rgba(74,222,128,.3); }}
+.install-table .complexity-moderate {{ color: #f59e0b; border-color: rgba(245,158,11,.3); }}
+.install-table .complexity-hard {{ color: #f87171; border-color: rgba(248,113,113,.3); }}
+
+.deploy-flags {{ list-style: none; padding: 0; margin: 8px 0 0; }}
+.deploy-flags li {{
+  padding: 6px 0; font-size: 13px; color: var(--text-2);
+  display: flex; gap: 10px; align-items: baseline;
+}}
+.flag-icon {{ flex-shrink: 0; }}
+
+.service-card {{
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px;
+  background: var(--surface-2);
+}}
+.service-card:last-child {{ margin-bottom: 0; }}
+.service-head {{
+  display: flex; justify-content: space-between;
+  gap: 12px; align-items: flex-start;
+}}
+.service-name {{ font-weight: 600; color: var(--text); font-size: 14px; }}
+.service-purpose {{
+  font-size: 12px; color: var(--text-2);
+  margin-top: 2px; line-height: 1.45;
+}}
+.service-pills {{
+  display: flex; flex-direction: column;
+  gap: 4px; flex-shrink: 0; align-items: flex-end;
+}}
+.service-pill {{
+  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap;
+}}
+.service-pill.status-must  {{ background: rgba(248,113,113,.14); color: #f87171; }}
+.service-pill.status-opt   {{ background: var(--surface-1); color: var(--text-3); }}
+.service-pill.status-paid  {{ background: rgba(245,158,11,.14); color: #f59e0b; }}
+.service-pill.status-free  {{ background: rgba(96,165,250,.14); color: #60a5fa; }}
+.service-pill.status-signup {{ background: rgba(192,132,252,.14); color: #c084fc; }}
+.service-pill.status-easy  {{ background: rgba(74,222,128,.14); color: #4ade80; }}
+
+.service-cost {{
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px; color: var(--text-2); line-height: 1.5;
+}}
 
 .stats-bar {{
   display: flex; height: 10px; border-radius: 999px;
@@ -2068,6 +2362,8 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
   </header>
 
   {scenarios_html}
+
+  {deployment_html}
 
   <div class="pull-quotes">
     {best_for_html or ''}

@@ -95,3 +95,33 @@ product_view:
   - en: Don't redistribute generated episodes commercially — no LICENSE; voice IP
       is its own consideration.
     zh: 生成的 episode 别商用分发 —— 没 LICENSE；声音 IP 也是独立考量。
+deployment:
+  installable: true
+  install_methods:
+  - method: gh repo clone into ~/.claude/skills/personalized-podcast
+    platform: any
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: Anthropic Claude (Claude Code)
+  purpose: LLM writes the 2-host conversation script
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Per-episode cost depends on length (~$0.10 for a 10-min episode)
+- name: Fish Audio
+  purpose: TTS — generates voice for each host
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Free tier sufficient for personal use; default voices pre-configured
+- name: GitHub (for RSS hosting)
+  purpose: Optional — host RSS feed for Apple Podcasts / Spotify
+  required: false
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: Use GitHub Pages; only needed if you want podcast app delivery

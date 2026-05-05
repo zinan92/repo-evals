@@ -22,3 +22,29 @@ notes: 'Claude Code skill (LLM-driven prompt) + 3 supporting scripts (extract-pp
   framework''s hybrid-repo rule, that gap caps the overall repo at ''usable''.
 
   '
+deployment:
+  installable: true
+  install_methods:
+  - method: Claude Code plugin marketplace install
+    platform: any
+    complexity: easy
+  - method: git clone + copy plugin folder
+    platform: any
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: Anthropic Claude (Claude Code)
+  purpose: LLM-driven slide generation
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Standard Claude Code subscription
+- name: vercel-deploy skill (optional)
+  purpose: Optional one-click deploy of generated slides
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Separate skill; Vercel free tier sufficient

@@ -86,3 +86,36 @@ product_view:
   - en: Don't redistribute generated ebooks commercially — no LICENSE; YouTube transcripts
       have their own copyright considerations.
     zh: 生成的电子书别商用分发 —— 没 LICENSE；YouTube 字幕本身也有版权问题要自己评估。
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + pip install -r requirements.txt
+    platform: any (Python)
+    complexity: moderate
+  - method: Mac LaunchAgent for weekly auto-runs
+    platform: macOS only
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: YouTube Data API v3
+  purpose: Fetch video metadata + transcripts
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: 'Free quota: 10,000 units/day — sufficient for personal use'
+- name: Anthropic Claude API
+  purpose: Rewrite transcripts as magazine articles
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Per-article cost depends on transcript length
+- name: SMTP (any email provider)
+  purpose: Optional email delivery
+  required: false
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: Use Gmail / iCloud / etc.; only needed for email delivery

@@ -88,3 +88,36 @@ multilingual_readme: true
 release_pipeline_score: 1
 eval_discipline_score: 1
 recently_active: false
+deployment:
+  installable: true
+  install_methods:
+  - method: npx skills add RKiding/Awesome-finance-skills@<skill>
+    platform: any (npm)
+    complexity: easy
+  - method: git clone + cp skills/* to ~/.config/opencode/skills/
+    platform: any
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: Anthropic Claude / OpenCode / OpenClaw
+  purpose: Agent host
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Standard agent-side cost
+- name: alphaear-news data sources (Cailian / Polymarket / etc.)
+  purpose: News + market data
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Each skill calls its own external sources; check skill SKILL.md for keys
+- name: FinBERT / Kronos forecasting
+  purpose: Sentiment + price forecasting
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Local models; CPU-friendly

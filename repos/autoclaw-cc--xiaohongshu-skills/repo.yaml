@@ -90,3 +90,31 @@ multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 1
 recently_active: true
+deployment:
+  installable: true
+  install_methods:
+  - method: Download ZIP + uv sync + load Chrome extension unpacked
+    platform: macOS / Linux
+    complexity: moderate
+  - method: git clone into agent skills dir + uv sync
+    platform: macOS / Linux
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+  windows_unsupported: true
+third_party_services:
+- name: Xiaohongshu (real account)
+  purpose: Drives operations on user's logged-in XHS session
+  required: true
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: Uses your own XHS account; aggressive use can trigger anti-automation
+    limits
+- name: Anthropic Claude / OpenClaw
+  purpose: Agent that invokes the skill
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Standard agent-side cost

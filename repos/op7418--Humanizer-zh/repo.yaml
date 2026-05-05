@@ -68,3 +68,22 @@ multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 1
 recently_active: false
+deployment:
+  installable: true
+  install_methods:
+  - method: npx skills add op7418/Humanizer-zh
+    platform: any (npm)
+    complexity: easy
+  - method: git clone into ~/.claude/skills/humanizer-zh
+    platform: any
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: Anthropic Claude / Claude Code
+  purpose: LLM that runs the humanization rubric
+  required: true
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: Standard agent-side cost; pure prompt-skill, no external services
