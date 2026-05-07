@@ -178,7 +178,7 @@ workflow_diagram:
     to: output
 stars: 2999
 archived: false
-has_license: true
+has_license: false  # 2026-05-07 audit: GitHub API license=null, no LICENSE file
 multilingual_readme: false
 release_pipeline_score: 2
 eval_discipline_score: 2

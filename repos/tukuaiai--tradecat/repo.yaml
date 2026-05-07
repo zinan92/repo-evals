@@ -67,7 +67,7 @@ product_view:
     zh: Google Sheets 不可达的环境下别依赖它；要稳定的话设 TRADECAT_NO_AUTO_UPDATE=1。
 stars: 928
 archived: false
-has_license: true
+has_license: false  # 2026-05-07 audit: README badge claims MIT, but no LICENSE file in repo + GitHub API license=null
 multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 2

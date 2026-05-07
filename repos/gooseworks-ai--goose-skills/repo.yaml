@@ -71,7 +71,7 @@ product_view:
     zh: 别信 README 上写的 108 个 skill —— manifest 已经 204 个；要看 skills-index.json 取最新数。
 stars: 650
 archived: false
-has_license: true
+has_license: false  # 2026-05-07 audit: GitHub API license=null, no LICENSE file
 multilingual_readme: false
 release_pipeline_score: 2
 eval_discipline_score: 1
