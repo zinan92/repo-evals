@@ -1,7 +1,15 @@
 # Starter claim map for an api-service archetype.
+# Each claim has a user view + a reviewer view.
 
 claims:
   - id: claim-001
+    user_icon: "📡"
+    user_title:
+      en: "Every documented endpoint actually responds"
+      zh: "文档列出的每个 endpoint 都真实存在"
+    user_description:
+      en: "Every endpoint listed in README or OpenAPI returns a non-404 to a real request. Clients won't hit a ghost route."
+      zh: "README 或 OpenAPI 列出的每个 endpoint 都对真实请求返回非 404。客户端不会撞上幽灵路由。"
     title: 所有已文档化 endpoint 都真实响应
     source: README / OpenAPI
     source_ref: ""
@@ -10,13 +18,18 @@ claims:
     statement: |
       文档（README 或 OpenAPI）中列出的每一个 endpoint 都对真实请求
       返回非 404 响应。
-    business_expectation: |
-      客户端不会拿到幽灵路由。
     evidence_needed: |
       每个 endpoint 的一次真实请求 + 状态码 + body 样本。
     status: untested
 
   - id: claim-002
+    user_icon: "📐"
+    user_title:
+      en: "Response shape matches the schema"
+      zh: "响应结构和 schema 对得上"
+    user_description:
+      en: "Field names, types, required-ness all match what the docs / OpenAPI declare. Clients can type-safe parse the response."
+      zh: "字段名 / 类型 / 必填性都和 docs / OpenAPI 声明一致。客户端可以 type-safe 解析。"
     title: 响应 shape 符合文档 schema
     source: OpenAPI / README
     source_ref: "response schema"
@@ -24,13 +37,18 @@ claims:
     area: contract-conformance
     statement: |
       成功响应 body 的字段、类型和必填性符合 schema。
-    business_expectation: |
-      客户端可以 type-safe 地解析。
     evidence_needed: |
       响应样本 + schema 校验结果。
     status: untested
 
   - id: claim-003
+    user_icon: "🔒"
+    user_title:
+      en: "Protected routes reject unauth'd requests"
+      zh: "受保护路由拒绝未认证请求"
+    user_description:
+      en: "Hit a protected route without a token (or with an invalid one) — service returns the documented 401 / 403, not a 200 empty body or 500. No data leaks."
+      zh: "无 token / 无效 token 撞 protected 路由，服务返回文档化的 401 / 403，不是 200 空响应或 500。没有泄漏风险。"
     title: 受保护路由拒绝未认证请求
     source: README
     source_ref: "auth section"
@@ -39,13 +57,18 @@ claims:
     statement: |
       所有声明为 protected 的路由在无 token / 无效 token 时返回文档化
       的 401 / 403，而不是 200 空响应或 500。
-    business_expectation: |
-      没有泄漏风险。
     evidence_needed: |
       每条 protected route 的一次无 token 请求。
     status: untested
 
   - id: claim-004
+    user_icon: "🚥"
+    user_title:
+      en: "Error codes match what docs promise"
+      zh: "错误码和文档对得上"
+    user_description:
+      en: "Each error class declared in README / OpenAPI (404 / 422 / 429 / …) actually fires under its own condition. Not a blanket 500. Clients can branch on the code."
+      zh: "README / OpenAPI 声明的每一类错误码（404 / 422 / 429 …）在对应条件下真的被返回，不是笼统的 500。客户端可以按错误码分支。"
     title: 错误码与文档一致
     source: README / OpenAPI
     source_ref: "error codes section"
@@ -54,13 +77,18 @@ claims:
     statement: |
       README / OpenAPI 声明的每一类错误码 (404, 422, 429, ...) 在对应
       条件下真的被返回，不是笼统的 500。
-    business_expectation: |
-      客户端可以针对错误码写 branch 处理。
     evidence_needed: |
       每一类错误码的一次触发请求 + 响应样本。
     status: untested
 
   - id: claim-005
+    user_icon: "🐢"
+    user_title:
+      en: "Rate-limit responses tell clients to back off"
+      zh: "限流时告诉客户端怎么退避"
+    user_description:
+      en: "When you exceed the rate limit, the service returns 429 + Retry-After (or whatever the docs say). Not silent drop, not generic 500. Clients can self-throttle."
+      zh: "超出限流时返回 429 + Retry-After（或 docs 声明的形式），不是 silent drop 或普通 500。客户端可以自适应退避。"
     title: Rate limit 触发时返回清晰的错误
     source: README
     source_ref: "rate limit section"
@@ -69,13 +97,18 @@ claims:
     statement: |
       超过速率限制时返回 429 + Retry-After（或文档声明的其他形式），
       而不是静默丢弃或普通 500。
-    business_expectation: |
-      客户端知道怎么退避。
     evidence_needed: |
       人工压测触发 rate limit + 响应样本。
     status: untested
 
   - id: claim-006
+    user_icon: "🔁"
+    user_title:
+      en: "Same request twice → same response"
+      zh: "同一个请求跑两次返回一致"
+    user_description:
+      en: "Same request, same instance, multiple times — body is identical (modulo timestamps). Lets downstream services cache + diff."
+      zh: "同一请求 / 同一实例下连续调多次，body 一致（除时间戳等已知易变字段）。下游可以缓存、可以 diff。"
     title: 重复请求得到一致响应
     source: framework
     source_ref: "repeatability"
@@ -84,8 +117,6 @@ claims:
     statement: |
       同一请求、同一服务实例下，连续多次调用返回相同 body
       （除时间戳等已知易变字段外）。
-    business_expectation: |
-      下游可以 cache / diff。
     evidence_needed: |
       两次响应 body 的 diff。
     status: untested

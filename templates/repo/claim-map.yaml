@@ -1,11 +1,39 @@
+# claim-map.yaml — what this repo claims, and what we will check.
+#
+# Every claim has TWO views:
+#   - User view: user_icon + user_title + user_description (bilingual). This is
+#     what shows up on the dossier HTML — readable by non-engineers.
+#   - Reviewer view: title + statement + evidence_needed. For technical
+#     auditors. Stays inside collapsed <details> in the HTML.
+#
+# Write the user view FIRST. If a claim can't be phrased as a user outcome,
+# demote it below `critical` / `high`.
+
 claims:
   - id: claim-001
-    title: Main claim
-    source: README
-    source_ref: ""
-    priority: critical
-    area: core
-    statement: ""
-    business_expectation: ""
-    evidence_needed: ""
-    status: untested
+    # --- User view -----------------------------------------------------------
+    user_icon: "✅"                  # one emoji
+    user_title:
+      en: ""                         # ≤ 8 words; outcome, not implementation
+      zh: ""
+    user_description:
+      en: ""                         # 1-2 sentences; what the user gets / loses
+      zh: ""
+    # --- Reviewer view -------------------------------------------------------
+    title: ""                        # technical name of the claim
+    source: README                   # README | --help | docs | API | code | …
+    source_ref: ""                   # path/anchor inside the source
+    priority: critical               # critical | high | medium | low
+    area: core                       # short tag for grouping
+    statement: |
+      …describe the claim formally for the reviewer…
+    evidence_needed: |
+      …what artifact (file, command output, screenshot, gh api dump) would
+      prove or disprove the claim…
+    status: untested                 # untested | passed | passed_with_concerns
+                                     # | failed_partial | failed | skipped
+    # When status != untested, fill these:
+    # last_run: runs/<date>/<run-id>
+    # evidence: |
+    #   …short note + paths…
+    # note: ""                       # one-line reviewer comment

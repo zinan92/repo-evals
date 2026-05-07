@@ -1,11 +1,19 @@
 # Starter claim map for a hybrid-skill archetype.
-# Key insight: split claims into SUPPORT-layer and CORE-layer so the
-# hybrid-cap rule can see what was actually tested.
+# Key insight: split claims into SUPPORT-layer (deterministic code) and
+# CORE-layer (LLM-driven) so the hybrid-cap rule can see what was actually
+# tested. Each claim has a user view + a reviewer view.
 
 claims:
   # --- Support layer (deterministic code) --------------------------------
 
   - id: claim-001
+    user_icon: "📦"
+    user_title:
+      en: "Installs cleanly on a fresh machine"
+      zh: "干净环境一键装上"
+    user_description:
+      en: "Run the README install command on a clean HOME / container — every file lands where expected, no silent failure."
+      zh: "在全新 HOME / 容器里跑 README 安装命令，所有文件按预期落位，没有 silent failure。"
     title: 干净环境安装成功
     source: README
     source_ref: "Install section"
@@ -14,13 +22,18 @@ claims:
     statement: |
       在全新 HOME / 容器里执行 README 的安装命令，所有文件被复制到预期
       位置，没有 silent failure。
-    business_expectation: |
-      新用户照 README 一条命令就能装上。
     evidence_needed: |
       安装脚本输出 + 文件落位检查 + 退出码。
     status: untested
 
   - id: claim-002
+    user_icon: "🖼"
+    user_title:
+      en: "Bundled templates render"
+      zh: "随包模板能正常渲染"
+    user_description:
+      en: "All templates/*.html load in a headless renderer with zero page errors. The LLM has working examples to copy from."
+      zh: "所有 templates/*.html 在 headless 渲染器里都能加载，0 page errors。LLM 抄模板时抄的是能跑的结构。"
     title: 随包模板能在浏览器/渲染器里打开
     source: README
     source_ref: "templates section"
@@ -28,13 +41,18 @@ claims:
     area: support-templates
     statement: |
       所有 templates/*.html 在 headless 渲染器里成功加载，0 page errors。
-    business_expectation: |
-      LLM 抄模板时抄的是能跑的结构。
     evidence_needed: |
       headless 渲染截图 + page errors 计数。
     status: untested
 
   - id: claim-003
+    user_icon: "🔗"
+    user_title:
+      en: "SKILL references all resolve"
+      zh: "SKILL 引用都打得开"
+    user_description:
+      en: "Every relative path SKILL.md mentions points to a file that exists. The LLM won't hallucinate when a referenced file is missing."
+      zh: "SKILL.md 引用的每个相对路径都真实存在。LLM 不会因为找不到文件就开始瞎编。"
     title: SKILL.md 引用全部解析得到
     source: SKILL.md
     source_ref: ""
@@ -42,13 +60,18 @@ claims:
     area: support-skill-integrity
     statement: |
       SKILL.md 中引用的每一个相对路径都指向真实存在的文件。
-    business_expectation: |
-      LLM 读 skill 时不会因为找不到文件而瞎写。
     evidence_needed: |
       grep + 文件存在列表。
     status: untested
 
   - id: claim-004
+    user_icon: "🚦"
+    user_title:
+      en: "Support scripts fail loudly on bad input"
+      zh: "辅助脚本错的输入会响亮报错"
+    user_description:
+      en: "All support scripts return non-zero with actionable stderr on common bad inputs. Pipelines + users can immediately tell what to do next."
+      zh: "辅助脚本在常见错误输入上返回非零退出码 + 有指向性的 stderr。pipeline 或用户立刻知道下一步。"
     title: 失败模式清晰报错
     source: README/SKILL
     source_ref: ""
@@ -56,8 +79,6 @@ claims:
     area: support-failure-transparency
     statement: |
       所有支持脚本在常见错误输入上返回非零退出码 + 可操作的 stderr。
-    business_expectation: |
-      Pipeline / 用户能立即知道下一步做什么。
     evidence_needed: |
       每种失败场景的 stderr + 退出码。
     status: untested
@@ -65,6 +86,13 @@ claims:
   # --- Core layer (LLM-driven — this is what gates the verdict) ----------
 
   - id: claim-101
+    user_icon: "🧪"
+    user_title:
+      en: "Real LLM run hits the quality contract"
+      zh: "真 LLM 跑一次，产出达到质量契约"
+    user_description:
+      en: "Run one README-promised command in a real agent session. The output meets SKILL.md's stated format / density / style — not a fallback or placeholder."
+      zh: "在真实 agent 会话里跑一条 README 承诺的命令。产出符合 SKILL.md 的格式 / 信息密度 / 风格 —— 不是 fallback、不是占位符。"
     title: 真实 LLM 会话产出达到质量契约
     source: SKILL.md
     source_ref: "quality contract / anti-slop section"
@@ -73,13 +101,18 @@ claims:
     statement: |
       在真实 agent 会话里执行一个 README 承诺的命令，产出符合 SKILL.md
       的质量契约（格式、信息密度、风格）。
-    business_expectation: |
-      用户拿到的是"真正能用的结果"，不是 fallback 或占位符。
     evidence_needed: |
       transcript + 产物 + 对照 quality contract 的逐项打分。
     status: untested
 
   - id: claim-102
+    user_icon: "🚫"
+    user_title:
+      en: "Anti-slop rules are followed"
+      zh: "禁止的写法没出现在产出里"
+    user_description:
+      en: "Patterns SKILL.md explicitly forbids (AI-style emoji spam, neon colors, etc.) don't appear in real output."
+      zh: "SKILL.md 明确禁止的模式（AI emoji 滥用、neon 配色等）在真实产出里没出现。"
     title: Anti-slop 规则被遵守
     source: SKILL.md
     source_ref: "anti-patterns section"
@@ -87,8 +120,6 @@ claims:
     area: core-llm
     statement: |
       SKILL.md 中显式禁止的模式在真实产出中没有出现。
-    business_expectation: |
-      风格契约不是许愿清单。
     evidence_needed: |
       产出对照 anti-slop 列表的 pass/fail。
     status: untested

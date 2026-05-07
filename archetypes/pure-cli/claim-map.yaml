@@ -1,8 +1,19 @@
 # Starter claim map for a pure-cli archetype.
 # Edit these before running any eval — they are prompts, not truths.
+#
+# Each claim has a user view (user_icon / user_title / user_description, both
+# en + zh) that drives the dossier HTML, and a reviewer view (title /
+# statement / evidence_needed) for the technical audit.
 
 claims:
   - id: claim-001
+    user_icon: "▶️"
+    user_title:
+      en: "README's first command actually works"
+      zh: "照 README 第一条命令就能跑通"
+    user_description:
+      en: "You paste the first command from the README into a terminal and it returns the expected output, exit code 0. No reading source code, no extra setup steps."
+      zh: "把 README 第一条命令粘贴进终端，能拿到预期输出，退出码 0。不用读源码、不用补步骤。"
     title: 主命令 happy-path 成功
     source: README
     source_ref: ""
@@ -11,13 +22,18 @@ claims:
     statement: |
       给定文档里列出的最小合法参数集，主命令执行成功，退出码为 0，
       stdout 包含文档承诺的输出结构。
-    business_expectation: |
-      用户照 README 第一条命令跑，就能拿到有效结果。
     evidence_needed: |
       完整命令行 + stdout + 退出码。
     status: untested
 
   - id: claim-002
+    user_icon: "🧰"
+    user_title:
+      en: "Every documented subcommand runs"
+      zh: "文档列出的每个子命令都能跑"
+    user_description:
+      en: "Whatever subcommands README or --help promise are real — none are ghost commands left over from old versions."
+      zh: "README 或 --help 列出的子命令都真实存在，没有从旧版残留下来的幽灵命令。"
     title: 所有已文档化的 subcommand 至少能跑一次
     source: README + --help
     source_ref: ""
@@ -26,13 +42,18 @@ claims:
     statement: |
       README 或 --help 列出的每一个 subcommand 都至少在一个合法输入上
       成功执行一次。
-    business_expectation: |
-      文档和实际功能对齐，没有 ghost command。
     evidence_needed: |
       对每个 subcommand 的调用记录 + 退出码。
     status: untested
 
   - id: claim-003
+    user_icon: "🚦"
+    user_title:
+      en: "Wrong input fails loudly, not silently"
+      zh: "错的输入会响亮报错，不会装作成功"
+    user_description:
+      en: "Type a non-existent subcommand or skip a required arg — the CLI exits non-zero and tells you what's valid. No silent success, no swallowed errors."
+      zh: "敲错子命令或漏参数时，CLI 会非零退出并告诉你正确选项是什么。不会假装成功、不会吞错误。"
     title: 未知 subcommand / 非法参数清晰报错
     source: README
     source_ref: ""
@@ -41,13 +62,18 @@ claims:
     statement: |
       给出未知 subcommand 或缺失必需参数时，CLI 以非零退出码退出，
       stderr 列出可用 subcommand / 说明缺失参数。
-    business_expectation: |
-      用户或 agent 能立即知道下一步做什么。
     evidence_needed: |
       stderr 文本 + 非零退出码。
     status: untested
 
   - id: claim-004
+    user_icon: "🔁"
+    user_title:
+      en: "Same input, same output (every time)"
+      zh: "同一份输入，每次都得到同一份输出"
+    user_description:
+      en: "Run the same command twice and the stdout is byte-identical (modulo timestamps). Lets you cache + diff results in pipelines."
+      zh: "同一条命令跑两次，stdout 是逐字节一致的（除了时间戳）。下游 pipeline 可以缓存、可以 diff。"
     title: 同一输入可重复得到相同结果
     source: framework
     source_ref: "repeatability dimension"
@@ -55,13 +81,18 @@ claims:
     area: repeatability
     statement: |
       同一条命令、同一输入、同一版本，连续多次运行得到相同 stdout。
-    business_expectation: |
-      下游 pipeline 可以 cache / diff 结果。
     evidence_needed: |
       至少两次完整运行的 stdout diff。
     status: untested
 
   - id: claim-005
+    user_icon: "📖"
+    user_title:
+      en: "--help matches reality"
+      zh: "--help 和真实命令对得上"
+    user_description:
+      en: "Flags listed in --help are flags the code actually accepts. No leftover --foo from a deleted feature, no missing --bar that the code does support."
+      zh: "--help 列出的 flag 就是代码实际支持的 flag。没有删了功能没删文档的残留，也没有代码支持但 --help 没列的 flag。"
     title: --help 与真实 subcommand 对齐
     source: --help
     source_ref: ""
@@ -70,8 +101,6 @@ claims:
     statement: |
       --help 列出的 subcommand 和 flag 与代码中实际暴露的一致，
       没有过时残留也没有遗漏。
-    business_expectation: |
-      用户不会被 --help 误导去用不存在的 flag。
     evidence_needed: |
       --help 输出 + 对应源代码交叉检查。
     status: untested

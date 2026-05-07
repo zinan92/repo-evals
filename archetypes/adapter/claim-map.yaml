@@ -1,7 +1,15 @@
 # Starter claim map for an adapter archetype.
+# Each claim has a user view + a reviewer view.
 
 claims:
   - id: claim-001
+    user_icon: "🌐"
+    user_title:
+      en: "Every advertised platform actually works"
+      zh: "README 列的每个平台都能跑通"
+    user_description:
+      en: "Every platform listed in README's supported-platforms table runs to a successful happy path with one real input. No 'mentioned but unimplemented' adapters."
+      zh: "README 列出的每个平台都能用一个真实输入跑通 happy path。没有"挂名却没接通"的 adapter。"
     title: 每个已声明平台 happy-path 成功
     source: README
     source_ref: "supported platforms table"
@@ -9,13 +17,18 @@ claims:
     area: platform-coverage
     statement: |
       README 中列出的每一个支持平台都至少能用一个真实输入跑通 happy path。
-    business_expectation: |
-      用户照 README 的平台清单来调用，不会踩到未实现的 adapter。
     evidence_needed: |
       每个平台的一次成功运行 + 产出文件。
     status: untested
 
   - id: claim-002
+    user_icon: "📐"
+    user_title:
+      en: "Every adapter outputs the same shape"
+      zh: "所有 adapter 输出格式一致"
+    user_description:
+      en: "Whatever platform you call, the output has the same field names, types, required-ness. Downstream consumers write one parser, not N."
+      zh: "调哪个平台返回都是同一份字段名 / 类型 / 必填性。下游写一份解析就够了，不用为每个平台写一套。"
     title: 所有 adapter 输出结构一致
     source: README/schema
     source_ref: "normalized output / ContentItem"
@@ -24,13 +37,18 @@ claims:
     statement: |
       无论哪个平台，输出都符合同一个 normalized shape（字段名、类型、
       必填性一致）。
-    business_expectation: |
-      下游消费者只需要写一份解析代码。
     evidence_needed: |
       每个平台的 normalized 输出样本 + schema diff。
     status: untested
 
   - id: claim-003
+    user_icon: "🚦"
+    user_title:
+      en: "Unknown platform input fails loudly"
+      zh: "不支持的输入会响亮报错"
+    user_description:
+      en: "Pass an input that doesn't match any implemented adapter — CLI/API errors immediately, lists supported platforms. No silent fallback, no empty output."
+      zh: "给一个不匹配任何 adapter 的输入，CLI/API 立刻报错并列出支持的平台。不会 silent fallback、不会输出空。"
     title: 不支持的输入响亮报错
     source: README
     source_ref: "fail unsupported"
@@ -39,13 +57,18 @@ claims:
     statement: |
       给一个不属于任何已实现 adapter 的输入，CLI / API 立即报错并提示
       支持的平台清单，没有 silent fallback，没有空输出。
-    business_expectation: |
-      Agent 调用时不会被欺骗认为 "成功"。
     evidence_needed: |
       stderr / 错误对象 + 非零退出码 / 错误状态码。
     status: untested
 
   - id: claim-004
+    user_icon: "🔐"
+    user_title:
+      en: "Auth failures tell you what to do"
+      zh: "凭证失败时知道去补什么"
+    user_description:
+      en: "Expired token / missing cookie / banned IP → an actionable error. Users know which credential to refresh, not just 'no results'."
+      zh: "过期 token / 缺 cookie / IP 被封 → 可操作的报错。用户知道去补哪个凭证，而不是看到一个空响应就懵了。"
     title: 认证失败清晰报错
     source: README/source
     source_ref: ""
@@ -53,13 +76,18 @@ claims:
     area: auth
     statement: |
       过期 token、缺 cookie、被封 IP 等 auth 失败情境返回可操作的错误。
-    business_expectation: |
-      用户知道去哪补凭证，而不是收到 "空结果"。
     evidence_needed: |
       至少一个 auth 失败场景的重现 + 错误信息。
     status: untested
 
   - id: claim-005
+    user_icon: "🔁"
+    user_title:
+      en: "Re-running the same input is idempotent"
+      zh: "同一个输入跑两次不会重复产出"
+    user_description:
+      en: "Run with the same input twice — second run skips download / file-write / manifest append. Batch runs don't burn extra bandwidth or quota."
+      zh: "同一份输入连续跑两次，第二次跳过下载 / 写文件 / append manifest。批量运行不会浪费带宽或配额。"
     title: 重复输入不重复产出
     source: README
     source_ref: "dedupe section"
@@ -67,13 +95,18 @@ claims:
     area: deduplication
     statement: |
       相同输入连续跑两次时，第二次不重复下载/写文件/追加 manifest。
-    business_expectation: |
-      批量运行幂等，不会消耗多余的带宽/配额。
     evidence_needed: |
       两次运行的 manifest diff + 第二次 "skipped" 证据。
     status: untested
 
   - id: claim-006
+    user_icon: "🌪"
+    user_title:
+      en: "Upstream API drift fails loudly, not silently"
+      zh: "上游接口变了会响亮报错"
+    user_description:
+      en: "When an external platform changes its signing / fields / structure, the adapter errors instead of returning 'looks-right but missing-fields' fake success. Pipelines don't silently consume bad data."
+      zh: "外部平台改签名 / 字段 / 结构时，adapter 会报错，不会输出"看起来对但缺字段"的假成功。pipeline 不会悄悄消费坏数据。"
     title: 上游漂移时响亮失败
     source: framework
     source_ref: "adapter drift"
@@ -82,8 +115,6 @@ claims:
     statement: |
       外部平台接口变化（签名、字段、结构）时，adapter 报错而不是输出
       "看起来对但实际缺字段" 的假成功。
-    business_expectation: |
-      Pipeline 不会悄悄消费坏数据。
     evidence_needed: |
       人工构造一个接口变化场景 + 观察 adapter 行为。
     status: untested

@@ -1,10 +1,17 @@
 # Starter claim map for an orchestrator archetype.
 # Orchestrators typically use areas/ — every downstream capability gets
 # its own area with its own claim map. Keep THIS claim map for the
-# orchestration layer itself.
+# orchestration layer itself. Each claim has a user view + reviewer view.
 
 claims:
   - id: claim-001
+    user_icon: "🚏"
+    user_title:
+      en: "Inputs route to the right downstream tool"
+      zh: "输入会被派到正确的下游"
+    user_description:
+      en: "Routing rules described in the README actually dispatch each input type to the matching downstream tool / skill. The user doesn't have to manually pick."
+      zh: "README 写的路由规则真的把不同类型输入派到对应的下游工具 / skill。用户不用自己挑。"
     title: 路由规则按文档派发到正确下游
     source: README
     source_ref: "routing section"
@@ -12,13 +19,18 @@ claims:
     area: routing
     statement: |
       输入根据文档化的路由规则被正确派发到对应的下游工具 / skill。
-    business_expectation: |
-      用户不需要手动决定用哪个下游。
     evidence_needed: |
       多种输入类型的路由追踪日志 + 预期下游对照表。
     status: untested
 
   - id: claim-002
+    user_icon: "🛣"
+    user_title:
+      en: "End-to-end happy path actually completes"
+      zh: "端到端跑通能拿到承诺的产物"
+    user_description:
+      en: "Run README's example — the full pipeline executes and produces the promised final artifact. New users get something real off the first command."
+      zh: "跑 README 的示例输入，完整流水线执行完，得到 README 承诺的最终产出。新用户照一条命令就能拿到可用结果。"
     title: 端到端 happy path 能跑通
     source: README
     source_ref: "end-to-end example"
@@ -26,13 +38,18 @@ claims:
     area: end-to-end
     statement: |
       给定 README 示例输入，执行完整流水线，得到 README 承诺的最终产出。
-    business_expectation: |
-      新用户照 README 一条命令就能拿到可用结果。
     evidence_needed: |
       完整调用链日志 + 最终产出文件。
     status: untested
 
   - id: claim-003
+    user_icon: "📣"
+    user_title:
+      en: "Downstream failures bubble up with context"
+      zh: "下游失败时能追溯到具体环节"
+    user_description:
+      en: "When a downstream tool fails, the orchestrator doesn't swallow the error — final logs / output point to the specific tool + the specific input that broke. Debuggable, not mysteriously gone."
+      zh: "某个下游工具挂了，orchestrator 不会吞错。最终日志 / 输出能定位到哪个下游、哪个输入炸了。可 debug，不会神秘消失。"
     title: 下游失败被响亮地冒泡
     source: framework
     source_ref: "error propagation"
@@ -41,13 +58,18 @@ claims:
     statement: |
       当某个下游 tool 失败，orchestrator 不 swallow 错误：
       错误在最终输出/日志中可追溯到具体下游 + 具体输入。
-    business_expectation: |
-      失败可以被 debug，而不是神秘消失。
     evidence_needed: |
       故意让一个下游失败的实验 + orchestrator 的错误输出。
     status: untested
 
   - id: claim-004
+    user_icon: "🚧"
+    user_title:
+      en: "Partial failure isn't disguised as complete success"
+      zh: "部分失败不会假装成完全成功"
+    user_description:
+      en: "When N-of-M downstreams fail, the final output marks which succeeded and which failed. Doesn't ship a 'looks complete but missing pieces' artifact. Downstream consumers don't get tricked into processing incomplete data."
+      zh: "M 个下游里挂了 N 个，最终结果会清楚标出哪部分成功、哪部分失败。不会输出一个看起来"完整"但实际缺失的产物。下游消费者不会被骗去处理不完整数据。"
     title: 部分失败不伪装成完全成功
     source: framework
     source_ref: "partial failure"
@@ -56,13 +78,18 @@ claims:
     statement: |
       当多个下游中的一部分失败时，最终结果清楚标记哪部分成功哪部分
       失败，不会输出一个看起来"完整"但实际缺失的产物。
-    business_expectation: |
-      下游消费者不会被骗去处理不完整数据。
     evidence_needed: |
       故意构造部分失败场景 + 最终输出检查。
     status: untested
 
   - id: claim-005
+    user_icon: "🗂"
+    user_title:
+      en: "Each downstream capability has its own area + run"
+      zh: "每个下游能力都有独立 area + run"
+    user_description:
+      en: "Every downstream capability the README claims has its own areas/<slug>/ with its own claim map and at least one logged run. Per-capability coverage doesn't get hidden behind the orchestrator's average score."
+      zh: "README 声称的每个下游能力在 areas/<slug>/ 下都有独立 claim map + 至少一次 run。下游覆盖度不会被 orchestrator 的平均分掩盖。"
     title: 每个下游能力都有独立 area 覆盖
     source: framework
     source_ref: "per-area coverage"
@@ -71,8 +98,6 @@ claims:
     statement: |
       每个 README 声明的下游能力在 areas/<slug>/ 下有独立的 claim map
       和至少一次 run。
-    business_expectation: |
-      下游能力的覆盖度不会被 orchestrator 的平均分数掩盖。
     evidence_needed: |
       areas/*/claims/claim-map.yaml 存在 + 每个 area 至少一个 run。
     status: untested

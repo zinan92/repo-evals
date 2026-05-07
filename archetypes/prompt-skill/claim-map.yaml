@@ -1,7 +1,16 @@
 # Starter claim map for a prompt-skill archetype.
+# Each claim has a user view (drives the dossier HTML) and a reviewer view
+# (for the technical audit).
 
 claims:
   - id: claim-001
+    user_icon: "📑"
+    user_title:
+      en: "Skill loads without parse errors"
+      zh: "Skill 加载时不会报 parse 错误"
+    user_description:
+      en: "SKILL.md has a valid YAML frontmatter (name, description, etc.). The agent host (Claude Code, Codex, …) accepts it without falling back to a generic chat."
+      zh: "SKILL.md 的 YAML frontmatter 合法（name / description 等齐全）。Agent 加载时不会因 parse 错而退化为普通对话。"
     title: SKILL.md 结构合法
     source: SKILL.md
     source_ref: "frontmatter"
@@ -9,13 +18,18 @@ claims:
     area: skill-structure
     statement: |
       SKILL.md 有效的 YAML frontmatter，包含 name / description 等必填字段。
-    business_expectation: |
-      Agent 加载 skill 时不会因 parse 错误而 fallback。
     evidence_needed: |
       YAML parse 成功 + 必填字段非空。
     status: untested
 
   - id: claim-002
+    user_icon: "🔗"
+    user_title:
+      en: "Internal links don't 404"
+      zh: "内部引用都打得开"
+    user_description:
+      en: "Every relative path the skill mentions (./references, ./templates, ./commands, …) actually exists. The LLM won't hallucinate when a referenced file is missing."
+      zh: "Skill 里写的每个相对路径都真实存在。LLM 不会因为引用的文件找不到就开始瞎编。"
     title: 内部引用都能解析
     source: SKILL.md
     source_ref: "./references/ / ./templates/ / ./commands/"
@@ -23,13 +37,18 @@ claims:
     area: skill-integrity
     statement: |
       SKILL.md 中引用的每一个相对路径都指向一个真实存在的文件。
-    business_expectation: |
-      LLM 执行 skill 时不会因为找不到文件而瞎写。
     evidence_needed: |
       grep + 文件存在检查的完整输出。
     status: untested
 
   - id: claim-003
+    user_icon: "🎯"
+    user_title:
+      en: "README features all have a real workflow"
+      zh: "README 承诺的能力在 SKILL 里都有对应实现"
+    user_description:
+      en: "Every feature the README advertises has a corresponding execution path inside SKILL.md or commands/. No 'mentioned but not built' features."
+      zh: "README 说能做什么，SKILL 或 commands/ 里就真有对应路径。没有"PR 提了功能、Skill 没接入"的情况。"
     title: README 承诺的每个能力在 SKILL 里都有对应 workflow
     source: README + SKILL.md
     source_ref: ""
@@ -38,13 +57,18 @@ claims:
     statement: |
       README 的功能列表中的每一项，在 SKILL.md 或 commands/ 下都能找到
       对应的执行路径。
-    business_expectation: |
-      用户看 README 期待的能力，agent 真的会去尝试。
     evidence_needed: |
       一一对应表 + 证据引用。
     status: untested
 
   - id: claim-004
+    user_icon: "🧪"
+    user_title:
+      en: "Real LLM run produces real-quality output"
+      zh: "真实 LLM 跑一次，产出符合质量契约"
+    user_description:
+      en: "Run a real prompt in Claude Code / Codex / Pi. The output meets SKILL.md's stated quality contract — format, length, style, anti-slop. Not a placeholder, not a fallback."
+      zh: "在真实 Claude Code / Codex / Pi 会话里跑一个 prompt。产出符合 SKILL.md 声明的质量契约（格式、长度、风格、anti-slop）。不是占位符、不是 fallback。"
     title: 真实 LLM 会话产出达到 SKILL 承诺的质量
     source: SKILL.md
     source_ref: "quality contract section"
@@ -53,13 +77,18 @@ claims:
     statement: |
       在真实 Claude Code / Codex / Pi 会话里跑至少一个真实 prompt，
       产出符合 SKILL.md 声明的质量契约（格式、长度、风格、anti-slop）。
-    business_expectation: |
-      用户拿到的不是占位符或 fallback，而是真正好用的产出。
     evidence_needed: |
       transcript + 产物文件 + 对照 quality contract 的逐项打分。
     status: untested
 
   - id: claim-005
+    user_icon: "🚫"
+    user_title:
+      en: "Anti-slop rules are actually followed"
+      zh: "禁止的写法没出现在产出里"
+    user_description:
+      en: "Patterns SKILL.md explicitly forbids (neon colors, AI-style emoji spam, etc.) don't show up in real output. The style contract isn't a wishlist."
+      zh: "SKILL.md 明确禁止的模式（neon 配色、AI emoji 滥用等）在真实产出里没出现。风格契约不是许愿清单。"
     title: Anti-slop 规则真的被遵守
     source: SKILL.md
     source_ref: "anti-patterns / constraints section"
@@ -68,8 +97,6 @@ claims:
     statement: |
       SKILL.md 里显式禁止的模式（neon 配色、AI slop emoji 滥用等）在真实
       产出里确实没有出现。
-    business_expectation: |
-      风格契约不只是许愿清单。
     evidence_needed: |
       产出对照 anti-slop 列表的 pass/fail。
     status: untested
