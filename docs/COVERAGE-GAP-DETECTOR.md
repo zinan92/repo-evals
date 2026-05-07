@@ -99,9 +99,10 @@ gaps:
 
 A reviewer should:
 
-1. Fix or re-explain every `critical` gap before accepting anything
-   above `usable`.
-2. Resolve every `warning` before accepting anything above `reusable`.
+1. Fix or re-explain every `critical` gap before accepting a score
+   above `risky` (≥50, 🛠 `available`).
+2. Resolve every `warning` before accepting a score in `production`
+   (≥80, 🏭). See [VERDICT-BUCKETS.md](VERDICT-BUCKETS.md) for tier+category table.
 3. Use `info` as context for plan rewrites.
 
 ## When to run it

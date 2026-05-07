@@ -108,27 +108,22 @@ If we run the same workflow multiple times, do we get consistently usable outcom
 
 When it cannot complete the task, does it fail clearly instead of pretending to succeed?
 
-## Reliability Buckets
+## Verdict — score + categories
 
-The final verdict must land in exactly one bucket.
+Every dossier shows a 0-100 score and a 4-category placement. See [VERDICT-BUCKETS.md](VERDICT-BUCKETS.md) for the full table; the short version:
 
-### `unusable`
+| Score | Category | Meaning |
+|---|---|---|
+| 80–100 | 🏭 `production` | Production-ready — depend on it in team pipelines |
+| 50–79  | 🛠 `available`  | Use it yourself; not yet ready to recommend broadly |
+| 30–49  | ⚠️ `risky`      | Runs but has unverified critical issues |
+| 0–29   | 🛑 `dont_use`   | Won't install, core feature broken, or archived |
 
-The repo fails its core claim, works only accidentally, or produces outputs too poor to rely on.
+The score (computed by `scripts/verdict_calculator.py::compute_score`) is built from claim outcomes (±30), maintainer evidence (+0..+15), ecosystem signals (+0..+15), layer bonus (-3..+5), and penalties. Every point traces to a specific signal.
 
-### `usable`
+### Legacy 4-bucket model
 
-The repo can complete its main job at least once, but confidence is still limited.
-Good for experimentation, not yet good for routine use.
-
-### `reusable`
-
-The repo succeeds across multiple realistic scenarios with acceptable consistency.
-Good for repeated internal use.
-
-### `recommendable`
-
-The repo is stable, clear about its boundaries, and reliable enough that you would feel comfortable recommending it to others.
+The older 4-bucket names (`unusable / usable / reusable / recommendable`) are still emitted by `verdict_calculator.py` for compatibility with old verdict files. New evals should think in score + category. See [VERDICT-BUCKETS.md](VERDICT-BUCKETS.md#legacy-4-bucket-model-still-in-code-used-by-old-evals) for the bucket → score mapping.
 
 ## Decision Rule
 
@@ -142,7 +137,7 @@ That means:
 
 - A repo can pass all tests and still only be `usable`
 - A hybrid repo cannot score above the strongest layer that was actually validated
-- A repo should not be called `recommendable` unless the plan included multiple realistic scenarios and repeatability checks
+- A repo should not score in `production` (80+) unless the plan included multiple realistic scenarios and repeatability checks
 
 ## Hybrid Repos
 
@@ -160,6 +155,6 @@ For these hybrid repos:
 
 Practical rule:
 
-- Untested core user-facing layer → overall verdict capped at `usable`
-- Tested core layer across realistic scenarios → eligible for `reusable`
-- Broad, repeated, trustworthy core coverage → eligible for `recommendable`
+- Untested core user-facing layer → score capped (typically caps at `available` 🛠 / mid-50s)
+- Tested core layer across realistic scenarios → eligible for higher `available` scores (60s–70s)
+- Broad, repeated, trustworthy core coverage → eligible for `production` 🏭 (80+)
