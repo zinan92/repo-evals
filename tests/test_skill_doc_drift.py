@@ -134,9 +134,20 @@ REQUIRED_REPO_YAML_FIELDS = (
     # Score-model inputs (drive the 0-100 score)
     "stars", "archived", "has_license", "multilingual_readme",
     "release_pipeline_score", "eval_discipline_score", "recently_active",
-    # Dossier sections
-    "product_view", "one_liner",
+    # Top-level dossier sections
+    "product_view",
     "deployment", "third_party_services", "workflow_placements",
+    "workflow_diagram",     # drives Atom/Molecule/Compound section
+    "similar_repos",        # drives "对比我们已经测评过的"
+    # product_view sub-fields (drive specific dossier sections)
+    "one_liner",            # always shown — top of dossier
+    "persona",              # drives "谁用"
+    "scenario",             # drives "什么时候用"
+    "without_this",         # drives without/with comparison
+    "with_this",            # same comparison block
+    "how",                  # drives "怎么用"
+    "examples",             # drives "三个真实场景里怎么唤醒"
+    "next_step",            # drives "提升评分的下一步"
 )
 
 
