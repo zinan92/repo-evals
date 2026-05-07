@@ -48,7 +48,16 @@ SCORE_BASE        = 40   (project is real, not archived, has license)
 | 30–49  | `risky`      | ⚠️ | Risky / 有风险 |
 | 0–29   | `dont_use`   | 🛑 | Don't use / 不可使用 |
 
-**Underneath: 6 tiers** for fine-grained sort (`recommend ≥90 / team ≥80 / self ≥65 / try ≥50 / risky ≥30 / broken <30`).
+**Underneath: 6 tiers** for fine-grained sort:
+
+| Score | Tier | Emoji | EN / ZH |
+|---|---|---|---|
+| ≥90 | `recommend` | ⭐ | Recommend / 公开推荐 |
+| ≥80 | `team`      | 🏭 | Team-ready / 团队就绪 |
+| ≥65 | `self`      | 🛠 | Self-use OK / 自用 OK |
+| ≥50 | `try`       | 🧪 | Try once / 试一下 |
+| ≥30 | `risky`     | ⚠️ | Risky / 慎用 |
+| <30 | `broken`    | 🛑 | Don't use / 别用 |
 
 Both the score and category are computed by `scripts/verdict_calculator.py` — never by judgement. Don't write a category into `repo.yaml.current_bucket` and expect it to stick; the calculator overwrites it.
 
