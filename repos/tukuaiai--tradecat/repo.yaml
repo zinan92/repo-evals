@@ -3,56 +3,49 @@ repo: tradecat
 display_name: tradecat
 repo_url: https://github.com/tukuaiai/tradecat
 repo_type: tool
-archetype: pure-cli
+archetype: hybrid-skill
 layer: molecule
 complexity: medium
 uses_areas: false
 status: evaluated
 current_bucket: usable
-last_evaluated: '2026-05-04'
-version_tested: develop@HEAD (0.1.0)
-notes: 'Local-only Python 3.12 CLI/TUI for browsing public market-data + event-stream
+last_evaluated: '2026-05-07'
+version_tested: develop@e1df620 (package version 0.1.0)
+notes: |
+  本地 Python 3.12 CLI/TUI 工具，从 Google Sheets 拉公开行情和事件流快照。
+  4 个 dataset（market_snapshot / anomaly_panel / market_stats / event_stream）
+  分布在 2 个 workbook（market_data + alternative_data）。一键 curl|sh 安装、
+  默认自动更新（可关闭）、TUI 在不支持 curses 的终端会优雅降级。
 
-  snapshots fetched from Google Sheets workbooks (4 datasets via dataset_registry.json:
+  本次重测发现的关键变化（2026-05-07，距上次评测仅 3 天）：
+  仓库整体重构成「Skill 外壳 + scripts/project/ 项目源」的 hybrid-skill 形态。
+  根目录新增 SKILL.md、AGENTS.md、references/ 长文档、validate-skill.sh /
+  verify.sh / security-scan.sh / supply-chain-audit.sh 等治理脚本，并接入了
+  GitHub Actions CI（含 skill strict 校验 + secret scan）。原 Python 项目
+  原封不动迁移到 scripts/project/，dataset_registry.json、install.sh、
+  request.py、tui.py 路径全部变化。这套重构把 release_pipeline_score 从 1 提升
+  到 2，但不解除 molecule 层天花板（live e2e 仍未跑）。
 
-  market_snapshot / anomaly_panel / market_stats / event_stream). Self-installs via
+  仍未修复的：仓库依然没有 LICENSE 文件（README 标 MIT 徽章但 GitHub API
+  license=null + 内容树无 LICENSE），star 数从 928 涨到 935，未授权的代码体
+  影响范围更大。
 
-  curl|sh, auto-updates, ships with TUI fallback for browser/SSH terminals. No LLM,
-
-  no server credentials, no SQLite — just JSON snapshot cache.
-
-
-  README is unusually candid about what it does NOT do (no PostgreSQL writeback,
-
-  no SQLite, no cloud accounts) — this clarity is itself a quality signal.
-
-
-  Static layer: install script, dataset registry, package layout, command entry
-
-  points are all auditable from this machine.
-
-
-  Live layer: actual Google Sheets fetch + cache write + TUI render need a real
-
-  install. Crypto/market workbook owners can revoke or change tab GIDs at any
-
-  time — those are runtime risks no static eval covers.
-
-  '
+  Static layer：install 脚本、dataset registry、entry-points、governance shell
+  全部静态可审。
+  Live layer：真实 Google Sheets 拉取 + 缓存写入 + TUI 渲染需要真实安装；
+  workbook 主可随时改 GID 或 tab 名，运行时风险无法被静态评测覆盖。
 product_view:
   one_liner:
-    en: A local-only Python CLI/TUI that pulls 4 public market-data snapshots from Google Sheets, caches them as JSON, and lets you browse them in a terminal panel — no API key, no server, no database, just a single command.
-    zh: 一个完全本地的 Python CLI/TUI 工具：从 Google Sheets 拉 4 个公开行情和事件流快照，存为本地 JSON 缓存，在终端面板里浏览。不要 API key，不要服务端，不要数据库，一条命令装完。
+    en: A local-only Python CLI/TUI that pulls 4 public market-data snapshots from Google Sheets, caches them as JSON, and lets you browse them in a terminal panel — no API key, no server, no database, just a single command. Now packaged as a Skill-shell repo with full root governance + CI.
+    zh: 一个完全本地的 Python CLI/TUI 工具：从 Google Sheets 拉 4 个公开行情和事件流快照，存为本地 JSON 缓存，在终端面板里浏览。不要 API key，不要服务端，不要数据库，一条命令装完。新版重构成 Skill 外壳 + 项目源的双层结构，根目录带完整治理脚本和 GitHub Actions CI。
   best_for:
-    en: Crypto/market traders who want a no-config terminal dashboard for shared public data, comfortable installing via curl|sh, comfortable with Google Sheets as a data backbone.
-    zh: 想要一个零配置终端看板、信得过 Google Sheets 作为公开数据载体的加密/行情交易者。前提：能接受 curl|sh 一键安装。
+    en: Crypto/market traders who want a no-config terminal dashboard for shared public data, comfortable installing via curl|sh, comfortable with Google Sheets as a data backbone, and Skill/Agent users who want a turnkey reference for the Skill-shell + project-source layout.
+    zh: 想要一个零配置终端看板、信得过 Google Sheets 作为公开数据载体的加密/行情交易者；以及想参考 Skill 外壳 + 项目源标准布局的 Skill/Agent 作者。前提：能接受 curl|sh 一键安装。
   watch_out:
-    en: 'The "public data" lives in Google Sheets workbooks owned by the project — if those workbooks are renamed, deleted, or have their tab GIDs changed, every dataset breaks until dataset_registry.json is updated. Auto-update is on by default and can pull breaking changes silently; set TRADECAT_NO_AUTO_UPDATE=1 if you need stability. The disclaimer is explicit that this is "for technical research only" — do not feed its data straight into trading decisions.
-
-      '
-    zh: '所谓「公开数据」其实存在项目方维护的 Google Sheets 里 —— 表被改名、删了或者 tab GID 变了，所有 dataset 都会跟着坏，直到 dataset_registry.json 被更新。默认开启自动更新，可能悄悄拉到 breaking change；要稳定的话设 TRADECAT_NO_AUTO_UPDATE=1。免责声明很明确写了「仅供技术研究」—— 别把它的数据直接拿去交易决策。
-
-      '
+    en: |
+      The "public data" lives in Google Sheets workbooks owned by the project — if those workbooks are renamed, deleted, or have their tab GIDs changed, every dataset breaks until dataset_registry.json is updated. Auto-update is on by default and can pull breaking changes silently; set TRADECAT_NO_AUTO_UPDATE=1 if you need stability. The README explicitly says "for technical research only" — do not feed its data straight into trading decisions. The repo still has NO LICENSE file despite README MIT badge — legally ambiguous to fork or redistribute. Tests live in a single 1622-line file (81 test functions) — adequate but a refactor risk.
+    zh: |
+      所谓「公开数据」其实存在项目方维护的 Google Sheets 里 —— 表被改名、删了或者 tab GID 变了，所有 dataset 都会跟着坏，直到 dataset_registry.json 被更新。默认开启自动更新，可能悄悄拉到 breaking change；要稳定的话设 TRADECAT_NO_AUTO_UPDATE=1。README 明确写「仅供技术研究」—— 别把它的数据直接拿去交易决策。仓库依然没有 LICENSE 文件（README 标了 MIT 徽章但实际没文件），分发或二次修改有法律风险。测试集中在单个 1622 行文件（81 个测试函数），覆盖够但重构脆弱。
   use_for:
   - en: Crypto / market traders who want a no-config terminal dashboard for shared public data.
     zh: 想要零配置终端看板、信得过共享公开数据的加密 / 行情交易者。
@@ -60,18 +53,73 @@ product_view:
     zh: 能接受 Google Sheets 作为数据底座和 curl|sh 一键安装。
   - en: Want to evaluate the data without installing first — use the zero-install request.py.
     zh: 想先评估数据再决定是否安装 —— 用零安装的 request.py。
+  - en: Building your own Skill-shell + project-source repo and want a working reference layout.
+    zh: 想抄一份 Skill 外壳 + 项目源的标准布局做自己的 repo —— 这套结构可以参考。
   dont_use_for:
   - en: Do NOT feed its data straight into trading decisions — README itself says 'research only'.
     zh: 不要把它的数据直接喂给真实交易决策 —— README 自己写明仅供研究。
   - en: Do NOT depend on it in environments where Google Sheets reachability matters — set TRADECAT_NO_AUTO_UPDATE=1 if you need stability.
     zh: Google Sheets 不可达的环境下别依赖它；要稳定的话设 TRADECAT_NO_AUTO_UPDATE=1。
-stars: 928
+  - en: Do NOT redistribute or fork commercially — the repo has no LICENSE file despite the README MIT badge.
+    zh: 不要二次分发或商业 fork —— README 标了 MIT 但仓库里实际没有 LICENSE 文件。
+  examples:
+  - en: 'Browse market snapshot in TUI: install via curl|sh, run `tradecat`, panel renders 4 datasets'
+    zh: 'TUI 看大盘快照：curl|sh 装完，运行 `tradecat`，面板显示 4 个数据集'
+  - en: 'Zero-install peek at event stream: `python3 <(curl -fsSL .../request.py) event_stream --format jsonl --limit 5`'
+    zh: '零安装看事件流：`python3 <(curl -fsSL .../request.py) event_stream --format jsonl --limit 5`'
+  - en: 'Pin to a known-good build: set TRADECAT_NO_AUTO_UPDATE=1 to disable startup auto-update'
+    zh: '锁定已知可用版本：设 TRADECAT_NO_AUTO_UPDATE=1 关闭启动时自动更新'
+  next_step:
+    en: |
+      To raise the score: (a) add a LICENSE file matching the README MIT badge — would unblock fork/redistribute and remove the unlicensed-with-935-stars penalty; (b) split the 1622-line test_cache_tui.py into focused test modules; (c) provide a CI-recorded e2e sync run artifact (sync + cache + render exit codes) so the molecule live-layer claim can be verified without each user running curl|sh.
+    zh: |
+      想往上加分的话：(a) 加 LICENSE 文件对齐 README 的 MIT 徽章 —— 解锁 fork / 二次分发，去掉 935 star 还无授权的扣分；(b) 把 1622 行的 test_cache_tui.py 拆成聚焦测试模块；(c) 在 CI 里录一次 e2e sync run 的 artifact（sync + cache + render 三段 exit code），让 molecule live-layer 这条 claim 不再需要每个用户都 curl|sh 才能验证。
+  persona:
+    en: 'Trader / quant tinkerer who wants a fast terminal lens on public market data without setting up a database or signing up for a vendor key.'
+    zh: '想要一个快速终端看公开行情、不愿意装数据库也不愿意申请数据商 API key 的交易/量化爱好者。'
+  scenario:
+    en: 'You want to glance at the live event stream and 3 market snapshots from a SSH session or local terminal, with no setup beyond a single install command.'
+    zh: '你想从 SSH 会话或本地终端瞄一眼实时事件流和 3 个市场快照，除了一条安装命令以外什么都不想配。'
+  without_this:
+    en: 'You either set up your own Google Sheets fetcher, or pay for a market-data vendor, or open a browser and click around.'
+    zh: '你要么自己写 Google Sheets fetch 脚本，要么花钱买数据商 API，要么打开浏览器点来点去。'
+  with_this:
+    en: 'One curl|sh, then `tradecat` opens a TUI panel pre-wired to 4 datasets that share a single registry contract.'
+    zh: '一行 curl|sh，然后 `tradecat` 打开 TUI 面板，4 个数据集预先按一份 registry 契约接好。'
+  how:
+    en: |
+      1. `curl -fsSL https://raw.githubusercontent.com/tukuaiai/tradecat/develop/scripts/project/install.sh | sh`
+      2. `tradecat` (TUI) or `tradecat sync && tradecat tui --plain` (text mode)
+      3. zero-install one-shot: `python3 <(curl -fsSL .../scripts/project/scripts/request.py) event_stream`
+    zh: |
+      1. `curl -fsSL https://raw.githubusercontent.com/tukuaiai/tradecat/develop/scripts/project/install.sh | sh`
+      2. `tradecat`（TUI）或 `tradecat sync && tradecat tui --plain`（纯文本模式）
+      3. 零安装一次性：`python3 <(curl -fsSL .../scripts/project/scripts/request.py) event_stream`
+business_category:
+  en: Public-data terminal dashboard
+  zh: 公开数据终端看板
+use_case_tags:
+- terminal-tui
+- crypto-market-data
+- google-sheets-backend
+- zero-install-cli
+- skill-shell
+similar_repos:
+- name: tradingview-cli
+  reason:
+    en: Other terminal-first market-data viewers, but TradeCat is unique in using a public Google Sheets workbook as the source of truth.
+    zh: 其它终端市场数据查看器，但 TradeCat 的独特之处是把公开 Google Sheets 当数据底座。
+- name: glances / btop
+  reason:
+    en: Generic terminal dashboards — TradeCat occupies the same UX niche but for trading-public-data instead of system metrics.
+    zh: 通用终端看板 —— TradeCat 占同一个 UX 生态位，只是把系统指标换成了交易公开数据。
+stars: 935
 archived: false
-has_license: false  # 2026-05-07 audit: README badge claims MIT, but no LICENSE file in repo + GitHub API license=null
-multilingual_readme: false
-release_pipeline_score: 1
+has_license: false  # 2026-05-07 audit: README MIT badge, but `gh api repos/tukuaiai/tradecat`.license=null + no LICENSE file in tree
+multilingual_readme: false  # README is zh-only; English is only inline in code/docs comments
+release_pipeline_score: 2  # 2026-05-07 audit: CI workflow now exists (.github/workflows/ci.yml) running validate-skill.sh --strict + secret scan; up from 1
 eval_discipline_score: 2
-recently_active: true
+recently_active: true  # 2026-05-07 push, ongoing CI fixes
 deployment:
   installable: true
   install_methods:
@@ -89,13 +137,19 @@ deployment:
   auto_update: true
 third_party_services:
 - name: Google Sheets (public read)
-  purpose: Hosts the 4 datasets read at runtime
+  purpose: Hosts the 4 datasets read at runtime via 2 workbooks (market_data + alternative_data)
   required: true
   api_key_needed: false
   signup_needed: false
   free_tier: true
   cost_note: Free; project owners can rename/delete sheets — single point of failure
 workflow_placements:
+- workflow_id: park-trading-v1
+  stage_id: 02_intel_collection
+  role: alternative
+  reason:
+    en: Lightweight read-only feed of public crypto/market snapshots — could supplement the intel layer without standing up a separate fetcher.
+    zh: 公开行情和事件流的只读轻量来源 —— 可以在不另起 fetcher 的情况下补充情报层。
 - workflow_id: park-trading-v1
   stage_id: 04_methodology_routing
   role: primary
@@ -108,3 +162,7 @@ workflow_placements:
   reason:
     en: Lighter-weight execution alternative to QuantDinger's full stack.
     zh: 比 QuantDinger 全栈更轻量的执行替代。
+workflow_diagram:
+  why_layer:
+    en: Multiple modules (CLI / TUI / sync / dataset registry / governance shell) wired by predefined orchestration; no LLM-runtime routing → molecule.
+    zh: 多模块（CLI / TUI / sync / dataset registry / 治理脚本）按预定义编排接线；没有 LLM-runtime 路由 → molecule。
