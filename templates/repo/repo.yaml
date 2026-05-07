@@ -1,13 +1,165 @@
+# repo.yaml — full dossier schema
+#
+# Every commented-out section is a dossier section that the renderer will
+# show if you fill it in. Missing fields = empty section in the HTML.
+#
+# Read SKILL.md "Dossier sections + which `repo.yaml` field drives each"
+# for the field → section mapping.
+
+# === Identity ================================================================
 owner: OWNER
 repo: REPO
 display_name: DISPLAY_NAME
 repo_url: https://github.com/OWNER/REPO
-repo_type: skill
-# Archetype drives scaffolding and verdict-calculator ceiling rules.
-# One of: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator | api-service | unknown
+
+# repo_type: tool | framework | app | skill | platform
+repo_type: tool
+
+# archetype: pure-cli | prompt-skill | hybrid-skill | adapter | orchestrator
+#          | api-service | mcp-enhancement | unknown
+# Drives evaluation dimensions in archetypes/<name>/archetype.yaml.
 archetype: unknown
-complexity: simple
+
+# layer: atom | molecule | compound
+#   atom     — one capability, deterministic, no orchestration. Static eval can
+#              fully test the user-facing layer.
+#   molecule — fixed pipeline of atoms (no LLM-runtime routing). Live e2e
+#              required to lift core_layer_tested.
+#   compound — LLM-runtime routing / dynamic agent dispatch. Live e2e + scenario
+#              breadth required.
+# Layer drives layer_bonus and core_layer_tested in the score.
+layer: atom
+
+complexity: simple        # simple | medium | complex
 uses_areas: false
-status: planned
-current_bucket: unknown
-notes: ""
+status: planned           # planned | evaluated
+last_evaluated: ""        # YYYY-MM-DD when first scored
+version_tested: ""        # e.g. "main@HEAD" or "v0.3.2"
+
+# === Maintainer / ecosystem signals (drive +/- in score model) ===============
+# Verify with `gh api repos/<owner>/<repo>` — do not eyeball.
+stars: 0
+archived: false
+has_license: false        # Verify with both `gh api .../contents/LICENSE` and
+                          # `gh api repos/<owner>/<repo>` license field. README
+                          # badges lie.
+multilingual_readme: false
+release_pipeline_score: 0  # 0..3 — 0=none, 1=manual, 2=CI, 3=tagged releases + changelog
+eval_discipline_score: 0   # 0..3 — 0=no tests, 1=ad-hoc, 2=CI tests, 3=full eval harness
+recently_active: false     # commits in the last 90 days
+
+# Optional: filter pills + business categorization
+business_category: ""      # finance | content | dev-tooling | ops | trading | …
+use_case_tags: []          # ["quant-trading", "video-pipeline", …]
+
+# Free-form long notes for the dossier (markdown OK)
+notes: |
+  …
+
+# === Product view (bilingual {en, zh} for every leaf string) =================
+# Write `one_liner` FIRST. Everything else falls out of it.
+product_view:
+  one_liner:
+    en: ""
+    zh: ""
+  # Optional richer one-pager fields. Drive "它到底能帮你解决什么".
+  persona:
+    en: ""
+    zh: ""
+  scenario:
+    en: ""
+    zh: ""
+  without_this:
+    en: ""
+    zh: ""
+  with_this:
+    en: ""
+    zh: ""
+  cost_summary:
+    en: ""
+    zh: ""
+  how:
+    en: ""
+    zh: ""
+  watch_out:
+    en: ""
+    zh: ""
+  # 2-3 examples, each shows context → user action → outcome.
+  examples:
+    - context:
+        en: ""
+        zh: ""
+      you_say:
+        en: ""
+        zh: ""
+      what_happens:
+        en: ""
+        zh: ""
+  # "提升评分的下一步" — concrete actions in score-impact order.
+  next_step:
+    en: ""
+    zh: ""
+
+# === Deployment (drives 怎么用 / install chips) ==============================
+deployment:
+  installable: false
+  install_methods:
+    - method: ""           # e.g. "git clone + pip install -e ."
+      platform: ""         # e.g. "any (Python 3.11+)" or "macOS / Linux"
+      complexity: easy     # easy | moderate | hard
+  requires_compile: false
+  works_offline_after_install: false
+  auto_update: false       # true if installer self-updates on launch — flag in watch_out
+
+# === Third-party services (drives "依赖什么外部服务") =========================
+third_party_services:
+  - name: ""
+    purpose: ""
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: ""
+
+# === Workflow placement (drives "在这条工作流里" strip) =======================
+# Workflow IDs come from dashboards/workflows/. Common ones:
+#   park-trading-v1 — 8-step trading pipeline (01_market_data … 08_journal)
+#   park-content-v1 — content pipeline (signal_discovery … learning)
+workflow_placements:
+  - workflow_id: ""
+    stage_id: ""
+    role: primary          # primary | alternative | supporting
+    reason:
+      en: ""
+      zh: ""
+
+# === Internal architecture (drives Atom / Molecule / Compound section) ======
+# Optional. Only fill when the user benefits from seeing the internal flow.
+workflow_diagram:
+  layout: linear           # linear | tree | mesh
+  why_layer:
+    en: ""
+    zh: ""
+  nodes:
+    - id: input
+      type: start
+      rank: 0
+      lane: 0
+      label:
+        en: ""
+        zh: ""
+  edges:
+    - {from: input, to: output}
+
+# === Comparison (drives "类比的同类 repo") ====================================
+similar_repos:
+  - slug: ""               # e.g. "owner--repo" — must match an existing eval
+    shared_purpose:
+      en: ""
+      zh: ""
+    this_better_at:
+      en: ""
+      zh: ""
+    other_better_at:
+      en: ""
+      zh: ""
