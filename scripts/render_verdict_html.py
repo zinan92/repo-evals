@@ -260,6 +260,80 @@ def _read_yaml(path: Path) -> dict[str, Any]:
         return yaml.safe_load(f) or {}
 
 
+# {en, zh} bilingual fields where the leaves MUST be strings. If an evaluator
+# writes the value as raw multiline text containing a colon (e.g.
+# "Hardware: $100"), YAML quietly parses it as a nested mapping and the
+# renderer falls back to empty strings — score unchanged but the dossier
+# section silently goes blank. This validator surfaces those corruptions.
+_BILINGUAL_LEAF_PATHS: tuple[tuple[str, ...], ...] = (
+    ("product_view", "one_liner"),
+    ("product_view", "best_for"),
+    ("product_view", "watch_out"),
+    ("product_view", "persona"),
+    ("product_view", "scenario"),
+    ("product_view", "without_this"),
+    ("product_view", "with_this"),
+    ("product_view", "cost_summary"),
+    ("product_view", "how"),
+    ("product_view", "next_step"),
+    ("business_category",),
+)
+
+
+def _validate_repo_yaml_shape(repo: dict[str, Any], path: Path) -> None:
+    """Warn loudly when bilingual leaf fields are corrupted into dicts.
+
+    YAML's ScannerError fires on truly malformed input, but a value like
+    `cost_summary.en: Hardware: $100 GPU` parses *successfully* into a nested
+    mapping ({Hardware: $100 GPU, ...}) instead of the expected string. The
+    renderer then treats the leaf as missing. We emit a stderr warning so
+    the corruption is visible — not a hard failure (the evaluator may have
+    intentionally nested), but loud enough to catch quoting bugs.
+    """
+    warnings: list[str] = []
+    for path_tuple in _BILINGUAL_LEAF_PATHS:
+        node: Any = repo
+        for key in path_tuple[:-1]:
+            if not isinstance(node, dict):
+                node = None
+                break
+            node = node.get(key)
+        if not isinstance(node, dict):
+            continue
+        leaf = node.get(path_tuple[-1])
+        if leaf is None:
+            continue
+        if isinstance(leaf, dict):
+            for lang in ("en", "zh"):
+                value = leaf.get(lang)
+                if value is None:
+                    continue
+                if not isinstance(value, str):
+                    warnings.append(
+                        f"  {'.'.join(path_tuple)}.{lang} expected str, "
+                        f"got {type(value).__name__}: {value!r}"
+                    )
+        elif not isinstance(leaf, str):
+            warnings.append(
+                f"  {'.'.join(path_tuple)} expected str or {{en, zh}} dict, "
+                f"got {type(leaf).__name__}: {leaf!r}"
+            )
+
+    if warnings:
+        print(
+            f"(warn) shape issues in {path} — likely unquoted strings "
+            f"containing colons / newlines:",
+            file=sys.stderr,
+        )
+        for w in warnings:
+            print(w, file=sys.stderr)
+        print(
+            "  → wrap the value in quotes or use a YAML block scalar (|) so "
+            "the colon doesn't trigger nested-mapping parsing.",
+            file=sys.stderr,
+        )
+
+
 def _derive_verdict_input(repo: dict[str, Any], claims: list[dict[str, Any]]) -> dict[str, Any]:
     """Build a verdict-input dict from repo.yaml + claim-map.yaml.
 
@@ -350,7 +424,9 @@ def load_verdict(slug: str, date: str | None) -> VerdictData:
         print(f"No scaffold at {repo_dir}", file=sys.stderr)
         sys.exit(2)
 
-    repo = _read_yaml(repo_dir / "repo.yaml")
+    repo_yaml_path = repo_dir / "repo.yaml"
+    repo = _read_yaml(repo_yaml_path)
+    _validate_repo_yaml_shape(repo, repo_yaml_path)
     claim_map = _read_yaml(repo_dir / "claims" / "claim-map.yaml")
     claims = list(claim_map.get("claims") or [])
 
