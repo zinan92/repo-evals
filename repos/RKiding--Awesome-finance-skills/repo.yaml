@@ -11,6 +11,22 @@ status: evaluated
 current_bucket: usable
 last_evaluated: '2026-05-04'
 version_tested: main@HEAD
+stars: 2064
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 1
+eval_discipline_score: 1
+recently_active: false
+business_category:
+  en: Finance-analyst skill catalog (10-skill bundle)
+  zh: 金融分析 skill 目录（10 件套）
+use_case_tags:
+- skill-catalog
+- finance-news
+- sentiment-analysis
+- transmission-chain
+- multi-agent-host
 notes: '10-skill finance toolkit for Antigravity / OpenCode / OpenClaw.
 
   README headlines 8 alphaear-* skills (news / stock / sentiment /
@@ -46,10 +62,10 @@ product_view:
     en: Solo investors / quant researchers who use AI agents (Claude Code / OpenCode / OpenClaw) for market analysis and want a curated, ready-to-load finance skill bundle without writing prompts from scratch.
     zh: 用 AI agent（Claude Code / OpenCode / OpenClaw）做市场分析的独立投资者 / 量化研究员，想要一组装上即用的金融 skill 包，不需要自己从头写 prompt。
   watch_out:
-    en: 'Skills depend on external services (financial news APIs, FinBERT model, Kronos forecasting, Polymarket) — each has its own auth + rate limits. The README lists `npx skills add` as the one-step install but that depends on a third-party `skills` CLI that isn''t bundled. Each skill''s individual quality varies; this eval validated that all 8 README-listed skills exist and are non-trivial, not that each one''s analysis is correct.
+    en: 'Skills depend on external services (financial news APIs, FinBERT model, Kronos forecasting, Polymarket) — each has its own auth + rate limits. The README lists `npx skills add` as the one-step install but that depends on a third-party `skills` CLI that isn''t bundled. Each skill''s individual quality varies; this eval validated that all 8 README-listed skills exist and are non-trivial, not that each one''s analysis is correct. End-to-end claim (`分析贵金属跳水对A股的影响` cross-skill orchestration) was NOT executed in a real agent session — capped at `usable` per hybrid-repo cap rule. Repo last pushed 2026-03-29 (>30 days at eval time) — recently_active=false.
 
       '
-    zh: 'Skill 依赖外部服务（金融新闻 API、FinBERT 模型、Kronos 预测、Polymarket）—— 每个都有自己的鉴权和速率限制。README 推 `npx skills add` 一键装，但要先有第三方的 `skills` CLI（不是仓库自带）。每个 skill 的质量独立，这次评测只验证了 README 列的 8 个 skill 都存在且非空，没验证每个分析的准确性。
+    zh: 'Skill 依赖外部服务（金融新闻 API、FinBERT 模型、Kronos 预测、Polymarket）—— 每个都有自己的鉴权和速率限制。README 推 `npx skills add` 一键装，但要先有第三方的 `skills` CLI（不是仓库自带）。每个 skill 的质量独立，这次评测只验证了 README 列的 8 个 skill 都存在且非空，没验证每个分析的准确性。端到端 claim（`分析贵金属跳水对A股的影响` 多 skill 协作）没在真实 agent session 跑过 —— 按 hybrid-repo cap 规则锁在 `usable`。仓库最后一次 push 是 2026-03-29（测评时已超 30 天），recently_active=false。
 
       '
   use_for:
@@ -62,13 +78,176 @@ product_view:
     zh: 别指望每个 skill 自动处理外部 API 鉴权 —— 每个都有自己的速率限制和 provider 配置。
   - en: Don't rely on `npx skills add` as the only install path — it depends on a third-party CLI not bundled in this repo.
     zh: 别只依赖 `npx skills add` —— 那是第三方 CLI，仓库自带没保证。
-stars: 2038
-archived: false
-has_license: true
-multilingual_readme: true
-release_pipeline_score: 1
-eval_discipline_score: 1
-recently_active: false
+  persona:
+    en: "Solo investor or quant researcher who already uses Claude Code / OpenCode / OpenClaw for market analysis, wants a curated set of finance-domain skills loaded once, then triggered by natural-language prompts like '分析贵金属跳水对 A 股的影响'."
+    zh: "已经在用 Claude Code / OpenCode / OpenClaw 做市场分析的独立投资者 / 量化研究员，想要一次性装好一组金融领域 skill，然后用自然语言 prompt 触发，比如「分析贵金属跳水对 A 股的影响」。"
+  scenario:
+    en: "An overnight event (Polymarket odds shift / a Cailian breaking news flash / a US session crash) hits, you want your agent to: (a) pull the news, (b) score sentiment, (c) draw a transmission chain to A-shares / HK / US, and (d) hand back a draftable report — without you scaffolding 4 separate prompts."
+    zh: "夜里出了个事（Polymarket 赔率变了 / 财联社快讯 / 美股盘中跳水），你想让 agent：(a) 拉新闻、(b) 打情绪分、(c) 画传导链到 A 股 / 港股 / 美股、(d) 给出可改的研报草稿 —— 不想自己分 4 段 prompt 搭场子。"
+  without_this:
+    en: "You write your own multi-source news scraper, integrate FinBERT or call an LLM for sentiment, hand-draw transmission diagrams in draw.io / mermaid, and prompt-engineer your report template from scratch each time."
+    zh: "自己写多源新闻爬虫、自己接 FinBERT 或喊 LLM 打情绪分、自己在 draw.io / mermaid 里画传导图、每次从头 prompt-engineer 一份研报模板。"
+  with_this:
+    en: "Install the 8-10 skills once into your agent's skills directory, then natural-language prompts auto-route to the right skill (alphaear-news for news, alphaear-sentiment for FinBERT scores, alphaear-logic-visualizer for transmission XML, alphaear-reporter for the writeup)."
+    zh: "把 8-10 个 skill 一次装到 agent 的 skills 目录，之后自然语言 prompt 会自动路由到对应 skill（alphaear-news 拉新闻、alphaear-sentiment 跑 FinBERT、alphaear-logic-visualizer 出传导链 XML、alphaear-reporter 写研报）。"
+  cost_summary:
+    en: "Apache 2.0, free OSS. Runtime cost = your agent's normal LLM token usage + per-skill external service fees: news scraping is mostly free (Cailian / Polymarket public endpoints), FinBERT runs locally on CPU (free), Kronos forecasting is local (free). alphaear-search may use Jina / DDG / Baidu — Jina has paid tier, DDG/Baidu free."
+    zh: "Apache 2.0、开源免费。运行成本 = agent 正常 LLM 用量 + 每个 skill 自带的外部服务费：新闻抓取大多免费（财联社 / Polymarket 公开端点）、FinBERT 本地 CPU 跑（免费）、Kronos 预测本地跑（免费）。alphaear-search 可能用 Jina / DDG / 百度 —— Jina 有付费档，DDG / 百度免费。"
+  how:
+    en: |
+      1. (recommended) Per-skill install via npx: `npx skills add RKiding/Awesome-finance-skills@alphaear-news` — needs a separate `skills` CLI installed first
+      2. (manual) `git clone https://github.com/RKiding/Awesome-finance-skills.git && cp -r Awesome-finance-skills/skills/* ~/.config/opencode/skills/`
+      3. For Claude Code: `cp -r Awesome-finance-skills/skills/* ~/.claude/skills/`
+      4. For OpenClaw: `cp -r Awesome-finance-skills/skills/* ~/.openclaw/skills/`
+      5. In agent: just ask, e.g., `分析贵金属跳水对 A 股的影响` — agent auto-routes via SKILL.md "Use when..." triggers
+    zh: |
+      1.（推荐）按 skill 单装：`npx skills add RKiding/Awesome-finance-skills@alphaear-news` —— 要先装第三方 `skills` CLI
+      2.（手动）`git clone https://github.com/RKiding/Awesome-finance-skills.git && cp -r Awesome-finance-skills/skills/* ~/.config/opencode/skills/`
+      3. Claude Code：`cp -r Awesome-finance-skills/skills/* ~/.claude/skills/`
+      4. OpenClaw：`cp -r Awesome-finance-skills/skills/* ~/.openclaw/skills/`
+      5. agent 里直接问，例如「分析贵金属跳水对 A 股的影响」—— agent 按 SKILL.md "Use when..." 触发自动路由
+  examples:
+  - context:
+      en: "Cross-asset event impact analysis"
+      zh: "跨资产事件影响分析"
+    you_say:
+      en: "分析贵金属跳水对 A 股的影响"
+      zh: "分析贵金属跳水对 A 股的影响"
+    what_happens:
+      en: "Agent triggers alphaear-news (pulls multi-source news on the gold drop), then alphaear-logic-visualizer (generates a draw.io XML transmission chain: gold → industry sectors → individual A-share names), optionally alphaear-sentiment (FinBERT score on related news), then alphaear-reporter for a writeup."
+      zh: "Agent 触发 alphaear-news（拉贵金属跳水的多源新闻），再 alphaear-logic-visualizer（生成 draw.io XML 传导链：贵金属 → 行业板块 → A 股个股），可选 alphaear-sentiment（相关新闻 FinBERT 打分），最后 alphaear-reporter 出研报。"
+  - context:
+      en: "Single-skill use: just want stock OHLCV"
+      zh: "单 skill：只要个股 OHLCV"
+    you_say:
+      en: "Get me 1-year OHLCV for 600519"
+      zh: "拉一下 600519 一年的 OHLCV"
+    what_happens:
+      en: "alphaear-stock skill alone fires; SKILL.md triggers ticker_search + ohlcv scripts; returns structured data the agent then formats. No cross-skill orchestration needed."
+      zh: "只触发 alphaear-stock skill；SKILL.md 触发 ticker_search + ohlcv 脚本；返回结构化数据后 agent 再格式化。不需要多 skill 协作。"
+  - context:
+      en: "News-aware price forecast"
+      zh: "结合新闻的价格预测"
+    you_say:
+      en: "Forecast TSLA for the next 5 trading days, accounting for recent news"
+      zh: "预测 TSLA 未来 5 个交易日，结合最近的新闻"
+    what_happens:
+      en: "Triggers alphaear-news + alphaear-sentiment + alphaear-predictor (Kronos time-series with news-aware adjustment). Output is a forecast band + the news context used to adjust it."
+      zh: "触发 alphaear-news + alphaear-sentiment + alphaear-predictor（Kronos 时序 + 新闻情绪调整）。输出是预测区间 + 用来调整的新闻上下文。"
+  next_step:
+    en: |
+      Three actions in score-impact order: (a) record one real Claude Code / OpenCode session running the README's `分析贵金属跳水对 A 股的影响` example end-to-end and commit the transcript + draw.io output — this is the only way to lift claim-006 (end-to-end) from `untested` and unblock the hybrid-repo cap from `usable`; (b) ship at least one tagged release with a CHANGELOG so release_pipeline_score moves from 1 to 2 — currently main@HEAD only; (c) push something — the repo is not recently_active (last push 2026-03-29, > 30 days at eval), which directly costs activity score; (d) document each skill's external dependencies (Jina key? FinBERT model size? Kronos checkpoint?) in its own SKILL.md prerequisites block so first-run failures stop being mysterious.
+    zh: |
+      按打分影响排序的下一步：(a) 录一次真实 Claude Code / OpenCode session，跑 README 里那个「分析贵金属跳水对 A 股的影响」的端到端示例，把 transcript + draw.io 输出 commit 进去 —— 这是唯一能把 claim-006（端到端）从 `untested` 抬出来、解开 hybrid-repo cap 从 `usable` 的方式；(b) 至少出一个 tagged release + CHANGELOG，把 release_pipeline_score 从 1 推到 2 —— 目前只有 main@HEAD；(c) 提个 commit —— 测评时仓库已经 30+ 天没 push 了（最后一次 2026-03-29），recently_active 直接扣分；(d) 在每个 skill 的 SKILL.md 里加 prerequisites 块，写明外部依赖（Jina key？FinBERT 模型多大？Kronos checkpoint？），首次运行失败不再神秘。
+workflow_diagram:
+  layout: mesh
+  why_layer:
+    en: |
+      Molecule — each individual alphaear-* skill is an atom (deterministic script bundle), but the user-facing value comes from agent-time orchestration across multiple skills (news → sentiment → visualizer → reporter). The orchestration is LLM-driven via SKILL.md "Use when..." triggers, not hard-wired — sits at the molecule / compound boundary.
+    zh: |
+      分子 —— 单个 alphaear-* skill 是 atom（确定性脚本包），但用户层面的价值来自 agent 运行时跨多个 skill 的协作（news → sentiment → visualizer → reporter）。协作由 LLM 通过 SKILL.md "Use when..." 触发驱动，不是硬接线 —— 处于分子 / 复合的边界。
+  nodes:
+  - id: user
+    type: start
+    rank: 0
+    lane: 1
+    label:
+      en: "User question\n(natural language)"
+      zh: "用户提问\n(自然语言)"
+  - id: news
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "alphaear-news\n10+ sources +\nPolymarket"
+      zh: "alphaear-news\n10+ 信源 +\nPolymarket"
+  - id: stock
+    type: atom
+    rank: 1
+    lane: 1
+    label:
+      en: "alphaear-stock\nA / HK / US\nOHLCV"
+      zh: "alphaear-stock\nA / 港 / 美\nOHLCV"
+  - id: sent
+    type: atom
+    rank: 1
+    lane: 2
+    label:
+      en: "alphaear-sentiment\nFinBERT / LLM\n-1 ~ +1"
+      zh: "alphaear-sentiment\nFinBERT / LLM\n-1 ~ +1"
+  - id: pred
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "alphaear-predictor\nKronos +\nnews-aware"
+      zh: "alphaear-predictor\nKronos +\n新闻调整"
+  - id: viz
+    type: atom
+    rank: 2
+    lane: 1
+    label:
+      en: "alphaear-logic-\nvisualizer\ndraw.io XML"
+      zh: "alphaear-logic-\nvisualizer\ndraw.io XML"
+  - id: track
+    type: atom
+    rank: 2
+    lane: 2
+    label:
+      en: "alphaear-signal-\ntracker\nstrengthen / falsify"
+      zh: "alphaear-signal-\ntracker\n强化 / 证伪"
+  - id: report
+    type: end
+    rank: 3
+    lane: 1
+    label:
+      en: "alphaear-reporter\nplan → write →\nedit → chart"
+      zh: "alphaear-reporter\n规划 → 撰写 →\n编辑 → 图表"
+  edges:
+  - {from: user, to: news}
+  - {from: user, to: stock}
+  - {from: user, to: sent}
+  - {from: news, to: sent}
+  - {from: news, to: viz}
+  - {from: stock, to: pred}
+  - {from: sent, to: pred}
+  - {from: sent, to: track}
+  - {from: viz, to: report}
+  - {from: pred, to: report}
+  - {from: track, to: report}
+similar_repos:
+- slug: gooseworks-ai--goose-skills
+  shared_purpose:
+    en: |
+      Both are skill-catalog repos shipping multiple independent SKILL.md bundles intended to be loaded into an agent host. Both face the same hybrid-repo cap — individual skill files are statically auditable but actual cross-skill orchestration requires live agent sessions to verify.
+    zh: |
+      都是 skill 目录类仓库，发的是多个独立 SKILL.md 包，给 agent host 加载。都吃同一个 hybrid-repo cap —— 单个 skill 文件可静态审，但真正的跨 skill 协作要真实 agent session 才能验证。
+  this_better_at:
+    en: |
+      Tighter domain focus (finance only) — every skill composes well with every other one (news → sentiment → predictor → visualizer → reporter). Multi-host install paths documented (Antigravity / OpenCode / OpenClaw / Claude Code / Codex). Apache 2.0 + bilingual README.
+    zh: |
+      领域聚焦更紧（只做金融）—— 每个 skill 都能跟其它 skill 组合（news → sentiment → predictor → visualizer → reporter）。多 host 安装路径都文档化了（Antigravity / OpenCode / OpenClaw / Claude Code / Codex）。Apache 2.0 + 双语 README。
+  other_better_at:
+    en: |
+      Broader scope — goose-skills covers general-purpose dev / ops skills, not domain-specific. If you don't care about finance, this repo isn't useful to you; goose-skills has wider applicability.
+    zh: |
+      覆盖更广 —— goose-skills 是通用 dev / ops skill，不限领域。不做金融的话这个仓库对你没用；goose-skills 适用面更宽。
+- slug: tukuaiai--tradecat
+  shared_purpose:
+    en: |
+      Both target trader / quant researchers using AI agents and ship as Skill-shell hybrid repos. Both pull from external public data sources.
+    zh: |
+      都瞄准用 AI agent 的交易 / 量化研究员，都是 Skill 外壳类 hybrid 仓库。都从外部公开数据源拉数据。
+  this_better_at:
+    en: |
+      Wider analysis surface — sentiment + transmission-chain + forecasting + reporting, not just a data viewer. 10 skills compose into a research pipeline.
+    zh: |
+      分析面更宽 —— 情绪 + 传导链 + 预测 + 研报，不只是数据查看器。10 个 skill 组成一条研究管线。
+  other_better_at:
+    en: |
+      Faster install + zero-config glance at public market data via curl|sh + TUI. TradeCat is for "what's happening right now in the market"; Awesome-finance-skills is for "explain why".
+    zh: |
+      安装更快、零配置 —— curl|sh + TUI 直接看公开行情。TradeCat 答的是「现在市场怎么了」；Awesome-finance-skills 答的是「为什么」。
 deployment:
   installable: true
   install_methods:

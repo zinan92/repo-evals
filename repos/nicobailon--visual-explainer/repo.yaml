@@ -9,7 +9,204 @@ complexity: medium
 uses_areas: false
 status: evaluated
 current_bucket: usable
+stars: 7869
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 1
+recently_active: true
+business_category:
+  en: Agent skill — terminal output to styled HTML
+  zh: Agent 技能 —— 把终端输出变成样式化 HTML
+use_case_tags:
+- agent-skill
+- html-rendering
+- diagram-generation
+- multi-harness
+- claude-code-plugin
 notes: "Hybrid repo: Claude Code skill (8 LLM-driven slash commands + 4 HTML reference\ntemplates + 1 install script + 1 share script). Evaluated under repo-evals\nframework v21f90eb (provenance + hybrid-repo cap rule).\n\nSupport layer is strong: 9 SKILL.md cross-references all resolve, 8/8 commands\nexist, all 4 HTML templates render in headless Chromium with zero JS errors,\nshare.sh has clean failure modes with exit 1.\n\nTwo real bugs found:\n- install-pi.sh missing `mkdir -p` for parent of $SKILL_DIR — fresh installs\n  (where ~/.pi/agent/skills/ doesn't exist) fail at the cp -r line\n- Version mismatch between .claude-plugin/marketplace.json (0.5.1) and\n  plugins/visual-explainer/.claude-plugin/plugin.json (0.6.3); SKILL.md\n  frontmatter agrees with plugin.json but not marketplace.json\n\nOne undocumented dependency:\n- share.sh requires a separate `vercel-deploy` skill at\n  ~/.pi/agent/skills/vercel-deploy/scripts/deploy.sh that README never mentions\n\nCore LLM-driven layer (8 slash commands) completely untested — same hybrid\ncap as frontend-slides: overall verdict capped at `usable` per the framework's\nhybrid-repo rule. Promotion to `reusable` requires running real Claude Code /\nPi / Codex sessions and inspecting the generated HTML against the SKILL.md\naesthetic contract.\n"
+product_view:
+  one_liner:
+    en: "An agent skill that turns 'draw a diagram of X' into a self-contained styled HTML page (with Mermaid + Chart.js + dark/light themes) that opens in your browser, instead of an ASCII-art mess in the terminal. 8 slash commands, 4 reference templates, multi-harness support (Claude Code / Pi / Codex / OpenCode / Cursor / OpenClaw)."
+    zh: "一个 agent skill —— 把「画一张 X 的图」从终端里那堆 ASCII 字符变成自包含的样式化 HTML 页面（含 Mermaid + Chart.js + 明暗主题），自动在浏览器里打开。8 个 slash command、4 个参考模板，跨 Claude Code / Pi / Codex / OpenCode / Cursor / OpenClaw 6 个 host 都能装。"
+  best_for:
+    en: "Agent users who frequently ask their coding agent for diagrams, plan reviews, or diff comparisons and are tired of terminal ASCII output. Comfortable installing skills via marketplace plugin or curl-based scripts. Mainly Claude Code and Pi users; other harnesses are best-effort."
+    zh: "经常让 coding agent 画图 / 做 plan review / 比 diff，但受够了终端 ASCII 输出的 agent 用户。能接受用 marketplace plugin 或 curl 脚本安装 skill。主力支持 Claude Code 和 Pi，其他 host 是 best-effort。"
+  watch_out:
+    en: |
+      Two real bugs at eval time: (a) install-pi.sh misses `mkdir -p` for the parent of $SKILL_DIR — fresh Pi installs (no existing ~/.pi/agent/skills/) fail at the cp step; (b) version mismatch between marketplace.json (0.5.1) and plugin.json + SKILL.md frontmatter (0.6.3). One undocumented dependency: /share-page calls a separate `vercel-deploy` skill that the README never mentions — sharing breaks if it's not installed. The 8 LLM-driven slash commands themselves were NOT executed at eval time; the verdict is capped at `usable` per the hybrid-repo cap until someone runs them in real Claude Code / Pi sessions and inspects the generated HTML.
+    zh: |
+      测评时发现两个真 bug：(a) install-pi.sh 漏了 `mkdir -p` —— 新装 Pi（还没有 ~/.pi/agent/skills/）时 cp 那一步会挂；(b) marketplace.json (0.5.1) 和 plugin.json + SKILL.md frontmatter (0.6.3) 版本号对不上。还有一个没文档化的依赖：/share-page 会调一个独立的 `vercel-deploy` skill，README 里只字未提 —— 没装的话分享功能直接坏。8 个 LLM-driven 命令本身没在真实 agent 里跑过；按 hybrid-repo cap 规则，整体 verdict 锁在 `usable`，要升 `reusable` 得有人真的在 Claude Code / Pi 里跑一遍并核对生成的 HTML。
+  persona:
+    en: "Coding-agent power user who lives in Claude Code or Pi all day, asks for diagrams 5+ times a week, and wants ASCII flowcharts replaced with real HTML diagrams that they can share or zoom into."
+    zh: "整天泡在 Claude Code 或 Pi 里的 coding agent 重度用户，每周让 agent 画图 5+ 次，希望把 ASCII 流程图换成可缩放、可分享的真 HTML 图。"
+  scenario:
+    en: "You ask your agent: 'compare these 4 architecture options across 6 dimensions' or 'review this 200-line refactor diff'. Without this skill you get a wrapped, broken ASCII table or a mermaid block that won't render in your terminal. With it, an HTML page opens in your browser with proper typography + Mermaid SVG + dark/light theme."
+    zh: "你跟 agent 说：「比一下这 4 个架构方案在 6 个维度上的差异」或「review 一下这 200 行 refactor 的 diff」。没装这个 skill：终端里一堆换行错乱的 ASCII 表 / 不能渲染的 mermaid block。装了：浏览器里直接开一个 HTML 页面，排版整齐 + Mermaid SVG + 明暗主题。"
+  without_this:
+    en: "You either tolerate ASCII flowcharts and mangled tables in your terminal, copy-paste mermaid blocks into a separate viewer, or hand-write HTML each time you want a polished artifact."
+    zh: "要么忍受终端里的 ASCII 流程图和乱码表，要么把 mermaid block 复制到另一个查看器，要么每次想要一份能看的 artefact 都自己写一遍 HTML。"
+  with_this:
+    en: "Install once via `/plugin marketplace add` or `pi install`, then any /generate-web-diagram, /diff-review, /plan-review, /project-recap, /generate-slides, /fact-check, /share-page, or /generate-visual-plan command produces a styled HTML page in `~/.agent/diagrams/` and auto-opens it."
+    zh: "一次安装（`/plugin marketplace add` 或 `pi install`），之后 /generate-web-diagram、/diff-review、/plan-review、/project-recap、/generate-slides、/fact-check、/share-page、/generate-visual-plan 任何一个命令都会在 `~/.agent/diagrams/` 生成样式化 HTML 并自动开浏览器。"
+  cost_summary:
+    en: "MIT-licensed, free OSS. Generation cost is your agent's normal LLM cost (a single command can spend several thousand tokens reading templates + producing HTML). /share-page additionally requires the separate `vercel-deploy` skill + a Vercel account."
+    zh: "MIT 协议、开源免费。生成成本就是你 agent 正常的 LLM 用量（单条命令读模板 + 出 HTML 大概几千 token）。/share-page 额外要装 `vercel-deploy` skill + Vercel 账号。"
+  how:
+    en: |
+      1. Claude Code: `/plugin marketplace add nicobailon/visual-explainer` then `/plugin install visual-explainer@visual-explainer-marketplace`
+      2. Pi: `pi install git:github.com/nicobailon/visual-explainer`
+      3. Codex / OpenCode: `git clone --depth 1 …` then `cp -R plugins/visual-explainer ~/.codex/skills/visual-explainer` (or `~/.config/opencode/skill/`)
+      4. Use any of the 8 commands, e.g. `/visual-explainer:generate-web-diagram`
+      5. Output lands in `~/.agent/diagrams/<name>.html` and auto-opens
+    zh: |
+      1. Claude Code：`/plugin marketplace add nicobailon/visual-explainer` 然后 `/plugin install visual-explainer@visual-explainer-marketplace`
+      2. Pi：`pi install git:github.com/nicobailon/visual-explainer`
+      3. Codex / OpenCode：`git clone --depth 1 …` 然后 `cp -R plugins/visual-explainer ~/.codex/skills/visual-explainer`（或 `~/.config/opencode/skill/`）
+      4. 使用 8 个命令中任何一个，例如 `/visual-explainer:generate-web-diagram`
+      5. 输出落到 `~/.agent/diagrams/<name>.html` 并自动开浏览器
+  examples:
+  - context:
+      en: "You want a quick architecture diagram of an unfamiliar system"
+      zh: "你想快速看明白一个陌生系统的架构图"
+    you_say:
+      en: "/visual-explainer:generate-web-diagram our authentication flow"
+      zh: "/visual-explainer:generate-web-diagram 我们的认证流程"
+    what_happens:
+      en: "Agent reads SKILL.md + references/css-patterns.md + templates/architecture.html, generates a self-contained HTML with a Mermaid sequence diagram + CSS Grid component overview + dark/light toggle, writes to ~/.agent/diagrams/, opens in browser."
+      zh: "Agent 读 SKILL.md + references/css-patterns.md + templates/architecture.html，生成一份自包含 HTML（含 Mermaid 序列图 + CSS Grid 架构概览 + 明暗切换），写到 ~/.agent/diagrams/，自动开浏览器。"
+  - context:
+      en: "You want to compare a refactor plan against actual codebase before approving"
+      zh: "你想在批准 refactor 计划前对照实际代码 review 一下"
+    you_say:
+      en: "/visual-explainer:plan-review ~/docs/refactor-plan.md"
+      zh: "/visual-explainer:plan-review ~/docs/refactor-plan.md"
+    what_happens:
+      en: "Agent reads the plan, scans the codebase, builds a 2-column comparison table (plan vs reality) + risk-flagged sections + suggested edits, all rendered as HTML you can scroll and search."
+      zh: "Agent 读 plan、扫代码，生成两列对比表（plan vs 现状）+ 风险标注段落 + 建议修改，全部渲染成可滚动可搜索的 HTML。"
+  - context:
+      en: "You want to share a generated HTML diagram with a teammate"
+      zh: "你想把生成的 HTML 图分享给队友"
+    you_say:
+      en: "/visual-explainer:share-page ~/.agent/diagrams/auth-flow.html"
+      zh: "/visual-explainer:share-page ~/.agent/diagrams/auth-flow.html"
+    what_happens:
+      en: "share.sh shells out to a separate `vercel-deploy` skill (must be pre-installed; this is the undocumented dependency) and returns a live Vercel URL. If the dependency is missing, exits 1 with a clear error message — that part works correctly."
+      zh: "share.sh 调一个独立的 `vercel-deploy` skill（要先装好，这是没文档化的依赖），返回一个 Vercel 在线 URL。依赖没装时会退出 1 + 清晰报错 —— 这一段失败模式做对了。"
+  next_step:
+    en: |
+      Three actions in score-impact order: (a) fix install-pi.sh (one `mkdir -p` line) — closes the most concrete reproducible install bug, would lift install claim from `failed` to `passed`; (b) align marketplace.json (0.5.1) with plugin.json + SKILL.md frontmatter (0.6.3) — closes the version-drift gap that fails claim-001's "passed_with_concerns"; (c) document the `vercel-deploy` skill dependency in README + add a `prerequisites:` block in share.sh — closes the undocumented-dependency penalty; (d) longer-term: run a real Claude Code session through each of the 8 commands and capture the output HTMLs — that's the only way to lift the hybrid-repo cap from `usable` to `reusable`.
+    zh: |
+      按打分影响排序的下一步：(a) 修 install-pi.sh（加一行 `mkdir -p`）—— 关掉最具体的可复现 install bug，把这条 claim 从 `failed` 提到 `passed`；(b) 对齐 marketplace.json (0.5.1) 和 plugin.json + SKILL.md (0.6.3) —— 关掉版本不一致的扣分（claim-001 现在是 passed_with_concerns）；(c) 在 README 里写明 `vercel-deploy` skill 依赖，给 share.sh 加 `prerequisites:` 区段 —— 关掉没文档化依赖的扣分；(d) 长期：在真实 Claude Code session 里把 8 个命令跑一遍，留下输出 HTML 当 evidence —— 这是唯一能把 hybrid-repo cap 从 `usable` 抬到 `reusable` 的方式。
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: |
+      Molecule — fixed pipeline per command (read references/ → read templates/ → produce HTML → open in browser).
+      LLM is inside each command but command routing is not LLM-driven; user picks the command.
+    zh: |
+      分子 —— 每条命令是固定流水线（读 references/ → 读 templates/ → 产 HTML → 开浏览器）。
+      命令内部用 LLM，但命令路由不是 LLM 决定的，用户自己挑。
+  nodes:
+  - id: user
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "User invokes\nslash command"
+      zh: "用户触发\nslash 命令"
+  - id: skill_md
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "SKILL.md\nworkflow"
+      zh: "SKILL.md\n工作流"
+  - id: refs
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "references/\n(css-patterns,\nlibraries, slides)"
+      zh: "references/\n(css-patterns,\nlibraries, slides)"
+  - id: tpls
+    type: atom
+    rank: 2
+    lane: 1
+    label:
+      en: "templates/\n(architecture,\ndata-table, …)"
+      zh: "templates/\n(architecture,\ndata-table …)"
+  - id: gen
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "LLM generates\nstyled HTML"
+      zh: "LLM 生成\n样式化 HTML"
+  - id: out
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: "~/.agent/diagrams/\n+ open browser"
+      zh: "~/.agent/diagrams/\n+ 打开浏览器"
+  edges:
+  - {from: user, to: skill_md}
+  - {from: skill_md, to: refs}
+  - {from: skill_md, to: tpls}
+  - {from: refs, to: gen}
+  - {from: tpls, to: gen}
+  - {from: gen, to: out}
+similar_repos:
+- slug: zarazhangrui--frontend-slides
+  shared_purpose:
+    en: |
+      Both are agent skills that produce polished HTML/slide artefacts instead of plain text. Both face the hybrid-repo cap — support layer (templates / scripts) auditable, but the LLM-driven core needs live agent sessions to validate.
+    zh: |
+      都是产 HTML / 幻灯片成品（不是纯文本）的 agent skill。两个都吃 hybrid-repo cap —— 支撑层（模板 / 脚本）可静态审，但 LLM-driven 核心要真实 agent session 才能验证。
+  this_better_at:
+    en: |
+      Multi-harness install support (6 hosts: Claude Code / Pi / Codex / OpenCode / Cursor / OpenClaw), more diverse output types (diagram / diff-review / plan-review / fact-check / project-recap), MIT licensed.
+    zh: |
+      多 host 安装（6 个：Claude Code / Pi / Codex / OpenCode / Cursor / OpenClaw），输出类型更多样（diagram / diff-review / plan-review / fact-check / project-recap），MIT 协议。
+  other_better_at:
+    en: |
+      More opinionated on slide aesthetics — frontend-slides is purpose-built for slide-deck creation with explicit style exploration; visual-explainer's `--slides` is a flag, not a focus.
+    zh: |
+      在幻灯片美学上更专注 —— frontend-slides 就是给做幻灯片设计的，带明确的样式探索；visual-explainer 的 `--slides` 是个开关，不是核心。
+deployment:
+  installable: true
+  install_methods:
+  - method: Claude Code marketplace plugin
+    platform: any (Claude Code)
+    complexity: easy
+  - method: pi install git:github.com/nicobailon/visual-explainer
+    platform: any (Pi)
+    complexity: easy
+  - method: git clone + cp to ~/.codex/skills (or ~/.config/opencode/skill)
+    platform: any
+    complexity: moderate
+  - method: install-pi.sh (legacy curl|sh)
+    platform: any (has known mkdir bug for fresh installs)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: Vercel (for /share-page only)
+  purpose: Hosting shared HTML pages
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Free tier sufficient for personal use; only needed for /share-page command
+- name: vercel-deploy skill (separate, undocumented dependency)
+  purpose: Backend for /share-page
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Must be installed separately at ~/.pi/agent/skills/vercel-deploy/ — README does not mention this
 workflow_placements:
 - workflow_id: park-development-v1
   stage_id: 02_plan_design

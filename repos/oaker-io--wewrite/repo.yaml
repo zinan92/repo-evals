@@ -4,12 +4,251 @@ display_name: wewrite
 repo_url: https://github.com/oaker-io/wewrite
 repo_type: skill
 archetype: hybrid-skill
-layer: atom
-complexity: simple
+layer: molecule
+complexity: medium
 uses_areas: false
 status: evaluated
 current_bucket: usable
-notes: ''
+last_evaluated: "2026-04-13"
+version_tested: main@HEAD
+stars: 1819
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 1
+recently_active: true
+business_category:
+  en: WeChat-article AI skill (end-to-end content factory)
+  zh: 微信公众号 AI 写作技能（端到端内容工厂）
+use_case_tags:
+- wechat-publishing
+- ai-writing
+- content-pipeline
+- markdown-to-html
+- agent-skill
+notes: |
+  Hybrid skill for Claude Code / OpenClaw that wraps an 8-step pipeline
+  (hotspot scrape → topic scoring → framework → material → write → SEO →
+  visuals → publish) around the user prompt "写一篇公众号文章".
+
+  Support layer is robust:
+  - 6 CLI subcommands (preview / publish / themes / image-post / gallery /
+    learn-theme) all respond to --help with exit 0
+  - Markdown→WeChat HTML converter produces inline-styled HTML with link→
+    footnote conversion + dark-mode attrs (verified on test article)
+  - Hotspot fetch returns live data from Weibo + Toutiao + Baidu
+    (sources_failed: [])
+  - 16 themes in toolkit/themes/ all have full YAML config including
+    darkmode_colors + base_css
+  - 9 image-gen providers (Doubao / OpenAI / Gemini / DashScope / MiniMax /
+    Replicate / Azure / OpenRouter / Jimeng) with auto-fallback chain
+  - 5 writing personas (cold-analyst / industry-observer / midnight-friend /
+    sharp-journalist / warm-editor) with detailed YAML parameters
+  - SEO keyword scoring + humanness scoring scripts both run
+
+  Negative finding: ZERO unit tests in the repo (no test_*.py / *_test.py /
+  pytest config). Only agent-level eval specs in evals/evals.json (3
+  scenarios with file_exists / content_check / behavior_check assertions).
+
+  Core LLM-driven layer (8-step pipeline + anti-AI quality contract) is
+  untested — would need a real Claude Code session with WeChat API
+  credentials to validate end-to-end. Capped at `usable` per hybrid-repo
+  cap rule.
+product_view:
+  one_liner:
+    en: "A Claude Code / OpenClaw skill that turns 'write a WeChat article' into a full pipeline: scrape live hotspots from Weibo/Toutiao/Baidu, score topics, pick from 7 frameworks, write in 1 of 5 voice personas, SEO-optimize, generate cover + inline images via 9 providers, render with 16 dark-mode-aware themes, and push to WeChat draft box. Around it sits a 6-command CLI for preview, theme gallery, and image post composition."
+    zh: "一个 Claude Code / OpenClaw skill，把「写一篇公众号文章」展开成完整管线：从微博 / 头条 / 百度抓实时热搜、做选题打分、从 7 套写作框架挑、用 5 种写作人格中的一种行文、做 SEO 优化、用 9 个 provider 生成封面 + 内文配图、用 16 个支持暗黑模式的主题排版、最后推送到公众号草稿箱。外面包了一个 6 子命令的 CLI 做预览 / 主题画廊 / 图片帖。"
+  best_for:
+    en: "Independent WeChat publishers who already use AI for drafts, want a single-command pipeline (vs. stitching ChatGPT + Bytedance image gen + a separate WeChat editor), are comfortable installing a Python skill and configuring config.yaml with their own appid/secret + image API keys."
+    zh: "已经在用 AI 起稿的独立公众号作者，想要一条命令跑通（不想再 ChatGPT + 字节生图 + 公众号编辑器三处来回切），能自己装 Python skill、能自己在 config.yaml 里填 appid/secret + 生图 API key。"
+  watch_out:
+    en: |
+      Zero unit tests in the repo — only 3 agent-level eval scenarios. Refactoring carries silent-breakage risk. The 8-step pipeline + anti-AI quality contract are LLM-driven and were not executed in a real Claude Code session at eval time; verdict capped at `usable` per hybrid-repo cap rule. Many features need provider keys (image gen, WeChat publish) — without keys you fall back to local HTML + image prompts, which is fine for a draft but not for end-to-end "publish to draft box". Output style strongly opinionated by the chosen persona; if you don't like any of the 5 presets, you'll be writing your own YAML. README explicitly says the goal is NOT to "fool AI detectors" but to write articles worth reading — the humanness score is self-check, not laundering.
+    zh: |
+      仓库里一个单元测试都没有 —— 只有 3 个 agent 级 eval 场景。重构的悄悄退化风险存在。8 步管线 + 反 AI 质量契约是 LLM 驱动的，测评时没在真实 Claude Code session 里跑过；按 hybrid-repo cap 规则锁在 `usable`。很多功能要 provider key（生图、推送公众号）—— 不配的话降级成本地 HTML + 图片提示词，做草稿够用，但不能端到端「推到草稿箱」。输出风格被选择的 persona 强约束，5 个预设都不喜欢的话得自己改 YAML。README 明说目标不是「骗过 AI 检测器」，是「写值得读的文章」—— humanness score 是自检不是洗稿。
+  persona:
+    en: "Solo or small-team WeChat publisher who already uses AI for drafts but currently stitches together 3-4 separate tools (ChatGPT for writing, Doubao/Jimeng for images, a markdown editor for typesetting), tired of the manual handoffs."
+    zh: "已经在用 AI 起稿但目前要拼 3-4 个工具（ChatGPT 写稿、豆包/即梦生图、Markdown 编辑器排版）的独立或小团队公众号作者，受不了来回手动交接。"
+  scenario:
+    en: "It's morning, a topic is trending on Weibo, you want a 1500-word article with 3 inline images + a cover, in your usual voice, dark-mode-safe formatting, pushed straight to your WeChat draft box where you'll spend 5 minutes adding 2-3 personal sentences before publishing."
+    zh: "早上微博上有个热点，你想要一篇 1500 字的文章 + 3 张内文配图 + 封面，按你平常的语气写、暗黑模式不会乱、直接推到公众号草稿箱 —— 然后你花 5 分钟在 2-3 个 anchor 处加上自己的话再发。"
+  without_this:
+    en: "You manually scrape hotspots / use a 3rd-party trends site, prompt ChatGPT for a draft, paste into Doubao/Jimeng for images, hand-format markdown into a WeChat-compatible editor, fix dark-mode issues, paste links and footnotes — 30-60 minutes of glue work per article."
+    zh: "手动刷热搜 / 用第三方榜单站，去 ChatGPT 起稿，去豆包/即梦生图，把 markdown 手动喂进公众号兼容编辑器，修暗黑模式问题、贴链接和脚注 —— 一篇 30-60 分钟的胶水活。"
+  with_this:
+    en: "Say `写一篇关于 AI Agent 的公众号文章`, the skill runs all 8 steps, drops a fully-formatted draft (with WeChat compatibility fixes already applied) into your draft box. You add 2-3 personal sentences at marked anchors, hit publish."
+    zh: "说一句「写一篇关于 AI Agent 的公众号文章」，skill 跑完 8 步，往你草稿箱里丢一份排好版（微信兼容修复已经做好）的文章。你在 2-3 个 anchor 位置加几句自己的话，发布。"
+  cost_summary:
+    en: "MIT-licensed OSS, free. Runtime cost = your agent's LLM tokens + image-gen provider fees (DashScope/Doubao ~¥0.1/img). WeChat publishing free; needs official-account appid/secret. Without API keys: degrades to local HTML + image prompts (still useful as a draft tool)."
+    zh: "MIT 协议、开源免费。运行成本 = agent 的 LLM token + 生图 provider 费（DashScope / 豆包大约每张 ¥0.1）。推送公众号免费；要公众号 appid/secret。不配 API key：降级成本地 HTML + 图片提示词（当起稿工具仍然有用）。"
+  how:
+    en: |
+      1. `git clone --depth 1 https://github.com/oaker-io/wewrite.git ~/.claude/skills/wewrite` (or `~/.openclaw/skills/wewrite`)
+      2. `cd ~/.claude/skills/wewrite && pip install -r requirements.txt`
+      3. (optional) `cp config.example.yaml config.yaml` and fill in WeChat appid/secret + image API keys
+      4. (optional) `cp style.example.yaml style.yaml` and pick a persona (`midnight-friend` / `cold-analyst` / etc.)
+      5. In Claude Code: say `写一篇公众号文章` to trigger the full pipeline, or use the CLI directly: `python3 toolkit/cli.py preview some.md -t professional-clean`
+    zh: |
+      1. `git clone --depth 1 https://github.com/oaker-io/wewrite.git ~/.claude/skills/wewrite`（或 `~/.openclaw/skills/wewrite`）
+      2. `cd ~/.claude/skills/wewrite && pip install -r requirements.txt`
+      3.（可选）`cp config.example.yaml config.yaml`，填公众号 appid/secret + 生图 API key
+      4.（可选）`cp style.example.yaml style.yaml`，选一个写作人格（`midnight-friend` / `cold-analyst` 等）
+      5. 在 Claude Code 里说「写一篇公众号文章」触发完整管线，或者直接用 CLI：`python3 toolkit/cli.py preview some.md -t professional-clean`
+  examples:
+  - context:
+      en: "You want today's article driven by a real Weibo hotspot in your usual voice"
+      zh: "想让今天的文章紧跟微博热点、用你平常的语气"
+    you_say:
+      en: "写一篇公众号文章"
+      zh: "写一篇公众号文章"
+    what_happens:
+      en: "Skill scrapes Weibo + Toutiao + Baidu hotspots, scores 10 topics on 3 dimensions with history dedup, picks 1 framework from 7, writes in your configured persona, generates cover + inline images, applies WeChat dark-mode + footnote fixes, pushes to draft box. Marks 2-3 anchor sentences for you to humanize."
+      zh: "Skill 抓微博 + 头条 + 百度热搜，10 选题 × 3 维度评分（历史去重），从 7 套框架挑 1 套，按你配置的人格行文，生成封面 + 内文配图，应用公众号暗黑模式 + 脚注修复，推送到草稿箱。在 2-3 个 anchor 处标记让你加自己的话。"
+  - context:
+      en: "Browse all 16 themes side by side before picking one"
+      zh: "想把 16 个主题摆一起对比再选"
+    you_say:
+      en: "python3 toolkit/cli.py gallery"
+      zh: "python3 toolkit/cli.py gallery"
+    what_happens:
+      en: "Opens a local browser page with all 16 themes (bauhaus, bytedance, ink, midnight, sspai, …) rendering the same sample article side by side, with a one-click copy button per theme."
+      zh: "本地浏览器开一个页面，把同一篇示例文章用 16 个主题（bauhaus / bytedance / ink / midnight / sspai 等）并排渲染，每个主题有一键复制按钮。"
+  - context:
+      en: "Teach the skill your style by importing 5-10 of your old articles"
+      zh: "导入 5-10 篇你的老文章，让 skill 学你的风格"
+    you_say:
+      en: "导入范文"
+      zh: "导入范文"
+    what_happens:
+      en: "scripts/extract_exemplar.py builds a SICO-style few-shot library from your past articles (sentence rhythm, emotion expression, transition style). Future drafts inject this fingerprint. Pair with `学习我的修改` to keep the flywheel turning."
+      zh: "scripts/extract_exemplar.py 把你过往文章建成 SICO 式 few-shot 风格库（句长节奏、情绪表达、转折方式）。后续起稿会注入这套指纹。配合「学习我的修改」让飞轮持续转。"
+  next_step:
+    en: |
+      Three actions in score-impact order: (a) add a pytest unit-test suite — converter, theme.py, image_gen.py provider chain, fetch_hotspots.py source-failure handling are all reachable without API keys and would meaningfully lift eval_discipline_score from 1 toward 2; (b) record one full Claude Code session running the 8-step pipeline end-to-end (with WeChat sandbox creds) and commit the transcript + output article — this is the only way to unblock the hybrid-repo cap and lift verdict from `usable` to `reusable`; (c) document each image-gen provider's auth + rate-limit notes inline (the 9 providers vary widely in cost per image).
+    zh: |
+      按打分影响排序的下一步：(a) 加 pytest 单测 —— converter、theme.py、image_gen.py 的 provider chain、fetch_hotspots.py 的 source-failure 处理都能在不要 API key 的情况下覆盖到，能有意义地把 eval_discipline_score 从 1 抬向 2；(b) 录一次完整的 Claude Code session（用沙箱公众号 creds 跑完 8 步），把会话 transcript + 输出文章 commit 进去 —— 这是唯一能解开 hybrid-repo cap、把 verdict 从 `usable` 抬到 `reusable` 的方式；(c) 在 README / SKILL.md 里给每个生图 provider 写明鉴权 + 速率限制（9 个 provider 单图价格差距很大）。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — fixed 8-step pipeline (hotspot → topic → framework → material → write → SEO → visuals → publish).
+      Each step is deterministic invocation of an LLM or a script; routing between steps is hard-coded in SKILL.md, not LLM-decided.
+    zh: |
+      分子 —— 固定 8 步管线（热点 → 选题 → 框架 → 素材 → 写作 → SEO → 配图 → 推送）。
+      每一步是确定性地调一个 LLM 或脚本；步骤间的路由写死在 SKILL.md 里，不是 LLM 决定的。
+  nodes:
+  - id: trigger
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: '"写一篇\n公众号文章"'
+      zh: '"写一篇\n公众号文章"'
+  - id: hotspot
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "Hotspot scrape\n(Weibo + Toutiao\n+ Baidu)"
+      zh: "热搜抓取\n(微博 + 头条\n+ 百度)"
+  - id: topic
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "Topic scoring\n+ history dedup"
+      zh: "选题打分\n+ 历史去重"
+  - id: framework
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "Pick 1 of 7\nframeworks +\nmaterial scrape"
+      zh: "7 选 1 框架\n+ 素材采集"
+  - id: write
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: "Write w/ persona\n+ exemplar style\n+ humanness check"
+      zh: "按人格 + 范文风格\n写作 + humanness\n自检"
+  - id: visuals
+    type: atom
+    rank: 5
+    lane: 0
+    label:
+      en: "SEO + 9-provider\nimage gen\n(cover + inline)"
+      zh: "SEO + 9 provider\n生图（封面 + 内文）"
+  - id: publish
+    type: end
+    rank: 6
+    lane: 0
+    label:
+      en: "16 themes +\nWeChat fixes +\ndraft-box push"
+      zh: "16 主题排版 +\n公众号兼容修复 +\n推送草稿箱"
+  edges:
+  - {from: trigger, to: hotspot}
+  - {from: hotspot, to: topic}
+  - {from: topic, to: framework}
+  - {from: framework, to: write}
+  - {from: write, to: visuals}
+  - {from: visuals, to: publish}
+similar_repos:
+- slug: geekjourneyx--md2wechat-skill
+  shared_purpose:
+    en: |
+      Both target the WeChat-article workflow with a Markdown→WeChat-HTML converter at the core. Both ship as Claude Code / OpenClaw skills.
+    zh: |
+      都瞄准公众号工作流，核心都是 Markdown → 公众号 HTML 的转换器。都是 Claude Code / OpenClaw skill 形态。
+  this_better_at:
+    en: |
+      Wider pipeline — wewrite covers the full 8 steps from hotspot to publish (image gen, persona-driven writing, SEO, draft-box push). 16 themes vs. typical 1-3 in pure converter skills. Has style flywheel (`学习我的修改`).
+    zh: |
+      管线更宽 —— wewrite 从热搜到推送 8 步全包（生图、按人格写作、SEO、推草稿箱）。16 主题 vs 纯转换器 skill 的 1-3 套。有风格飞轮（「学习我的修改」）。
+  other_better_at:
+    en: |
+      Lighter — if you only want Markdown → WeChat HTML conversion (no hotspot scrape, no image gen), a smaller converter skill is faster to install and easier to audit.
+    zh: |
+      更轻 —— 只想要 Markdown → 公众号 HTML 转换（不要热搜、不要生图）的话，纯转换器 skill 装起来更快、审起来更容易。
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + pip install -r requirements.txt
+    platform: any (Python 3.11+)
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: false
+  auto_update: true
+third_party_services:
+- name: WeChat Official Account API
+  purpose: Push articles to draft box; fetch read-stats
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: Free; needs verified WeChat Official Account with appid/secret
+- name: Image-gen providers (9 supported)
+  purpose: Cover + inline image generation
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: true
+  cost_note: "DashScope/Doubao ~¥0.1/img; OpenAI/Gemini priced higher; auto-fallback chain handles outages"
+- name: Hotspot sources (Weibo / Toutiao / Baidu)
+  purpose: Live trending topic scrape
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Public endpoints; rate-limited but no signup
+- name: SEO sources (Baidu / 360)
+  purpose: Search suggestions for keyword scoring
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: Public endpoints
 workflow_placements:
 - workflow_id: park-content-v1
   stage_id: 05_production
