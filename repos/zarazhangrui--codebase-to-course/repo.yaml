@@ -10,37 +10,37 @@ uses_areas: false
 status: evaluated
 last_evaluated: '2026-05-05'
 version_tested: main@HEAD
-stars: 4224
+stars: 4264
 archived: false
 has_license: false
 multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 0
 recently_active: true
+business_category:
+  en: Codebase explainer skill
+  zh: 代码库讲解技能
+use_case_tags:
+- claude-code-skill
+- codebase-onboarding
+- vibe-coder
+- interactive-tutorial
+- html-course
 notes: 'Claude Code skill that turns any codebase into a single-page
-
   interactive HTML course. SKILL.md (221 lines) + references/ shipping
-
   real CSS (1195 lines, 34 KB), real JS (498 lines, 19 KB), 4 reference
-
   docs (content-philosophy / design-system / gotchas /
-
   interactive-elements totalling ~57 KB), HTML templates, and a
-
   build.sh assembler. 4.2K stars, recently active, no LICENSE file.
 
 
   Per the README: install by copying `codebase-to-course/` into
-
   `~/.claude/skills/`. Trigger phrases: "turn this into a course",
-
   "explain this codebase interactively", etc.
 
 
   Molecule layer: SKILL.md drives a multi-stage pipeline (read code →
-
   module briefs → per-module HTML → build.sh assembles into final
-
   course directory). Predefined stages, not runtime LLM routing.
 
   '
@@ -52,26 +52,142 @@ product_view:
     en: '''Vibe coders'' who already build software with AI tools but want to actually understand a codebase they shipped or forked, without taking a CS course.'
     zh: 已经在用 AI 工具写代码，但想真正搞懂自己已部署 / fork 的代码库的「vibe coder」—— 不想去读 CS 课。
   watch_out:
-    en: 'No LICENSE file at the repo root — until that''s added, downstream reuse is legally murky. The skill assembles a directory of generated HTML/CSS/JS at runtime; quality of the rendered course depends entirely on the LLM''s analysis pass over your code, and on whether your codebase actually fits the "scroll-based 5-7 module" template the skill encodes. Large monorepos / mixed-language repos may not produce a great course without manual scoping.
-
-      '
-    zh: '仓库根目录没有 LICENSE —— 在补上之前，下游二次使用法律上是灰区。skill 在运行时拼出一个 HTML/CSS/JS 目录；最终课程质量完全取决于 LLM 对你代码库的分析，以及你的代码库是否能塞进它「滚动式 5-7 模块」的模板。大 monorepo / 多语言混合仓库不手动框定范围，产出可能不好。
-
-      '
-  use_for:
-  - en: Vibe coders who built or forked a codebase and want to actually understand how it works — without sitting through a CS course.
-    zh: 自己写了或者 fork 了一个项目、想搞懂它怎么工作的「vibe coder」—— 不想去上 CS 课。
-  - en: Onboarding a non-technical teammate to a small/medium codebase you maintain.
-    zh: 把一个你维护的中小型代码库讲给一个不懂技术的同事 / 合作者。
-  - en: Turn an open-source repo you depend on into a teaching artefact for your team.
-    zh: 把团队依赖的某个开源项目做成内部教学资料。
-  dont_use_for:
-  - en: Don't use on a giant monorepo or polyglot codebase without scoping a sub-directory first — the 5-7 module template won't survive.
-    zh: 别直接对着大 monorepo 或多语言混合代码库跑 —— 5-7 模块模板撑不住，先框一个子目录。
-  - en: Don't redistribute the generated course in a commercial context yet — repo has no LICENSE; legal status is unclear.
-    zh: 生成的课程暂时别商用 / 公开转发 —— 仓库没 LICENSE，法律状态不明。
-  - en: Don't expect a polished course out of a half-finished prototype — quality of the analysis ≤ quality of the codebase.
-    zh: 半成品原型别指望出精品课 —— 分析质量 ≤ 代码库本身的质量。
+    en: |
+      No LICENSE file at the repo root — until that's added, downstream reuse is legally murky. The skill assembles a directory of generated HTML/CSS/JS at runtime; quality of the rendered course depends entirely on the LLM's analysis pass over your code, and on whether your codebase actually fits the "scroll-based 5-7 module" template the skill encodes. Large monorepos / mixed-language repos may not produce a great course without manual scoping.
+    zh: |
+      仓库根目录没有 LICENSE —— 在补上之前，下游二次使用法律上是灰区。skill 在运行时拼出一个 HTML/CSS/JS 目录；最终课程质量完全取决于 LLM 对你代码库的分析，以及你的代码库是否能塞进它「滚动式 5-7 模块」的模板。大 monorepo / 多语言混合仓库不手动框定范围，产出可能不好。
+  persona:
+    en: A vibe coder who shipped or forked a codebase by chatting with AI tools but doesn't really understand how it works under the hood — wants the speed of "open it in a browser and scroll" instead of reading code top-to-bottom.
+    zh: 用 AI 工具聊出来 / fork 来一个项目、但其实没搞懂内部怎么跑的「vibe coder」—— 想要「浏览器打开往下滚」的速度，不想从头读代码。
+  scenario:
+    en: You forked an open-source repo (or your AI agent built one for you) and now you need to actually understand it before adding features, debugging it, or explaining it to a teammate. You don't have time for a CS course — you need a 30-minute scroll-through that traces what happens when the app actually runs.
+    zh: 你 fork 了一个开源仓库（或者 agent 给你生了一个），现在要加功能 / debug / 跟同事讲解之前必须真的懂它。没时间上 CS 课，要的是 30 分钟的滚动式讲解，跟着 app 真实运行的路径走一遍。
+  without_this:
+    en: Either spend a weekend reading source code top-to-bottom, or paste files into ChatGPT one-by-one for ad-hoc explanations, or hire a senior engineer to walk you through it. None give you a reusable, shareable artifact.
+    zh: 要么花一个周末从头读源码，要么一个文件一个文件丢给 ChatGPT 临时讲解，要么花钱请高工讲一遍。三条路都不会给你一份可复用、可转发的产物。
+  with_this:
+    en: Open Claude Code in the repo, say "turn this into a course". The skill reads code, breaks it into 5-7 modules, generates per-module HTML with animations + quizzes + glossary tooltips, and `build.sh` stitches it all into a single HTML file you can host on GitHub Pages or send to a teammate.
+    zh: 在仓库里打开 Claude Code，说一句「turn this into a course」。skill 读代码、切成 5-7 个模块、给每个模块生成带动画 / quiz / 术语 tooltip 的 HTML，最后 `build.sh` 拼成一个 HTML 文件 —— 可以挂 GitHub Pages，也可以直接发给同事。
+  cost_summary:
+    en: Skill itself is free OSS (no LICENSE though). You need a Claude Code subscription. Per-course token cost depends on codebase size — typically a few dollars for a medium repo.
+    zh: skill 开源免费（虽然没 LICENSE）。需要 Claude Code 订阅。每生成一份课程的 token 成本看代码库大小 —— 中等仓库通常几美元。
+  how:
+    en: |
+      1. `git clone https://github.com/zarazhangrui/codebase-to-course`
+      2. `cp -r codebase-to-course ~/.claude/skills/`
+      3. Open the codebase you want to learn in Claude Code
+      4. Say "turn this into a course" (or any of the README trigger phrases)
+      5. Skill produces a course directory; run `bash build.sh` to assemble final index.html
+      6. Open index.html in a browser, or push the directory to GitHub Pages
+    zh: |
+      1. `git clone https://github.com/zarazhangrui/codebase-to-course`
+      2. `cp -r codebase-to-course ~/.claude/skills/`
+      3. 在 Claude Code 里打开想学的那个代码库
+      4. 说一句「turn this into a course」（或 README 里任意一句触发短语）
+      5. skill 输出一个课程目录，跑 `bash build.sh` 拼成最终 index.html
+      6. 浏览器打开 index.html，或把目录推到 GitHub Pages
+  examples:
+  - context:
+      en: A vibe coder forked a Next.js + Supabase SaaS template and wants to add a billing module — but doesn't yet understand auth flow / data fetching patterns
+      zh: 一个 vibe coder fork 了一个 Next.js + Supabase 的 SaaS 模板，想加计费模块 —— 但还没搞懂 auth 流程 / 取数模式
+    you_say:
+      en: '"Turn this codebase into an interactive course"'
+      zh: 「turn this codebase into an interactive course」
+    what_happens:
+      en: 'Skill produces 5-7 modules: app routing → auth flow → data layer → API patterns → deploy. Each module has animated data-flow diagrams + code↔English side-by-side + a quiz like "user sees stale data after switching pages — where do you look?". Output is one HTML file ready to scroll through.'
+      zh: skill 产出 5-7 个模块：app routing → auth 流程 → 数据层 → API 模式 → 部署。每个模块带数据流动画 + 代码↔大白话对照 + quiz（比如「切页后看到旧数据，先看哪里？」）。出来一份 HTML 文件，可以直接滚。
+  - context:
+      en: Onboarding a non-technical PM to a small/medium internal codebase you maintain
+      zh: 把你维护的中小型内部代码库讲给一个不懂技术的 PM 同事
+    you_say:
+      en: '"Make a course from this project — focus on the user-facing features, not the infra"'
+      zh: 「make a course from this project — 重点讲用户能看到的功能，不要讲基础设施」
+    what_happens:
+      en: Skill scopes the course to feature flows (rather than DB schema + CI). PM scrolls through, hovers terms for plain-English glossary, takes the quizzes. They walk into the next sprint with shared vocabulary.
+      zh: skill 把课程范围锁定到功能流（而不是 DB schema + CI）。PM 滚动看，遇到术语 hover 看大白话解释，做完 quiz。下次 sprint 同事之间已经有共同词汇了。
+  - context:
+      en: An open-source maintainer wants a teaching artifact for new contributors — instead of writing a wiki by hand
+      zh: 开源维护者想给新贡献者做一份教学资料 —— 不想手写 wiki
+    you_say:
+      en: '"Turn this into a course aimed at first-time contributors"'
+      zh: 「做一份给第一次贡献者看的课程」
+    what_happens:
+      en: Skill emphasizes contribution paths (where to add a new feature, how tests are organized, what to look at first when reviewing a PR). Maintainer reviews + tweaks the HTML, hosts on GitHub Pages, and links it from CONTRIBUTING.md.
+      zh: skill 重点讲贡献路径（在哪加新功能、测试怎么组织、review PR 时先看什么）。维护者再 review + 微调 HTML，挂 GitHub Pages，从 CONTRIBUTING.md 链过去。
+  next_step:
+    en: |
+      Three actions to lift the score: (a) add LICENSE file (one commit) — closes the legal-ambiguity penalty; (b) ship a "scope" flag in SKILL.md so monorepo users can point at a subdirectory cleanly — addresses the biggest watch_out item; (c) publish 2-3 example outputs (HTML + screenshots in /examples) so prospective users can see the artifact before installing — currently the README only shows screenshots of UI elements, not a full sample.
+    zh: |
+      三个加分动作：(a) 加 LICENSE（一个 commit）—— 关掉法律不清的扣分；(b) 在 SKILL.md 里支持 "scope" 参数让 monorepo 用户能优雅地指定子目录 —— 解掉最大的 watch_out；(c) 在 /examples 下发 2-3 个真实产出（HTML + 截图）让用户装之前能看到样品 —— 现在 README 只放了 UI 元素截图，没有完整样品。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Atom — single capability (codebase → course). The internal phases (read → module split → per-module HTML → assemble) are deterministic stages, not LLM-runtime routing. From the user's view it's one input → one artifact.
+    zh: |
+      原子 —— 单一能力（codebase → 课程）。内部阶段（读代码 → 切模块 → 模块 HTML → 拼接）是确定性流水线，不是 LLM 运行时 dispatch。从用户角度就是一个输入 → 一个产物。
+  nodes:
+  - id: codebase
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "Your codebase\n(any language)"
+      zh: "你的代码库\n(任意语言)"
+  - id: analyze
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "LLM reads code\n→ module briefs"
+      zh: "LLM 读代码\n→ 模块大纲"
+  - id: render
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "Per-module HTML\n+ quizzes + diagrams"
+      zh: "每模块 HTML\n+ quiz + 图示"
+  - id: assemble
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "build.sh\nstitches index.html"
+      zh: "build.sh\n拼成 index.html"
+  - id: course
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: "Single-page\ninteractive course"
+      zh: "单页交互课程"
+  edges:
+  - {from: codebase, to: analyze}
+  - {from: analyze, to: render}
+  - {from: render, to: assemble}
+  - {from: assemble, to: course}
+similar_repos:
+- slug: zarazhangrui--frontend-slides
+  shared_purpose:
+    en: Both are atom-level Claude Code skills from Zara that turn one input into a polished long-form HTML output via internal phases. Both bet on the LLM to handle layout/structure work the user doesn't want to.
+    zh: 都是 Zara 写的 atom 级 Claude Code skill —— 一个输入 → 通过内部多阶段产出一份长文 HTML。都让 LLM 替你处理不想干的排版/结构活。
+  this_better_at:
+    en: Multi-chapter educational course with structured progression — code↔English side-by-side, embedded quizzes, glossary tooltips. Better when readers need depth + step-by-step learning.
+    zh: 多章节教学课程 + 结构化推进 —— 代码↔大白话对照、嵌入 quiz、术语 tooltip。读者需要深度 + 一步步学下来时合适。
+  other_better_at:
+    en: Presentation-medium output — slide deck for talks, workshops, pitches. Visual rhythm beats depth. 10-30 slides, scan in 5 minutes.
+    zh: 演示型产物 —— 给讲座、workshop、pitch 的 slide deck。视觉节奏比深度重要，10-30 页，5 分钟扫完。
+- slug: zarazhangrui--youtube-to-ebook
+  shared_purpose:
+    en: Both turn one source artifact into a polished long-form output via Claude. Both target consumption-medium conversion (read/scroll instead of watch/skim).
+    zh: 都是把一份原始素材通过 Claude 转成精修长文产物。都做「消费媒介」转换（读 / 滚 取代 看视频 / 浏览代码）。
+  this_better_at:
+    en: Source is a codebase; output is interactive HTML with embedded code blocks + quizzes. Best when the source is structural/architectural in nature.
+    zh: 源是代码库，产物是带代码块 + quiz 的交互式 HTML。源带结构性 / 架构性时最合适。
+  other_better_at:
+    en: Source is YouTube videos; output is plain EPUB for Kindle / Apple Books. Best when you want a quiet long-read instead of an interactive scroll.
+    zh: 源是 YouTube 视频，产物是 EPUB（Kindle / Apple Books）。想安静读长文而不是交互式滚动时合适。
 deployment:
   installable: true
   install_methods:

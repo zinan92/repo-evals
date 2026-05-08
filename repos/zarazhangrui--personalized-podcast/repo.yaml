@@ -10,39 +10,38 @@ uses_areas: false
 status: evaluated
 last_evaluated: '2026-05-05'
 version_tested: main@HEAD
-stars: 338
+stars: 342
 archived: false
 has_license: false
 multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 0
 recently_active: true
+business_category:
+  en: Content-to-podcast generator skill
+  zh: 内容转播客生成技能
+use_case_tags:
+- claude-code-skill
+- text-to-audio
+- podcast-generator
+- notebooklm-alternative
+- rss-feed
 notes: 'Claude Code skill (`/podcast` slash command) that turns any content
-
   into a 2-host AI podcast episode. Architecture: SKILL.md (235 lines)
-
   + PROMPT.md (33 lines, the actual hosts-conversation prompt) +
-
   4 Python scripts (bootstrap 352 / publish 295 / speak 254 / utils
-
   195 lines) + Jinja2 RSS feed template + sample config.
 
 
   Uses Fish Audio (free API key) for TTS — different voice per host.
-
   pydub stitches the audio. publish.py generates an RSS feed for
-
-  Apple Podcasts / Spotify / Overcast / etc. 338 stars, recently
-
+  Apple Podcasts / Spotify / Overcast / etc. 342 stars, recently
   active (last push 2026-04-08, ~30 days at eval time).
 
 
   README typo: `gh repo clone zarazhangrui/personalized-podcast-skill`
-
   — the actual repo is `personalized-podcast` (no -skill suffix).
-
   GitHub returns HTTP 301 redirect, so installs work, but it''s a
-
   polish gap.
 
   '
@@ -54,26 +53,142 @@ product_view:
     en: 'Long-read consumers who''d rather listen on a walk / commute. Also: introspection — feed it your own writing / journal / resume and have the hosts ''eavesdrop'' on you.'
     zh: 更想在通勤 / 散步时用耳朵消费长文的人。另外还有意外用法：把自己的写作 / 日记 / 简历喂进去，让两位主持人「在你不在场」时点评你。
   watch_out:
-    en: 'No LICENSE — fork / commercial use status unclear. README has a typo: `gh repo clone zarazhangrui/personalized-podcast-skill` should be `personalized-podcast` (GitHub redirects so it works, but copy-pasters will see a 301 redirect notice). Fish Audio is third-party — voices and rate limits depend on their service. The "feed it your personal content" use case is genuinely interesting but think before you upload your journal entries to Anthropic + Fish Audio.
-
-      '
-    zh: '没 LICENSE —— fork / 商用法律状态不明。README 有一处小 typo：`gh repo clone zarazhangrui/personalized-podcast-skill` 应该是 `personalized-podcast`（GitHub 自动重定向所以能跑通，但复制粘贴会看到 301 redirect）。Fish Audio 是第三方服务 —— 音色和频率限制都看他们脸色。「把私人内容喂进去」这个用法很有意思，但上传日记前想清楚 Anthropic + Fish Audio 都会看到。
-
-      '
-  use_for:
-  - en: Convert long-form content (newsletters / research papers / Twitter threads) into audio you can listen to on a walk.
-    zh: 把长文（newsletter / 研究论文 / 推特长帖）变成走路 / 通勤时能听的音频。
-  - en: Self-reflection — feed it your own writing / meeting transcripts / resume; have the hosts 'eavesdrop' on you.
-    zh: 自我反思 —— 把自己的写作 / 会议录音 / 简历喂进去，让主持人「在你不在场时」点评你。
-  - en: Subscribe via RSS to your generated feed so episodes appear in Apple Podcasts / Spotify next to real subscriptions.
-    zh: 订阅自己生成的 RSS feed，episode 会和真订阅的节目一起出现在 Apple Podcasts / Spotify 里。
-  dont_use_for:
-  - en: Don't upload sensitive personal content blindly — it goes to Anthropic + Fish Audio.
-    zh: 敏感个人内容别盲目上传 —— 内容会经过 Anthropic + Fish Audio 两家服务。
-  - en: Don't expect production-grade audio — Fish Audio quality is good but not studio-level, and pacing is automated.
-    zh: 音频质量别期待录音棚级别 —— Fish Audio 不错但还不到专业水准，节奏也是自动化的。
-  - en: Don't redistribute generated episodes commercially — no LICENSE; voice IP is its own consideration.
-    zh: 生成的 episode 别商用分发 —— 没 LICENSE；声音 IP 也是独立考量。
+    en: |
+      No LICENSE — fork / commercial use status unclear. README has a typo: `gh repo clone zarazhangrui/personalized-podcast-skill` should be `personalized-podcast` (GitHub redirects so it works, but copy-pasters will see a 301 redirect notice). Fish Audio is third-party — voices and rate limits depend on their service. The "feed it your personal content" use case is genuinely interesting but think before you upload your journal entries to Anthropic + Fish Audio.
+    zh: |
+      没 LICENSE —— fork / 商用法律状态不明。README 有一处小 typo：`gh repo clone zarazhangrui/personalized-podcast-skill` 应该是 `personalized-podcast`（GitHub 自动重定向所以能跑通，但复制粘贴会看到 301 redirect）。Fish Audio 是第三方服务 —— 音色和频率限制都看他们脸色。「把私人内容喂进去」这个用法很有意思，但上传日记前想清楚 Anthropic + Fish Audio 都会看到。
+  persona:
+    en: A long-read consumer who'd rather listen than read on a screen — and who has heard NotebookLM but wants to control the script, voices, and host personalities themselves rather than accept the defaults.
+    zh: 更喜欢用耳朵而不是盯屏幕的长文消费者 —— 听过 NotebookLM 但想自己控制脚本 / 配音 / 主持人风格，而不是用默认。
+  scenario:
+    en: "A 4000-word newsletter just landed in your inbox. You'd rather listen on tomorrow's commute than read it tonight. You paste the URL into `/podcast`, by morning there's an MP3 in your podcast app — two hosts walking through it. Or weirder: you paste your own resume and ask the hosts to comment on your career."
+    zh: "一封 4000 字的 newsletter 刚到 inbox，你想明天通勤路上听，不想今晚硬读。把 URL 丢给 `/podcast`，第二天早上播客 app 里就有一份 MP3 —— 两位主持人帮你走一遍。或者更怪一点：把自己简历丢进去，让主持人点评你的职业轨迹。"
+  without_this:
+    en: Either read everything on a screen, or use NotebookLM (free but Google sees everything + you can't control the script / voices / hosts), or pay for a manual narrator service.
+    zh: 要么全部硬读，要么用 NotebookLM（免费但 Google 看到一切 + 脚本/配音/主持人都不可控），要么花钱找人配音。
+  with_this:
+    en: Run `/podcast <content>` in Claude Code. Claude writes a 2-host script (the prompt is yours to edit in PROMPT.md), Fish Audio voices each host distinctly, pydub stitches an MP3, optional publish.py emits an RSS feed you can subscribe to in Apple Podcasts / Spotify alongside real shows.
+    zh: 在 Claude Code 里跑 `/podcast <内容>`。Claude 写两人对谈脚本（PROMPT.md 里的提示词由你编辑），Fish Audio 给每位主持人配不同声线，pydub 拼成 MP3，可选 publish.py 输出 RSS feed —— Apple Podcasts / Spotify 里和真节目一起订阅。
+  cost_summary:
+    en: Skill is free OSS (no LICENSE though). Need Claude Code subscription (~$0.10 / 10-min episode in Claude tokens). Fish Audio free tier sufficient for personal use. Optional GitHub Pages (free) to host the RSS feed.
+    zh: skill 开源免费（没 LICENSE）。需要 Claude Code 订阅（10 分钟一集大约 $0.10 token 成本）。Fish Audio 免费档够个人用。可选 GitHub Pages（免费）托管 RSS feed。
+  how:
+    en: |
+      1. `gh repo clone zarazhangrui/personalized-podcast ~/.claude/skills/personalized-podcast` (note: README has a typo with `-skill` suffix; redirect handles it)
+      2. In Claude Code, run `/podcast <URL or file path or text>`
+      3. First run: Claude bootstraps Python deps + asks for free Fish Audio API key
+      4. Subsequent runs: an MP3 opens and plays
+      5. (Optional) Edit PROMPT.md to change host personalities; edit config.example.yaml for show name / voices / length
+      6. (Optional) Run publish.py to emit RSS feed; host on GitHub Pages and subscribe in Apple Podcasts / Spotify
+    zh: |
+      1. `gh repo clone zarazhangrui/personalized-podcast ~/.claude/skills/personalized-podcast`（README 有 `-skill` 后缀的 typo，重定向能兜）
+      2. Claude Code 里跑 `/podcast <URL / 文件路径 / 文字>`
+      3. 第一次会装 Python 依赖 + 让你填免费的 Fish Audio API key
+      4. 之后每次直接出 MP3 并播放
+      5. （可选）改 PROMPT.md 调主持人风格；改 config.example.yaml 改节目名 / 配音 / 时长
+      6. （可选）跑 publish.py 出 RSS feed；挂 GitHub Pages 后在 Apple Podcasts / Spotify 订阅
+  examples:
+  - context:
+      en: A long newsletter article that would be a 25-min read, but you have a 25-min commute tomorrow
+      zh: 一篇要读 25 分钟的 newsletter，但明天通勤刚好 25 分钟
+    you_say:
+      en: '"/podcast https://newsletter.example.com/issue-42"'
+      zh: 「/podcast https://newsletter.example.com/issue-42」
+    what_happens:
+      en: Claude reads the URL, writes a 2-host script (Alex curious, Sam analytical), Fish Audio voices it with two distinct voices, pydub stitches the MP3. Plays in 2-3 minutes. You commute, listen, mark it as listened.
+      zh: Claude 读 URL，写两人对谈脚本（Alex 好奇 / Sam 分析），Fish Audio 配两种声线，pydub 拼 MP3。2-3 分钟出片。通勤时听完，标已听。
+  - context:
+      en: Self-reflection — you want to hear two AI hosts comment on your meeting transcripts as if you weren't in the room
+      zh: 自我反思 —— 想听两位 AI 主持人「不在场时」点评你的会议录音
+    you_say:
+      en: '"/podcast read ~/transcripts/q1-review.txt and have the hosts share their impressions of me"'
+      zh: 「/podcast 读 ~/transcripts/q1-review.txt，让主持人聊聊对我的印象」
+    what_happens:
+      en: Claude treats your transcript as the topic, writes a 2-host conversation that *describes* you (your patterns, communication style, decision-making) rather than narrating the transcript. The result is an outside-view audio — sometimes uncomfortable, often illuminating.
+      zh: Claude 把你的会议录音当 topic，写两人对话「描述」你（你的模式、沟通风格、决策方式），而不是复述录音内容。出来的是外部视角的音频 —— 偶尔不舒服，但常常有启发。
+  - context:
+      en: Build a private podcast feed for the long-form content you actually consume each week
+      zh: 给自己想消费的长文做一个私人播客订阅源
+    you_say:
+      en: '"/podcast read these 3 newsletters; publish to my RSS feed"'
+      zh: 「/podcast 读这 3 份 newsletter；发到我的 RSS feed」
+    what_happens:
+      en: Claude generates 3 episodes, publish.py adds them to your feed.xml, GitHub Pages serves the feed. New episodes appear in Apple Podcasts / Spotify next to The Daily and Hard Fork. You listen during workouts.
+      zh: Claude 生成 3 期 episode，publish.py 加到 feed.xml，GitHub Pages 托管。新 episode 在 Apple Podcasts / Spotify 里和 The Daily / Hard Fork 一起出现。健身时听。
+  next_step:
+    en: |
+      Three actions to lift the score: (a) add LICENSE file (one commit) — closes the legal-ambiguity penalty; (b) fix the README typo (`personalized-podcast-skill` → `personalized-podcast`) so copy-pasters don't see 301 redirects on first try — small polish that reads as care; (c) add a short "what data leaves your machine" callout in README explaining content goes through Anthropic + Fish Audio — defuses the privacy concern in the watch_out item.
+    zh: |
+      三个加分动作：(a) 加 LICENSE（一个 commit）—— 关掉法律不清的扣分；(b) 修 README typo（`personalized-podcast-skill` → `personalized-podcast`），让复制粘贴的用户第一次就不会看到 301 redirect —— 小细节但显得在乎；(c) 在 README 里加一段「哪些数据会离开你机器」的说明，讲清内容会经过 Anthropic + Fish Audio —— 把 watch_out 里的隐私担忧主动说在前面。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Atom — single capability (any content → 2-host podcast episode). Internal phases (script → TTS → stitch → optional publish) are deterministic stages. From the user's view, one input → one MP3.
+    zh: |
+      原子 —— 单一能力（任意内容 → 两人对谈播客 episode）。内部阶段（脚本 → TTS → 拼接 → 可选发布）都是确定性流水线。从用户角度就是一个输入 → 一个 MP3。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "URL / file / text\n/ topic"
+      zh: "URL / 文件 / 文字\n/ 主题"
+  - id: script
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "Claude writes\n2-host script\n(PROMPT.md)"
+      zh: "Claude 写两人\n对谈脚本\n(PROMPT.md)"
+  - id: tts
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "Fish Audio TTS\n(voice per host)"
+      zh: "Fish Audio TTS\n(每位主持人单独声线)"
+  - id: stitch
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "pydub stitches\nfinal MP3"
+      zh: "pydub 拼\n最终 MP3"
+  - id: publish
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: "Play locally\n+ optional RSS"
+      zh: "本地播放\n+ 可选 RSS"
+  edges:
+  - {from: input, to: script}
+  - {from: script, to: tts}
+  - {from: tts, to: stitch}
+  - {from: stitch, to: publish}
+similar_repos:
+- slug: zarazhangrui--youtube-to-ebook
+  shared_purpose:
+    en: Both are Zara's content-conversion skills that take third-party content and reshape it into a different consumption mode — by-the-author atoms with a clear input → artifact contract.
+    zh: 都是 Zara 写的「内容转换」skill —— 把第三方内容重塑成另一种消费方式 —— 同作者的 atom，输入 → 产物契约清晰。
+  this_better_at:
+    en: Audio output for ear consumption (commute / walk / cook). Output is an MP3 + optional podcast-app subscription.
+    zh: 音频产出，给耳朵用（通勤 / 散步 / 做饭）。产物是 MP3+ 可选播客 app 订阅。
+  other_better_at:
+    en: Text output for quiet long-reading on Kindle / Apple Books. Output is an EPUB delivered to email.
+    zh: 文字产出，给安静长读（Kindle / Apple Books）。产物是 EPUB 发到邮箱。
+- slug: zarazhangrui--codebase-to-course
+  shared_purpose:
+    en: Both are atom-level Claude Code skills that take one input and produce one polished long-form output via internal phases. Both lean on the LLM for the structure work users don't want to do by hand.
+    zh: 都是 atom 级 Claude Code skill —— 一个输入通过内部阶段产出一份精修长文产物。都让 LLM 替你处理不想干的结构工作。
+  this_better_at:
+    en: Time-shifted ear consumption — content you'd read becomes content you can listen to. Conversational vs reading mode.
+    zh: 异步耳朵消费 —— 该读的内容变成可以听的。对话模式 vs 阅读模式。
+  other_better_at:
+    en: Interactive eye consumption — codebase becomes scrollable HTML with quizzes + diagrams. Active learning vs passive listening.
+    zh: 交互式眼睛消费 —— 代码库变成可滚 HTML 带 quiz + 图示。主动学习 vs 被动听。
 deployment:
   installable: true
   install_methods:

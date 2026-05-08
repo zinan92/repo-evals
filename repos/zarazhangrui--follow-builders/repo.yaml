@@ -10,88 +10,184 @@ uses_areas: false
 status: evaluated
 last_evaluated: '2026-05-05'
 version_tested: main@HEAD
-stars: 3689
+stars: 3852
 archived: false
 has_license: false
 multilingual_readme: true
 release_pipeline_score: 1
 eval_discipline_score: 0
 recently_active: true
+business_category:
+  en: AI-builder content digest skill
+  zh: AI 从业者内容摘要技能
+use_case_tags:
+- claude-code-skill
+- content-digest
+- ai-news
+- bilingual
+- centralized-feed
 notes: 'AI-builder digest skill for Claude Code / OpenClaw. Tracks 25 X
-
   builders + 6 AI podcasts + 2 official blogs. Architecture: Zara
-
   maintains a central pipeline (Node.js scripts + cron) that
-
   pre-fetches + summarizes content into feed-{x,podcasts,blogs}.json;
-
   the user''s skill reads those JSONs and delivers per their
-
   preferences (Telegram / email / in-chat) in EN / ZH / bilingual.
 
 
   466-line SKILL.md, 5 prompt files (digest-intro, summarize-blogs,
-
   summarize-podcast, summarize-tweets, translate). 3 Node.js scripts
-
   in scripts/ (generate-feed, prepare-digest, deliver). Bilingual
-
-  (EN + ZH READMEs). 3.7K stars, recently active, no LICENSE.
+  (EN + ZH READMEs). 3.85K stars, recently active, no LICENSE.
 
 
   Clever design: "no API keys needed — all content fetched centrally"
-
   means the user-facing skill is light, all the heavy lifting happens
-
   on the maintainer''s server. Trade-off: the central server is a
-
   single point of failure / single source of curation bias.
 
   '
 product_view:
   one_liner:
-    en: A Claude Code / OpenClaw skill that delivers a daily or weekly digest of what
-      25 top AI builders are saying — summaries of new podcast episodes (Latent Space,
-      No Priors, Training Data, etc.), insights from X posts, and Anthropic / Claude
-      blog articles. Bilingual EN / ZH. No API keys needed (centrally fetched feeds).
-    zh: 一个 Claude Code / OpenClaw 技能：定期送上 25 位顶级 AI builder 的内容摘要 —— 顶尖 AI 播客（Latent
-      Space / No Priors / Training Data 等）+ X 上的精华帖 + Anthropic / Claude 官方博客。中英双语，不需要
-      API key（feed 由项目方中心化抓取）。
+    en: A Claude Code / OpenClaw skill that delivers a daily or weekly digest of what 25 top AI builders are saying — summaries of new podcast episodes (Latent Space, No Priors, Training Data, etc.), insights from X posts, and Anthropic / Claude blog articles. Bilingual EN / ZH. No API keys needed (centrally fetched feeds).
+    zh: 一个 Claude Code / OpenClaw 技能：定期送上 25 位顶级 AI builder 的内容摘要 —— 顶尖 AI 播客（Latent Space / No Priors / Training Data 等）+ X 上的精华帖 + Anthropic / Claude 官方博客。中英双语，不需要 API key（feed 由项目方中心化抓取）。
   best_for:
-    en: AI practitioners who want curated input from people who actually build, not
-      from influencers — willing to trust the maintainer's curation list.
+    en: AI practitioners who want curated input from people who actually build, not from influencers — willing to trust the maintainer's curation list.
     zh: 想从真正在做产品的人那里取信息（不是 KOL）的 AI 从业者；愿意信任维护者的 curation 名单。
   watch_out:
-    en: 'No LICENSE file at the repo root yet — fork / modify legality is unclear.
-      The "no API keys needed" model means content fetching depends on Zara''s central
-      pipeline; if her server goes down or she stops maintaining it, your digest stops
-      working and there''s no documented fallback. Curation list is centrally controlled
-      — you can''t easily add your own builders without forking and running scripts/generate-feed
-      yourself.
-
-      '
-    zh: '仓库根目录还没 LICENSE —— fork / 改用法律状态不明。「不需要 API key」的代价是：内容抓取依赖 Zara 的中央服务器；她不维护了或者服务器挂了，你的
-      digest 就停。curation 名单也是中心化的，想加自己关注的 builder 得自己 fork 并跑 scripts/generate-feed。
-
-      '
-  use_for:
-  - en: Daily / weekly AI-builder digest in your existing chat tool (Telegram / Discord
-      / email) — light-touch consumption.
-    zh: 在你常用的 chat 工具（Telegram / Discord / 邮箱）里定期收 AI builder 摘要 —— 轻量消费。
-  - en: Bilingual readers who want both EN and ZH versions of summaries.
-    zh: 想同时看到中英文摘要的双语用户。
-  - en: Trust Zara's curation of 25 builders + 6 podcasts + 2 official blogs (Anthropic
-      / Claude).
-    zh: 信得过 Zara 选的 25 位 builder + 6 个播客 + 2 个官方博客（Anthropic / Claude）的清单。
-  dont_use_for:
-  - en: Don't depend on it for production / business intelligence — central pipeline
-      is single point of failure with no documented SLA.
-    zh: 别把它当生产环境 / 商业情报源 —— 中央 pipeline 是单点故障，没有 SLA 承诺。
-  - en: Don't expect to easily customize the source list without forking and self-hosting
-      scripts/generate-feed.
-    zh: 想自定义关注的 builder 不容易 —— 得 fork 仓库并自己跑 scripts/generate-feed。
-  - en: Don't redistribute generated digests commercially — no LICENSE at repo root.
-    zh: 生成的 digest 别商用分发 —— 仓库没 LICENSE。
+    en: |
+      No LICENSE file at the repo root yet — fork / modify legality is unclear. The "no API keys needed" model means content fetching depends on Zara's central pipeline; if her server goes down or she stops maintaining it, your digest stops working and there's no documented fallback. Curation list is centrally controlled — you can't easily add your own builders without forking and running scripts/generate-feed yourself.
+    zh: |
+      仓库根目录还没 LICENSE —— fork / 改用法律状态不明。「不需要 API key」的代价是：内容抓取依赖 Zara 的中央服务器；她不维护了或者服务器挂了，你的 digest 就停。curation 名单也是中心化的，想加自己关注的 builder 得自己 fork 并跑 scripts/generate-feed。
+  persona:
+    en: An AI practitioner / founder / PM who wants to stay current on what frontier-lab builders are actually shipping and saying — but doesn't have time to follow 25 X accounts + 6 podcasts manually, and doesn't want a generic AI-news newsletter pasted from VC blogs.
+    zh: 一个想跟踪一线实验室的 builder 真正在 ship 什么、说什么的 AI 从业者 / 创业者 / PM —— 但没时间手动追 25 个 X 账号 + 6 个播客，也受够了 VC 博客复制粘贴的通用 AI 新闻 newsletter。
+  scenario:
+    en: Monday morning, you want a single message summarizing what the 25 top AI builders said over the weekend — what Karpathy posted, what was new on Latent Space, what Anthropic Engineering shipped — bilingual if you read both EN/ZH. Delivered to Telegram or in-chat, no logging into 6 platforms.
+    zh: 周一早上想一条消息看完 25 位顶尖 AI builder 周末说了什么 —— Karpathy 发了啥、Latent Space 出了什么新一期、Anthropic Engineering 写了什么 —— 中英双语都看。送到 Telegram 或直接在 chat 里，不用登 6 个平台。
+  without_this:
+    en: Either follow 25 X accounts + 6 podcasts + 2 blogs by hand, or pay for a generic AI newsletter that mostly reposts VC takes, or build your own scraper-and-summarizer from scratch.
+    zh: 要么手动追 25 个 X 账号 + 6 个播客 + 2 个博客，要么订一份内容多半是 VC 转载的通用 AI newsletter，要么从零自己写抓取 + 摘要。
+  with_this:
+    en: Install the skill, say "set up follow builders" — agent walks you through frequency / language / delivery channel conversationally, then digests start arriving. The central pipeline fetches + pre-summarizes; your skill just renders + delivers.
+    zh: 装好 skill，说一句「set up follow builders」—— agent 在对话里问你频率 / 语言 / 送到哪里，然后摘要就开始到了。中央 pipeline 负责抓取 + 预摘要，本地 skill 只负责渲染 + 投递。
+  cost_summary:
+    en: Free OSS (no LICENSE though). Need a Claude Code or OpenClaw subscription. No third-party API keys required for content (Zara's pipeline pays that cost), but you do need the agent host to run. Optional Telegram / Discord / email for delivery (free tiers fine).
+    zh: 开源免费（虽然没 LICENSE）。需要 Claude Code 或 OpenClaw 订阅。内容不要第三方 API key（Zara 那边掏钱），但 agent host 得跑。可选 Telegram / Discord / 邮箱投递（免费档够用）。
+  how:
+    en: |
+      1. Install the skill in OpenClaw or Claude Code (skill loader)
+      2. In agent chat, say "set up follow builders" or invoke `/follow-builders`
+      3. Agent asks: frequency (daily / weekly + time), language (EN / ZH / bilingual), delivery channel (Telegram / email / in-chat)
+      4. First digest arrives immediately
+      5. To change settings, just say "switch to weekly digests on Monday mornings" — the agent updates your prefs
+    zh: |
+      1. 在 OpenClaw 或 Claude Code 里装 skill
+      2. agent 对话里说「set up follow builders」或者跑 `/follow-builders`
+      3. agent 会问：频率（日/周 + 时间）、语言（中/英/双语）、送到哪里（Telegram / 邮箱 / chat）
+      4. 第一份 digest 立刻到
+      5. 要改设置，说一句「改成周一早上的周报」—— agent 自己改好
+  examples:
+  - context:
+      en: A founder who wants a Monday-morning briefing on what the 25 top AI builders said over the weekend
+      zh: 创业者想在周一早上看 25 位顶尖 AI builder 周末说了啥
+    you_say:
+      en: '"Set up follow builders — weekly, Monday 9 AM, bilingual, deliver to Telegram"'
+      zh: 「set up follow builders —— 周报，周一早 9 点，中英双语，送 Telegram」
+    what_happens:
+      en: Agent registers your prefs. Each Monday at 9 AM you get a Telegram message with podcast summaries (last week's Latent Space + No Priors), top X posts from 25 builders, and any new Anthropic / Claude Engineering articles — each in EN then ZH, with original-link citations.
+      zh: agent 把偏好登记下。每周一早 9 点你收到 Telegram 消息：上周播客摘要（Latent Space + No Priors 等）+ 25 位 builder 的精华 X 帖 + Anthropic / Claude Engineering 的新文章 —— 每条先英文后中文，附原文链接。
+  - context:
+      en: A bilingual reader who wants the same digest in Chinese for forwarding to a non-English-reading partner
+      zh: 双语用户，想把同一份 digest 转中文发给不懂英文的搭档
+    you_say:
+      en: '"Switch language to bilingual; make the Chinese version slightly more formal"'
+      zh: 「切到中英双语；中文版语气稍微正式一点」
+    what_happens:
+      en: Agent updates the translate.md prompt with your tone preference. Next digest renders both EN and ZH; ZH summaries follow your tone instructions. You forward the ZH-only block to your partner.
+      zh: agent 更新 translate.md prompt 加上你说的语气偏好。下一份 digest 中英双语都出，中文摘要按你的语气走。把中文块转给搭档即可。
+  - context:
+      en: A power user who wants to add their own X accounts to track (skill defaults to Zara's curation of 25)
+      zh: 高阶用户想加自己关注的 X 账号（skill 默认是 Zara 选的 25 位）
+    you_say:
+      en: '"Help me fork follow-builders and run scripts/generate-feed locally with my own list of 30 builders"'
+      zh: 「帮我 fork follow-builders，用我自己的 30 位 builder 名单跑 scripts/generate-feed」
+    what_happens:
+      en: Agent walks you through forking + setting up Node.js + adding X / RSS / podcast credentials + running the cron. You become your own central pipeline. Trade-off, you now pay for the X API + transcript costs Zara was paying for everyone else.
+      zh: agent 带你走完 fork + 装 Node.js + 配 X / RSS / 播客凭证 + 跑 cron。你成了自己那份的中央 pipeline。代价：原本 Zara 掏的 X API + 字幕成本现在你掏。
+  next_step:
+    en: |
+      Three actions to lift the score: (a) add LICENSE file (one commit) — closes the legal-ambiguity penalty; (b) document the central-pipeline SLA + a self-host fallback path so users can survive a maintainer pause — addresses the single-point-of-failure watch_out; (c) add a "my-builders" config that lets a user inject 1-3 extra X accounts without forking the whole repo — relaxes the centralized-curation lock-in.
+    zh: |
+      三个加分动作：(a) 加 LICENSE（一个 commit）—— 关掉法律不清的扣分；(b) 把中央 pipeline 的 SLA 写清楚，并给出自托管 fallback 路径，让维护者断更时用户能续上 —— 解掉单点故障；(c) 加一个 "my-builders" 配置，用户能在不 fork 全仓库的情况下加 1-3 个 X 账号 —— 松开中心化 curation 的锁。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — fixed multi-stage pipeline (central fetch → summarize → translate → deliver). Each stage is deterministic; LLM is a summarizer/translator plug-in, not a runtime router. The novel architecture is the central-vs-local split, not LLM dispatch.
+    zh: |
+      分子 —— 固定多阶段流水线（中央抓取 → 摘要 → 翻译 → 投递）。每一步都是确定性的；LLM 只做摘要 / 翻译，不是运行时 dispatcher。这个架构的精彩点在「中央 vs 本地」拆分，不是 LLM 路由。
+  nodes:
+  - id: sources
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "25 X builders\n+ 6 podcasts\n+ 2 blogs"
+      zh: "25 位 X builder\n+ 6 播客\n+ 2 博客"
+  - id: central
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "Central pipeline\n(scripts/generate-feed)"
+      zh: "中央 pipeline\n(scripts/generate-feed)"
+  - id: feeds
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "feed-{x,podcasts,\nblogs}.json"
+      zh: "feed-{x,podcasts,\nblogs}.json"
+  - id: digest
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "Local skill\n+ user prefs\n→ render + translate"
+      zh: "本地 skill\n+ 用户偏好\n→ 渲染 + 翻译"
+  - id: deliver
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: "Telegram / email\n/ in-chat"
+      zh: "Telegram / 邮箱\n/ chat"
+  edges:
+  - {from: sources, to: central}
+  - {from: central, to: feeds}
+  - {from: feeds, to: digest}
+  - {from: digest, to: deliver}
+similar_repos:
+- slug: zinan92--intel
+  shared_purpose:
+    en: Both aggregate multi-source content (X / podcasts / blogs / news) into a digest, with LLM summarization on top. Both target the "I want to keep up without doomscrolling" user.
+    zh: 都聚合多源内容（X / 播客 / 博客 / 新闻）做 digest，再叠 LLM 摘要。都瞄准「想跟得上但不想刷信息瀑布」的用户。
+  this_better_at:
+    en: Zero-setup user experience — no API keys, no DB, no scheduler. Curation done by maintainer, you just say "set up". Bilingual EN/ZH out of the box.
+    zh: 零配置用户体验 —— 没有 API key、DB、调度器。curation 维护者做，用户只要说「set up」。开箱中英双语。
+  other_better_at:
+    en: Self-hosted, full control. You own the data, the source list, the schedule. No central single point of failure. More work to maintain but no maintainer-dependency risk.
+    zh: 自托管 + 完全控制。数据、源列表、调度全在自己手里。没有中央单点故障。维护成本高，但没有「维护者断更」风险。
+- slug: zarazhangrui--youtube-to-ebook
+  shared_purpose:
+    en: Both are Zara's content-consumption skills that take third-party content (podcasts / videos) and reshape it for a different consumption mode (digest message / EPUB).
+    zh: 都是 Zara 写的「内容消费」skill —— 把第三方内容（播客 / 视频）转成另一种消费方式（摘要消息 / EPUB）。
+  this_better_at:
+    en: "Many-to-one: 25+ builders → one digest message. Optimized for daily/weekly check-in cadence."
+    zh: "多对一：25+ builder → 一条 digest 消息。针对日 / 周 check-in 频率优化。"
+  other_better_at:
+    en: "One-to-one: each YouTube channel → its own EPUB chapter. Optimized for long-form quiet-reading consumption."
+    zh: 一对一：每个 YouTube 频道 → 一章 EPUB。针对长文安静阅读优化。
 deployment:
   installable: true
   install_methods:

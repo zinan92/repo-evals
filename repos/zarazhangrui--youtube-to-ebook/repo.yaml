@@ -10,30 +10,32 @@ uses_areas: false
 status: evaluated
 last_evaluated: '2026-05-05'
 version_tested: main@HEAD
-stars: 440
+stars: 442
 archived: false
 has_license: false
 multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 0
 recently_active: false
+business_category:
+  en: Video-to-ebook converter
+  zh: 视频转电子书工具
+use_case_tags:
+- claude-code-skill
+- youtube-pipeline
+- epub-generation
+- video-to-text
+- mac-launchagent
 notes: 'Python CLI tool that fetches YouTube videos from configured channels,
-
   extracts transcripts, uses Claude to rewrite as magazine-style
-
   articles, packages into EPUB, optionally emails. Ships SKILL.md
-
   alongside (so it can also load into Claude Code as a skill, though
-
   install path is `git clone + pip install`, not skills directory).
-
-  440 stars, last pushed 2026-01-28 (3+ months stale at eval time).
+  442 stars, last pushed 2026-01-28 (3+ months stale at eval time).
 
 
   Source layout: main.py orchestrator + get_videos.py + get_transcripts.py
-
   + write_articles.py + send_email.py + video_tracker.py + dashboard.py
-
   (890-line Streamlit). Mac LaunchAgent plists for cron. No LICENSE.
 
 
@@ -48,26 +50,152 @@ product_view:
     en: Long-form readers who'd rather read than watch — turn favorite YouTubers (mkbhd / veritasium / 3blue1brown) into a weekly ebook delivered to Kindle / Apple Books / email.
     zh: 更喜欢看文字的人 —— 把自己关注的 YouTube 频道（mkbhd / veritasium / 3blue1brown 等）变成每周一本电子书，送到 Kindle / Apple Books / 邮箱。
   watch_out:
-    en: 'No LICENSE file at root — fork / commercial use legal status unclear. README''s git-clone snippet still uses `YOUR_USERNAME` placeholder (Zara''s repo, not yours, but the README templating leak is a polish gap). Not recently maintained (last push 2026-01-28, 3+ months at eval time); YouTube transcript API can break when YouTube changes the front-end. The Mac LaunchAgent path is Mac-only; Linux users need to write their own cron config.
-
-      '
-    zh: '仓库根没有 LICENSE —— fork / 商用法律状态不明。README 的 git clone 命令里还写着 `YOUR_USERNAME` 占位符（其实是 Zara 自己的仓库，README 模板没改干净）。最近没维护（2026-01-28 最后一次 push，已 3 个月+）；YouTube 改前端时 transcript API 可能失效。Mac LaunchAgent 只 Mac 能用，Linux 用户要自己配 cron。
-
-      '
-  use_for:
-  - en: Turn YouTube channels you follow regularly into a weekly EPUB ebook delivered to Kindle / Apple Books / email.
-    zh: 把常看的 YouTube 频道变成每周送到 Kindle / Apple Books / 邮箱的 EPUB 电子书。
-  - en: Mac users who want hands-off automation via LaunchAgent.
-    zh: 想用 Mac LaunchAgent 实现完全无人值守自动化的用户。
-  - en: Bring-your-own-key Anthropic + free-tier YouTube Data API.
-    zh: 自带 Anthropic key + 用免费的 YouTube Data API。
-  dont_use_for:
-  - en: Don't run on Linux without writing your own cron config — Mac LaunchAgent paths won't help.
-    zh: Linux 上跑别指望仓库自带的 LaunchAgent，要自己写 cron 配置。
-  - en: Don't expect channels with auto-generated captions only to produce great articles — quality of LLM rewrite ≤ quality of source transcript.
-    zh: 只有机器自动字幕的频道，别指望产出精品文章 —— LLM 改写质量 ≤ 字幕源质量。
-  - en: Don't redistribute generated ebooks commercially — no LICENSE; YouTube transcripts have their own copyright considerations.
-    zh: 生成的电子书别商用分发 —— 没 LICENSE；YouTube 字幕本身也有版权问题要自己评估。
+    en: |
+      No LICENSE file at root — fork / commercial use legal status unclear. README's git-clone snippet still uses `YOUR_USERNAME` placeholder (Zara's repo, not yours, but the README templating leak is a polish gap). Not recently maintained (last push 2026-01-28, 3+ months at eval time); YouTube transcript API can break when YouTube changes the front-end. The Mac LaunchAgent path is Mac-only; Linux users need to write their own cron config.
+    zh: |
+      仓库根没有 LICENSE —— fork / 商用法律状态不明。README 的 git clone 命令里还写着 `YOUR_USERNAME` 占位符（其实是 Zara 自己的仓库，README 模板没改干净）。最近没维护（2026-01-28 最后一次 push，已 3 个月+）；YouTube 改前端时 transcript API 可能失效。Mac LaunchAgent 只 Mac 能用，Linux 用户要自己配 cron。
+  persona:
+    en: A long-form reader who follows specific YouTube channels (mkbhd, veritasium, 3blue1brown) but would rather read than watch — wants the content but not the autoplay-recommendation rabbit-hole, and likes consuming on Kindle / Apple Books.
+    zh: 喜欢长文阅读的用户 —— 关注几个特定 YouTube 频道（mkbhd / veritasium / 3blue1brown 等）但更想读不想看 —— 想要内容但不想被算法推送拉走，习惯 Kindle / Apple Books 阅读。
+  scenario:
+    en: Sunday evening. A weekly EPUB lands in your email — last week's episodes from your 5 favorite YouTubers, rewritten as readable magazine articles by Claude. Apple Books picks it up automatically. Monday commute = quiet reading; no autoplay, no related-videos spiral, no algorithm stealing 90 minutes.
+    zh: 周日晚上，邮箱收到一份 EPUB —— 关注的 5 个 YouTuber 这周的视频，Claude 改写成杂志体可读文章。Apple Books 自动接收。周一通勤 = 安静读完；没有自动播放、没有相关视频推荐、没有算法偷你 90 分钟。
+  without_this:
+    en: Either watch on YouTube and lose 90 minutes to autoplay, or open each video and copy-paste the transcript by hand, or pay for an ebook curation service that doesn't track your specific creators.
+    zh: 要么在 YouTube 上看然后被自动播放偷走 90 分钟，要么一个视频一个视频手动复制字幕，要么付钱给一个电子书 curation 服务（但他们不会追踪你具体关注的创作者）。
+  with_this:
+    en: Configure a channels.txt with your handles. main.py fetches new videos, extracts transcripts, calls Claude to rewrite as magazine articles, ebooklib packages an EPUB, send_email.py optionally emails it. A LaunchAgent plist runs it weekly on Mac.
+    zh: 在 channels.txt 配上你关注的 handle。main.py 拉新视频、抓字幕、调 Claude 改写成杂志体文章、ebooklib 打成 EPUB、send_email.py 可选邮件发出。Mac 的 LaunchAgent plist 让它每周自动跑。
+  cost_summary:
+    en: Free OSS (no LICENSE though). YouTube Data API free tier (10K units/day) is plenty for personal use. Anthropic Claude is BYOK — typically a few dollars per weekly book depending on episode count + transcript length. Email delivery via your existing SMTP (Gmail / iCloud).
+    zh: 开源免费（没 LICENSE）。YouTube Data API 免费档（每日 10K 配额）个人用绰绰有余。Anthropic Claude 自带 key —— 一般每周书几美元，看 episode 数和字幕长度。邮件投递用现有 SMTP（Gmail / iCloud）。
+  how:
+    en: |
+      1. `git clone https://github.com/zarazhangrui/youtube-to-ebook && cd youtube-to-ebook`
+      2. `pip install -r requirements.txt`
+      3. `cp .env.example .env`, add YouTube Data API key + Anthropic API key + (optional) SMTP creds
+      4. Edit `channels.txt` with the handles you follow (e.g. `@mkbhd`, `@veritasium`)
+      5. `python main.py` — generates an EPUB
+      6. (Optional Mac) `cp com.youtube.newsletter.plist ~/Library/LaunchAgents/` + `launchctl bootstrap` to run weekly
+      7. (Optional) `streamlit run dashboard.py` for a web UI
+    zh: |
+      1. `git clone https://github.com/zarazhangrui/youtube-to-ebook && cd youtube-to-ebook`
+      2. `pip install -r requirements.txt`
+      3. `cp .env.example .env`，填 YouTube Data API key + Anthropic API key +（可选）SMTP
+      4. 改 `channels.txt`，写上你关注的 handle（例如 `@mkbhd`、`@veritasium`）
+      5. `python main.py` —— 生成 EPUB
+      6. （可选 Mac）`cp com.youtube.newsletter.plist ~/Library/LaunchAgents/` + `launchctl bootstrap` 每周自动跑
+      7. （可选）`streamlit run dashboard.py` 起 web UI
+  examples:
+  - context:
+      en: A reader who follows 5 long-form YouTubers and wants Sunday-evening EPUB delivery to Apple Books
+      zh: 一个关注 5 个长文 YouTuber、想周日晚收 EPUB 到 Apple Books 的读者
+    you_say:
+      en: 'Edit channels.txt with @veritasium @mkbhd @3blue1brown @lexfridman @tomscott; configure LaunchAgent for Sunday 6 PM'
+      zh: 'channels.txt 加上 @veritasium @mkbhd @3blue1brown @lexfridman @tomscott；LaunchAgent 配周日晚 6 点'
+    what_happens:
+      en: Each Sunday at 6 PM, the LaunchAgent runs main.py. It pulls last 7 days of videos, extracts transcripts, Claude rewrites each as a magazine article, ebooklib packages an EPUB titled "Week of [date]", emails it to you. Apple Mail's iCloud rules drop it into Apple Books.
+      zh: 每周日晚 6 点 LaunchAgent 跑 main.py。拉过去 7 天的视频、抓字幕、Claude 改写成杂志体文章、ebooklib 打成 EPUB（标题「Week of [date]」）、邮件发给你。Apple Mail 的 iCloud 规则把它转给 Apple Books。
+  - context:
+      en: A Mac user who wants a Streamlit dashboard to see what episodes were processed this week + retry failures
+      zh: 想用 Streamlit 看板查本周处理了哪些 episode + 重试失败的 Mac 用户
+    you_say:
+      en: '`streamlit run dashboard.py`'
+      zh: '`streamlit run dashboard.py`'
+    what_happens:
+      en: Dashboard at localhost:8501 shows tracked videos (from video_tracker.py state), processed/failed counts, last EPUB timestamp + size, retry button. You spot a video that failed (transcript missing), retry it, the article gets added to next week's EPUB.
+      zh: localhost:8501 显示已追踪的视频（来自 video_tracker.py 状态）、成功 / 失败计数、上次 EPUB 时间戳和大小、重试按钮。看到一个失败（字幕缺）的视频，点重试，文章会进下一周的 EPUB。
+  - context:
+      en: A Linux user who wants to adapt this without LaunchAgent
+      zh: 想在 Linux 上用、不想要 LaunchAgent 的用户
+    you_say:
+      en: '0 18 * * 0 cd /opt/youtube-to-ebook && python main.py  (in crontab)'
+      zh: 'crontab 里加：0 18 * * 0 cd /opt/youtube-to-ebook && python main.py'
+    what_happens:
+      en: 'main.py works fine on Linux — it''s pure Python. The only Mac-specific files are the .plist examples; replace with crontab. Caveat: the README + skill don''t document this path, so you''re on your own for systemd / cron syntax.'
+      zh: 'main.py 在 Linux 上能正常跑 —— 纯 Python。仓库里只有 .plist 是 Mac 专属，换成 crontab 即可。注意：README + skill 没写这条路径，systemd / cron 语法要自己搞定。'
+  next_step:
+    en: |
+      Three actions to lift the score: (a) add LICENSE file (one commit) — closes the legal-ambiguity penalty; (b) fix the README placeholder `YOUR_USERNAME` → `zarazhangrui` so first-time clones don't 404 — small polish but it screams "untested README"; (c) push a maintenance commit (refresh youtube-transcript-api dep + a CI job) — recently_active is currently false (last push 2026-01-28); a single 2026-05 commit fixes that signal and re-validates the YouTube transcript path.
+    zh: |
+      三个加分动作：(a) 加 LICENSE（一个 commit）—— 关掉法律不清的扣分；(b) 修 README 里的 `YOUR_USERNAME` 占位符 → `zarazhangrui`，第一次 clone 的人不会 404 —— 小事但说明 README 没人测过；(c) 推一次维护性 commit（升级 youtube-transcript-api 依赖 + 一个 CI job）—— 现在 recently_active 是 false（最后一次 push 2026-01-28），一个 2026-05 的 commit 能修这个信号 + 重新验证 YouTube 字幕路径。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Atom from the user's view (channel list → EPUB), but internally a fixed 5-stage pipeline. Each stage is deterministic; LLM is a rewriter plug-in, not a runtime router. From outside it's one capability; inside it's a molecule.
+    zh: |
+      从用户看是原子（频道列表 → EPUB），内部是固定 5 阶段流水线。每一步都是确定性的；LLM 只是改写器插件，不是运行时路由。外部看是单一能力，内部是 molecule。
+  nodes:
+  - id: channels
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "channels.txt\n(@mkbhd, @veritasium, …)"
+      zh: "channels.txt\n(@mkbhd / @veritasium 等)"
+  - id: fetch
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "get_videos.py\nYouTube Data API"
+      zh: "get_videos.py\nYouTube Data API"
+  - id: transcripts
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "get_transcripts.py\n字幕抓取"
+      zh: "get_transcripts.py\n字幕抓取"
+  - id: write
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "write_articles.py\nClaude 改写"
+      zh: "write_articles.py\nClaude 改写"
+  - id: epub
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: "ebooklib\n→ EPUB"
+      zh: "ebooklib\n→ EPUB"
+  - id: deliver
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: "send_email.py\n→ Kindle / Apple Books"
+      zh: "send_email.py\n→ Kindle / Apple Books"
+  edges:
+  - {from: channels, to: fetch}
+  - {from: fetch, to: transcripts}
+  - {from: transcripts, to: write}
+  - {from: write, to: epub}
+  - {from: epub, to: deliver}
+similar_repos:
+- slug: zarazhangrui--personalized-podcast
+  shared_purpose:
+    en: Both are Zara's content-conversion skills that take third-party long-form content and reshape it for a different consumption mode. Same author, same atom-level shape, same BYOK-Claude pattern.
+    zh: 都是 Zara 写的「内容转换」skill —— 把第三方长文重塑成另一种消费方式。同作者，同样的 atom 形态，同样自带 Claude key 的模式。
+  this_better_at:
+    en: Text output for quiet long-reading on Kindle / Apple Books. Source is YouTube videos. Best for ear-tired readers.
+    zh: 文字产出，给安静长读（Kindle / Apple Books）。源是 YouTube 视频。耳朵已经累了的读者最合适。
+  other_better_at:
+    en: Audio output for ear consumption (commute / walk). Source is any text/URL. Best when you want to listen, not read.
+    zh: 音频产出，给耳朵（通勤 / 散步）。源是任意文字 / URL。想用听不想用读时合适。
+- slug: zarazhangrui--codebase-to-course
+  shared_purpose:
+    en: Both are Zara's atom-level Claude skills that take one source artifact and produce one polished long-form output via internal phases. Both bet on the LLM for the structure work.
+    zh: 都是 Zara 写的 atom 级 Claude skill —— 一个原始素材 → 通过内部阶段产出精修长文。都让 LLM 处理结构工作。
+  this_better_at:
+    en: Recurring scheduled output (weekly EPUB). Source is video transcripts; output is read-mode magazine articles.
+    zh: 定时重复产出（每周 EPUB）。源是视频字幕，产出是阅读模式杂志体文章。
+  other_better_at:
+    en: One-off interactive HTML course for a codebase. Higher per-run value, lower frequency, eye-mode consumption.
+    zh: 一次性交互式 HTML 课程（针对代码库）。单次价值更高，频率更低，眼睛模式消费。
 deployment:
   installable: true
   install_methods:

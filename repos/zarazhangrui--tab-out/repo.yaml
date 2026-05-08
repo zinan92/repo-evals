@@ -11,82 +11,174 @@ status: evaluated
 current_bucket: usable
 last_evaluated: '2026-05-04'
 version_tested: main@HEAD (manifest 1.0.0)
-notes: 'Chrome Manifest V3 extension that overrides the new-tab page with a
-
-  domain-grouped dashboard of currently-open tabs. Storage is
-
-  chrome.storage.local, sound is synthesized via Web Audio (no audio
-
-  files), animations are CSS + JS confetti. README headlines "100%
-
-  local" and "no external API calls".
-
-
-  One real privacy finding: every domain in the user''s open-tab list is
-
-  sent to https://www.google.com/s2/favicons?domain=<DOMAIN>&sz=16 to
-
-  render favicons (3 call sites in app.js, lines 770/851/969). That
-
-  contradicts the "no external API calls" + "data never leaves your
-
-  machine" headline claims — Google sees the user''s full open-tab
-
-  domain list every time the new-tab page renders.
-
-
-  Static layer otherwise clean: minimal permission scope (tabs,
-
-  activeTab, storage), no host_permissions, no fetch / XHR, MV3.
-
-  '
-product_view:
-  one_liner:
-    en: A Chrome Manifest V3 extension that replaces the new-tab page with a domain-grouped
-      dashboard of all your open tabs — close groups with a swoosh + confetti, save
-      for later, dedup duplicates. Local storage, but every tab's domain leaks to
-      Google's favicon service for icon rendering.
-    zh: 一个 Chrome MV3 扩展：把新标签页换成按域名分组的 tab 看板，关掉分组带音效和彩纸，可以收藏 tab，自动去重。数据存本地 chrome.storage.local，但每个
-      tab 的域名会经 Google 的 favicon 服务渲染图标 —— 实际上 Google 拿得到你打开的所有域名清单。
-  best_for:
-    en: People who keep dozens of tabs open and want a visual dashboard to triage
-      and close them, willing to install an unpacked Chrome extension and not bothered
-      by Google seeing their domain list.
-    zh: 同时开几十个 tab、想要一个可视化看板做分类和清理的人；接受手动加载 Chrome 扩展，并且不介意 Google 看到自己打开过哪些域名。
-  watch_out:
-    en: 'README says "no external API calls" and "data never leaves your machine";
-      both are technically false because every tab''s domain is sent to Google''s
-      s2/favicons endpoint to render favicons. Saved-tab data does stay in chrome.storage.local
-      — that part is honest. If you mind the favicon leak, you''d need to swap the
-      favicon source to a local fallback (the code has `onerror=display:none` so favicons
-      silently no-op when the request fails, which means an offline / blocked-domain
-      user already gets a graceful degraded experience).
-
-      '
-    zh: 'README 写了「没有外部 API 调用」「数据不离开你的机器」—— 两条其实都不严谨：每个 tab 的域名会发到 Google 的 s2/favicons
-      服务渲染图标。保存 tab 的数据确实只在 chrome.storage.local 里，这部分没说错。介意 favicon 泄露的话需要把 favicon
-      数据源换成本地兜底（代码里有 `onerror=display:none`，所以离线 / 屏蔽域名时会优雅降级）。
-
-      '
-  use_for:
-  - en: Tab hoarders who want a visual dashboard to triage and close many open tabs.
-    zh: 经常开几十个 tab、想要一个可视化看板来分类清理的人。
-  - en: OK with manually loading an unpacked Chrome extension.
-    zh: 接受手动加载 Chrome 未打包扩展。
-  dont_use_for:
-  - en: Don't trust the 'no external API calls' headline — every tab's domain is sent
-      to Google's favicon service.
-    zh: 别信 README 头条说的「无外部 API 调用」—— 每个 tab 域名都会发到 Google 的 favicon 服务。
-  - en: Don't use if your open-tab list is sensitive — Google sees the domain list,
-      even if not the URLs.
-    zh: 如果打开的 tab 涉及敏感网站不要用 —— Google 能看到所有域名，虽然看不到完整 URL。
-stars: 1152
+stars: 1184
 archived: false
 has_license: true
 multilingual_readme: false
 release_pipeline_score: 0
 eval_discipline_score: 0
 recently_active: true
+business_category:
+  en: Browser tab management extension
+  zh: 浏览器 tab 管理扩展
+use_case_tags:
+- chrome-extension
+- new-tab-replacement
+- tab-management
+- privacy-claim-gap
+- mv3
+notes: 'Chrome Manifest V3 extension that overrides the new-tab page with a
+  domain-grouped dashboard of currently-open tabs. Storage is
+  chrome.storage.local, sound is synthesized via Web Audio (no audio
+  files), animations are CSS + JS confetti. README headlines "100%
+  local" and "no external API calls".
+
+
+  One real privacy finding: every domain in the user''s open-tab list is
+  sent to https://www.google.com/s2/favicons?domain=<DOMAIN>&sz=16 to
+  render favicons (3 call sites in app.js, lines 770/851/969). That
+  contradicts the "no external API calls" + "data never leaves your
+  machine" headline claims — Google sees the user''s full open-tab
+  domain list every time the new-tab page renders.
+
+
+  Static layer otherwise clean: minimal permission scope (tabs,
+  activeTab, storage), no host_permissions, no fetch / XHR, MV3.
+  MIT licensed.
+
+  '
+product_view:
+  one_liner:
+    en: A Chrome Manifest V3 extension that replaces the new-tab page with a domain-grouped dashboard of all your open tabs — close groups with a swoosh + confetti, save for later, dedup duplicates. Local storage, but every tab's domain leaks to Google's favicon service for icon rendering.
+    zh: 一个 Chrome MV3 扩展：把新标签页换成按域名分组的 tab 看板，关掉分组带音效和彩纸，可以收藏 tab，自动去重。数据存本地 chrome.storage.local，但每个 tab 的域名会经 Google 的 favicon 服务渲染图标 —— 实际上 Google 拿得到你打开的所有域名清单。
+  best_for:
+    en: People who keep dozens of tabs open and want a visual dashboard to triage and close them, willing to install an unpacked Chrome extension and not bothered by Google seeing their domain list.
+    zh: 同时开几十个 tab、想要一个可视化看板做分类和清理的人；接受手动加载 Chrome 扩展，并且不介意 Google 看到自己打开过哪些域名。
+  watch_out:
+    en: |
+      README says "no external API calls" and "data never leaves your machine"; both are technically false because every tab's domain is sent to Google's s2/favicons endpoint to render favicons. Saved-tab data does stay in chrome.storage.local — that part is honest. If you mind the favicon leak, you'd need to swap the favicon source to a local fallback (the code has `onerror=display:none` so favicons silently no-op when the request fails, which means an offline / blocked-domain user already gets a graceful degraded experience).
+    zh: |
+      README 写了「没有外部 API 调用」「数据不离开你的机器」—— 两条其实都不严谨：每个 tab 的域名会发到 Google 的 s2/favicons 服务渲染图标。保存 tab 的数据确实只在 chrome.storage.local 里，这部分没说错。介意 favicon 泄露的话需要把 favicon 数据源换成本地兜底（代码里有 `onerror=display:none`，所以离线 / 屏蔽域名时会优雅降级）。
+  persona:
+    en: A tab hoarder — typically a developer / researcher / multitasker — who routinely has 30-100 tabs open across multiple windows, can't tell what's even open anymore, and needs a dashboard to triage rather than a tiny strip of unreadable favicons.
+    zh: tab 收集癖 —— 通常是开发者 / 研究者 / 多线程工作者 —— 经常多窗口开 30-100 个 tab，已经分不清哪些是开着的，需要一个看板来分类清理，而不是一条全是看不清 favicon 的细条。
+  scenario:
+    en: "It's Friday afternoon. You have 78 tabs open, half are Slack threads, half are GitHub PRs, half are docs you swore you'd read. You hit Cmd+T — instead of an empty new-tab page, Tab Out shows a grid grouped by domain. You triage: close the Slack group (swoosh), save the docs group 'for later', jump to one specific GitHub PR by clicking its tile."
+    zh: "周五下午，开了 78 个 tab，一半 Slack 线程，一半 GitHub PR，一半「以后会读」的文档。Cmd+T 一按，Tab Out 给你一个按域名分组的网格 —— 不是空白新标签页。你开始清：Slack 那组关掉（swoosh）、文档那组「保存以后看」、特定的 GitHub PR 点 tile 跳过去。"
+  without_this:
+    en: Either tolerate Chrome's tiny tab strip until you can't read favicons, or use OneTab / Toby (which save tabs but force you out of your current flow), or pay for Arc / Sigma OS (a whole new browser).
+    zh: 要么忍 Chrome 那条小到看不清 favicon 的 tab 条，要么用 OneTab / Toby（能存 tab 但要打断当前 flow），要么付钱用 Arc / Sigma OS（整个换浏览器）。
+  with_this:
+    en: Install once, every new tab opens to a domain-grouped dashboard. No new app, no new flow — Cmd+T already does what you wanted. Closes are satisfying (swoosh + confetti), duplicate detection nudges you to clean up, and "save for later" is a checklist not a black hole.
+    zh: 装一次，之后每次新标签页都是按域名分组的看板。不换 app、不换 flow —— Cmd+T 就直接到位。关 tab 有反馈（swoosh + 彩纸），自动找重复让你清理，「保存以后看」是 checklist 不是黑洞。
+  cost_summary:
+    en: Free OSS (MIT licensed). No subscription, no account, no server. Browser must be Chrome / Edge / Brave (anything Chromium-based). Installs as unpacked extension — no Chrome Web Store listing yet.
+    zh: 开源免费（MIT 协议）。没订阅、没账号、没服务器。浏览器要 Chrome / Edge / Brave（Chromium 系列都行）。装的是未打包扩展，还没上 Chrome Web Store。
+  how:
+    en: |
+      1. `git clone https://github.com/zarazhangrui/tab-out` (or send your coding agent the repo URL with "install this")
+      2. Open `chrome://extensions`, enable Developer mode (top-right toggle)
+      3. Click "Load unpacked" and select the `extension/` folder
+      4. Open a new tab — Tab Out replaces it
+      5. (Optional) Pin the extension; click for quick actions
+    zh: |
+      1. `git clone https://github.com/zarazhangrui/tab-out`（或者把仓库 URL 发给你的 coding agent 说「install this」）
+      2. 打开 `chrome://extensions`，开启右上角「开发者模式」
+      3. 点「加载已解压的扩展程序」选 `extension/` 目录
+      4. 开一个新标签页 —— 看到的就是 Tab Out
+      5. （可选）把扩展 pin 在工具栏，点开做快捷操作
+  examples:
+  - context:
+      en: A developer with 80+ tabs trying to figure out what they're even working on
+      zh: 开 80+ tab 的开发者，已经分不清自己在做什么
+    you_say:
+      en: Cmd+T (open a new tab)
+      zh: Cmd+T（开新标签页）
+    what_happens:
+      en: 'Tab Out shows tabs grouped by domain: github.com (12 PRs), localhost (4 dev servers with port numbers), notion.so (8 docs), slack (1 homepage tile). You see what you''re actually doing. You close the Slack group with a swoosh.'
+      zh: 'Tab Out 按域名分组显示：github.com（12 个 PR）、localhost（4 个 dev server 带端口号）、notion.so（8 份文档）、slack（1 个首页 tile）。你看清自己在做啥了，关掉 Slack 那组带 swoosh 音效。'
+  - context:
+      en: You opened the same Stack Overflow question 3 times across 3 windows
+      zh: 同一个 Stack Overflow 问题在 3 个窗口里开了 3 次
+    you_say:
+      en: Cmd+T → click the duplicate flag
+      zh: Cmd+T → 点重复 tab 标记
+    what_happens:
+      en: Tab Out shows a "3 duplicates" badge on the stackoverflow group. One click cleans up the extras while keeping the active one focused.
+      zh: Tab Out 在 stackoverflow 分组上显示「3 个重复」徽章。一点把多余的清掉，活动的那个保留。
+  - context:
+      en: You're closing tabs but want to revisit the docs ones later this week
+      zh: 关 tab 时不想丢掉这周晚点要回头看的文档
+    you_say:
+      en: Right-click the docs group → Save for later
+      zh: 右键文档分组 → Save for later
+    what_happens:
+      en: Tab Out drops the URLs into a checklist saved in chrome.storage.local. Tabs close (swoosh + confetti). When you want them back, open Tab Out, restore from the checklist.
+      zh: Tab Out 把这组 URL 存进 chrome.storage.local 的 checklist。tab 关闭（swoosh + 彩纸）。想看时打开 Tab Out 从 checklist 恢复。
+  next_step:
+    en: |
+      Three actions to lift the score: (a) fix the README claim — either swap Google favicons for local DuckDuckGo / Bing icons / a self-bundled set, or update README to honestly say "favicons render via Google"; this is the one real-vs-claim gap the eval found; (b) ship a proper Chrome Web Store listing so users don't have to "Load unpacked" — moves complexity from moderate to easy; (c) add a basic test harness (Puppeteer or Playwright snapshot of new-tab render) — eval_discipline_score is currently 0.
+    zh: |
+      三个加分动作：(a) 修 README 的不一致 —— 要么把 Google favicon 换成本地 DuckDuckGo / Bing 或自带 icon 集，要么改 README 老老实实写「favicon 经 Google 渲染」；这是 eval 发现的唯一一处「实际 vs 宣称」差距；(b) 上 Chrome Web Store 正式发布，用户不用「加载未打包」—— 把复杂度从 moderate 降到 easy；(c) 加基础测试（Puppeteer / Playwright 截图新标签页渲染）—— eval_discipline_score 现在是 0。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Atom — single capability (override new-tab → domain-grouped dashboard). No LLM, no pipeline, no orchestration. Pure browser-extension code.
+    zh: |
+      原子 —— 单一能力（覆盖新标签页 → 按域名分组看板）。没有 LLM、没有流水线、没有编排。纯浏览器扩展代码。
+  nodes:
+  - id: newtab
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "User hits Cmd+T\n(new tab event)"
+      zh: "用户按 Cmd+T\n(new tab 事件)"
+  - id: query
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "chrome.tabs.query\n→ all open tabs"
+      zh: "chrome.tabs.query\n→ 所有打开的 tab"
+  - id: group
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "Group by domain\n+ dedup"
+      zh: "按域名分组\n+ 去重"
+  - id: render
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "Render dashboard\n(favicons via Google)"
+      zh: "渲染看板\n(favicon 走 Google)"
+  - id: actions
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: "User actions:\nclose / save / jump"
+      zh: "用户操作：\n关 / 存 / 跳"
+  edges:
+  - {from: newtab, to: query}
+  - {from: query, to: group}
+  - {from: group, to: render}
+  - {from: render, to: actions}
+similar_repos:
+- slug: zarazhangrui--codebase-to-course
+  shared_purpose:
+    en: Both are Zara's atom-level tools that take an opaque artifact (codebase / pile of tabs) and reshape it into something the user can scan in 30 seconds. Both target "I have too much, help me triage" pain.
+    zh: 都是 Zara 写的 atom 级工具 —— 把一份模糊的素材（代码库 / 一堆 tab）重塑成 30 秒能扫完的东西。都在解决「太多了，帮我清」的痛。
+  this_better_at:
+    en: Real-time browser-state visualization, no LLM cost, instant feedback on every new-tab event. Pure client-side.
+    zh: 实时浏览器状态可视化，没 LLM 成本，每次开新标签都即时反馈。纯客户端。
+  other_better_at:
+    en: Deeper semantic understanding via LLM — produces a course not just a dashboard. Higher value per run, much higher cost.
+    zh: 借 LLM 做更深的语义理解 —— 产出是课程不是看板。单次价值更高，成本也高。
 deployment:
   installable: true
   install_methods:
@@ -102,5 +194,4 @@ third_party_services:
   api_key_needed: false
   signup_needed: false
   free_tier: true
-  cost_note: 'Privacy concern: every open-tab domain leaks to Google. Graceful fallback
-    exists if blocked.'
+  cost_note: 'Privacy concern: every open-tab domain leaks to Google. Graceful fallback exists if blocked.'
