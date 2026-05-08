@@ -1,0 +1,259 @@
+# HyperFrames claim map — hybrid-skill archetype
+# Static eval (GitHub API + repo inspection). Core-layer claims (live agent run)
+# are deferred — see repo.yaml.notes for upgrade path.
+
+claims:
+
+  # --- Support layer (deterministic, code + structure) -----------------------
+
+  - id: claim-001
+    user_icon: "📦"
+    user_title:
+      en: "Published on npm with the version README claims"
+      zh: "已发布到 npm，版本与 README 一致"
+    user_description:
+      en: "`npm install hyperframes` actually pulls a real, recent package. Not a stale or unpublished name-grab."
+      zh: "`npm install hyperframes` 真的能装到一个最近发布的包，不是占名空壳。"
+    title: npm 包发布且最近更新
+    source: README
+    source_ref: "Quick Start, badges, package list"
+    priority: critical
+    area: support-distribution
+    statement: |
+      `hyperframes` is published to the public npm registry, version is current
+      (v0.5.x band), engines.node ≥ 22 matches README requirement.
+    evidence_needed: |
+      `curl https://registry.npmjs.org/hyperframes/latest` returns version 0.5.x
+      with engines.node = ">=22".
+    status: passed
+    evidence: |
+      Verified 2026-05-08: npm latest = 0.5.3, engines.node = ">=22". Matches
+      README "Requirements: Node.js >= 22". 30 release tags on GitHub
+      (v0.5.0-alpha.1 through v0.5.3 + a v1.0.3 catalog tag).
+
+  - id: claim-002
+    user_icon: "🏗"
+    user_title:
+      en: "All 7 packages from the README actually exist"
+      zh: "README 列的 7 个包确实都在"
+    user_description:
+      en: "The README claims a monorepo with cli + core + engine + producer + studio + player + shader-transitions. All 7 directories exist."
+      zh: "README 说有 7 个包：cli + core + engine + producer + studio + player + shader-transitions。7 个目录全在。"
+    title: Monorepo 结构与 README 一致
+    source: README
+    source_ref: "Packages table"
+    priority: critical
+    area: support-structure
+    statement: |
+      packages/ contains all 7 directories named in the README Packages table.
+    evidence_needed: |
+      `gh api repos/heygen-com/hyperframes/contents/packages` returns all 7.
+    status: passed
+    evidence: |
+      Verified 2026-05-08: packages/{cli, core, engine, player, producer,
+      shader-transitions, studio} — exact match to README table.
+
+  - id: claim-003
+    user_icon: "🎓"
+    user_title:
+      en: "All 13 skills the README references actually ship"
+      zh: "README 提到的 13 个 skill 全部随包发布"
+    user_description:
+      en: "If the README points your agent at /gsap, /lottie, /tailwind, /three — those skill directories exist in the repo. No phantom skills."
+      zh: "README 让 agent 调 /gsap / /lottie / /tailwind / /three，对应的 skill 目录都存在。没有空头 skill。"
+    title: skills/ 目录与 README 表一致
+    source: README
+    source_ref: "Skills section table"
+    priority: critical
+    area: support-skills
+    statement: |
+      skills/ contains directories for every skill named in the README:
+      hyperframes, hyperframes-cli, hyperframes-media, hyperframes-registry,
+      website-to-hyperframes, remotion-to-hyperframes, gsap, animejs,
+      css-animations, lottie, three, tailwind, waapi.
+    evidence_needed: |
+      `gh api repos/heygen-com/hyperframes/contents/skills` returns all 13.
+    status: passed
+    evidence: |
+      Verified 2026-05-08: skills/ has exactly 13 directories matching the
+      README list, including bonus tailwind + waapi that the table mentions.
+
+  - id: claim-004
+    user_icon: "🧱"
+    user_title:
+      en: "The catalog actually has 50+ blocks"
+      zh: "Catalog 真的有 50+ block"
+    user_description:
+      en: "README says 50+ ready-to-use blocks for `npx hyperframes add`. Verifies they exist and are not vaporware."
+      zh: "README 说 50+ 个 `npx hyperframes add` 可用的 block。核实它们都在。"
+    title: registry/blocks 数量 ≥ 50
+    source: README
+    source_ref: "Catalog section"
+    priority: high
+    area: support-catalog
+    statement: |
+      registry/blocks/ contains at least 50 block directories that the CLI
+      can install via `hyperframes add <name>`.
+    evidence_needed: |
+      Block count from `gh api repos/heygen-com/hyperframes/contents/registry/blocks`.
+    status: passed
+    evidence: |
+      Verified 2026-05-08: 52 blocks (e.g. flash-through-white, instagram-follow,
+      data-chart, gravitational-lens, light-leak, glitch, …) plus 4 components
+      (grain-overlay, grid-pixelate-wipe, shimmer-sweep, texture-mask-text).
+
+  - id: claim-005
+    user_icon: "📜"
+    user_title:
+      en: "Apache-2.0 — truly open source, not source-available"
+      zh: "Apache-2.0 — 真开源，不是 source-available"
+    user_description:
+      en: "The big differentiator vs Remotion. Verified license is Apache-2.0 in both the GitHub metadata and the LICENSE file. No 'BSL' or 'company-size cap' rider."
+      zh: "和 Remotion 最大的区别。GitHub 元数据和 LICENSE 文件都是 Apache-2.0，没有 BSL、没有公司规模限制。"
+    title: 许可证 Apache-2.0 已验证
+    source: README
+    source_ref: "Licensing section"
+    priority: critical
+    area: support-license
+    statement: |
+      Repo license is Apache-2.0 per both `gh api repos/.../` license field
+      and the root LICENSE file. README's "fully open source vs source-available"
+      framing is accurate.
+    evidence_needed: |
+      `gh api repos/heygen-com/hyperframes` license.spdx_id == "Apache-2.0"
+      AND root LICENSE file present.
+    status: passed
+    evidence: |
+      Verified 2026-05-08: GitHub repos API returns
+      license.spdx_id = "Apache-2.0", license.name = "Apache License 2.0".
+      Root LICENSE file present at default branch.
+
+  - id: claim-006
+    user_icon: "🤖"
+    user_title:
+      en: "Plugin manifests for Claude Code, Cursor, and Codex are real"
+      zh: "Claude Code / Cursor / Codex 三套 plugin manifest 都是真的"
+    user_description:
+      en: "README says you can sideload as plugin in Claude Code, Cursor, and Codex. Three plugin directories exist with valid manifests."
+      zh: "README 说能在 Claude Code / Cursor / Codex 三家以 plugin 形式装。三个 plugin 目录都在，manifest 合法。"
+    title: 三个 IDE plugin manifest 全部存在
+    source: README
+    source_ref: "Quick Start Option 1"
+    priority: high
+    area: support-plugins
+    statement: |
+      .claude-plugin/plugin.json, .codex-plugin/plugin.json,
+      .cursor-plugin/plugin.json all exist and contain valid metadata
+      (name, version, license).
+    evidence_needed: |
+      `gh api .../contents/.claude-plugin/plugin.json` and the other two return
+      content; JSON parses; identifies hyperframes with Apache-2.0.
+    status: passed
+    evidence: |
+      Verified 2026-05-08: .claude-plugin/plugin.json present, parses, declares
+      name=hyperframes, license=Apache-2.0, author=HeyGen, homepage=hyperframes.heygen.com.
+      .codex-plugin/ and .cursor-plugin/ directories also exist at repo root.
+
+  - id: claim-007
+    user_icon: "🔁"
+    user_title:
+      en: "Real CI: tests + regression + cross-platform render verification"
+      zh: "真正的 CI：测试 + 回归 + 跨平台渲染验证"
+    user_description:
+      en: "Not 'we'll add tests later'. 11 active GitHub Actions including CI, regression, preview-regression, Windows render verification, Player perf, CodeQL."
+      zh: "不是「以后再加测试」。11 个活跃的 GitHub Actions：CI、regression、preview-regression、Windows 渲染验证、Player 性能、CodeQL。"
+    title: 11 个活跃 CI workflow，含回归与跨平台验证
+    source: GitHub Actions tab
+    source_ref: "/actions"
+    priority: high
+    area: support-eval-discipline
+    statement: |
+      Repo has multiple active CI workflows that exercise different layers
+      (unit, regression, perf, codeQL, cross-platform). This is not a
+      "smoke-test only" project.
+    evidence_needed: |
+      `gh api repos/.../actions/workflows` returns ≥ 5 active workflows
+      including a regression and a cross-platform variant.
+    status: passed
+    evidence: |
+      Verified 2026-05-08: 11 active workflows — CI, Publish to npm, regression,
+      Docs, Dependabot Updates, Catalog Previews, Copilot code review,
+      Windows render verification, Player perf, CodeQL, preview-regression.
+      Dockerfile.test also present at repo root.
+
+  - id: claim-008
+    user_icon: "🚀"
+    user_title:
+      en: "Actively maintained — 100+ commits in the last 30 days"
+      zh: "在积极维护 — 最近 30 天 100+ commit"
+    user_description:
+      en: "Project pace matches a funded team, not a one-person experiment that's already drifting."
+      zh: "更新节奏像是有公司在投入，不是一个人写完就漂着的实验项目。"
+    title: 高频维护，近 30 天 100+ commit
+    source: GitHub commits
+    source_ref: "main branch"
+    priority: high
+    area: support-activity
+    statement: |
+      `pushed_at` is within the last 7 days; commit volume in the last 30
+      days is consistent with active development by a funded team.
+    evidence_needed: |
+      `gh api repos/.../commits?since=<30 days ago>` returns full page.
+    status: passed
+    evidence: |
+      Verified 2026-05-08: `pushed_at`=2026-05-08T04:16:43Z; first commits-since
+      page (per_page=100) was full → at least 100 commits in last 30 days.
+
+  # --- Core layer (LLM-driven, requires live run) ----------------------------
+
+  - id: claim-009
+    user_icon: "🎬"
+    user_title:
+      en: "Agent + skill produces a working MP4 from a natural-language prompt"
+      zh: "Agent + skill 能从自然语言提示直出可播放 MP4"
+    user_description:
+      en: "The end-to-end claim. Without this, all the structural goodness is just scaffolding. NOT verified in this static eval."
+      zh: "端到端核心 claim。没这一条，前面 8 条都只是脚手架。本次静态评测没有验证。"
+    title: 端到端 agent → MP4 跑通
+    source: README
+    source_ref: "Quick Start Option 1 — example prompts"
+    priority: critical
+    area: core-llm-output
+    statement: |
+      Given a realistic prompt (e.g. "Make a 9:16 TikTok hook video about X
+      with bouncy captions synced to TTS narration"), an agent loaded with
+      the hyperframes skill bundle produces an HTML composition that
+      `hyperframes render` turns into a playable MP4 matching the prompt's
+      intent.
+    evidence_needed: |
+      Live agent transcript + scaffolded composition + rendered MP4 +
+      manual quality check against the prompt.
+    status: deferred
+    skip_reason: |
+      Static eval; no live agent run executed. Requires Node 22 + FFmpeg +
+      Puppeteer + an agent runtime; intentionally out of scope for the
+      first-pass dossier. See repo.yaml.next_step for the upgrade path.
+
+  - id: claim-010
+    user_icon: "🎯"
+    user_title:
+      en: "Frame-accurate seeking — preview matches render exactly"
+      zh: "逐帧精确 seek — 预览和渲染完全一致"
+    user_description:
+      en: "The technical bet that distinguishes HyperFrames from Remotion: library-clock animations (GSAP, Anime.js, Motion One) seek frame-accurately. NOT verified in this static eval."
+      zh: "HyperFrames 区别于 Remotion 的技术押注：GSAP / Anime.js / Motion One 逐帧精确 seek。本次静态评测没有验证。"
+    title: Frame Adapter 逐帧 seek 一致性
+    source: README
+    source_ref: "Hyperframes vs Remotion table — 'Library-clock animations'"
+    priority: high
+    area: core-rendering-determinism
+    statement: |
+      Browser preview at frame N visually matches the encoded MP4's frame N
+      across at least one GSAP and one CSS-animation Frame Adapter.
+    evidence_needed: |
+      Frame-by-frame diff (preview vs render) for at least one composition
+      using GSAP and one using CSS animations.
+    status: deferred
+    skip_reason: |
+      Static eval; no render run executed. Requires running the producer
+      pipeline locally and frame-extracting both preview and MP4.

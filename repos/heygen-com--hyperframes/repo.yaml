@@ -1,0 +1,254 @@
+# === Identity ================================================================
+owner: heygen-com
+repo: hyperframes
+display_name: HyperFrames
+repo_url: https://github.com/heygen-com/hyperframes
+
+repo_type: framework
+archetype: hybrid-skill
+
+# Compound: ships skills (LLM-runtime routing across /hyperframes,
+# /hyperframes-cli, /gsap, /tailwind, /lottie, /three, /animejs, …),
+# and a multi-package framework (cli + core + engine + producer + studio +
+# player + shader-transitions). Live agent-driven render run was not
+# executed in this static eval, so core_layer_tested is intentionally false.
+layer: compound
+
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-08"
+version_tested: "v0.5.3 (npm) / main@2026-05-08"
+
+# === Maintainer / ecosystem signals (verified via gh api) ====================
+stars: 15863
+archived: false
+has_license: true                # Apache-2.0 — verified via repos API + LICENSE file
+multilingual_readme: false
+release_pipeline_score: 3        # 30 tags incl. v0.5.3, dedicated "Publish to npm" workflow,
+                                 # CHANGELOG present, semver discipline (alpha/beta/RC tags)
+eval_discipline_score: 3         # 11 active CI workflows: CI, regression, preview-regression,
+                                 # Windows render verification, Player perf, CodeQL,
+                                 # Catalog Previews, Docs, Copilot code review, Dependabot,
+                                 # Publish to npm. Dockerfile.test for reproducible runs.
+recently_active: true            # 100+ commits in last 30 days; pushed_at 2026-05-08
+
+business_category: dev-tooling
+use_case_tags: ["ai-video", "agent-tooling", "html-to-video", "framework", "skill-bundle"]
+
+notes: |
+  HeyGen's open-source bet on "what should agents author when they make video?".
+  The answer: HTML — because every LLM already speaks it. Apache-2.0 (not the
+  source-available trap most video tools fall into), monorepo with 7 packages,
+  13 bundled skills that cover both the framework itself and adjacent runtimes
+  (GSAP, Anime.js, Lottie, Three.js, CSS, WAAPI), a 52-block component catalog,
+  and pre-built plugin manifests for Claude Code, Cursor, and Codex. The README
+  "Option 1" is literally "install our skills and prompt your agent" — the
+  agent-first posture is structural, not marketing.
+
+  This eval is static + GitHub-only. To lift core_layer_tested to true: clone,
+  run `npx hyperframes init demo`, prompt an agent through the bundled skills,
+  and verify the produced MP4 matches the prompt's intent. That live run is
+  the only thing standing between this score and the production-ready band.
+
+# === Product view ============================================================
+product_view:
+  one_liner:
+    en: "Write HTML, render video — AI agents do the authoring, HyperFrames does the rendering. Open-source (Apache-2.0) framework from HeyGen with a 13-skill bundle that lets Claude/Cursor/Codex produce real MP4s instead of just storyboards."
+    zh: "用 HTML 写视频，让 AI 智能体动手做 — HeyGen 出品的开源视频框架（Apache-2.0），随包 13 个 skill 让 Claude/Cursor/Codex 不再只生成 storyboard，而是直出可以发布的 MP4。"
+  persona:
+    en: "Builders who want AI agents to produce shippable video — content creators automating short-form output, dev-tooling teams adding video to their product, and engineers tired of writing React for every social-media intro."
+    zh: "想让 AI 帮自己出片的人 — 自动化短视频生产的创作者、想给产品加视频能力的开发团队、不想为每条片头都手写 React 的工程师。"
+  scenario:
+    en: "You give an agent a prompt like 'a 10-second product intro with fade-in title, background video, and music'. Agent writes an HTML composition with data attributes, calls `hyperframes render`, hands back an MP4. No bundler step, no proprietary DSL, no per-render fee."
+    zh: "你给 agent 一句话：「做个 10 秒产品片头，标题淡入，背景视频，配 BGM」。Agent 写一份带 data 属性的 HTML 组合，调 `hyperframes render`，把 MP4 还给你。零打包步骤、零私有 DSL、零按次计费。"
+  without_this:
+    en: "Either you write React/TSX video components by hand (Remotion route, source-available license + per-seat fees above small-team cap) or you orchestrate FFmpeg + Puppeteer + a timeline library yourself and ship glue code your agent has no idea how to extend."
+    zh: "要么自己写 React/TSX 视频组件（Remotion 路线，source-available 许可，团队稍大就要付费）；要么自己搭 FFmpeg + Puppeteer + 时间线库，写一堆 agent 看不懂的 glue code。"
+  with_this:
+    en: "Compositions are HTML files with `data-start` / `data-duration` attributes. The CLI is non-interactive by default (one of the rare frameworks built so an agent — not a human — drives the dev loop). Frame Adapter pattern means GSAP / Anime.js / Lottie / Three.js / CSS animations all seek frame-accurately, so the same composition that previews in your browser renders identically to MP4."
+    zh: "组合就是带 `data-start` / `data-duration` 属性的 HTML 文件。CLI 默认非交互（极少数从设计上就是给 agent 跑、不是给人跑的框架）。Frame Adapter 让 GSAP / Anime.js / Lottie / Three.js / CSS 动画都能逐帧精确 seek — 浏览器里预览什么样，渲染出来就是什么样。"
+  cost_summary:
+    en: "Free, open source, Apache-2.0. Self-hosted: pay your own CPU + FFmpeg time. No SaaS gate, no per-render fee, no seat cap, no company-size threshold. Skills install layer routes through `vercel-labs/skills` (also free)."
+    zh: "免费开源，Apache-2.0。自托管：自己出 CPU 和 FFmpeg 的电费。不锁 SaaS，不按次计费，不限座位数，不卡公司规模。Skills 走 `vercel-labs/skills`（也免费）。"
+  best_for:
+    en: "Agent-driven content pipelines where you want HTML in, MP4 out, and the LLM steering the timeline. Also a credible Remotion replacement when the OSI-license matters."
+    zh: "agent 驱动的内容流水线 — HTML 进、MP4 出、由 LLM 操纵时间线。如果你在意 OSI 开源许可，也是 Remotion 的可替代品。"
+  how:
+    en: "Two paths. (1) `npx skills add heygen-com/hyperframes` to install the skill bundle into Claude Code / Cursor / Codex, then describe the video. (2) `npx hyperframes init my-video && npx hyperframes preview && npx hyperframes render`. Requires Node ≥ 22 and FFmpeg."
+    zh: "两条路。(1) `npx skills add heygen-com/hyperframes` 把 skill 装进 Claude Code / Cursor / Codex，然后用自然语言描述视频。(2) `npx hyperframes init my-video && npx hyperframes preview && npx hyperframes render`。要 Node ≥ 22 + FFmpeg。"
+  watch_out:
+    en: "Single-machine rendering today — no Lambda/distributed mode (Remotion still wins on that axis). v0.5.x (pre-1.0) — APIs may shift. The 'AI-first CLI' is genuine but means the human ergonomics are deliberately minimal — if you want a designer-friendly GUI, go look at the `studio` package separately."
+    zh: "目前只支持单机渲染 — 没有 Lambda/分布式模式（这条 Remotion 还是赢）。当前 v0.5.x，pre-1.0，API 可能再调。「AI-first CLI」是真实的，但意味着人类操作体验被刻意精简 — 想要设计师友好的 GUI，去单独看 `studio` 包。"
+  examples:
+    - context:
+        en: "I have a CSV of monthly revenue numbers and want a 30-second animated bar chart race for a board update."
+        zh: "我有一份月度营收 CSV，想做一段 30 秒的动态条形图视频给董事会。"
+      you_say:
+        en: "Using /hyperframes, turn this CSV into an animated bar chart race."
+        zh: "用 /hyperframes 把这份 CSV 转成动态条形图视频。"
+      what_happens:
+        en: "Agent reads the CSV, scaffolds an HTML composition using the `data-chart` block from the catalog, configures a GSAP timeline, runs `hyperframes render`, hands you back an MP4."
+        zh: "Agent 读 CSV，从 catalog 拉 `data-chart` block 搭出 HTML 组合，配 GSAP 时间线，跑 `hyperframes render`，把 MP4 还给你。"
+    - context:
+        en: "I have a Remotion (React) composition I want to migrate off the source-available license."
+        zh: "我有一份 Remotion (React) 组合，想从 source-available 许可上迁出来。"
+      you_say:
+        en: "Use the remotion-to-hyperframes skill on src/MyVideo.tsx."
+        zh: "用 remotion-to-hyperframes skill 处理 src/MyVideo.tsx。"
+      what_happens:
+        en: "Agent translates the React component tree into HTML + GSAP, preserves frame-accurate timing, lands you on Apache-2.0."
+        zh: "Agent 把 React 组件树翻成 HTML + GSAP，保留逐帧时序，落到 Apache-2.0 许可下。"
+    - context:
+        en: "I want to turn a public webpage (e.g. a blog post) into a 45-second narrated explainer."
+        zh: "想把一个公开网页（比如一篇博客文章）做成 45 秒的旁白讲解视频。"
+      you_say:
+        en: "Use website-to-hyperframes on https://example.com/post."
+        zh: "对 https://example.com/post 用 website-to-hyperframes。"
+      what_happens:
+        en: "Skill captures the page (Puppeteer), pulls structure into a composition, hyperframes-media generates Kokoro TTS narration + Whisper-aligned captions, renders an MP4."
+        zh: "Skill 抓页面（Puppeteer），把结构灌进组合，hyperframes-media 用 Kokoro 生成 TTS 旁白 + Whisper 对齐字幕，渲染成 MP4。"
+  next_step:
+    en: "Run a live agent session — `npx hyperframes init demo`, prompt Claude Code with `/hyperframes`, and capture both the produced MP4 and the agent transcript. That single run lifts `core_layer_tested` and unlocks the production-ready ceiling for compound layer."
+    zh: "做一次活体 agent 测试 — `npx hyperframes init demo`，用 `/hyperframes` 提示 Claude Code，把 MP4 和 agent 对话记录都存档。这一次测试就能把 `core_layer_tested` 翻成 true，解锁 compound 层的 production-ready 上限。"
+
+# === Deployment =============================================================
+deployment:
+  installable: true
+  install_methods:
+    - method: "npx hyperframes init <name>"
+      platform: "any (Node ≥ 22 + FFmpeg)"
+      complexity: easy
+    - method: "npx skills add heygen-com/hyperframes"
+      platform: "Claude Code / Cursor / Codex / Gemini CLI"
+      complexity: easy
+    - method: "npm install hyperframes"
+      platform: "any (Node ≥ 22)"
+      complexity: easy
+  requires_compile: false
+  works_offline_after_install: true
+  auto_update: false
+
+# === Third-party services ===================================================
+third_party_services:
+  - name: "FFmpeg"
+    purpose: "Video encoding (image2pipe → MP4)"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Free, must be on PATH"
+  - name: "Node.js (≥ 22)"
+    purpose: "Runtime"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Free"
+  - name: "Chrome / Chromium (via Puppeteer)"
+    purpose: "Headless rendering"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Free; auto-downloaded by Puppeteer"
+  - name: "Kokoro TTS (optional)"
+    purpose: "Voiceover synthesis (via hyperframes-media)"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Local model, free"
+  - name: "Whisper (optional)"
+    purpose: "Audio transcription / caption alignment (via hyperframes-media)"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Local model, free"
+
+# === Workflow placement =====================================================
+workflow_placements:
+  - workflow_id: "park-content-v1"
+    stage_id: "production"
+    role: primary
+    reason:
+      en: "HyperFrames is the rendering stage — agent has the script, this is what turns it into pixels."
+      zh: "HyperFrames 落在「production」阶段 — agent 有脚本之后，HyperFrames 把它变成像素。"
+
+# === Workflow diagram (compound — see why_layer) ============================
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: "Compound: at runtime an LLM picks which skill to invoke (/hyperframes vs /gsap vs /lottie vs /three vs /tailwind), and the framework dispatches to the right Frame Adapter (GSAP / Anime.js / Lottie / Three.js / CSS / WAAPI). Routing is dynamic, not a fixed pipeline."
+    zh: "Compound 层：运行时 LLM 决定调哪个 skill（/hyperframes / /gsap / /lottie / /three / /tailwind），框架再 dispatch 到对应 Frame Adapter（GSAP / Anime.js / Lottie / Three.js / CSS / WAAPI）。路由是动态的，不是固定流水线。"
+  nodes:
+    - id: prompt
+      type: start
+      rank: 0
+      lane: 0
+      label:
+        en: "User prompt"
+        zh: "用户描述"
+    - id: skill-router
+      type: process
+      rank: 1
+      lane: 0
+      label:
+        en: "Agent picks skill"
+        zh: "Agent 选 skill"
+    - id: composition
+      type: process
+      rank: 2
+      lane: 0
+      label:
+        en: "HTML composition"
+        zh: "HTML 组合"
+    - id: adapter
+      type: process
+      rank: 3
+      lane: 0
+      label:
+        en: "Frame Adapter"
+        zh: "Frame Adapter"
+    - id: engine
+      type: process
+      rank: 4
+      lane: 0
+      label:
+        en: "@hyperframes/engine (Puppeteer)"
+        zh: "@hyperframes/engine（Puppeteer）"
+    - id: producer
+      type: process
+      rank: 5
+      lane: 0
+      label:
+        en: "@hyperframes/producer (FFmpeg)"
+        zh: "@hyperframes/producer（FFmpeg）"
+    - id: mp4
+      type: end
+      rank: 6
+      lane: 0
+      label:
+        en: "MP4"
+        zh: "MP4 视频"
+  edges:
+    - {from: prompt, to: skill-router}
+    - {from: skill-router, to: composition}
+    - {from: composition, to: adapter}
+    - {from: adapter, to: engine}
+    - {from: engine, to: producer}
+    - {from: producer, to: mp4}
+
+# === Comparison =============================================================
+similar_repos:
+  - slug: "remotion-dev--skills"
+    shared_purpose:
+      en: "AI-agent skill bundle that teaches an LLM how to author video compositions."
+      zh: "教 LLM 如何写视频组合的 skill 包。"
+    this_better_at:
+      en: "Apache-2.0 (truly open source); HTML authoring (no JSX rewrite); first-class non-interactive CLI built for agents; bundles 13 skills covering 6 animation runtimes and 52 catalog blocks."
+      zh: "Apache-2.0（真正开源）；HTML 创作（不用改写 JSX）；CLI 默认非交互、为 agent 而生；随包 13 skill 覆盖 6 个动画运行时 + 52 个 catalog block。"
+    other_better_at:
+      en: "Battle-tested Lambda distributed rendering, larger React-component ecosystem, longer history (Hyperframes is < 2 months old; Remotion has years of production scars healed)."
+      zh: "成熟的 Lambda 分布式渲染、更大的 React 组件生态、更长的历史（Hyperframes 才不到 2 个月；Remotion 多年生产环境跑出来的）。"
