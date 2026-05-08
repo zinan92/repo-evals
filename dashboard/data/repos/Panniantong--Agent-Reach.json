@@ -1,0 +1,42 @@
+{
+  "slug": "Panniantong--Agent-Reach",
+  "display_name": "Agent-Reach",
+  "owner": "Panniantong",
+  "repo": "Agent-Reach",
+  "repo_url": "https://github.com/Panniantong/Agent-Reach",
+  "repo_type": "tool",
+  "archetype": "pure-cli",
+  "layer": "molecule",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "MIT-licensed Python CLI giving an AI agent \"eyes\" — read + search Twitter (X) / Reddit / YouTube / GitHub / Bilibili / 小红书 from one tool, no per-API fees. 19K stars, recently active. Quad-language README (zh / en / ja / ko). Architecture: agent_reach/ Python package + scripts/ +…",
+  "repo_path": "repos/Panniantong--Agent-Reach",
+  "claims_summary": {
+    "total": 7,
+    "passed": 6,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 3,
+    "critical_passed": 2,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 4
+  },
+  "runs_summary": {
+    "count": 0,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": null,
+  "verdict_path": null,
+  "attention_level": "high"
+}

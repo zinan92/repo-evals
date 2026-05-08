@@ -5,24 +5,24 @@
   "repo": "tradecat",
   "repo_url": "https://github.com/tukuaiai/tradecat",
   "repo_type": "tool",
-  "archetype": "pure-cli",
+  "archetype": "hybrid-skill",
   "layer": "molecule",
-  "layer_inferred": "atom",
+  "layer_inferred": "molecule",
   "status": "evaluated",
   "current_bucket": "usable",
   "uses_areas": false,
-  "notes_excerpt": "Local-only Python 3.12 CLI/TUI for browsing public market-data + event-stream snapshots fetched from Google Sheets workbooks (4 datasets via dataset_registry.json: market_snapshot / anomaly_panel / market_stats / event_stream). Self-installs via curl|sh, auto-updates, ships with…",
+  "notes_excerpt": "本地 Python 3.12 CLI/TUI 工具，从 Google Sheets 拉公开行情和事件流快照。 4 个 dataset（market_snapshot / anomaly_panel / market_stats / event_stream） 分布在 2 个 workbook（market_data + alternative_data）。一键 curl|sh 安装、 默认自动更新（可关闭）、TUI 在不支持 curses 的终端会优雅降级。 本次重测发现的关键变化（2026-05-07，距上次评测仅 3 天）： 仓库整体重构成「Ski…",
   "repo_path": "repos/tukuaiai--tradecat",
   "claims_summary": {
-    "total": 7,
-    "passed": 6,
-    "failed": 0,
+    "total": 12,
+    "passed": 10,
+    "failed": 1,
     "untested": 1,
-    "critical_total": 3,
+    "critical_total": 4,
     "critical_passed": 2,
-    "critical_failed": 0,
+    "critical_failed": 1,
     "critical_untested": 1,
-    "high_total": 4
+    "high_total": 6
   },
   "runs_summary": {
     "count": 1,
@@ -37,6 +37,6 @@
   "latest_diff": null,
   "areas": [],
   "plan_path": "repos/tukuaiai--tradecat/plans/2026-05-04-eval-plan.md",
-  "verdict_path": "repos/tukuaiai--tradecat/verdicts/2026-05-04-final-verdict.md",
+  "verdict_path": "repos/tukuaiai--tradecat/verdicts/2026-05-07-final-verdict.md",
   "attention_level": "medium"
 }

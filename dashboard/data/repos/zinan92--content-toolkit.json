@@ -11,7 +11,7 @@
   "status": "evaluated",
   "current_bucket": "usable",
   "uses_areas": true,
-  "notes_excerpt": "Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.",
+  "notes_excerpt": "Aggregator and orchestrator for multiple content-related capabilities. The CLI 'content' is a single entrypoint that dispatches to a set of skills: ctk-download, ctk-analyze, ctk-rewrite, ctk-videocut, ctk-publish, plus platform-specific ctk-xiaohongshu. Each skill is a separate…",
   "repo_path": "repos/zinan92--content-toolkit",
   "claims_summary": {
     "total": 16,

@@ -1,0 +1,42 @@
+{
+  "slug": "zinan92--kline",
+  "display_name": "kline",
+  "owner": "zinan92",
+  "repo": "kline",
+  "repo_url": "https://github.com/zinan92/kline",
+  "repo_type": "framework",
+  "archetype": "api-service",
+  "layer": "molecule",
+  "layer_inferred": "molecule",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Wendy's own multi-asset OHLCV candle service (Park-trading stage 01). Python 3.11 + FastAPI. 4 provider modules: tushare (A股), yahoo (美股), binance (crypto), commodity. ~900 LoC in src/kline/ under proper src-layout packaging. tests/ has 3 test files (test_models / test_providers…",
+  "repo_path": "repos/zinan92--kline",
+  "claims_summary": {
+    "total": 6,
+    "passed": 3,
+    "failed": 2,
+    "untested": 1,
+    "critical_total": 4,
+    "critical_passed": 2,
+    "critical_failed": 1,
+    "critical_untested": 1,
+    "high_total": 1
+  },
+  "runs_summary": {
+    "count": 0,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": null,
+  "verdict_path": null,
+  "attention_level": "high"
+}

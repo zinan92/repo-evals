@@ -1,0 +1,42 @@
+{
+  "slug": "zinan92--AI-videos",
+  "display_name": "AI-videos",
+  "owner": "zinan92",
+  "repo": "AI-videos",
+  "repo_url": "https://github.com/zinan92/AI-videos",
+  "repo_type": "framework",
+  "archetype": "pure-cli",
+  "layer": "molecule",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Wendy's own AI virtual-character video pipeline. Inputs: a character PNG + (optional) outfit reference PNG + a motion reference MP4. Output: AI-generated video MP4 + JSON run log. Drives the RunningHub v2 API for the actual generation. Architecture: scripts/pipeline.py orchestra…",
+  "repo_path": "repos/zinan92--AI-videos",
+  "claims_summary": {
+    "total": 5,
+    "passed": 2,
+    "failed": 2,
+    "untested": 1,
+    "critical_total": 3,
+    "critical_passed": 1,
+    "critical_failed": 1,
+    "critical_untested": 1,
+    "high_total": 1
+  },
+  "runs_summary": {
+    "count": 0,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": null,
+  "verdict_path": null,
+  "attention_level": "high"
+}

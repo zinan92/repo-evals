@@ -9,9 +9,9 @@
   "layer": "atom",
   "layer_inferred": "molecule",
   "status": "evaluated",
-  "current_bucket": "reusable",
+  "current_bucket": "unknown",
   "uses_areas": false,
-  "notes_excerpt": "",
+  "notes_excerpt": "Go CLI for converting Markdown to WeChat-formatted HTML. 2K stars, MIT, pushed 2026-04-30. The deterministic support layer is unusually strong: 228 passing Go tests, 36 test files, 14 packages, 5 discovery commands returning consistent JSON envelopes (capabilities / providers /…",
   "repo_path": "repos/geekjourneyx--md2wechat-skill",
   "claims_summary": {
     "total": 14,
@@ -38,5 +38,5 @@
   "areas": [],
   "plan_path": "repos/geekjourneyx--md2wechat-skill/plans/2026-04-13-eval-plan.md",
   "verdict_path": "repos/geekjourneyx--md2wechat-skill/verdicts/2026-04-13-final-verdict.md",
-  "attention_level": "low"
+  "attention_level": "high"
 }

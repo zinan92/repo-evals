@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-05-05T12:17:50Z",
-  "generated_from_commit": "ac78b39",
+  "generated_at": "2026-05-08T08:20:36Z",
+  "generated_from_commit": "3f117cb",
   "repos": [
     {
       "slug": "zarazhangrui--frontend-slides",
@@ -474,7 +474,7 @@
       "status": "evaluated",
       "current_bucket": "usable",
       "uses_areas": true,
-      "notes_excerpt": "Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.",
+      "notes_excerpt": "Aggregator and orchestrator for multiple content-related capabilities. The CLI 'content' is a single entrypoint that dispatches to a set of skills: ctk-download, ctk-analyze, ctk-rewrite, ctk-videocut, ctk-publish, plus platform-specific ctk-xiaohongshu. Each skill is a separate…",
       "repo_path": "repos/zinan92--content-toolkit",
       "claims_summary": {
         "total": 16,
@@ -584,6 +584,48 @@
       "attention_level": "high"
     },
     {
+      "slug": "AIDC-AI--Pixelle-Video",
+      "display_name": "Pixelle-Video",
+      "owner": "AIDC-AI",
+      "repo": "Pixelle-Video",
+      "repo_url": "https://github.com/AIDC-AI/Pixelle-Video",
+      "repo_type": "framework",
+      "archetype": "orchestrator",
+      "layer": "compound",
+      "layer_inferred": "compound",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "Apache 2.0 fully-automated short-video generation engine. 11.5K stars, recently active. Architecture: FastAPI service (api/) + Python pipelines (pixelle_video/pipelines/ + models/ + llm_presets.py). Multi-LLM provider support. Docker + Windows binary + mkdocs site. Compound laye…",
+      "repo_path": "repos/AIDC-AI--Pixelle-Video",
+      "claims_summary": {
+        "total": 7,
+        "passed": 6,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 3,
+        "critical_passed": 2,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 3
+      },
+      "runs_summary": {
+        "count": 0,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": null,
+      "attention_level": "high"
+    },
+    {
       "slug": "HughYau--qiushi-skill",
       "display_name": "qiushi-skill",
       "owner": "HughYau",
@@ -623,6 +665,48 @@
       "areas": [],
       "plan_path": "repos/HughYau--qiushi-skill/plans/2026-05-05-eval-plan.md",
       "verdict_path": "repos/HughYau--qiushi-skill/verdicts/2026-05-05-final-verdict.md",
+      "attention_level": "high"
+    },
+    {
+      "slug": "Panniantong--Agent-Reach",
+      "display_name": "Agent-Reach",
+      "owner": "Panniantong",
+      "repo": "Agent-Reach",
+      "repo_url": "https://github.com/Panniantong/Agent-Reach",
+      "repo_type": "tool",
+      "archetype": "pure-cli",
+      "layer": "molecule",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "MIT-licensed Python CLI giving an AI agent \"eyes\" — read + search Twitter (X) / Reddit / YouTube / GitHub / Bilibili / 小红书 from one tool, no per-API fees. 19K stars, recently active. Quad-language README (zh / en / ja / ko). Architecture: agent_reach/ Python package + scripts/ +…",
+      "repo_path": "repos/Panniantong--Agent-Reach",
+      "claims_summary": {
+        "total": 7,
+        "passed": 6,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 3,
+        "critical_passed": 2,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 4
+      },
+      "runs_summary": {
+        "count": 0,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": null,
       "attention_level": "high"
     },
     {
@@ -668,30 +752,30 @@
       "attention_level": "high"
     },
     {
-      "slug": "karpathy--autoresearch",
-      "display_name": "autoresearch",
-      "owner": "karpathy",
-      "repo": "autoresearch",
-      "repo_url": "https://github.com/karpathy/autoresearch",
-      "repo_type": "research-template",
-      "archetype": "hybrid-skill",
-      "layer": "compound",
-      "layer_inferred": "molecule",
+      "slug": "dreammis--social-auto-upload",
+      "display_name": "social-auto-upload",
+      "owner": "dreammis",
+      "repo": "social-auto-upload",
+      "repo_url": "https://github.com/dreammis/social-auto-upload",
+      "repo_type": "tool",
+      "archetype": "adapter",
+      "layer": "molecule",
+      "layer_inferred": "atom",
       "status": "evaluated",
       "current_bucket": "unknown",
       "uses_areas": false,
-      "notes_excerpt": "Karpathy's \"give an AI agent a small but real LLM training setup and let it experiment overnight\" template. 79K stars in ~6 weeks. 3-file core: prepare.py (389 lines, fixed) + train.py (630 lines, agent edits) + program.md (114 lines, the \"skill\"). Single H100 required for the m…",
-      "repo_path": "repos/karpathy--autoresearch",
+      "notes_excerpt": "A Playwright-based CLI + backend that auto-uploads video content to 7 Chinese + international social platforms (抖音 / Bilibili / 小红书 / 快手 / 视频号 / 百家号 / TikTok). 10.6K stars, started 2023-12, pushed 2026-04-24 (~11 days ago). Single visible commit in git log (\"ok\") suggests histor…",
+      "repo_path": "repos/dreammis--social-auto-upload",
       "claims_summary": {
-        "total": 8,
+        "total": 10,
         "passed": 6,
-        "failed": 1,
+        "failed": 3,
         "untested": 1,
-        "critical_total": 6,
-        "critical_passed": 4,
+        "critical_total": 4,
+        "critical_passed": 2,
         "critical_failed": 1,
         "critical_untested": 1,
-        "high_total": 2
+        "high_total": 5
       },
       "runs_summary": {
         "count": 1,
@@ -705,8 +789,92 @@
       "latest_gap_report": null,
       "latest_diff": null,
       "areas": [],
-      "plan_path": "repos/karpathy--autoresearch/plans/2026-05-05-eval-plan.md",
-      "verdict_path": "repos/karpathy--autoresearch/verdicts/2026-05-05-final-verdict.md",
+      "plan_path": null,
+      "verdict_path": "repos/dreammis--social-auto-upload/verdicts/2026-05-05-final-verdict.md",
+      "attention_level": "high"
+    },
+    {
+      "slug": "geekjourneyx--md2wechat-skill",
+      "display_name": "md2wechat-skill",
+      "owner": "geekjourneyx",
+      "repo": "md2wechat-skill",
+      "repo_url": "https://github.com/geekjourneyx/md2wechat-skill",
+      "repo_type": "skill",
+      "archetype": "hybrid-skill",
+      "layer": "atom",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "Go CLI for converting Markdown to WeChat-formatted HTML. 2K stars, MIT, pushed 2026-04-30. The deterministic support layer is unusually strong: 228 passing Go tests, 36 test files, 14 packages, 5 discovery commands returning consistent JSON envelopes (capabilities / providers /…",
+      "repo_path": "repos/geekjourneyx--md2wechat-skill",
+      "claims_summary": {
+        "total": 14,
+        "passed": 9,
+        "failed": 0,
+        "untested": 5,
+        "critical_total": 7,
+        "critical_passed": 4,
+        "critical_failed": 0,
+        "critical_untested": 3,
+        "high_total": 6
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "full",
+        "counts": {
+          "full": 1,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/geekjourneyx--md2wechat-skill/plans/2026-04-13-eval-plan.md",
+      "verdict_path": "repos/geekjourneyx--md2wechat-skill/verdicts/2026-04-13-final-verdict.md",
+      "attention_level": "high"
+    },
+    {
+      "slug": "heygen-com--hyperframes",
+      "display_name": "HyperFrames",
+      "owner": "heygen-com",
+      "repo": "hyperframes",
+      "repo_url": "https://github.com/heygen-com/hyperframes",
+      "repo_type": "framework",
+      "archetype": "hybrid-skill",
+      "layer": "compound",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "HeyGen's open-source bet on \"what should agents author when they make video?\". The answer: HTML — because every LLM already speaks it. Apache-2.0 (not the source-available trap most video tools fall into), monorepo with 7 packages, 13 bundled skills that cover both the framework…",
+      "repo_path": "repos/heygen-com--hyperframes",
+      "claims_summary": {
+        "total": 10,
+        "passed": 8,
+        "failed": 0,
+        "untested": 2,
+        "critical_total": 5,
+        "critical_passed": 4,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 5
+      },
+      "runs_summary": {
+        "count": 0,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/heygen-com--hyperframes/plans/2026-05-08-eval-plan.md",
+      "verdict_path": "repos/heygen-com--hyperframes/verdicts/2026-05-08-final-verdict.md",
       "attention_level": "high"
     },
     {
@@ -749,6 +917,90 @@
       "areas": [],
       "plan_path": "repos/obra--superpowers/plans/2026-05-05-eval-plan.md",
       "verdict_path": "repos/obra--superpowers/verdicts/2026-05-05-final-verdict.md",
+      "attention_level": "high"
+    },
+    {
+      "slug": "putyy--res-downloader",
+      "display_name": "res-downloader",
+      "owner": "putyy",
+      "repo": "res-downloader",
+      "repo_url": "https://github.com/putyy/res-downloader",
+      "repo_type": "tool",
+      "archetype": "pure-cli",
+      "layer": "molecule",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "Apache 2.0 cross-platform desktop resource downloader (Go + Wails). 17K stars. Covers 9 CN-content platforms: 视频号 / 小程序 / 抖音 / 快手 / 小红书 / 直播流 / m3u8 / 酷狗 / QQ音乐. Architecture: Go backend (core/ with app.go / downloader.go / plugins/ per-platform handlers / resource.go / storage.…",
+      "repo_path": "repos/putyy--res-downloader",
+      "claims_summary": {
+        "total": 6,
+        "passed": 4,
+        "failed": 1,
+        "untested": 1,
+        "critical_total": 4,
+        "critical_passed": 3,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 1
+      },
+      "runs_summary": {
+        "count": 0,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": null,
+      "attention_level": "high"
+    },
+    {
+      "slug": "wechat-article--wechat-article-exporter",
+      "display_name": "wechat-article-exporter",
+      "owner": "wechat-article",
+      "repo": "wechat-article-exporter",
+      "repo_url": "https://github.com/wechat-article/wechat-article-exporter",
+      "repo_type": "tool",
+      "archetype": "api-service",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "Online + self-hostable Nuxt + Vue web app for batch downloading WeChat 公众号 articles. 9K stars, MIT, recently active (pushed 2026-04-29). Outputs include HTML format that \"100% restores article layout + style\" + view-count and comment data export. Architecture: Nuxt 3 app. Root h…",
+      "repo_path": "repos/wechat-article--wechat-article-exporter",
+      "claims_summary": {
+        "total": 7,
+        "passed": 6,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 3,
+        "critical_passed": 2,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 3
+      },
+      "runs_summary": {
+        "count": 0,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": null,
       "attention_level": "high"
     },
     {
@@ -917,6 +1169,216 @@
       "areas": [],
       "plan_path": "repos/zarazhangrui--youtube-to-ebook/plans/2026-05-05-eval-plan.md",
       "verdict_path": "repos/zarazhangrui--youtube-to-ebook/verdicts/2026-05-05-final-verdict.md",
+      "attention_level": "high"
+    },
+    {
+      "slug": "zinan92--AI-videos",
+      "display_name": "AI-videos",
+      "owner": "zinan92",
+      "repo": "AI-videos",
+      "repo_url": "https://github.com/zinan92/AI-videos",
+      "repo_type": "framework",
+      "archetype": "pure-cli",
+      "layer": "molecule",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "Wendy's own AI virtual-character video pipeline. Inputs: a character PNG + (optional) outfit reference PNG + a motion reference MP4. Output: AI-generated video MP4 + JSON run log. Drives the RunningHub v2 API for the actual generation. Architecture: scripts/pipeline.py orchestra…",
+      "repo_path": "repos/zinan92--AI-videos",
+      "claims_summary": {
+        "total": 5,
+        "passed": 2,
+        "failed": 2,
+        "untested": 1,
+        "critical_total": 3,
+        "critical_passed": 1,
+        "critical_failed": 1,
+        "critical_untested": 1,
+        "high_total": 1
+      },
+      "runs_summary": {
+        "count": 0,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": null,
+      "attention_level": "high"
+    },
+    {
+      "slug": "zinan92--doc-driven-dev-workflow",
+      "display_name": "doc-driven-dev-workflow",
+      "owner": "zinan92",
+      "repo": "doc-driven-dev-workflow",
+      "repo_url": "https://github.com/zinan92/doc-driven-dev-workflow",
+      "repo_type": "framework",
+      "archetype": "pure-cli",
+      "layer": "molecule",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "An AI-native \"doc-driven development workflow\" framework. Source of truth is docs/canonical-workflow.json (5 phases × 22 stages, version 2.0). Six Python scripts (~921 lines total) implement task scaffolding + state-transition enforcement + event logging + workflow validation. A…",
+      "repo_path": "repos/zinan92--doc-driven-dev-workflow",
+      "claims_summary": {
+        "total": 10,
+        "passed": 8,
+        "failed": 1,
+        "untested": 1,
+        "critical_total": 5,
+        "critical_passed": 3,
+        "critical_failed": 1,
+        "critical_untested": 1,
+        "high_total": 4
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": "repos/zinan92--doc-driven-dev-workflow/verdicts/2026-05-05-final-verdict.md",
+      "attention_level": "high"
+    },
+    {
+      "slug": "zinan92--kline",
+      "display_name": "kline",
+      "owner": "zinan92",
+      "repo": "kline",
+      "repo_url": "https://github.com/zinan92/kline",
+      "repo_type": "framework",
+      "archetype": "api-service",
+      "layer": "molecule",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "Wendy's own multi-asset OHLCV candle service (Park-trading stage 01). Python 3.11 + FastAPI. 4 provider modules: tushare (A股), yahoo (美股), binance (crypto), commodity. ~900 LoC in src/kline/ under proper src-layout packaging. tests/ has 3 test files (test_models / test_providers…",
+      "repo_path": "repos/zinan92--kline",
+      "claims_summary": {
+        "total": 6,
+        "passed": 3,
+        "failed": 2,
+        "untested": 1,
+        "critical_total": 4,
+        "critical_passed": 2,
+        "critical_failed": 1,
+        "critical_untested": 1,
+        "high_total": 1
+      },
+      "runs_summary": {
+        "count": 0,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": null,
+      "attention_level": "high"
+    },
+    {
+      "slug": "zinan92--repo-evals",
+      "display_name": "repo-evals",
+      "owner": "zinan92",
+      "repo": "repo-evals",
+      "repo_url": "https://github.com/zinan92/repo-evals",
+      "repo_type": "framework",
+      "archetype": "pure-cli",
+      "layer": "molecule",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "A claim-first evaluation framework for skill / repo quality. Inputs: one GitHub repo. Outputs: bilingual HTML dossier with 0-100 score, layer classification (atom / molecule / compound), category band (Production / Available / Risky / Don't use), workflow diagram, benefits-drive…",
+      "repo_path": "repos/zinan92--repo-evals",
+      "claims_summary": {
+        "total": 10,
+        "passed": 9,
+        "failed": 0,
+        "untested": 1,
+        "critical_total": 5,
+        "critical_passed": 4,
+        "critical_failed": 0,
+        "critical_untested": 1,
+        "high_total": 5
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": "repos/zinan92--repo-evals/verdicts/2026-05-05-final-verdict.md",
+      "attention_level": "high"
+    },
+    {
+      "slug": "zinan92--videocut",
+      "display_name": "videocut",
+      "owner": "zinan92",
+      "repo": "videocut",
+      "repo_url": "https://github.com/zinan92/videocut",
+      "repo_type": "framework",
+      "archetype": "pure-cli",
+      "layer": "molecule",
+      "layer_inferred": "atom",
+      "status": "evaluated",
+      "current_bucket": "unknown",
+      "uses_areas": false,
+      "notes_excerpt": "Wendy's own AI-driven 口播 (talking-head) video editing pipeline. 7 independent CLI tools (剪辑 / 字幕 / 金句 / 拆条 / 封面 / 变速 + pipeline orchestrator) — each runnable standalone, chainable via pipeline.js. Architecture: pipeline.js (84 LoC) wires capabilities; lib/ has the 3 real integra…",
+      "repo_path": "repos/zinan92--videocut",
+      "claims_summary": {
+        "total": 6,
+        "passed": 4,
+        "failed": 1,
+        "untested": 1,
+        "critical_total": 4,
+        "critical_passed": 2,
+        "critical_failed": 1,
+        "critical_untested": 1,
+        "high_total": 1
+      },
+      "runs_summary": {
+        "count": 0,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 0
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": null,
+      "verdict_path": null,
       "attention_level": "high"
     },
     {
@@ -1256,6 +1718,48 @@
       "attention_level": "medium"
     },
     {
+      "slug": "karpathy--autoresearch",
+      "display_name": "autoresearch",
+      "owner": "karpathy",
+      "repo": "autoresearch",
+      "repo_url": "https://github.com/karpathy/autoresearch",
+      "repo_type": "research-template",
+      "archetype": "hybrid-skill",
+      "layer": "compound",
+      "layer_inferred": "molecule",
+      "status": "evaluated",
+      "current_bucket": "usable",
+      "uses_areas": false,
+      "notes_excerpt": "Karpathy's \"give an AI agent a small but real LLM training setup and let it experiment overnight\" template. 79K stars in ~6 weeks. 3-file core: prepare.py (389 lines, fixed) + train.py (630 lines, agent edits) + program.md (114 lines, the \"skill\"). Single H100 required for the m…",
+      "repo_path": "repos/karpathy--autoresearch",
+      "claims_summary": {
+        "total": 8,
+        "passed": 6,
+        "failed": 1,
+        "untested": 1,
+        "critical_total": 6,
+        "critical_passed": 4,
+        "critical_failed": 1,
+        "critical_untested": 1,
+        "high_total": 2
+      },
+      "runs_summary": {
+        "count": 1,
+        "provenance_quality": "missing",
+        "counts": {
+          "full": 0,
+          "partial": 0,
+          "missing": 1
+        }
+      },
+      "latest_gap_report": null,
+      "latest_diff": null,
+      "areas": [],
+      "plan_path": "repos/karpathy--autoresearch/plans/2026-05-05-eval-plan.md",
+      "verdict_path": "repos/karpathy--autoresearch/verdicts/2026-05-05-final-verdict.md",
+      "attention_level": "medium"
+    },
+    {
       "slug": "remotion-dev--skills",
       "display_name": "@remotion/skills",
       "owner": "remotion-dev",
@@ -1346,24 +1850,24 @@
       "repo": "tradecat",
       "repo_url": "https://github.com/tukuaiai/tradecat",
       "repo_type": "tool",
-      "archetype": "pure-cli",
+      "archetype": "hybrid-skill",
       "layer": "molecule",
-      "layer_inferred": "atom",
+      "layer_inferred": "molecule",
       "status": "evaluated",
       "current_bucket": "usable",
       "uses_areas": false,
-      "notes_excerpt": "Local-only Python 3.12 CLI/TUI for browsing public market-data + event-stream snapshots fetched from Google Sheets workbooks (4 datasets via dataset_registry.json: market_snapshot / anomaly_panel / market_stats / event_stream). Self-installs via curl|sh, auto-updates, ships with…",
+      "notes_excerpt": "本地 Python 3.12 CLI/TUI 工具，从 Google Sheets 拉公开行情和事件流快照。 4 个 dataset（market_snapshot / anomaly_panel / market_stats / event_stream） 分布在 2 个 workbook（market_data + alternative_data）。一键 curl|sh 安装、 默认自动更新（可关闭）、TUI 在不支持 curses 的终端会优雅降级。 本次重测发现的关键变化（2026-05-07，距上次评测仅 3 天）： 仓库整体重构成「Ski…",
       "repo_path": "repos/tukuaiai--tradecat",
       "claims_summary": {
-        "total": 7,
-        "passed": 6,
-        "failed": 0,
+        "total": 12,
+        "passed": 10,
+        "failed": 1,
         "untested": 1,
-        "critical_total": 3,
+        "critical_total": 4,
         "critical_passed": 2,
-        "critical_failed": 0,
+        "critical_failed": 1,
         "critical_untested": 1,
-        "high_total": 4
+        "high_total": 6
       },
       "runs_summary": {
         "count": 1,
@@ -1378,7 +1882,7 @@
       "latest_diff": null,
       "areas": [],
       "plan_path": "repos/tukuaiai--tradecat/plans/2026-05-04-eval-plan.md",
-      "verdict_path": "repos/tukuaiai--tradecat/verdicts/2026-05-04-final-verdict.md",
+      "verdict_path": "repos/tukuaiai--tradecat/verdicts/2026-05-07-final-verdict.md",
       "attention_level": "medium"
     },
     {
@@ -1422,48 +1926,6 @@
       "plan_path": "repos/zarazhangrui--tab-out/plans/2026-05-04-eval-plan.md",
       "verdict_path": "repos/zarazhangrui--tab-out/verdicts/2026-05-04-final-verdict.md",
       "attention_level": "medium"
-    },
-    {
-      "slug": "geekjourneyx--md2wechat-skill",
-      "display_name": "md2wechat-skill",
-      "owner": "geekjourneyx",
-      "repo": "md2wechat-skill",
-      "repo_url": "https://github.com/geekjourneyx/md2wechat-skill",
-      "repo_type": "skill",
-      "archetype": "hybrid-skill",
-      "layer": "atom",
-      "layer_inferred": "molecule",
-      "status": "evaluated",
-      "current_bucket": "reusable",
-      "uses_areas": false,
-      "notes_excerpt": "",
-      "repo_path": "repos/geekjourneyx--md2wechat-skill",
-      "claims_summary": {
-        "total": 14,
-        "passed": 9,
-        "failed": 0,
-        "untested": 5,
-        "critical_total": 7,
-        "critical_passed": 4,
-        "critical_failed": 0,
-        "critical_untested": 3,
-        "high_total": 6
-      },
-      "runs_summary": {
-        "count": 1,
-        "provenance_quality": "full",
-        "counts": {
-          "full": 1,
-          "partial": 0,
-          "missing": 0
-        }
-      },
-      "latest_gap_report": null,
-      "latest_diff": null,
-      "areas": [],
-      "plan_path": "repos/geekjourneyx--md2wechat-skill/plans/2026-04-13-eval-plan.md",
-      "verdict_path": "repos/geekjourneyx--md2wechat-skill/verdicts/2026-04-13-final-verdict.md",
-      "attention_level": "low"
     },
     {
       "slug": "zinan92--intel",
@@ -1574,12 +2036,12 @@
       "repo_url": "https://github.com/oaker-io/wewrite",
       "repo_type": "skill",
       "archetype": "hybrid-skill",
-      "layer": "atom",
+      "layer": "molecule",
       "layer_inferred": "molecule",
       "status": "evaluated",
       "current_bucket": "usable",
       "uses_areas": false,
-      "notes_excerpt": "",
+      "notes_excerpt": "Hybrid skill for Claude Code / OpenClaw that wraps an 8-step pipeline (hotspot scrape → topic scoring → framework → material → write → SEO → visuals → publish) around the user prompt \"写一篇公众号文章\". Support layer is robust: - 6 CLI subcommands (preview / publish / themes / image-pos…",
       "repo_path": "repos/oaker-io--wewrite",
       "claims_summary": {
         "total": 13,
@@ -1658,8 +2120,8 @@
     }
   ],
   "stats": {
-    "repo_count": 30,
-    "evaluated_count": 30,
+    "repo_count": 41,
+    "evaluated_count": 41,
     "planned_count": 0,
     "critical_gap_total": 19,
     "warning_gap_total": 3,
@@ -1667,10 +2129,10 @@
     "medium_or_low_confidence_diffs": 4,
     "bucket_counts": {
       "recommendable": 0,
-      "reusable": 2,
-      "usable": 19,
+      "reusable": 1,
+      "usable": 20,
       "unusable": 1,
-      "unknown": 8
+      "unknown": 19
     }
   }
 }

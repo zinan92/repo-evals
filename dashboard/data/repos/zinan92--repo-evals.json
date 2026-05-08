@@ -1,0 +1,42 @@
+{
+  "slug": "zinan92--repo-evals",
+  "display_name": "repo-evals",
+  "owner": "zinan92",
+  "repo": "repo-evals",
+  "repo_url": "https://github.com/zinan92/repo-evals",
+  "repo_type": "framework",
+  "archetype": "pure-cli",
+  "layer": "molecule",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "A claim-first evaluation framework for skill / repo quality. Inputs: one GitHub repo. Outputs: bilingual HTML dossier with 0-100 score, layer classification (atom / molecule / compound), category band (Production / Available / Risky / Don't use), workflow diagram, benefits-drive…",
+  "repo_path": "repos/zinan92--repo-evals",
+  "claims_summary": {
+    "total": 10,
+    "passed": 9,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 5,
+    "critical_passed": 4,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 5
+  },
+  "runs_summary": {
+    "count": 1,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": null,
+  "verdict_path": "repos/zinan92--repo-evals/verdicts/2026-05-05-final-verdict.md",
+  "attention_level": "high"
+}

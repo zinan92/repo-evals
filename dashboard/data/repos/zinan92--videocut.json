@@ -1,0 +1,42 @@
+{
+  "slug": "zinan92--videocut",
+  "display_name": "videocut",
+  "owner": "zinan92",
+  "repo": "videocut",
+  "repo_url": "https://github.com/zinan92/videocut",
+  "repo_type": "framework",
+  "archetype": "pure-cli",
+  "layer": "molecule",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Wendy's own AI-driven 口播 (talking-head) video editing pipeline. 7 independent CLI tools (剪辑 / 字幕 / 金句 / 拆条 / 封面 / 变速 + pipeline orchestrator) — each runnable standalone, chainable via pipeline.js. Architecture: pipeline.js (84 LoC) wires capabilities; lib/ has the 3 real integra…",
+  "repo_path": "repos/zinan92--videocut",
+  "claims_summary": {
+    "total": 6,
+    "passed": 4,
+    "failed": 1,
+    "untested": 1,
+    "critical_total": 4,
+    "critical_passed": 2,
+    "critical_failed": 1,
+    "critical_untested": 1,
+    "high_total": 1
+  },
+  "runs_summary": {
+    "count": 0,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": null,
+  "verdict_path": null,
+  "attention_level": "high"
+}

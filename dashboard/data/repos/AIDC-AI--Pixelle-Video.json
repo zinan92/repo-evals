@@ -1,0 +1,42 @@
+{
+  "slug": "AIDC-AI--Pixelle-Video",
+  "display_name": "Pixelle-Video",
+  "owner": "AIDC-AI",
+  "repo": "Pixelle-Video",
+  "repo_url": "https://github.com/AIDC-AI/Pixelle-Video",
+  "repo_type": "framework",
+  "archetype": "orchestrator",
+  "layer": "compound",
+  "layer_inferred": "compound",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Apache 2.0 fully-automated short-video generation engine. 11.5K stars, recently active. Architecture: FastAPI service (api/) + Python pipelines (pixelle_video/pipelines/ + models/ + llm_presets.py). Multi-LLM provider support. Docker + Windows binary + mkdocs site. Compound laye…",
+  "repo_path": "repos/AIDC-AI--Pixelle-Video",
+  "claims_summary": {
+    "total": 7,
+    "passed": 6,
+    "failed": 0,
+    "untested": 1,
+    "critical_total": 3,
+    "critical_passed": 2,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 3
+  },
+  "runs_summary": {
+    "count": 0,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": null,
+  "verdict_path": null,
+  "attention_level": "high"
+}

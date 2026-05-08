@@ -1,0 +1,42 @@
+{
+  "slug": "putyy--res-downloader",
+  "display_name": "res-downloader",
+  "owner": "putyy",
+  "repo": "res-downloader",
+  "repo_url": "https://github.com/putyy/res-downloader",
+  "repo_type": "tool",
+  "archetype": "pure-cli",
+  "layer": "molecule",
+  "layer_inferred": "atom",
+  "status": "evaluated",
+  "current_bucket": "unknown",
+  "uses_areas": false,
+  "notes_excerpt": "Apache 2.0 cross-platform desktop resource downloader (Go + Wails). 17K stars. Covers 9 CN-content platforms: 视频号 / 小程序 / 抖音 / 快手 / 小红书 / 直播流 / m3u8 / 酷狗 / QQ音乐. Architecture: Go backend (core/ with app.go / downloader.go / plugins/ per-platform handlers / resource.go / storage.…",
+  "repo_path": "repos/putyy--res-downloader",
+  "claims_summary": {
+    "total": 6,
+    "passed": 4,
+    "failed": 1,
+    "untested": 1,
+    "critical_total": 4,
+    "critical_passed": 3,
+    "critical_failed": 0,
+    "critical_untested": 1,
+    "high_total": 1
+  },
+  "runs_summary": {
+    "count": 0,
+    "provenance_quality": "missing",
+    "counts": {
+      "full": 0,
+      "partial": 0,
+      "missing": 0
+    }
+  },
+  "latest_gap_report": null,
+  "latest_diff": null,
+  "areas": [],
+  "plan_path": null,
+  "verdict_path": null,
+  "attention_level": "high"
+}
