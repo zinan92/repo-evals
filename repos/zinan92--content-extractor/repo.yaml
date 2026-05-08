@@ -9,7 +9,207 @@ complexity: medium
 uses_areas: false
 status: evaluated
 current_bucket: usable
-notes: "视频核心路径工作得相当好：30s 中文 Douyin clip → 真实 transcript (7 段) +\nClaude LLM 分析 (7 topics, 5 takeaways) + structured_text.md，全部都是\n下游可用的内容。失败模式 (nonexistent / bad JSON / unsupported audio) 都\n返回退出码 1 + 清晰错误。\n\n但有三个文档↔代码不对齐的硬伤：\n1. README 列了 .mp3/.wav/.m4a/.aac/.ogg/.flac 作为 bare_file_support，但\n   CLI auto-wrap 把它们设成 content_type='audio'，router 没有 audio adapter，\n   直接报错 — 这是承诺过但没实现的功能。\n2. README badge 写 \"221 tests / 96% coverage\"，实际 tests/test_llm.py 有\n   ImportError (LLMRateLimitError 不存在)，测试套件根本无法 collect。\n   ignore 这个文件后只剩 207 tests。\n3. 在 Mac 上用 faster-whisper + CTranslate2 + device=\"auto\" — CTranslate2\n   不支持 Apple Silicon GPU/MPS，所以 auto 永远 fallback 到 CPU。Mac 用户\n   转录速度大约是实时 (30s 音频用 25.8s)。mlx-whisper 同样输入快 5-10x，\n   README 完全没提这个 trade-off。\n"
+last_evaluated: "2026-04-09"
+version_tested: main@HEAD
+stars: 0
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 2
+recently_active: true
+business_category:
+  en: Multi-modal content extraction + LLM analysis
+  zh: 多模态内容提取 + LLM 分析
+use_case_tags:
+- content-pipeline
+- whisper-transcription
+- llm-analysis
+- content-understanding
+- video-to-text
+notes: |
+  视频核心路径工作得相当好：30s 中文 Douyin clip → 真实 transcript (7 段) +
+  Claude LLM 分析 (7 topics, 5 takeaways) + structured_text.md，全部都是
+  下游可用的内容。失败模式 (nonexistent / bad JSON / unsupported audio) 都
+  返回退出码 1 + 清晰错误。
+
+  但有三个文档↔代码不对齐的硬伤：
+  1. README 列了 .mp3/.wav/.m4a/.aac/.ogg/.flac 作为 bare_file_support，但
+     CLI auto-wrap 把它们设成 content_type='audio'，router 没有 audio adapter，
+     直接报错 — 这是承诺过但没实现的功能。
+  2. README badge 写 "221 tests / 96% coverage"，实际 tests/test_llm.py 有
+     ImportError (LLMRateLimitError 不存在)，测试套件根本无法 collect。
+     ignore 这个文件后只剩 207 tests。
+  3. 在 Mac 上用 faster-whisper + CTranslate2 + device="auto" — CTranslate2
+     不支持 Apple Silicon GPU/MPS，所以 auto 永远 fallback 到 CPU。Mac 用户
+     转录速度大约是实时 (30s 音频用 25.8s)。mlx-whisper 同样输入快 5-10x，
+     README 完全没提这个 trade-off。
+
+product_view:
+  one_liner:
+    en: "Drop in a content-downloader output dir (or a bare .mp4) and get back transcript.json + analysis.json + structured_text.md. Video path works well; audio adapter is documented but unimplemented."
+    zh: "丢进 content-downloader 输出目录（或裸 .mp4 文件），拿回 transcript.json + analysis.json + structured_text.md。视频路径稳，但音频 adapter README 说了没实现。"
+  best_for:
+    en: "Content creators / researchers who want one tool to turn video corpus into searchable text + structured insights — already have content-downloader output (or just .mp4 files) and need fast transcripts + LLM topic/takeaway extraction."
+    zh: "想用一个工具把视频语料变成可搜文本 + 结构化洞察的创作者 / 研究者 —— 已经有 content-downloader 输出（或就是 .mp4 文件），需要快速转录 + LLM 主题 / takeaway 提取。"
+  watch_out:
+    en: |
+      Three doc↔code mismatches at eval time: (1) README claims audio file support, but auto-wrap sets content_type='audio' which has no adapter — fails immediately. (2) Badge says "221 tests / 96% coverage", but tests/test_llm.py has an ImportError so the suite can't even collect; ignoring it leaves 207. (3) On Mac, faster-whisper + CTranslate2 with device="auto" silently falls back to CPU because CTranslate2 doesn't support Apple Silicon GPU — transcription runs at real-time (30s audio takes ~25s). README never warns, doesn't mention mlx-whisper alternative which is 5-10x faster on Mac.
+    zh: |
+      测评时发现 3 个文档↔代码不对齐：(1) README 写支持音频文件，但 auto-wrap 把它们设成 content_type='audio'，router 没对应 adapter，直接 fail。(2) Badge 写「221 tests / 96% coverage」，实际 tests/test_llm.py 有 ImportError，测试套件 collect 不起来；ignore 后只剩 207。(3) Mac 上 faster-whisper + CTranslate2 + device="auto" 静默 fallback 到 CPU（CTranslate2 不支持 Apple Silicon GPU），转录是实时速度（30s 音频跑 25s）。README 没提这事，也没提 mlx-whisper 在 Mac 上快 5-10x 的替代方案。
+  persona:
+    en: "Content creator with hours of downloaded video (Douyin / YouTube / etc.) who needs to find what's in them — quotes, takeaways, structure — without watching the whole thing. Wants Whisper + Claude in one CLI."
+    zh: "手里有大量下载视频（抖音 / YouTube 等）的创作者，需要找出里面有什么 —— 金句、takeaway、结构 —— 但不想从头看一遍。想要 Whisper + Claude 一条 CLI 搞定。"
+  scenario:
+    en: "You downloaded 50 trending videos with content-downloader. Now you want to know which ones are worth watching, what topics they cover, what hooks they use — without scrubbing through 5 hours of video."
+    zh: "你刚用 content-downloader 抓了 50 个热门视频。现在想知道哪些值得看、它们讲了什么主题、用了什么 hook —— 不想真的拖进度条看 5 小时。"
+  without_this:
+    en: "You either watch every video, or wire up Whisper + Claude API yourself for each one (boilerplate per call), or pay for a SaaS transcription service (~$0.10/min × 50 videos = real money)."
+    zh: "要么每个都看一遍，要么自己写 Whisper + Claude API 调用代码（每个视频都要 boilerplate），要么用 SaaS 转录服务（约 $0.10/分钟 × 50 个视频 = 真金白银）。"
+  with_this:
+    en: "`content-extractor extract-batch ./output/` — auto-detects every video in the tree, transcribes with Whisper, runs Claude analysis, dumps transcript.json + analysis.json + structured_text.md per item. Failures are reported in a table, not silent."
+    zh: "`content-extractor extract-batch ./output/` —— 自动识别整个目录里的视频，Whisper 转录，Claude 分析，每条产出 transcript.json + analysis.json + structured_text.md。失败的会在表格里列出来，不会 silent。"
+  cost_summary:
+    en: "Free OSS (MIT). Need Python 3.13+, ffmpeg, ANTHROPIC_API_KEY for analysis (optional — extraction without LLM still produces transcript). Whisper runs locally — no per-minute fees. On Mac, expect real-time transcription (no GPU acceleration)."
+    zh: "MIT 免费开源。要 Python 3.13+、ffmpeg、ANTHROPIC_API_KEY 用于 LLM 分析（可选 —— 不调 LLM 也能出转录）。Whisper 本机跑，没有按分钟计费。Mac 上实时速度（没有 GPU 加速）。"
+  how:
+    en: |
+      1. `pip install -e .`
+      2. (Optional) Set ANTHROPIC_API_KEY for LLM analysis
+      3. `content-extractor extract <content_item-dir>` (single)
+      4. `content-extractor extract-batch <root-dir>` (recursive)
+      5. Find transcript.json + analysis.json + structured_text.md in each content dir
+    zh: |
+      1. `pip install -e .`
+      2.（可选）设 ANTHROPIC_API_KEY 用于 LLM 分析
+      3. `content-extractor extract <content_item-目录>`（单个）
+      4. `content-extractor extract-batch <根目录>`（递归）
+      5. 每个内容目录下产出 transcript.json + analysis.json + structured_text.md
+  examples:
+  - context:
+      en: "Extract a single content-downloader output dir (the cleanest path)"
+      zh: "提取单个 content-downloader 输出目录（最干净的路径）"
+    you_say:
+      en: 'content-extractor extract ./douyin/102174692353/7621048932151414054/'
+      zh: 'content-extractor extract ./douyin/102174692353/7621048932151414054/'
+    what_happens:
+      en: "Reads content_item.json + media/. Runs Whisper on video.mp4 → 7 transcript segments. Calls Claude → 7 topics + 5 takeaways + sentiment. Writes 3 files. ~25s on Mac for 30s clip."
+      zh: "读 content_item.json + media/。Whisper 跑 video.mp4 → 7 段 transcript。调 Claude → 7 个主题 + 5 个 takeaway + 情绪。写 3 个文件。Mac 上 30s 片段约 25s。"
+  - context:
+      en: "Drop in a bare .mp4 (no content_item.json)"
+      zh: "丢一个裸 .mp4（没有 content_item.json）"
+    you_say:
+      en: 'content-extractor extract ./interview.mp4'
+      zh: 'content-extractor extract ./interview.mp4'
+    what_happens:
+      en: "Auto-wraps as ContentItem with content_type='video'. Same pipeline runs. Output goes to a temp ContentItem dir alongside the mp4."
+      zh: "自动包装成 content_type='video' 的 ContentItem，同样的管线跑一遍。输出到 mp4 旁边的临时 ContentItem 目录。"
+  - context:
+      en: "Try a bare .mp3 — README says it's supported (but it isn't)"
+      zh: "丢一个裸 .mp3 —— README 说支持（但其实没实现）"
+    you_say:
+      en: 'content-extractor extract ./podcast.mp3'
+      zh: 'content-extractor extract ./podcast.mp3'
+    what_happens:
+      en: "Auto-wraps as content_type='audio'. Router has no audio adapter → UnsupportedContentTypeError. Documented support that doesn't exist — file an issue."
+      zh: "自动包装成 content_type='audio'。Router 没 audio adapter → UnsupportedContentTypeError。文档说支持但代码没实现 —— 提 issue。"
+  next_step:
+    en: |
+      To lift to reusable: (a) either implement the audio adapter or remove .mp3/.wav/.m4a from README's bare_file_support — close the doc/code gap; (b) fix tests/test_llm.py ImportError so the test suite actually collects 221 tests as the badge claims; (c) on Mac, switch to mlx-whisper or document the CPU-fallback so users aren't surprised by 1× real-time speed.
+    zh: |
+      想升 reusable：(a) 要么实现 audio adapter，要么从 README 的 bare_file_support 里删掉 .mp3/.wav/.m4a —— 关掉文档↔代码的 gap；(b) 修 tests/test_llm.py 的 ImportError，让测试套件真的能 collect 221 个 test（对得上 badge）；(c) Mac 上换 mlx-whisper，或者文档化 CPU fallback，免得用户被实时速度吓到。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — fixed pipeline (ContentItem → adapter by content_type → Whisper or
+      vision model → LLM analysis → 3 output files). Adapter selection by content_type,
+      not LLM runtime decision.
+    zh: |
+      分子 —— 固定流水线（ContentItem → 按 content_type 选 adapter → Whisper 或 vision
+      模型 → LLM 分析 → 3 个输出文件）。Adapter 按 content_type 选，不是运行时 LLM 决策。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "ContentItem dir\nor bare .mp4"
+      zh: "ContentItem 目录\n或裸 .mp4"
+  - id: router
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "Adapter router\n(by content_type)"
+      zh: "Adapter 路由\n(按 content_type)"
+  - id: extract
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "Whisper\ntranscription /\nvision analysis"
+      zh: "Whisper 转录 /\n视觉分析"
+  - id: llm
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "Claude\ntopic + takeaway\nextraction"
+      zh: "Claude\n主题 + takeaway\n提取"
+  - id: output
+    type: end
+    rank: 4
+    lane: 0
+    label:
+      en: "transcript.json\n+ analysis.json\n+ structured_text.md"
+      zh: "transcript.json\n+ analysis.json\n+ structured_text.md"
+  edges:
+  - {from: input, to: router}
+  - {from: router, to: extract}
+  - {from: extract, to: llm}
+  - {from: llm, to: output}
+similar_repos:
+- slug: zinan92--videocut
+  shared_purpose:
+    en: "Both turn video into structured derivatives. Both author's tools."
+    zh: "都把视频变成结构化产物。都是作者自己的工具。"
+  this_better_at:
+    en: "Pure analysis layer — transcript + LLM topics/takeaways. Output is text artifacts for downstream consumption."
+    zh: "纯分析层 —— 转录 + LLM 主题 / takeaway。产出是给下游消费的文本产物。"
+  other_better_at:
+    en: "Production-side editing — autocut / subtitle / hook clips / cover cards. videocut is the editor; content-extractor is the reader."
+    zh: "生产端剪辑 —— autocut / 字幕 / hook 片段 / 封面卡。videocut 是剪辑器，content-extractor 是阅读器。"
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + pip install -e .
+    platform: any (Python 3.13+)
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: true
+third_party_services:
+- name: Anthropic API
+  purpose: LLM topic + takeaway extraction
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: "Optional; without it you still get transcripts but no analysis"
+- name: ffmpeg
+  purpose: Audio extraction from video
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: "Local install; brew / apt / choco"
+- name: faster-whisper / Whisper models
+  purpose: Local audio transcription
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: "Models auto-download on first run; runs CPU-only on Mac (no GPU acceleration)"
 workflow_placements:
 - workflow_id: park-content-v1
   stage_id: 03_understanding

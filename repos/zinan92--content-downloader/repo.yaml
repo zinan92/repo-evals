@@ -9,27 +9,222 @@ complexity: medium
 uses_areas: false
 status: evaluated
 current_bucket: unusable
-notes: 'Fresh live re-eval on 2026-04-09 confirms Douyin still works end-to-end
-
+last_evaluated: "2026-04-09"
+version_tested: main@HEAD
+stars: 0
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 2
+eval_discipline_score: 2
+recently_active: true
+business_category:
+  en: Multi-platform content acquisition
+  zh: 多平台内容采集
+use_case_tags:
+- content-pipeline
+- multi-platform-adapter
+- cli-tool
+- douyin
+- xhs
+notes: |
+  Fresh live re-eval on 2026-04-09 confirms Douyin still works end-to-end
   (Playwright fallback catches API signing failure and produces full media +
-
   metadata), but WeChat OA and X still fail critical claims while the CLI reports
-
   "Downloaded". WeChat writes 0-byte article.html + blank metadata on two real
-
   URLs; X writes placeholder output with empty core fields and inconsistent
-
   directory structure. Unsupported-URL path errors clearly. Dedup works on rerun
-
-  but still happens after wasted network retries. The repo''s own pytest suite was
-
+  but still happens after wasted network retries. The repo's own pytest suite was
   also not green on this machine (294 passed / 9 failed).
 
-  '
+product_view:
+  one_liner:
+    en: "Single command, 4 Chinese-content platforms (Douyin / XHS / WeChat / X), one normalized output shape — but at eval time WeChat + X silently produce empty files while reporting success."
+    zh: "一条命令搞定 4 个中文内容平台（抖音 / 小红书 / 公众号 / X），输出格式统一 —— 但测评时公众号和 X 在「成功」表象下产出空文件。"
+  best_for:
+    en: "Solo content creators / researchers who only download from Douyin (the working adapter) and want one-command-fits-all CLI rather than learning each platform's tooling. Avoid for now if you depend on WeChat or X."
+    zh: "只在抖音上下载的个人创作者 / 研究者（这是当前唯一稳定可用的 adapter），想要一条命令搞定的 CLI。如果你依赖公众号或 X，先别用。"
+  watch_out:
+    en: |
+      Douyin works (with Playwright fallback when API signing fails); XHS and WeChat go through fragile HTML scraping and at eval time WeChat OA + X were producing empty / placeholder files while the CLI still printed "Downloaded". You may not notice the failure until you try to consume content_item.json downstream. Pytest had 9 failures in the local run. Dedup works but happens AFTER network retries — wasted bandwidth on rerun.
+    zh: |
+      抖音能用（API 签名失败时会 Playwright 兜底）；小红书和公众号走 HTML 爬解析比较脆，测评时公众号和 X 在 CLI 打印「Downloaded」的同时其实写了 0 字节文件 / 空字段。你可能要到下游消费 content_item.json 时才发现坏了。本机 pytest 9 个测试 fail。去重能用但发生在重试之后 —— 重跑还是会浪费带宽。
+  persona:
+    en: "Content creator or research engineer who needs to systematically pull content from Chinese platforms — already familiar with CLI tools but doesn't want to learn 4 separate platform SDKs."
+    zh: "需要从中文平台系统拉内容的创作者或研究工程师 —— 熟悉 CLI 但不想学 4 个平台各自的 SDK。"
+  scenario:
+    en: "You build a content pipeline that needs to ingest video / posts / articles across multiple Chinese platforms. You want one CLI shape, one output schema, one manifest — not 4 platform-specific scripts."
+    zh: "你在搭一条内容管线，要从多个中文平台采素材（视频 / 帖子 / 文章）。你要的是一份 CLI 形状、一份输出 schema、一份 manifest —— 不是 4 套各自一套的脚本。"
+  without_this:
+    en: "Hand-write XBogus / A-Bogus signing for Douyin, run XHS-Downloader sidecar separately, parse WeChat HTML yourself, install yt-dlp for X — and reconcile 4 different output shapes downstream."
+    zh: "自己写抖音 XBogus / A-Bogus 签名，单独跑 XHS-Downloader sidecar，自己解析公众号 HTML，给 X 装 yt-dlp —— 然后下游还要把 4 套不一样的输出统一。"
+  with_this:
+    en: "`python3 -m content_downloader download <url>` — auto-detect platform, route to adapter, output `content_item.json` + media files + manifest.jsonl entry. Same shape across all 4 platforms (when they work)."
+    zh: "`python3 -m content_downloader download <url>` —— 自动识别平台、路由到 adapter、输出 `content_item.json` + 媒体文件 + manifest.jsonl 一行。4 个平台输出格式一致（前提是它们能跑通）。"
+  cost_summary:
+    en: "Free OSS (MIT). Need Python 3.11+, Playwright (auto-installs Chromium), yt-dlp (auto-installs). For Douyin: prepare cookies.json. For XHS: sidecar auto-installs. WeChat + X currently produce broken output."
+    zh: "MIT 免费开源。要 Python 3.11+、Playwright（自动装 Chromium）、yt-dlp（自动装）。抖音：准备 cookies.json。小红书：sidecar 自动装。公众号 + X 当前产出有问题。"
+  how:
+    en: |
+      1. `pip install -e .`
+      2. (Douyin only) Place cookies.json next to the binary
+      3. `python3 -m content_downloader download <URL>`
+      4. Find output at `output/<platform>/<author>/<content_id>/`
+      5. Bulk: pass a profile URL to download all author's content
+    zh: |
+      1. `pip install -e .`
+      2. （抖音才需要）把 cookies.json 放到 binary 旁边
+      3. `python3 -m content_downloader download <URL>`
+      4. 输出在 `output/<platform>/<author>/<content_id>/`
+      5. 批量：传 profile URL，下载该作者所有内容
+  examples:
+  - context:
+      en: "Download a Douyin video (the working path)"
+      zh: "下载一个抖音视频（当前能用的路径）"
+    you_say:
+      en: 'python3 -m content_downloader download "https://www.douyin.com/video/7621048932151414054" --cookies cookies.json'
+      zh: 'python3 -m content_downloader download "https://www.douyin.com/video/7621048932151414054" --cookies cookies.json'
+    what_happens:
+      en: "Watermark-free MP4 + cover.jpg + metadata.json + content_item.json + text.txt land in output/douyin/<author>/<id>/. Manifest.jsonl gets one new line. Re-run skips."
+      zh: "去水印 MP4 + 封面 + metadata.json + content_item.json + text.txt 落在 output/douyin/<author>/<id>/。manifest.jsonl 加一行。重跑会跳过。"
+  - context:
+      en: "Try a WeChat OA article (broken at eval time)"
+      zh: "试一篇公众号文章（测评时是坏的）"
+    you_say:
+      en: 'python3 -m content_downloader download "https://mp.weixin.qq.com/s/abc123"'
+      zh: 'python3 -m content_downloader download "https://mp.weixin.qq.com/s/abc123"'
+    what_happens:
+      en: "CLI prints 'Downloaded' but article.html is 0 bytes and metadata.json has empty core fields. You only catch this when you try to consume the output downstream — failure is silent at the CLI layer."
+      zh: "CLI 打印「Downloaded」但 article.html 是 0 字节，metadata.json 核心字段是空的。要到下游消费才会发现 —— CLI 这层是 silent failure。"
+  - context:
+      en: "Bulk dedup: re-run profile download"
+      zh: "批量去重：profile 二次下载"
+    you_say:
+      en: 'python3 -m content_downloader download "https://www.douyin.com/user/MS4wLjAB..."'
+      zh: 'python3 -m content_downloader download "https://www.douyin.com/user/MS4wLjAB..."'
+    what_happens:
+      en: "Iterates author's videos. Already-downloaded items log 'Skipped'; only new items consume bandwidth. But dedup happens AFTER the network retry, not before — so failed items still burn quota."
+      zh: "遍历作者视频。已下载的打 'Skipped'，只有新的耗带宽。但去重是在重试之后才发生，不是之前 —— failed 项还是会消耗配额。"
+  next_step:
+    en: |
+      To exit unusable: (a) fix WeChat OA + X adapters to actually fail loudly when scraping returns empty content (silent success is the worst failure mode); (b) move dedup BEFORE network retries (currently wastes bandwidth before checking manifest); (c) fix the 9 failing pytest cases. WeChat is the priority — content-pipeline downstream depends on it.
+    zh: |
+      想脱离 unusable：(a) 让公众号 + X adapter 在抓到空内容时响亮报错（silent success 是最糟的失败模式）；(b) 把去重检查移到网络重试之前（现在是先重试再去重，浪费带宽）；(c) 修 9 个跑不过的 pytest。公众号最优先 —— 下游内容管线依赖它。
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: |
+      Molecule — fixed routing pipeline (URL → router → per-platform adapter →
+      normalized ContentItem). Platform selection by URL pattern, not LLM
+      runtime decision.
+    zh: |
+      分子 —— 固定路由流水线（URL → router → 各平台 adapter → 标准化 ContentItem）。
+      平台识别按 URL 模式匹配，不是运行时 LLM 决策。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "URL\n(douyin / xhs /\nwechat / x)"
+      zh: "URL\n(抖音 / 小红书 /\n公众号 / X)"
+  - id: router
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "URL Router\n(auto-detect)"
+      zh: "URL Router\n(自动识别)"
+  - id: douyin
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "Douyin\n(XBogus +\nPlaywright fallback)"
+      zh: "抖音\n(XBogus +\nPlaywright 兜底)"
+  - id: xhs
+    type: atom
+    rank: 2
+    lane: 1
+    label:
+      en: "XHS\n(sidecar)"
+      zh: "小红书\n(sidecar)"
+  - id: wechat
+    type: atom
+    rank: 2
+    lane: 2
+    label:
+      en: "WeChat OA\n(HTML parse —\nbroken)"
+      zh: "公众号\n(HTML 解析 —\n当前坏)"
+  - id: x
+    type: atom
+    rank: 2
+    lane: 3
+    label:
+      en: "X\n(yt-dlp —\nbroken)"
+      zh: "X\n(yt-dlp —\n当前坏)"
+  - id: output
+    type: end
+    rank: 3
+    lane: 0
+    label:
+      en: "ContentItem\n+ media\n+ manifest.jsonl"
+      zh: "ContentItem\n+ 媒体\n+ manifest.jsonl"
+  edges:
+  - {from: input, to: router}
+  - {from: router, to: douyin}
+  - {from: router, to: xhs}
+  - {from: router, to: wechat}
+  - {from: router, to: x}
+  - {from: douyin, to: output}
+  - {from: xhs, to: output}
+  - {from: wechat, to: output}
+  - {from: x, to: output}
+similar_repos:
+- slug: dreammis--social-auto-upload
+  shared_purpose:
+    en: "Both serve content pipelines; both wrap multiple Chinese platforms behind one CLI."
+    zh: "都服务内容管线；都把多个中文平台包在一个 CLI 后。"
+  this_better_at:
+    en: "Pure download path — single direction (platform → local). Cleaner output schema for downstream consumers."
+    zh: "纯下载路径 —— 单向（平台 → 本地）。下游消费的输出 schema 更干净。"
+  other_better_at:
+    en: "Upload + scheduling. social-auto-upload pushes content TO platforms; content-downloader only pulls FROM them."
+    zh: "上传 + 排期。social-auto-upload 是把内容推到平台；content-downloader 只往本地拉。"
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + pip install -e .
+    platform: any (Python 3.11+)
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: Douyin (cookies required)
+  purpose: Video + author content
+  required: false
+  api_key_needed: false
+  signup_needed: true
+  free_tier: true
+  cost_note: "Need to extract cookies.json from your browser session"
+- name: XHS-Downloader (sidecar, auto-installed)
+  purpose: XHS content
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: "Free OSS sidecar; auto-installs on first XHS URL"
+- name: yt-dlp (for X)
+  purpose: X / Twitter video extraction
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: "Auto pip-installed; X adapter currently broken"
 workflow_placements:
 - workflow_id: park-content-v1
   stage_id: 02_acquisition
   role: alternative
   reason:
-    en: Lighter single-purpose downloader. Currently broken on Douyin signing — use only when MediaCrawler is overkill for your one platform AND that platform isn't Douyin.
-    zh: 更轻量的单目的下载器。抖音签名当前坏了 —— 只在 MediaCrawler 对你那一个平台太重 + 那个平台不是抖音时用。
+    en: Lighter single-purpose downloader. Currently broken on WeChat + X — use only when MediaCrawler is overkill for your one platform AND that platform is Douyin.
+    zh: 更轻量的单目的下载器。公众号 + X 当前坏 —— 只在 MediaCrawler 对你那一个平台太重 + 那个平台是抖音时用。

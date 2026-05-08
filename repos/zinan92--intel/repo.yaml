@@ -11,6 +11,23 @@ uses_areas: false
 status: evaluated
 current_bucket: reusable
 last_evaluated: "2026-04-24"
+version_tested: main@3c6eaa9
+stars: 0
+archived: false
+has_license: false
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 2
+recently_active: true
+business_category:
+  en: Self-hosted market intelligence
+  zh: 自托管市场情报管线
+use_case_tags:
+- self-hosted-pipeline
+- news-aggregation
+- narrative-clustering
+- trading-research
+- fastapi-service
 notes: |
   Self-hosted market-intelligence pipeline. Evaluated 2026-04-24 against
   live instance at localhost:8001 (commit 3c6eaa9). 10 documented REST
@@ -37,6 +54,172 @@ product_view:
     zh: "想自建实时新闻流看板的个人交易者 / 研究者。前提：会在本机跑 Python 服务、不想付费买商用新闻源、接受单机部署。"
   watch_out:
     en: |
-      You need to run and maintain it yourself — scheduler, DB, frontend build. Core sources work without keys but the richest layer (LLM relevance scoring, narrative tags) needs an ANTHROPIC_API_KEY. Health dashboard is honest about failures but doesn't fix them for you: at eval time one collector (reddit) had been silently stale for 11 days. Plan to actually read /health.
+      You need to run and maintain it yourself — scheduler, DB, frontend build. Core sources work without keys but the richest layer (LLM relevance scoring, narrative tags) needs an ANTHROPIC_API_KEY. Health dashboard is honest about failures but doesn't fix them for you: at eval time one collector (reddit) had been silently stale for 11 days. Plan to actually read /health. No LICENSE file — fork/redistribute is legally ambiguous.
     zh: |
-      需要你自己跑自己维护 — 调度器、数据库、前端 build 全在本机。核心源免密钥能跑，但「LLM 相关性打分 + narrative tag」这层最值钱的能力要自己配 ANTHROPIC_API_KEY。Health 页面会老老实实显示坏掉的源，但不会替你修：测评时 reddit 采集器已经悄悄坏了 11 天。所以得养成看 /health 的习惯。
+      需要你自己跑自己维护 — 调度器、数据库、前端 build 全在本机。核心源免密钥能跑，但「LLM 相关性打分 + narrative tag」这层最值钱的能力要自己配 ANTHROPIC_API_KEY。Health 页面会老老实实显示坏掉的源，但不会替你修：测评时 reddit 采集器已经悄悄坏了 11 天。所以得养成看 /health 的习惯。仓库还没有 LICENSE 文件，二次分发法律上不清。
+  persona:
+    en: "Solo trader / researcher who wants to track narrative shifts across multiple news sources without paying $500/mo for Bloomberg or Refinitiv, comfortable running Python services on their own machine."
+    zh: "想跨多个新闻源跟踪叙事变化、不愿意为 Bloomberg / Refinitiv 付每月 $500 的个人交易者 / 研究者，能自己在本机跑 Python 服务。"
+  scenario:
+    en: "You want to wake up and immediately see what stories are clustering across HN + Reddit + RSS + Twitter, with relevance scores against your watchlist tickers. You don't want the noise of raw RSS readers; you want events with multi-source coverage."
+    zh: "早上起来想直接看到 HN + Reddit + RSS + Twitter 在聚合什么故事，结合你的 watchlist 给出相关性打分。不想要 RSS 阅读器那种原始噪音，要的是多源验证过的事件。"
+  without_this:
+    en: "You either pay for a commercial feed (Bloomberg / Refinitiv / Stocktwits Premium), or hand-watch 10 RSS feeds + Twitter + HN + Reddit each morning, or build your own crawler-and-cluster from scratch."
+    zh: "要么订商用源（Bloomberg / Refinitiv / Stocktwits Premium），要么每天早上手刷 10 个 RSS + Twitter + HN + Reddit，要么从零自己写爬虫加聚类。"
+  with_this:
+    en: "Run `make dev` once, point your browser at localhost:8001 — every 30 min the scheduler crawls 10+ sources, tags articles, clusters into narrative events, scores by relevance. The health dashboard tells you which collectors are stale."
+    zh: "跑一次 `make dev`，浏览器指向 localhost:8001 —— 调度器每 30 分钟抓 10+ 源、打标签、聚成事件、按相关性打分。health 页面告诉你哪个 collector 是 stale 的。"
+  cost_summary:
+    en: "Free as OSS (no LICENSE file though). Need Python 3.11+, SQLite (built-in), Node.js for frontend. Optional: ANTHROPIC_API_KEY for LLM relevance scoring (~$10/mo for personal use)."
+    zh: "开源免费（虽然还没 LICENSE 文件）。要 Python 3.11+、SQLite（内置）、Node.js 跑前端。可选：ANTHROPIC_API_KEY 用于 LLM 相关性打分（个人用大约月 $10）。"
+  how:
+    en: |
+      1. `git clone https://github.com/zinan92/intel && cd intel`
+      2. `make dev` (starts FastAPI :8001 + frontend :5173 + scheduler in background)
+      3. Visit `localhost:8001/health` to see source status
+      4. Visit `localhost:5173` for the feed UI
+      5. (Optional) Set ANTHROPIC_API_KEY in .env to enable LLM scoring
+    zh: |
+      1. `git clone https://github.com/zinan92/intel && cd intel`
+      2. `make dev`（同时起 FastAPI :8001 + frontend :5173 + scheduler 后台进程）
+      3. 访问 `localhost:8001/health` 看源状态
+      4. 访问 `localhost:5173` 看 feed UI
+      5. （可选）.env 里设 ANTHROPIC_API_KEY 开启 LLM 打分
+  examples:
+  - context:
+      en: "Morning brief: see what's clustering across financial Twitter + HN + RSS"
+      zh: "早晨摘要：看 financial Twitter + HN + RSS 在聚什么"
+    you_say:
+      en: "curl localhost:8001/api/events?limit=20&min_signal=0.6"
+      zh: "curl localhost:8001/api/events?limit=20&min_signal=0.6"
+    what_happens:
+      en: "Returns the top 20 narrative events from the last 24h with at least 2 source confirmations + signal score ≥0.6. Each event lists the source articles + first-seen timestamp + cluster keywords."
+      zh: "返回过去 24h 至少 2 源确认、信号分 ≥0.6 的 20 条 narrative event。每条事件列出来源文章、首次出现时间、聚类关键词。"
+  - context:
+      en: "Watchlist filtering: only show events touching tickers I care about"
+      zh: "Watchlist 过滤：只看涉及我关心的 ticker 的事件"
+    you_say:
+      en: "curl 'localhost:8001/api/events?tickers=NVDA,TSLA&since=24h'"
+      zh: "curl 'localhost:8001/api/events?tickers=NVDA,TSLA&since=24h'"
+    what_happens:
+      en: "Filters to events that LLM-tagged as relevant to NVDA or TSLA. Returns ranked by signal score + source breadth."
+      zh: "过滤出 LLM 标记为 NVDA / TSLA 相关的事件，按信号分 + 多源覆盖排序。"
+  - context:
+      en: "Source health: which collectors have stopped working?"
+      zh: "源健康：哪些 collector 停了？"
+    you_say:
+      en: "curl localhost:8001/health | jq '.sources[] | select(.status != \"ok\")'"
+      zh: "curl localhost:8001/health | jq '.sources[] | select(.status != \"ok\")'"
+    what_happens:
+      en: "Lists each collector with its last-success timestamp + status. At eval time, reddit had been stale for 266h — found because /health honestly reports it."
+      zh: "列出每个 collector 的上次成功时间和状态。eval 时 reddit 已经 stale 266 小时 —— /health 老实地报出来了。"
+  next_step:
+    en: |
+      Three actions to lift the score: (a) add LICENSE file (one commit) — closes the legal-ambiguity penalty; (b) fix the reddit collector regression that /health reveals — proves health checks aren't decorative; (c) fix the 2 failing migration tests in source-registry — the 366/368 number itself is a small concern.
+    zh: |
+      三个加分动作：(a) 加 LICENSE 文件（一个 commit）—— 关掉法律不清的扣分；(b) 修 /health 里 reddit 这个 collector 的退化 —— 证明 health 检查不是装饰；(c) 修 source-registry 那 2 个跑不过的 migration 测试 —— 366/368 这个数字本身是个小污点。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Molecule — fixed pipeline (collector → tagger → clusterer → scorer → API).
+      Each step is deterministic; LLM is a tagger plug-in, not a runtime dispatcher.
+    zh: |
+      分子 —— 固定流水线（collector → tagger → clusterer → scorer → API）。
+      每一步都是确定性的；LLM 只是 tagger 插件，不是运行时 dispatcher。
+  nodes:
+  - id: sources
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "10+ sources\n(RSS, HN, Reddit,\nGitHub, Yahoo, …)"
+      zh: "10+ 信息源\n(RSS, HN, Reddit,\nGitHub, Yahoo, …)"
+  - id: collector
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "Per-source\ncollector"
+      zh: "各源 collector"
+  - id: tagger
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "Article tagger\n(rule + LLM)"
+      zh: "文章打标签\n(规则 + LLM)"
+  - id: clusterer
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "Narrative\nclusterer"
+      zh: "叙事聚类"
+  - id: scorer
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: "Signal scorer\n(multi-source\nweighted)"
+      zh: "信号打分\n(多源加权)"
+  - id: api
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: "FastAPI :8001\n+ React UI"
+      zh: "FastAPI :8001\n+ React UI"
+  edges:
+  - {from: sources, to: collector}
+  - {from: collector, to: tagger}
+  - {from: tagger, to: clusterer}
+  - {from: clusterer, to: scorer}
+  - {from: scorer, to: api}
+similar_repos:
+- slug: zinan92--kline
+  shared_purpose:
+    en: |
+      Both are author's self-hosted trading-pipeline data services. Both target Park-trading 8-step pipeline as upstream data layers.
+    zh: |
+      都是作者自托管的交易管线数据服务。都瞄准 Park 交易 8 步管线的上游数据层。
+  this_better_at:
+    en: |
+      Qualitative + narrative data — RSS / HN / Reddit / Twitter narrative clustering, LLM-tagged relevance. Stage 02 of the pipeline.
+    zh: |
+      定性 + 叙事数据 —— RSS / HN / Reddit / Twitter 叙事聚类、LLM 打标签的相关性。管线第 02 阶段。
+  other_better_at:
+    en: |
+      Quantitative OHLCV across 4 asset classes. Pure price-and-volume; no narrative analysis.
+    zh: |
+      4 资产类的定量 OHLCV。纯价格和成交量，不做叙事分析。
+deployment:
+  installable: true
+  install_methods:
+  - method: git clone + make dev
+    platform: any (Python 3.11+, Node.js 18+)
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: Anthropic API (optional)
+  purpose: LLM relevance scoring + narrative tagging
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: "~$10/mo for personal use; service runs without it but loses LLM tagging"
+- name: HN / Reddit / RSS / GitHub / Yahoo / Google News
+  purpose: Public news + social aggregation
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: "Public endpoints; rate-limited but no signup"
+workflow_placements:
+- workflow_id: park-trading-v1
+  stage_id: 02_intel_aggregation
+  role: primary
+  reason:
+    en: "Stage 02 of the Park trading pipeline — narrative + qualitative data layer that downstream signal/risk services consume."
+    zh: "Park 交易管线 02 阶段 —— 叙事 + 定性数据层，下游信号 / 风控服务消费它。"

@@ -9,7 +9,235 @@ complexity: complex
 uses_areas: true
 status: evaluated
 current_bucket: usable
-notes: Aggregator and orchestrator for multiple content-related capabilities. Evaluate both end-user orchestration quality and downstream capability delegation.
+last_evaluated: "2026-04-09"
+version_tested: main@HEAD
+stars: 0
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 1
+recently_active: true
+business_category:
+  en: AI content workflow orchestrator
+  zh: AI 内容工作流编排
+use_case_tags:
+- content-pipeline
+- orchestrator
+- multi-skill-router
+- xiaohongshu-automation
+- content-creation
+notes: |
+  Aggregator and orchestrator for multiple content-related capabilities. The
+  CLI 'content' is a single entrypoint that dispatches to a set of skills:
+  ctk-download, ctk-analyze, ctk-rewrite, ctk-videocut, ctk-publish, plus
+  platform-specific ctk-xiaohongshu. Each skill is a separate repo that
+  auto-installs on first use (git clone + venv + deps, ~10-30s first time).
+
+  Compound layer: runtime decision is "which skill is this URL/file/intent
+  for?" — answered by an LLM-aware router. That makes static eval insufficient
+  to validate the user-facing layer; need live runs for each documented
+  intent. Evaluate both end-user orchestration quality and downstream
+  capability delegation.
+
+product_view:
+  one_liner:
+    en: "One CLI ('content') that routes URL / video / text / platform-task to the right downstream skill — download, extract, analyze, rewrite, edit, publish, native-XHS — installing each skill on first use."
+    zh: "一条 CLI ('content') 把 URL / 视频 / 文本 / 平台任务路由到对应的下游 skill —— 下载、提取、分析、改写、剪辑、发布、小红书原生 —— 每个 skill 第一次用时自动装。"
+  best_for:
+    en: "Content creators running an end-to-end production line who want one entry point ('content X') instead of remembering 7 separate tools. Already comfortable with CLI orchestration; willing to wait 10-30s for first-use skill install."
+    zh: "在跑端到端生产线、想要一个入口 ('content X') 而不是记 7 套工具的内容创作者。熟悉 CLI 编排、能接受第一次用某个 skill 时等 10-30s 自动装。"
+  watch_out:
+    en: |
+      Compound layer — failures cascade. If the router misroutes (e.g., picks ctk-rewrite when you wanted ctk-analyze), the failure happens deep in the downstream skill and the error message comes from there, not from content-toolkit. First-use auto-install can fail behind a corporate proxy. Each downstream skill has its own quality bar — content-toolkit is only as good as ctk-{download,analyze,rewrite,videocut,publish}'s current state. content-downloader (one of the downstreams) was failing on WeChat + X at last eval.
+    zh: |
+      Compound 层 —— 失败会级联。如果 router 路错了（比如该用 ctk-analyze 选了 ctk-rewrite），错误是从下游 skill 深处冒上来的，不是 content-toolkit 自己的报错。第一次自动装在公司代理后面可能挂。每个下游 skill 都有自己的质量水准 —— content-toolkit 不会比 ctk-{download,analyze,rewrite,videocut,publish} 当前状态更好。content-downloader（下游之一）在公众号 + X 上最近的测评里是坏的。
+  persona:
+    en: "Content creator who already has 5+ tools doing different stages (download / extract / rewrite / videocut / publish) and wants to stop typing different command names. Prefers one CLI shape with delegated skills."
+    zh: "已经有 5+ 个工具处理不同阶段（下载 / 提取 / 改写 / 剪辑 / 发布）的内容创作者，受够了输不同命令名。想要一个 CLI 形状把 skill 派出去。"
+  scenario:
+    en: "You see a viral Douyin video. You want to: download it → analyze the hook → rewrite for XHS → cut a 30s clip with subtitles → publish. Right now that's 5 tools with 5 syntaxes. With content-toolkit it's `content download`, `content analyze`, `content rewrite`, `content videocut`, `content publish` — same shape, sub-skills cooperate."
+    zh: "看到一个抖音爆款。你要：下载 → 分析 hook → 改写小红书版 → 剪 30s 带字幕版 → 发布。现在这是 5 个工具 5 套语法。用 content-toolkit 是 `content download / analyze / rewrite / videocut / publish` —— 一个形状，下游 skill 协作。"
+  without_this:
+    en: "Memorize 5+ tool names, run each separately, manually pass output paths between them, debug each tool's quirks individually. Stage transitions are manual."
+    zh: "记 5+ 个工具名，一个一个跑，输出路径手动传给下个工具，每个工具的脾气单独 debug。阶段切换全靠手。"
+  with_this:
+    en: "`content <verb> <input>` — toolkit routes based on input shape (URL → download, .mp4 → videocut, content dir → extract/rewrite). Output paths chain automatically."
+    zh: "`content <动词> <输入>` —— toolkit 按输入形状路由（URL → 下载、.mp4 → 剪辑、内容目录 → 提取 / 改写）。输出路径自动链。"
+  cost_summary:
+    en: "Free OSS (MIT). Need Node.js 18+, Python 3.11+, ffmpeg, git. ANTHROPIC_API_KEY for analysis + rewrite. First-time install of a skill takes 10-30s (clones repo + venv). Each downstream skill may have its own deps."
+    zh: "MIT 免费开源。要 Node.js 18+、Python 3.11+、ffmpeg、git。分析 + 改写要 ANTHROPIC_API_KEY。第一次用某 skill 装 10-30s（clone repo + 建 venv）。下游 skill 可能各自有依赖。"
+  how:
+    en: |
+      1. `npm install -g @zinan92/content-toolkit` (or git clone + npm link)
+      2. `content` (no args) — see all available verbs and skills
+      3. `content download <URL>` — first run installs ctk-download
+      4. `content analyze trends` — first run installs ctk-analyze
+      5. Mix verbs as your pipeline needs
+    zh: |
+      1. `npm install -g @zinan92/content-toolkit`（或 git clone + npm link）
+      2. `content`（不带参数）—— 看所有可用动词和 skill
+      3. `content download <URL>` —— 第一次跑会装 ctk-download
+      4. `content analyze trends` —— 第一次跑会装 ctk-analyze
+      5. 按管线需要混搭动词
+  examples:
+  - context:
+      en: "End-to-end: see a video, take it to publish-ready"
+      zh: "端到端：看到一个视频，做到可发布"
+    you_say:
+      en: 'content download https://www.douyin.com/video/xxx && content extract output/douyin/.../xxx/ && content rewrite output/douyin/.../xxx/ --from douyin --to xiaohongshu'
+      zh: 'content download https://www.douyin.com/video/xxx && content extract output/douyin/.../xxx/ && content rewrite output/douyin/.../xxx/ --from douyin --to xiaohongshu'
+    what_happens:
+      en: "Three skills chain: download (content-downloader) → extract (content-extractor) → rewrite (ctk-rewrite). Each runs in its own venv, output dirs match the next input."
+      zh: "3 个 skill 串：download (content-downloader) → extract (content-extractor) → rewrite (ctk-rewrite)。各自 venv，输出目录正好是下一步的输入。"
+  - context:
+      en: "Smart hint: pass an URL when content-toolkit isn't sure"
+      zh: "智能提示：传一个 URL 但 content-toolkit 不确定怎么用"
+    you_say:
+      en: 'content https://www.xiaohongshu.com/explore/xxx'
+      zh: 'content https://www.xiaohongshu.com/explore/xxx'
+    what_happens:
+      en: "CLI hints: 'looks like you want to download? try content download <URL>'. Doesn't auto-route to avoid silent wrong dispatch."
+      zh: "CLI 提示「看起来你想下载？试试 content download <URL>」。不自动路由，避免 silent 错派。"
+  - context:
+      en: "Native XHS action: post a note end-to-end"
+      zh: "小红书原生动作：发一条笔记"
+    you_say:
+      en: 'content xiaohongshu post --content "你的文案" --images img1.jpg img2.jpg'
+      zh: 'content xiaohongshu post --content "你的文案" --images img1.jpg img2.jpg'
+    what_happens:
+      en: "Routes to ctk-xiaohongshu skill which handles auth + upload + post. Auto-installs on first run. Returns post URL on success."
+      zh: "路由到 ctk-xiaohongshu skill 处理鉴权 + 上传 + 发帖。第一次用自动装。成功返回帖子 URL。"
+  next_step:
+    en: |
+      To raise score: (a) since downstream content-downloader has known WeChat + X failures, content-toolkit's smart-routing should warn when delegating to a known-broken adapter — not just transparently pass the failure through; (b) provide a `content health` verb that pings each downstream skill and reports which are installed / functional / stale; (c) document the trade-off between `content X` (toolkit-routed) vs invoking each skill directly.
+    zh: |
+      想加分：(a) 既然下游 content-downloader 在公众号 + X 已知坏，content-toolkit 路由时应该 warn 当派到已知坏的 adapter —— 而不是透传错误；(b) 加一个 `content health` 动词，ping 每个下游 skill，报哪个装了、哪个能跑、哪个 stale；(c) 文档化 `content X`（走 toolkit 路由）vs 直接调每个 skill 的 trade-off。
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: |
+      Compound — runtime LLM-aware routing. The 'content' entrypoint inspects
+      input shape (URL / file / text / dir) AND verb intent to dispatch to one
+      of 6+ skills, each with its own state. This is not a fixed pipeline.
+    zh: |
+      复合物 —— 运行时 LLM 感知路由。'content' 入口看输入形状（URL / 文件 / 文本 /
+      目录）+ 动词意图，派到 6+ 个 skill 之一，每个 skill 有自己的状态。这不是固定管线。
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "URL / file /\ntext / dir / verb"
+      zh: "URL / 文件 /\n文本 / 目录 / 动词"
+  - id: router
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "Smart router\n(intent + shape)"
+      zh: "智能 router\n(意图 + 形状)"
+  - id: download
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "ctk-download"
+      zh: "ctk-download"
+  - id: analyze
+    type: atom
+    rank: 2
+    lane: 1
+    label:
+      en: "ctk-analyze"
+      zh: "ctk-analyze"
+  - id: rewrite
+    type: atom
+    rank: 2
+    lane: 2
+    label:
+      en: "ctk-rewrite"
+      zh: "ctk-rewrite"
+  - id: videocut
+    type: atom
+    rank: 2
+    lane: 3
+    label:
+      en: "ctk-videocut"
+      zh: "ctk-videocut"
+  - id: publish
+    type: atom
+    rank: 2
+    lane: 4
+    label:
+      en: "ctk-publish"
+      zh: "ctk-publish"
+  - id: xhs
+    type: atom
+    rank: 2
+    lane: 5
+    label:
+      en: "ctk-xiaohongshu\n(native ops)"
+      zh: "ctk-xiaohongshu\n(原生动作)"
+  - id: output
+    type: end
+    rank: 3
+    lane: 0
+    label:
+      en: "Skill-specific\noutput"
+      zh: "Skill 各自\n的输出"
+  edges:
+  - {from: input, to: router}
+  - {from: router, to: download}
+  - {from: router, to: analyze}
+  - {from: router, to: rewrite}
+  - {from: router, to: videocut}
+  - {from: router, to: publish}
+  - {from: router, to: xhs}
+  - {from: download, to: output}
+  - {from: analyze, to: output}
+  - {from: rewrite, to: output}
+  - {from: videocut, to: output}
+  - {from: publish, to: output}
+  - {from: xhs, to: output}
+similar_repos:
+- slug: zinan92--content-downloader
+  shared_purpose:
+    en: "Both serve the content-pipeline. content-toolkit is the orchestrator over content-downloader (and 5 other skills)."
+    zh: "都服务 content-pipeline。content-toolkit 是编排器，content-downloader 是它编排的下游之一。"
+  this_better_at:
+    en: "Higher-level ergonomics — one CLI shape covering all pipeline stages. Smart hints when intent is unclear."
+    zh: "更高层的人体工学 —— 一个 CLI 形状覆盖所有管线阶段。意图不清时给智能提示。"
+  other_better_at:
+    en: "Atomic capability — content-downloader is one tool, easier to reason about + reproducible."
+    zh: "原子能力 —— content-downloader 是单一工具，更容易理解 + 可复现。"
+deployment:
+  installable: true
+  install_methods:
+  - method: npm install -g @zinan92/content-toolkit
+    platform: any (Node.js 18+, Python 3.11+ on demand)
+    complexity: easy
+  - method: git clone + npm link
+    platform: any
+    complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+third_party_services:
+- name: GitHub (for downstream skill repos)
+  purpose: First-time skill auto-install (git clone)
+  required: true
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: "Public repos; needs network on first use of each skill"
+- name: Anthropic API (downstream)
+  purpose: ctk-analyze + ctk-rewrite use Claude
+  required: false
+  api_key_needed: true
+  signup_needed: true
+  free_tier: false
+  cost_note: "Required only for the analyze + rewrite verbs"
 workflow_placements:
 - workflow_id: park-content-v1
   stage_id: 05_production
@@ -17,3 +245,9 @@ workflow_placements:
   reason:
     en: Author's content-rewriter logic. Supplements Humanizer-zh on the production layer.
     zh: 作者自己的内容改写工具。在生产层补 Humanizer-zh。
+- workflow_id: park-content-v1
+  stage_id: 06_ideation_assembly
+  role: primary
+  reason:
+    en: Top-level orchestrator across the content pipeline — inputs flow through here, get routed to the right stage.
+    zh: 内容管线最顶层的 orchestrator —— 输入从这里流入，路由到正确的阶段。
