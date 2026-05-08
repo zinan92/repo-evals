@@ -128,7 +128,7 @@ third_party_services:
 workflow_placements:
   - workflow_id: ""
     stage_id: ""
-    role: primary          # primary | alternative | supporting
+    role: primary          # primary | support | alternative | reference
     reason:
       en: ""
       zh: ""
