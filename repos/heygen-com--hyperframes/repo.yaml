@@ -33,8 +33,8 @@ eval_discipline_score: 3         # 11 active CI workflows: CI, regression, previ
                                  # Publish to npm. Dockerfile.test for reproducible runs.
 recently_active: true            # 100+ commits in last 30 days; pushed_at 2026-05-08
 
-business_category: dev-tooling
-use_case_tags: ["ai-video", "agent-tooling", "html-to-video", "framework", "skill-bundle"]
+business_category: content
+use_case_tags: ["ai-video", "creative-assembly", "html-to-video", "agent-tooling", "framework"]
 
 notes: |
   HeyGen's open-source bet on "what should agents author when they make video?".
@@ -170,15 +170,21 @@ third_party_services:
 # === Workflow placement =====================================================
 workflow_placements:
   - workflow_id: "park-content-v1"
-    stage_id: "production"
+    stage_id: "06_assembly"
     role: primary
     reason:
-      en: "HyperFrames is the rendering stage — agent has the script, this is what turns it into pixels."
-      zh: "HyperFrames 落在「production」阶段 — agent 有脚本之后，HyperFrames 把它变成像素。"
+      en: "HyperFrames *is* creative assembly. Once the agent has a script/storyboard, HyperFrames is the tool that wraps it into the platform-ready creative artifact — vertical video for douyin/xhs/TikTok, intro/outro stings, animated explainers. HTML in, MP4 out."
+      zh: "HyperFrames 就是「创意组装」这一步。Agent 有了脚本/分镜之后，HyperFrames 把它包成平台可用的创意产物 — 抖音/小红书/TikTok 竖版视频、片头片尾、动画讲解。HTML 进，MP4 出。"
+  - workflow_id: "park-content-v1"
+    stage_id: "05_production"
+    role: supporting
+    reason:
+      en: "Also reaches up into production: the agent uses /hyperframes to author the HTML composition itself (the 'human-voiced draft in publishable form') — it's not just a renderer."
+      zh: "也涉及「内容生产」：agent 用 /hyperframes 写 HTML 组合本身（「像人写的草稿，已是可发布形态」）— 不只是渲染器。"
 
 # === Workflow diagram (compound — see why_layer) ============================
 workflow_diagram:
-  layout: tree
+  layout: linear
   why_layer:
     en: "Compound: at runtime an LLM picks which skill to invoke (/hyperframes vs /gsap vs /lottie vs /three vs /tailwind), and the framework dispatches to the right Frame Adapter (GSAP / Anime.js / Lottie / Three.js / CSS / WAAPI). Routing is dynamic, not a fixed pipeline."
     zh: "Compound 层：运行时 LLM 决定调哪个 skill（/hyperframes / /gsap / /lottie / /three / /tailwind），框架再 dispatch 到对应 Frame Adapter（GSAP / Anime.js / Lottie / Three.js / CSS / WAAPI）。路由是动态的，不是固定流水线。"
