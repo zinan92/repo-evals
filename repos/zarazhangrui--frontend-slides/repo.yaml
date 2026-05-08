@@ -9,6 +9,7 @@ complexity: medium
 uses_areas: false
 status: evaluated
 current_bucket: usable
+has_license: true  # 2026-05-08 audit: GitHub API license=mit, LICENSE file exists
 notes: 'Claude Code skill (LLM-driven prompt) + 3 supporting scripts (extract-pptx,
 
   export-pdf, deploy). Plugin marketplace structure is valid; SKILL.md references
