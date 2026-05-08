@@ -11,6 +11,22 @@ status: evaluated
 current_bucket: usable
 last_evaluated: '2026-05-04'
 version_tested: main@HEAD (skills-index v1.2.0, generated 2026-04-29)
+stars: 658
+archived: false
+has_license: false  # 2026-05-07 audit: GitHub API license=null, no LICENSE file (README MIT badge does not match)
+multilingual_readme: false
+release_pipeline_score: 2
+eval_discipline_score: 1
+recently_active: true
+business_category:
+  en: GTM / sales / marketing skill catalog
+  zh: GTM / 销售 / 营销技能目录
+use_case_tags:
+- skill-catalog
+- gtm-automation
+- sales-marketing
+- npm-distributed
+- multi-agent-platform
 notes: 'GTM / sales / marketing / SEO / CI / lead-gen skill catalog distributed
 
   as the `goose-skills` npm package (v1.0.1, MIT). Master skill installs
@@ -51,12 +67,10 @@ product_view:
     en: Solo founders / GTM ops people who use coding agents for non-engineering work and want a curated library of growth skills they don't have to write themselves.
     zh: 用 coding agent 做非工程工作的独立创始人、GTM ops 同学；想要一份现成的增长 skills 库，不想自己从头写。
   watch_out:
-    en: 'The README still advertises 108 skills, but skills-index.json (generated 2026-04-29) shipped 204 — the docs are stale, the catalog is bigger. Each skill''s quality is independent, and there are 204 of them; do not treat "the catalog is great" as "every skill is great". The npm package is the install path, but skill content is just markdown — you can also `git clone` the repo and copy specific skills if you want offline / version-pinned use.
-
-      '
-    zh: 'README 还在宣传 108 个 skill，实际 skills-index.json（2026-04-29 生成）已经 204 个 —— 文档过时，目录更大。每个 skill 质量独立，一共 204 个，别把「目录质量高」直接等同于「每个 skill 都好」。npm 是官方安装路径，但 skill 内容就是 markdown —— 想离线 / 锁版本可以直接 git clone 后挑你要的 skill。
-
-      '
+    en: |
+      The README still advertises 108 skills, but skills-index.json (generated 2026-04-29) shipped 204 — the docs are stale, the catalog is bigger. Each skill's quality is independent, and there are 204 of them; do not treat "the catalog is great" as "every skill is great". The npm package is the install path, but skill content is just markdown — you can also `git clone` the repo and copy specific skills if you want offline / version-pinned use. README badges show "License: MIT" but the GitHub API reports license=null and there is no LICENSE file in the tree — the npm package file declares MIT, but the source tree itself is unlicensed. Many composites call external APIs (Apollo, Reddit, Meta Ad Library, LinkedIn scrapers) — you supply the keys, and Apollo+Semrush+Ahrefs are not free.
+    zh: |
+      README 还在宣传 108 个 skill，实际 skills-index.json（2026-04-29 生成）已经 204 个 —— 文档过时，目录更大。每个 skill 质量独立，一共 204 个，别把「目录质量高」直接等同于「每个 skill 都好」。npm 是官方安装路径，但 skill 内容就是 markdown —— 想离线 / 锁版本可以直接 git clone 后挑你要的 skill。README 上挂着 "License: MIT" 徽章但 GitHub API 报 license=null，仓库里也没 LICENSE 文件 —— npm 包声明 MIT，但源代码树本身是没授权的。很多 composite 会调外部 API（Apollo / Reddit / Meta Ad Library / LinkedIn 爬虫），key 你自己出，Apollo + Semrush + Ahrefs 都不便宜。
   use_for:
   - en: Solo founders / GTM ops people using AI agents (Claude Code / Cursor / Codex) for non-engineering work.
     zh: 用 AI agent 做非工程工作的独立创始人 / GTM ops。
@@ -69,13 +83,67 @@ product_view:
     zh: 不要把「目录质量」等同于「每个 skill 的质量」—— 上生产前先抽样具体 skill 验证。
   - en: Don't trust the README headline numbers (108 skills) — manifest has 204; check skills-index.json for current count.
     zh: 别信 README 上写的 108 个 skill —— manifest 已经 204 个；要看 skills-index.json 取最新数。
-stars: 650
-archived: false
-has_license: false  # 2026-05-07 audit: GitHub API license=null, no LICENSE file
-multilingual_readme: false
-release_pipeline_score: 2
-eval_discipline_score: 1
-recently_active: true
+  persona:
+    en: Solo founder or GTM-ops generalist who uses Claude Code / Cursor / Codex for non-engineering work — drafting LinkedIn posts, mining ad angles, scraping competitor data, qualifying inbound leads — and is tired of re-inventing the same prompts every week.
+    zh: 用 Claude Code / Cursor / Codex 做非工程工作的独立创始人 / GTM ops 通才 —— 写 LinkedIn 帖子、挖广告创意角度、爬竞品数据、给 inbound lead 评分 —— 厌倦了每周重写同一套 prompt。
+  scenario:
+    en: You want to ask your coding agent "build me a battlecard for Notion vs Linear" or "qualify this inbound lead against my ICP" and have a vetted, reusable skill answer instead of spelling out the workflow from scratch every time.
+    zh: 你想跟 coding agent 说「给我做一份 Notion vs Linear 的销售对照卡」或「按我的 ICP 给这条 inbound lead 评分」，让一个经过设计的可复用 skill 来执行，而不是每次从零口述工作流。
+  without_this:
+    en: You write the same 50 prompts yourself, copy them into a personal skills folder, and hope you remember which version is current. Or you pay for one-shot SaaS tools (Apollo / Clay / Common Room) that don't compose with each other.
+    zh: 你自己写同样 50 条 prompt、塞进自己的 skills 目录、祈祷自己记得哪个版本是最新的。或者花钱买一个个一次性 SaaS（Apollo / Clay / Common Room），互相还接不上。
+  with_this:
+    en: One `npx gooseworks install --all` and your agent has 204 vetted GTM skills with a uniform metadata contract. Each skill works the same way across Claude Code / Cursor / Codex.
+    zh: 一条 `npx gooseworks install --all`，你的 agent 就拿到 204 个有统一元数据契约的 GTM skill。每个 skill 在 Claude Code / Cursor / Codex 上的用法一致。
+  cost_summary:
+    en: The skill bundle itself is free (npm package declares MIT; repo tree has no LICENSE — caveat). Some composites need third-party API keys (Apollo, Semrush, Ahrefs, Meta Ad Library, Reddit, LinkedIn scrapers via Apify) — those are paid. Per-skill LLM tokens vary; multi-skill playbooks (e.g. event-prospecting-pipeline) are token-heavy.
+    zh: 技能包本身免费（npm 包声明 MIT，但仓库树没有 LICENSE 文件 —— 注意）。一部分 composite 要外部 API key（Apollo / Semrush / Ahrefs / Meta Ad Library / Reddit / Apify 上的 LinkedIn 爬虫）—— 那些是收费的。每个 skill 的 LLM token 消耗不同；多 skill 的 playbook（如 event-prospecting-pipeline）token 消耗大。
+  how:
+    en: |
+      1. Pick your agent: `npx gooseworks install --claude` (or `--cursor` / `--codex` / `--all`)
+      2. Browse: `npx gooseworks search "reddit scraping"` or visit https://skills.gooseworks.ai
+      3. In your agent, ask by skill name: "use ad-angle-miner on https://example.com/reviews"
+      4. (offline alt) `git clone https://github.com/gooseworks-ai/goose-skills` and copy specific skills/ subdirs into your agent's skills folder
+      5. For composites needing API keys, set them in your agent env per the skill's SKILL.md
+    zh: |
+      1. 选你用的 agent：`npx gooseworks install --claude`（或 `--cursor` / `--codex` / `--all`）
+      2. 浏览：`npx gooseworks search "reddit scraping"` 或访问 https://skills.gooseworks.ai
+      3. 在 agent 里按 skill 名调用：「用 ad-angle-miner 处理 https://example.com/reviews」
+      4. （离线方案）`git clone https://github.com/gooseworks-ai/goose-skills`，把指定 skills/ 子目录拷到 agent 的 skills 文件夹
+      5. 需要外部 API key 的 composite，按它 SKILL.md 的指示在 agent env 里配
+  examples:
+  - context:
+      en: Mine converting ad angles from a competitor's reviews + Reddit threads
+      zh: 从竞品评论 + Reddit 讨论里挖出能转化的广告创意角度
+    you_say:
+      en: "Use ad-angle-miner to surface 5 ad angles for Notion based on G2 reviews + r/productivity"
+      zh: "用 ad-angle-miner 基于 G2 评论 + r/productivity 给 Notion 列 5 个广告创意角度"
+    what_happens:
+      en: "Agent runs the composite skill: scrapes review sites, pulls Reddit threads, clusters pain language, returns ranked angles with example phrasing. Token-heavy + may need a Reddit API key for high volume."
+      zh: "Agent 跑 composite skill：抓评论站、拉 Reddit 线程、聚类痛点语言、返回带样例措辞的排序角度。Token 消耗大；高量调用要 Reddit API key。"
+  - context:
+      en: Qualify an inbound lead against your ICP without writing prompts from scratch
+      zh: 不从零写 prompt，按 ICP 给 inbound lead 打分
+    you_say:
+      en: "Run inbound-lead-qualification on these 12 form submissions vs my ICP doc"
+      zh: "用 inbound-lead-qualification 处理这 12 条表单 + 我的 ICP 文档"
+    what_happens:
+      en: "Skill applies the ICP rules from its meta contract, scores + tags each lead, surfaces the top fits and the disqualifications with reasons. Pure-LLM — no external API needed."
+      zh: "Skill 按 meta 契约里的 ICP 规则给每条 lead 打分 + 打标签，列出最匹配的和淘汰原因。纯 LLM —— 不需要外部 API。"
+  - context:
+      en: Ship a feature launch with brief + LinkedIn + X + carousel in one shot
+      zh: 一键产出 feature 发布的 brief + LinkedIn + X + 轮播图
+    you_say:
+      en: "Run feature-launch-playbook for our new export feature — voice = our brand-voice doc"
+      zh: "用 feature-launch-playbook 给我们的新导出功能产出全套 —— 声音用我们的 brand-voice 文档"
+    what_happens:
+      en: "Playbook chains create-linkedin-content + create-x-content + goose-graphics + content-brief-factory. Outputs voice-tuned drafts + matching graphic. The 5 playbooks are the heaviest molecules in the catalog."
+      zh: "Playbook 串接 create-linkedin-content + create-x-content + goose-graphics + content-brief-factory，输出风格一致的草稿 + 配图。5 个 playbook 是目录里最重的分子。"
+  next_step:
+    en: |
+      Three actions to lift the score: (a) ship a real LICENSE file in the repo tree (npm package claims MIT but the source tree has none — closes the unlicensed-with-650-stars penalty); (b) update README headline to match skills-index.json (108 → 204) — fixes a stale-doc claim_with_concerns; (c) record an end-to-end agent-session transcript invoking 1 capability + 1 composite + 1 playbook so claim-007 (end-to-end) moves from `untested` to `passed`.
+    zh: |
+      三个加分动作：(a) 在仓库树里加一份真实的 LICENSE 文件（npm 包声明 MIT，但源树没有 —— 关掉「658 star 还无授权」的扣分）；(b) 更新 README 头条数字对齐 skills-index.json（108 → 204）—— 修一条 stale-doc 的 passed_with_concerns；(c) 录一段端到端 agent 会话记录，跑通 1 个 capability + 1 个 composite + 1 个 playbook，让 claim-007（end-to-end）从 `untested` 升到 `passed`。
 deployment:
   installable: true
   install_methods:
@@ -96,12 +164,12 @@ third_party_services:
   free_tier: false
   cost_note: Per-skill execution token cost varies; some skills hit external APIs (Reddit, GitHub) too
 - name: Per-skill external APIs
-  purpose: Some composites call Reddit / GitHub / Meta Ad Library / etc.
+  purpose: Some composites call Reddit / GitHub / Meta Ad Library / Apollo / Semrush / Ahrefs / Apify
   required: false
   api_key_needed: true
   signup_needed: true
   free_tier: true
-  cost_note: Each skill in the catalog may need its own API keys — read SKILL.md before running
+  cost_note: Each skill in the catalog may need its own API keys — read SKILL.md before running. Apollo/Semrush/Ahrefs are paid.
 workflow_placements:
 - workflow_id: park-development-v1
   stage_id: 03_code_review
@@ -109,3 +177,96 @@ workflow_placements:
   reason:
     en: Goose-runtime methodology skills — alternative when the agent harness is Goose rather than Claude Code.
     zh: Goose 运行时的方法论 skills —— 当 agent 平台是 Goose 而非 Claude Code 时的替代。
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: |
+      Molecule — uniform metadata contract routes one of 204 skills based on user request. Capabilities (atoms) feed Composites; Composites + Capabilities feed Playbooks. No LLM-runtime dispatch at the catalog layer.
+    zh: |
+      Molecule —— 统一元数据契约根据用户请求路由 204 个 skill 之一。Capabilities（原子）喂给 Composites；Composites + Capabilities 喂给 Playbooks。目录层没有 LLM-runtime dispatch。
+  nodes:
+  - id: agent
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "Coding agent\n(Claude / Cursor\n/ Codex)"
+      zh: "Coding agent\n(Claude / Cursor\n/ Codex)"
+  - id: catalog
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "skills-index.json\n(catalog router)"
+      zh: "skills-index.json\n(目录路由)"
+  - id: caps
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "143 Capabilities\n(atomic skills)"
+      zh: "143 Capabilities\n(原子 skill)"
+  - id: comps
+    type: atom
+    rank: 2
+    lane: 1
+    label:
+      en: "56 Composites\n(multi-skill chains)"
+      zh: "56 Composites\n(多 skill 链)"
+  - id: plays
+    type: atom
+    rank: 2
+    lane: 2
+    label:
+      en: "5 Playbooks\n(end-to-end)"
+      zh: "5 Playbooks\n(端到端)"
+  - id: outputs
+    type: end
+    rank: 3
+    lane: 1
+    label:
+      en: "GTM artifacts\n(briefs / posts /\nleads / battlecards)"
+      zh: "GTM 产物\n(brief / 帖子 /\nlead / 对照卡)"
+  edges:
+  - {from: agent, to: catalog}
+  - {from: catalog, to: caps}
+  - {from: catalog, to: comps}
+  - {from: catalog, to: plays}
+  - {from: caps, to: comps}
+  - {from: caps, to: outputs}
+  - {from: comps, to: plays}
+  - {from: comps, to: outputs}
+  - {from: plays, to: outputs}
+similar_repos:
+- slug: anthropics--skill-creator
+  shared_purpose:
+    en: |
+      Both produce / distribute Claude Code-compatible skills with a SKILL.md contract.
+    zh: |
+      都产出 / 分发兼容 Claude Code 的 SKILL.md 契约 skill。
+  this_better_at:
+    en: |
+      A ready-made catalog of 204 GTM skills with a uniform install path. You install + use, no authoring required.
+    zh: |
+      现成的 204 个 GTM skill 目录 + 统一安装路径。装上就用，不用自己写。
+  other_better_at:
+    en: |
+      Helps you author your own skill from scratch — generic across domains, official Anthropic tooling. Goose-skills is a vertical (GTM) catalog, skill-creator is the horizontal authoring tool.
+    zh: |
+      帮你从零写自己的 skill —— 跨领域通用，是 Anthropic 官方工具。Goose-skills 是垂直（GTM）目录，skill-creator 是横向的写作工具。
+- slug: RKiding--Awesome-finance-skills
+  shared_purpose:
+    en: |
+      Both are vertical skill catalogs distributing many SKILL.md skills under one repo.
+    zh: |
+      都是垂直 skill 目录，在一个仓库里分发很多 SKILL.md 技能。
+  this_better_at:
+    en: |
+      204 skills with a generated index + npm distribution + multi-platform contract (Claude / Cursor / Codex). Vetted to a uniform metadata shape.
+    zh: |
+      204 个 skill + 自动生成的 index + npm 分发 + 多平台契约（Claude / Cursor / Codex）。统一元数据形态。
+  other_better_at:
+    en: |
+      Vertical to finance/trading instead of GTM. Different target audience, similar shape.
+    zh: |
+      垂直在金融 / 交易而不是 GTM。受众不同、形态相似。

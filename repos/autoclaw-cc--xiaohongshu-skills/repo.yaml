@@ -11,6 +11,22 @@ status: evaluated
 current_bucket: usable
 last_evaluated: '2026-05-04'
 version_tested: main@HEAD (skill v1.0.0, Python 3.11+)
+stars: 1206
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 1
+eval_discipline_score: 1
+recently_active: true
+business_category:
+  en: Xiaohongshu (RED) operations automation
+  zh: 小红书运营自动化技能集
+use_case_tags:
+- xiaohongshu-automation
+- skill-bundle
+- browser-extension
+- content-publishing
+- social-engagement
 notes: 'Xiaohongshu (小红书) automation skill bundle for OpenClaw / Claude Code.
 
   5 atomic sub-skills (xhs-auth, xhs-publish, xhs-explore, xhs-interact,
@@ -45,12 +61,10 @@ product_view:
     en: Xiaohongshu creators or operators who already manage a real account in Chrome and want an AI agent (Claude Code / OpenClaw) to drive search, publish, and engagement workflows — willing to give the paired extension `debugger` + `cookies` permissions on xiaohongshu.com.
     zh: 已经有真实小红书账号、希望让 AI agent（Claude Code / OpenClaw）帮你跑搜索、发布、互动工作流的运营 / 创作者；接受配套 Chrome 扩展拿 `debugger` + `cookies` 权限。
   watch_out:
-    en: 'The Chrome extension requires `debugger`, `cookies`, and `scripting` permissions on xiaohongshu.com — a real privilege escalation. Anyone evaluating this for production use should read manifest.json before installing, and pin the source commit. README itself recommends rate-limiting because XHS does run anti-automation; "use real account" mode is more humane than headless scraping but still violates the platform ToS in spirit, and your account is at risk if you move too fast.
-
-      '
-    zh: 'Chrome 扩展需要 `debugger` + `cookies` + `scripting` 三项高权限并绑定 xiaohongshu.com — 真实的权限升级。生产用前先读 manifest.json，并锁定 commit。README 自己也建议控制速率：XHS 有反自动化检测；用「真实账号」模式比 headless 爬取温和，但精神上仍违反平台 ToS，太频繁会让账号受限。
-
-      '
+    en: |
+      The Chrome extension requires `debugger`, `cookies`, and `scripting` permissions on xiaohongshu.com — a real privilege escalation. Anyone evaluating this for production use should read manifest.json before installing, and pin the source commit. README itself recommends rate-limiting because XHS does run anti-automation; "use real account" mode is more humane than headless scraping but still violates the platform ToS in spirit, and your account is at risk if you move too fast. Root SKILL.md homepage points to a different repo (xpzouying/xiaohongshu-skills) — origin attribution is fuzzy.
+    zh: |
+      Chrome 扩展需要 `debugger` + `cookies` + `scripting` 三项高权限并绑定 xiaohongshu.com — 真实的权限升级。生产用前先读 manifest.json，并锁定 commit。README 自己也建议控制速率：XHS 有反自动化检测；用「真实账号」模式比 headless 爬取温和，但精神上仍违反平台 ToS，太频繁会让账号受限。根 SKILL.md 的 homepage 指向另一个 repo (xpzouying/xiaohongshu-skills) —— 来源归属不太清晰。
   use_for:
   - en: Xiaohongshu (XHS) creators / operators who already manage a real account in Chrome.
     zh: 已经在 Chrome 里维护真实小红书账号的创作者 / 运营者。
@@ -63,13 +77,67 @@ product_view:
     zh: 请求频率别太高 —— 小红书反自动化会限你的账号。
   - en: Don't pin to main without locking a commit; routing logic and platform code change frequently.
     zh: 别直接跟 main —— 锁定具体 commit；路由逻辑和平台代码经常变。
-stars: 1185
-archived: false
-has_license: true
-multilingual_readme: false
-release_pipeline_score: 1
-eval_discipline_score: 1
-recently_active: true
+  persona:
+    en: Xiaohongshu solo creator or small-team operator who already runs a real account in Chrome and wants an AI agent to handle the boring half — search trends, publish drafts, like/comment/bookmark — while the human stays in charge of taste and escalations.
+    zh: 已经在 Chrome 里跑真实小红书账号的个人创作者 / 小团队运营。想让 AI agent 接管「无聊那一半」—— 搜热点、发草稿、点赞评论收藏 —— 自己掌控选题和重要决策。
+  scenario:
+    en: You want to tell your agent "find the top assassin's-creed image notes, bookmark them and tell me what they're about" and have it actually search XHS, filter to image notes, sort by likes, bookmark, fetch detail, and summarize — without you opening 20 tabs by hand.
+    zh: 你想跟 agent 说「找刺客信条最火的图文，收藏并告诉我讲了什么」，然后它真的会去搜小红书、筛图文、按点赞排序、收藏、拉详情、做总结 —— 不用你自己开 20 个 tab 手动操作。
+  without_this:
+    en: You either click around XHS by hand for an hour every day, or you write a brittle Selenium / Playwright scraper that breaks every time XHS ships UI changes, or you reverse-engineer XHS's signed APIs and live with the cat-and-mouse.
+    zh: 要么每天手点小红书一小时，要么写脆弱的 Selenium / Playwright 爬虫（XHS 一改 UI 就坏），要么去逆向 XHS 的签名 API 跟平台玩猫鼠游戏。
+  with_this:
+    en: One `uv sync` + load the unpacked Chrome extension, then talk to your AI agent in natural language. The agent routes intent across 5 sub-skills (auth/publish/explore/interact/content-ops) and operates inside your real logged-in browser, not a headless puppet.
+    zh: 一次 `uv sync` + 加载 unpacked Chrome 扩展，然后用自然语言跟 AI agent 说话。Agent 会把意图分发到 5 个子技能（auth/publish/explore/interact/content-ops），全部在你真实登录的浏览器里执行，不是 headless 木偶。
+  cost_summary:
+    en: Free OSS (MIT). Need Python 3.11+, uv, Chrome with the unpacked XHS Bridge extension loaded, and a real XHS account. Agent-side LLM cost is on you (Anthropic Claude / OpenClaw provider).
+    zh: 开源免费（MIT）。需要 Python 3.11+、uv、加载了 XHS Bridge 解压扩展的 Chrome、一个真实 XHS 账号。Agent 端 LLM 成本自付（Anthropic Claude / OpenClaw 提供商）。
+  how:
+    en: |
+      1. Download ZIP / `git clone` into your agent skills dir (e.g. `.claude/skills/xiaohongshu-skills/`)
+      2. `cd xiaohongshu-skills && uv sync`
+      3. Open `chrome://extensions/`, enable Developer Mode, "Load unpacked" → select the `extension/` folder; confirm "XHS Bridge" is enabled
+      4. In your AI agent (Claude Code / OpenClaw), prompt: "登录小红书" or "搜索关于露营的笔记"
+      5. (optional CLI) `python scripts/cli.py check-login` for direct invocation outside an agent
+    zh: |
+      1. 下载 ZIP / `git clone` 到 agent 的 skills 目录（如 `.claude/skills/xiaohongshu-skills/`）
+      2. `cd xiaohongshu-skills && uv sync`
+      3. 打开 `chrome://extensions/`，开启开发者模式，「加载已解压的扩展程序」→ 选 `extension/` 目录；确认 XHS Bridge 已启用
+      4. 在 AI agent（Claude Code / OpenClaw）里说：「登录小红书」或「搜索关于露营的笔记」
+      5. （可选 CLI）`python scripts/cli.py check-login` 在 agent 之外直接调用
+  examples:
+  - context:
+      en: Trend research — find what's hot on XHS for a topic and bookmark the top one
+      zh: 选题研究 —— 找小红书某话题的爆款并收藏 top 1
+    you_say:
+      en: "搜索刺客信条最火的图文帖子，收藏它，然后告诉我讲了什么"
+      zh: "搜索刺客信条最火的图文帖子，收藏它，然后告诉我讲了什么"
+    what_happens:
+      en: "Agent chains xhs-explore (search → filter image notes → sort by likes) → xhs-interact (favorite) → xhs-explore (get-feed-detail) → returns a summary. All inside your real logged-in Chrome."
+      zh: "Agent 串：xhs-explore（搜索 → 筛图文 → 按点赞排序）→ xhs-interact（收藏）→ xhs-explore（拉详情）→ 给出摘要。全程在你真实登录的 Chrome 里完成。"
+  - context:
+      en: Content publishing — post an image note with title + captions + tags
+      zh: 内容发布 —— 发图文笔记 + 标题 + 文案 + 标签
+    you_say:
+      en: "帮我发一条图文笔记，标题是… 配图是 /abs/path/pic1.jpg /abs/path/pic2.jpg"
+      zh: "帮我发一条图文笔记，标题是… 配图是 /abs/path/pic1.jpg /abs/path/pic2.jpg"
+    what_happens:
+      en: "Agent calls xhs-publish: fills title + content, attaches images, optionally previews, then triggers click-publish. CLI equivalent: `python scripts/cli.py publish --title-file ... --images ...`."
+      zh: "Agent 调用 xhs-publish：填标题 + 文案、传图、可预览，最后点发布。CLI 对应：`python scripts/cli.py publish --title-file ... --images ...`。"
+  - context:
+      en: Engagement loop — like + comment on a curated list of competitor notes
+      zh: 互动循环 —— 在竞品笔记列表上点赞 + 评论
+    you_say:
+      en: "搜索竞品账号最近的爆款，挑 5 篇点赞，并写真诚一点的评论"
+      zh: "搜索竞品账号最近的爆款，挑 5 篇点赞，并写真诚一点的评论"
+    what_happens:
+      en: "Agent uses xhs-content-ops to orchestrate: explore → rank → for each: interact (like) + interact (post-comment with tailored text). Slow it down — XHS rate-limits aggressive runs."
+      zh: "Agent 用 xhs-content-ops 编排：explore → 排序 → 逐条：interact（点赞）+ interact（写评论）。速度放慢 —— XHS 会限速过快的批量。"
+  next_step:
+    en: |
+      Three actions to lift the score: (a) record an end-to-end session log (search → bookmark → summarize) as evidence so claim-006 can move from `untested` to `passed` — currently the molecule live layer is unverified; (b) document the privileged Chrome permissions in README explicitly (manifest asks for `debugger`/`cookies`/`scripting` but README only hand-waves about real-account mode); (c) clarify the homepage attribution — root SKILL.md points to xpzouying/xiaohongshu-skills, which confuses provenance.
+    zh: |
+      三个加分动作：(a) 录一段端到端 session 日志（搜索 → 收藏 → 摘要）作为证据，让 claim-006 从 `untested` 升到 `passed` —— 目前 molecule live 层无验证；(b) 在 README 里明确扩展拿了 `debugger`/`cookies`/`scripting` 这些高权限（manifest 写了但 README 只是含糊提了「真实账号模式」）；(c) 修正主页归属 —— 根 SKILL.md 的 homepage 指向 xpzouying/xiaohongshu-skills，让来源不清。
 deployment:
   installable: true
   install_methods:
@@ -105,3 +173,112 @@ workflow_placements:
   reason:
     en: Xiaohongshu single-platform helper. Use when the workflow targets only Xiaohongshu and you don't need the multi-platform overhead of social-auto-upload.
     zh: 小红书单平台助手。当工作流只发小红书 + 不想要 social-auto-upload 多平台开销时用。
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: |
+      Molecule — root SKILL.md routes to 5 atomic sub-skills (auth / publish / explore / interact / content-ops) by predefined matching. Routing is contract-driven, not LLM-runtime dispatch.
+    zh: |
+      Molecule —— 根 SKILL.md 按预定义规则路由到 5 个原子子技能（auth / publish / explore / interact / content-ops）。是契约驱动的路由，不是 LLM-runtime dispatch。
+  nodes:
+  - id: agent
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "Natural-language\nintent (Claude Code\n/ OpenClaw)"
+      zh: "自然语言意图\n(Claude Code\n/ OpenClaw)"
+  - id: root
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "Root SKILL.md\n(intent router)"
+      zh: "根 SKILL.md\n(意图路由)"
+  - id: auth
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "xhs-auth\n(login / status)"
+      zh: "xhs-auth\n(登录 / 状态)"
+  - id: explore
+    type: atom
+    rank: 2
+    lane: 1
+    label:
+      en: "xhs-explore\n(search / detail)"
+      zh: "xhs-explore\n(搜索 / 详情)"
+  - id: publish
+    type: atom
+    rank: 2
+    lane: 2
+    label:
+      en: "xhs-publish\n(image / video)"
+      zh: "xhs-publish\n(图文 / 视频)"
+  - id: interact
+    type: atom
+    rank: 2
+    lane: 3
+    label:
+      en: "xhs-interact\n(like / comment\n/ bookmark)"
+      zh: "xhs-interact\n(点赞 / 评论\n/ 收藏)"
+  - id: ops
+    type: atom
+    rank: 2
+    lane: 4
+    label:
+      en: "xhs-content-ops\n(compound flows)"
+      zh: "xhs-content-ops\n(复合运营)"
+  - id: bridge
+    type: end
+    rank: 3
+    lane: 2
+    label:
+      en: "XHS Bridge\nChrome ext.\n→ real account"
+      zh: "XHS Bridge\nChrome 扩展\n→ 真实账号"
+  edges:
+  - {from: agent, to: root}
+  - {from: root, to: auth}
+  - {from: root, to: explore}
+  - {from: root, to: publish}
+  - {from: root, to: interact}
+  - {from: root, to: ops}
+  - {from: auth, to: bridge}
+  - {from: explore, to: bridge}
+  - {from: publish, to: bridge}
+  - {from: interact, to: bridge}
+  - {from: ops, to: bridge}
+similar_repos:
+- slug: Jamailar--RedBox
+  shared_purpose:
+    en: |
+      Both target Xiaohongshu creators and use real-browser automation. Both refuse to reverse XHS APIs.
+    zh: |
+      都瞄准小红书创作者，都用真实浏览器自动化，都拒绝逆向 XHS API。
+  this_better_at:
+    en: |
+      Lightweight skill bundle — drops into any agent's skills dir, no Electron app, no signed installer. You stay in your own agent + your own Chrome. Easier to audit (5 markdown files + 1 manifest).
+    zh: |
+      轻量技能包 —— 可以丢进任意 agent 的 skills 目录，没 Electron app，没签名安装器。你留在自己的 agent + 自己的 Chrome 里。更易审计（5 个 markdown + 1 个 manifest）。
+  other_better_at:
+    en: |
+      Full desktop workspace — knowledge base, multi-workspace editor, scheduled background jobs, image generation. RedBox is an app; xiaohongshu-skills is a skill set. RedBox covers more ground but is much heavier.
+    zh: |
+      完整桌面工作台 —— 知识库、多工作区编辑器、定时后台任务、生图。RedBox 是 app，xiaohongshu-skills 是技能集。RedBox 覆盖面广但重得多。
+- slug: dreammis--social-auto-upload
+  shared_purpose:
+    en: |
+      Both automate XHS publish flow without API keys.
+    zh: |
+      都不用 API key 就能自动发小红书。
+  this_better_at:
+    en: |
+      Conversational agent integration + 4 other skill domains beyond publish (search, interact, ops). Built for OpenClaw / Claude Code skill contract.
+    zh: |
+      对话式 agent 集成 + 除发布外还有 4 个领域（搜索、互动、复合运营）。按 OpenClaw / Claude Code skill 契约设计。
+  other_better_at:
+    en: |
+      Multi-platform publishing in one tool (Douyin / Kuaishou / Bilibili / Xiaohongshu / TikTok). Pure publishing focus, no agent layer needed.
+    zh: |
+      一个工具覆盖多平台发布（抖音 / 快手 / B 站 / 小红书 / TikTok）。纯发布场景，不需要 agent 层。

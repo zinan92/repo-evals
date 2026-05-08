@@ -8,15 +8,25 @@ layer: compound
 complexity: medium
 uses_areas: false
 status: evaluated
+current_bucket: usable
 last_evaluated: '2026-05-05'
 version_tested: master@HEAD
-stars: 78982
+stars: 79581
 archived: false
 has_license: false
 multilingual_readme: false
 release_pipeline_score: 1
 eval_discipline_score: 1
 recently_active: true
+business_category:
+  en: Autonomous AI-research template (LLM training)
+  zh: 自动 AI-研究模板（LLM 训练）
+use_case_tags:
+- ai-research
+- llm-training
+- autonomous-agent
+- nanochat-derivative
+- single-gpu
 notes: 'Karpathy''s "give an AI agent a small but real LLM training setup
 
   and let it experiment overnight" template. 79K stars in ~6 weeks.
@@ -52,12 +62,10 @@ product_view:
     en: 'Researchers / AI engineers with an H100 (or compatible) who want to play with autonomous experimentation on small LLM training. Also: anyone studying how to design ''AI agents that do research'', because program.md is a clear, minimal example.'
     zh: 有 H100（或兼容卡）的研究员 / AI 工程师，想玩自动实验做小 LLM 训练。还有：想研究「AI agent 做研究」怎么设计的人 —— program.md 是个简洁清晰的最小例子。
   watch_out:
-    en: 'No LICENSE file at repo root despite README claiming MIT — fork / commercial use legal status is technically unclear until a LICENSE is shipped. Single-NVIDIA-H100 required for the main repo; if you have anything else (Mac / Windows / AMD), use one of the community forks listed in README. Each experiment burns 5 minutes of GPU time + non-trivial agent token cost — overnight = serious cost. The agent has ''all permissions disabled'' is a recommendation in the README; verify your platform respects that or it can edit anything.
-
-      '
-    zh: 'README 说 MIT 但仓库根没有 LICENSE 文件 —— fork / 商用法律状态严格说不明确，等 LICENSE 上线为止。主仓库要单卡 H100；其他硬件（Mac / Windows / AMD）用 README 里列的社区 fork。每个实验烧 5 分钟 GPU + 不少 agent token —— 通宵跑成本不低。README 建议「关闭 agent 所有权限」是建议，不是强制 —— 自己确认 agent 平台真的能限权，不然 agent 改的不只是 train.py。
-
-      '
+    en: |
+      No LICENSE file at repo root despite README claiming MIT — fork / commercial use legal status is technically unclear until a LICENSE is shipped. Single-NVIDIA-H100 required for the main repo; if you have anything else (Mac / Windows / AMD), use one of the community forks listed in README. Each experiment burns 5 minutes of GPU time + non-trivial agent token cost — overnight = serious cost. The agent has 'all permissions disabled' is a recommendation in the README; verify your platform respects that or it can edit anything beyond train.py.
+    zh: |
+      README 说 MIT 但仓库根没有 LICENSE 文件 —— fork / 商用法律状态严格说不明确，等 LICENSE 上线为止。主仓库要单卡 H100；其他硬件（Mac / Windows / AMD）用 README 里列的社区 fork。每个实验烧 5 分钟 GPU + 不少 agent token —— 通宵跑成本不低。README 建议「关闭 agent 所有权限」是建议，不是强制 —— 自己确认 agent 平台真的能限权，不然 agent 改的不只是 train.py。
   use_for:
   - en: Have an H100 idle overnight? Let the agent run 100 experiments and see what comes out.
     zh: 有 H100 闲着过夜？让 agent 跑 100 个实验看看出什么。
@@ -72,6 +80,71 @@ product_view:
     zh: 无人值守跑前一定先设好 token / GPU 时间预算 —— 一整晚成本可能不低。
   - en: Don't redistribute commercially yet — README says MIT but no LICENSE file ships.
     zh: 暂时别商用分发 —— README 说 MIT 但没 LICENSE 文件兜底。
+  persona:
+    en: ML researcher or curious AI engineer who has access to a single H100 (or rentable cloud H100 for an evening), wants to play with autonomous experimentation, and is interested in studying how a minimal "agent-as-researcher" skill is designed.
+    zh: 能拿到一张 H100（或者愿意租一晚云 H100）的 ML 研究员 / 好奇心强的 AI 工程师。想玩自动实验，也想研究最小的「agent 当研究员」的 skill 怎么写。
+  scenario:
+    en: It's 10pm. You spin up Claude Code or Codex in the autoresearch repo, point it at program.md, set a token + GPU-time budget, and go to sleep. By morning the agent has run ~100 5-minute training experiments, kept the architectural / hyperparameter changes that lowered val_bpb, and left you a journal you can read with coffee.
+    zh: 晚上 10 点，你在 autoresearch 仓库里启动 Claude Code 或 Codex，指向 program.md，设好 token + GPU 时间预算，睡觉。早上起来，agent 已经跑了大约 100 次 5 分钟训练实验，留下了让 val_bpb 下降的架构 / 超参数变更，并附上你可以喝咖啡读的日志。
+  without_this:
+    en: You either run experiments by hand one at a time during work hours, or write your own runner + parser + bookkeeping infra (which is most of the work), or never get around to nightly autonomous experiments at all.
+    zh: 要么白天一项一项手跑实验，要么自己写 runner + 解析器 + 记账基础设施（这才是大头工作量），要么永远做不到通宵自动实验。
+  with_this:
+    en: 3 files (prepare.py + train.py + program.md). Agent edits exactly one of them. Fixed 5-minute budget makes runs comparable. ~100 experiments / night on H100.
+    zh: 3 个文件（prepare.py + train.py + program.md）。Agent 只改其中一个。固定 5 分钟预算让每次运行可比较。H100 一晚约 100 个实验。
+  cost_summary:
+    en: 'Code is "MIT" per README (no LICENSE file shipped — caveat). Hardware: single NVIDIA H100 — cloud H100 ≈ $2-4/hr depending on provider, ≈ $20-40 for an overnight run. Agent tokens: each experiment iteration burns coding-agent tokens; budget for 100 experiments before launch.'
+    zh: '代码按 README 说是 "MIT"（仓库没有 LICENSE 文件 —— 注意）。硬件：单卡 NVIDIA H100 —— 云 H100 大概 $2-4/小时，通宵跑大约 $20-40。Agent token：每次实验都烧 coding-agent token；100 个实验的预算先估好再启动。'
+  how:
+    en: |
+      1. `git clone https://github.com/karpathy/autoresearch && cd autoresearch`
+      2. `curl -LsSf https://astral.sh/uv/install.sh | sh` (if uv missing)
+      3. `uv sync`
+      4. `uv run prepare.py` (downloads training data + trains BPE tokenizer, ~2 min)
+      5. `uv run train.py` (runs one 5-min experiment to verify the rig works)
+      6. Spin up Claude Code / Codex in the repo with permissions restricted; prompt: "Have a look at program.md and let's kick off a new experiment! Let's do the setup first."
+      7. (Mac / MLX / Windows-RTX / AMD) use one of the 4 community forks listed in README
+    zh: |
+      1. `git clone https://github.com/karpathy/autoresearch && cd autoresearch`
+      2. `curl -LsSf https://astral.sh/uv/install.sh | sh`（如果没装 uv）
+      3. `uv sync`
+      4. `uv run prepare.py`（下载训练数据 + 训 BPE tokenizer，约 2 分钟）
+      5. `uv run train.py`（跑一次 5 分钟实验验证环境）
+      6. 在仓库里起 Claude Code / Codex，限好权限，prompt：「看一下 program.md，开个新实验！先做 setup。」
+      7. （Mac / MLX / Windows-RTX / AMD）用 README 里列的 4 个社区 fork
+  examples:
+  - context:
+      en: Single-experiment sanity check before letting the agent loose
+      zh: 放任 agent 之前先单实验跑通环境
+    you_say:
+      en: "uv run train.py"
+      zh: "uv run train.py"
+    what_happens:
+      en: "Loads the dataloader, runs the GPT model with Muon+AdamW for 5 wall-clock minutes, prints val_bpb. If this completes, your H100 + uv setup is sound; the agent can take over."
+      zh: "加载 dataloader，跑 5 分钟挂钟时间的 GPT 模型 + Muon+AdamW，打印 val_bpb。能跑完就说明 H100 + uv 环境 OK，agent 接手。"
+  - context:
+      en: Hand control to the agent for an overnight run
+      zh: 把控制权交给 agent 跑一整晚
+    you_say:
+      en: "Hi, have a look at program.md and let's kick off a new experiment! let's do the setup first."
+      zh: "看一下 program.md，开个新实验！先做 setup。"
+    what_happens:
+      en: "Agent reads program.md, plans an experiment series, edits train.py, runs `uv run train.py`, parses val_bpb, keeps or reverts the change, logs to a journal, repeats. ~12 experiments/hr → ~100 overnight on H100."
+      zh: "Agent 读 program.md，规划实验序列，改 train.py，跑 `uv run train.py`，解析 val_bpb，保留或回滚改动，写日志，循环。H100 上每小时约 12 个 → 一晚约 100 个。"
+  - context:
+      en: Switch to small hardware via a community fork
+      zh: 用社区 fork 切到小硬件
+    you_say:
+      en: "git clone https://github.com/miolini/autoresearch-macos && cd autoresearch-macos && uv sync"
+      zh: "git clone https://github.com/miolini/autoresearch-macos && cd autoresearch-macos && uv sync"
+    what_happens:
+      en: "MacOS fork uses smaller defaults (lower DEPTH, lower MAX_SEQ_LEN, byte-level tokenizer option). Results are no longer cross-platform comparable, but you can iterate on a Mac instead of an H100."
+      zh: "MacOS fork 用更小的默认值（更小 DEPTH、更小 MAX_SEQ_LEN、可选字节级 tokenizer）。结果跨平台不可比，但能在 Mac 上迭代，不用 H100。"
+  next_step:
+    en: |
+      Three actions to lift the score: (a) ship a real LICENSE file in the repo root — README says MIT but `gh api .../contents/LICENSE` returns 404. For a 79K-star repo this is the single highest-impact fix; (b) record an end-to-end H100 session log + agent-iteration trace as evidence so claim-007 (5-min experiment runs to completion) and claim-008 (agent doesn't touch out-of-scope files) can move from `passed`/`untested` with empirical data; (c) add a "running cost estimator" section to README — overnight runs are non-trivially expensive ($20-40 GPU + agent tokens), and inexperienced users need that surfaced.
+    zh: |
+      三个加分动作：(a) 在仓库根加一份真实的 LICENSE 文件 —— README 说 MIT 但 `gh api .../contents/LICENSE` 返回 404。对一个 79K star 的仓库，这是单点收益最高的修复；(b) 录一份端到端 H100 会话日志 + agent 迭代轨迹作为证据，让 claim-007（5 分钟实验跑通）和 claim-008（agent 不改超范围文件）从 `passed`/`untested` 升级到带实际数据的 passed；(c) 在 README 加一段「跑一晚成本估算」—— 通宵跑不便宜（$20-40 GPU + agent token），新手需要看见。
 deployment:
   installable: true
   install_methods:
@@ -113,3 +186,93 @@ workflow_placements:
   reason:
     en: Research-loop reference — LLM-training research, not general code research, but the autonomous-research pattern is the canonical example.
     zh: 研究循环参考 —— LLM 训练研究,不是通用代码研究,但自主研究模式是规范例子。
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: |
+      Compound — the agent decides at runtime what to edit in train.py and what to try next based on observed val_bpb. The pipeline shape is fixed (edit → run → evaluate → keep/discard), but the content of each iteration is LLM-routed.
+    zh: |
+      Compound —— agent 在运行时决定 train.py 改什么、根据观察到的 val_bpb 决定下一步试什么。流水线形状固定（改 → 跑 → 评估 → 留 / 丢），但每次迭代的内容由 LLM 路由。
+  nodes:
+  - id: program
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: "program.md\n(skill = agent\ninstructions)"
+      zh: "program.md\n(skill = agent\n指令)"
+  - id: edit
+    type: atom
+    rank: 1
+    lane: 0
+    label:
+      en: "Agent edits\ntrain.py\n(one file only)"
+      zh: "Agent 改\ntrain.py\n(只改一个文件)"
+  - id: run
+    type: atom
+    rank: 2
+    lane: 0
+    label:
+      en: "uv run train.py\n(5-min budget)"
+      zh: "uv run train.py\n(5 分钟预算)"
+  - id: parse
+    type: atom
+    rank: 3
+    lane: 0
+    label:
+      en: "Parse val_bpb\n(lower = better)"
+      zh: "解析 val_bpb\n(越低越好)"
+  - id: decide
+    type: atom
+    rank: 4
+    lane: 0
+    label:
+      en: "Keep or revert\n+ journal entry"
+      zh: "保留或回滚\n+ 日志记录"
+  - id: loop
+    type: end
+    rank: 5
+    lane: 0
+    label:
+      en: "Next iteration\n(~100 / night\non H100)"
+      zh: "下一轮迭代\n(H100 一晚\n约 100 次)"
+  edges:
+  - {from: program, to: edit}
+  - {from: edit, to: run}
+  - {from: run, to: parse}
+  - {from: parse, to: decide}
+  - {from: decide, to: loop}
+  - {from: loop, to: edit}
+similar_repos:
+- slug: anthropics--skill-creator
+  shared_purpose:
+    en: |
+      Both treat a markdown file as the "skill" / "program" that drives an AI agent's behavior — program.md here, SKILL.md there.
+    zh: |
+      都把一个 markdown 文件当作驱动 AI agent 行为的「skill」/「program」—— 这里是 program.md，那边是 SKILL.md。
+  this_better_at:
+    en: |
+      A complete, runnable end-to-end research loop in 3 files. Shows what an agent-as-researcher actually does: edit, run, evaluate, iterate. Concrete domain: LLM training.
+    zh: |
+      3 个文件的完整可跑端到端研究循环。展示 agent 当研究员实际在做什么：改、跑、评估、迭代。具体领域：LLM 训练。
+  other_better_at:
+    en: |
+      Generic skill authoring tool for any domain. Anthropic-official, designed to teach you how to write your own SKILL.md. Autoresearch is a vertical example, skill-creator is the horizontal authoring tool.
+    zh: |
+      面向任意领域的通用 skill 写作工具。Anthropic 官方，目的是教你写自己的 SKILL.md。autoresearch 是垂直样例，skill-creator 是横向写作工具。
+- slug: zinan92--doc-driven-dev-workflow
+  shared_purpose:
+    en: |
+      Both encode an iterative loop where a single doc + a runner drives an agent through repeated cycles of edit → verify → keep / discard.
+    zh: |
+      都把「单一文档 + runner 驱动 agent 反复改 → 验证 → 留 / 丢」的循环具象化。
+  this_better_at:
+    en: |
+      Concrete LLM-research domain with a real metric (val_bpb). Tight 5-minute budget makes it possible to run 100 cycles overnight.
+    zh: |
+      具体的 LLM 研究领域，带真实指标（val_bpb）。5 分钟预算让一晚跑 100 轮成为可能。
+  other_better_at:
+    en: |
+      General software-development workflow. Domain-agnostic: works on any codebase, not tied to a specific GPU or training task.
+    zh: |
+      通用软件开发流。跨领域：任何代码库都能用，不绑定具体 GPU 或训练任务。
