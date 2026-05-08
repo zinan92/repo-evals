@@ -177,7 +177,7 @@ workflow_placements:
       zh: "HyperFrames 就是「创意组装」这一步。Agent 有了脚本/分镜之后，HyperFrames 把它包成平台可用的创意产物 — 抖音/小红书/TikTok 竖版视频、片头片尾、动画讲解。HTML 进，MP4 出。"
   - workflow_id: "park-content-v1"
     stage_id: "05_production"
-    role: supporting
+    role: support
     reason:
       en: "Also reaches up into production: the agent uses /hyperframes to author the HTML composition itself (the 'human-voiced draft in publishable form') — it's not just a renderer."
       zh: "也涉及「内容生产」：agent 用 /hyperframes 写 HTML 组合本身（「像人写的草稿，已是可发布形态」）— 不只是渲染器。"
