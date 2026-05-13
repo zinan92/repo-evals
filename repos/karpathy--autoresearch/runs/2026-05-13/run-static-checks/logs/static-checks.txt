@@ -1,0 +1,40 @@
+=== claim-001 file sizes ===
+  prepare.py:      389 lines
+  train.py:      630 lines
+  program.md:      114 lines
+
+=== claim-002 deps ===
+name = "autoresearch"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+name = "pytorch-cu128"
+
+uv.lock present:
+  HTTP 200
+
+=== claim-003 program.md sections ===
+## Setup
+## Experimentation
+## Output format
+## Logging results
+## The experiment loop
+
+=== claim-004 train.py model + optimizer ===
+25
+  ↑ model+optimizer signatures count
+
+=== claim-005 LICENSE ===
+  HTTP 404
+
+=== claim-006 community fork URLs ===
+  miolini/autoresearch-macos: HTTP 200
+  trevin-creator/autoresearch-mlx: HTTP 200
+  jsegov/autoresearch-win-rtx: HTTP 200
+  andyluo7/autoresearch: HTTP 200
+
+=== claim-008 program.md safety scope ===
+   - `prepare.py` — fixed constants, data prep, tokenizer, dataloader, evaluation. Do not modify.
+4. **Verify data exists**: Check that `~/.cache/autoresearch/` contains data shards and a tokenizer. If not, tell the human to run `uv run prepare.py`.
+- Modify `prepare.py`. It is read-only. It contains the fixed evaluation, data loading, tokenizer, and training constants (time budget, sequence length, etc).
+- Modify the evaluation harness. The `evaluate_bpb` function in `prepare.py` is the ground truth metric.

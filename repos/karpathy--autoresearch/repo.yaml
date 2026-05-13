@@ -9,7 +9,7 @@ complexity: medium
 uses_areas: false
 status: evaluated
 current_bucket: usable
-last_evaluated: '2026-05-05'
+last_evaluated: '2026-05-13'
 version_tested: master@HEAD
 stars: 79581
 archived: false

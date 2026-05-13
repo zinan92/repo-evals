@@ -1,0 +1,38 @@
+repo: "karpathy/autoresearch"
+archetype: "hybrid-skill"
+core_layer_tested: false
+evidence_completeness: "partial"
+coverage_summary:
+  critical_claims: 6
+  critical_covered: 5
+  total_claims: 8
+  total_covered: 7
+claims:
+  - id: claim-001
+    priority: critical
+    status: passed
+  - id: claim-002
+    priority: critical
+    status: passed
+  - id: claim-003
+    priority: critical
+    status: passed
+  - id: claim-004
+    priority: high
+    status: passed
+  - id: claim-005
+    priority: critical
+    status: failed
+  - id: claim-006
+    priority: high
+    status: passed
+  - id: claim-007
+    priority: critical
+    status: untested
+  - id: claim-008
+    priority: critical
+    status: passed
+override:
+  apply: true
+  bucket: "usable"
+  reason: "Upstream HEAD unchanged since 2026-05-05; prior eval reached 'usable' on the same evidence. Calculator drops to 'unusable' only because LICENSE (claim-005) is marked critical and failed, but the repo is empirically usable for personal experimentation — README declares MIT, license-missing affects redistribution legality, not runnability. Compound runtime (claim-007) still untested; bucket stays at 'usable' rather than 'reusable' to reflect that."
