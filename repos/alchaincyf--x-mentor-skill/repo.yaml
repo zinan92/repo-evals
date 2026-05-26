@@ -1,0 +1,286 @@
+# === Identity ================================================================
+owner: alchaincyf
+repo: x-mentor-skill
+display_name: x-mentor-skill
+repo_url: https://github.com/alchaincyf/x-mentor-skill
+
+repo_type: skill
+archetype: prompt-skill
+layer: atom
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-26"
+version_tested: "master@HEAD"
+
+# === Maintainer / ecosystem signals ==========================================
+stars: 819
+archived: false
+has_license: true              # MIT, verified via gh api
+multilingual_readme: false     # README + SKILL.md 都是中文为主
+release_pipeline_score: 1      # 手动发布，无 tag / release / CI
+eval_discipline_score: 1       # README 自报有 A/B 测试，仓库内无自动化 eval 套件
+recently_active: true          # pushed_at 2026-05-22（评测前 4 天）
+
+business_category:
+  en: "Content / X-Twitter growth coaching skill"
+  zh: "内容创作 / X-Twitter 增长教练 skill"
+use_case_tags:
+  - x-twitter-growth
+  - content-coaching
+  - prompt-skill
+  - tweet-writing
+  - account-diagnosis
+
+notes: |
+  纯 prompt-skill：1 个 SKILL.md（252 行路由 + 5 场景执行规则）+ 5 个按需加载
+  的操作层 reference（writing-workshop / algorithm-niche / growth-monetization /
+  quality-analytics / mental-models-heuristics，每个 ~100–220 行）+ 6 份
+  research（每个 369–503 行，总计 2475 行）作为追溯来源。MIT 协议。
+  819 stars / 161 forks，作者是「花叔」（@AlchainHust，独立开发者，App Store
+  付费榜 Top1 作品「小猫补光灯」）。由作者另一个项目「女娲.skill」蒸馏生成。
+
+  没有任何脚本 / 二进制 / 外部 API 调用；纯 markdown，跨 runtime（Claude Code
+  / Codex / Cursor / OpenClaw / Hermes / Gemini CLI 等）通用。
+  安装方式两种：`npx skills add alchaincyf/x-mentor-skill` 或 git clone 到
+  对应 runtime 的 skills 目录。
+
+  v2.0 (2026-05) 把单文件 769 行拆成「路由层 + 操作层 references + research 层」
+  渐进式披露架构，并新增「场景 E：账号诊断」流程（依赖宿主 runtime 的
+  computer-use / 浏览器工具，本仓库不提供这些工具）。
+
+  本次评测：纯静态 + GitHub API 验证。未在真实 LLM 会话执行 SKILL，未触发
+  computer-use 数据采集流程（场景 E）—— 因此场景 E 的端到端可用性、以及
+  「真实产出符合质量契约」两个 critical 项保持 untested，按 atom 上限处理。
+
+# === Product view ============================================================
+product_view:
+  one_liner:
+    en: "A Claude/Codex/Cursor skill that turns your agent into an X-Twitter growth mentor — distills 6 top creators (Cole, Bush, Sahil, Welsh, Koe, Hormozi) + X's open-source algorithm weights into a routed playbook for writing tweets, picking topics, reviewing drafts, planning growth, and diagnosing accounts."
+    zh: "一个能跑在 Claude Code / Codex / Cursor 上的 prompt-skill —— 把 agent 变成 X-Twitter 增长教练，蒸馏 Nicolas Cole、Dickie Bush、Sahil Bloom、Justin Welsh、Dan Koe、Alex Hormozi 6 位百万美元级创作者的方法论 + X 开源算法权重，按「写推文 / 选题 / 审稿 / 增长策略 / 账号诊断」5 个场景给出可执行步骤。"
+
+  persona:
+    en: "Solo creator or AI / tech founder who already uses Claude Code (or any Agent-Skills runtime) and wants their agent to coach them on X strategy — not generate hollow tweets, but route to the right playbook (hook formulas, 1/3/1 cadence, TweepCred mechanics, AI-niche super-bowl response) based on which question they ask."
+    zh: "已经在用 Claude Code（或任何支持 Agent Skills 协议的 runtime）的独立创作者 / AI 或科技领域 founder，想要 agent 不只是「生成一条像样的推文」，而是按你的问题路由到对应剧本：写推文走 hook 公式 + 1/3/1 节奏，问增长走 TweepCred + 阶段性策略，AI 赛道问题走超级碗响应。"
+
+  scenario:
+    en: "You sit down to post on X. You don't know whether to write a short tweet or a Thread, whether your hook is strong, why your follower growth stalled at 500, or how to respond to a new model release in the AI super-bowl window. You ask your agent and you want a real playbook, not a generic LLM tweet."
+    zh: "你打开 X 准备发内容。你不确定该发短推文还是 Thread、hook 够不够强、为什么粉丝卡在 500 涨不动、新模型发布的「AI 超级碗」窗口里该怎么响应。你问 agent，希望拿到一份真剧本，而不是 LLM 默认那种四平八稳的推文。"
+
+  without_this:
+    en: "Your agent writes generic English-style tweets that sound like every other AI-generated post — no hook formulas, no awareness that external links cut reach 30-50%, no algorithm weights, no Premium / TweepCred math, no super-bowl response window."
+    zh: "Agent 写出来的是「LLM 通用味」推文：没有 hook 公式、不知道外链降触达 30–50%、不知道 X 开源算法里对话回复权重是点赞的 150 倍、不懂 TweepCred 起步分、对 AI 新模型发布的响应窗口完全没感知。"
+
+  with_this:
+    en: "Skill routes your question into 1 of 5 scenarios, loads only the relevant reference (so it doesn't drown in context), follows a step-by-step protocol (e.g. for tweets: 3 hooks with formula tags → user picks → 1/3/1 body → algorithm checklist), and tags every recommendation with confidence + source (open-source algorithm vs community consensus vs author's guess)."
+    zh: "Skill 把你的问题路由到 5 个场景之一（写 / 选题 / 审 / 增长 / 诊断），只加载对应 reference（不会 context 爆炸），按固定 step 走（如「写推文」=3 个标了公式的 Hook → 你选 → 1/3/1 正文 → 算法 checklist），每条建议都标了置信度和来源（X 开源代码 / 社区共识 / 作者推测）。"
+
+  cost_summary:
+    en: "MIT, free. Pure markdown — no scripts, no API keys, no external services. Runtime cost = your agent's normal LLM token usage. The skill loads only the references the current scenario needs, so context overhead is bounded (~250-line SKILL.md + 100-220-line per-scenario reference)."
+    zh: "MIT 免费。纯 markdown，零脚本、零 API key、零外部服务。运行成本 = 你 agent 自己的 LLM token 费用。Skill 是按场景按需加载 reference 的（SKILL.md ~250 行 + 当前场景对应 reference 100-220 行），上下文开销有上限。"
+
+  how:
+    en: |
+      1. `npx skills add alchaincyf/x-mentor-skill` (auto-detects Claude Code / Codex / Cursor / OpenClaw / Hermes, etc.) — or manual: `git clone https://github.com/alchaincyf/x-mentor-skill ~/.claude/skills/x-mentor-skill/`
+      2. Open your agent, ask "帮我写条推文" / "X 怎么涨粉" / "审一下这条 tweet" / "分析我的 X 账号" — skill activates via its description triggers
+      3. For 账号诊断 (scenario E) you also need a runtime with computer-use / browser tools — Claude Code's computer-use, claude-in-chrome, or you provide a CSV/JSON export manually
+    zh: |
+      1. `npx skills add alchaincyf/x-mentor-skill`（自动识别 Claude Code / Codex / Cursor / OpenClaw / Hermes 等 50+ runtime），或者 `git clone https://github.com/alchaincyf/x-mentor-skill ~/.claude/skills/x-mentor-skill/`
+      2. 在你的 agent 里直接说「帮我写条推文」「X 怎么涨粉」「审一下这条 tweet」「分析我的 X 账号」，skill 通过描述里的触发词激活
+      3. 「账号诊断」（场景 E）额外依赖宿主 runtime 提供 computer-use / 浏览器工具（Claude Code 的 computer-use、claude-in-chrome 扩展），或者你手动把 analytics.x.com 导出的 CSV 拖给 agent
+
+  watch_out:
+    en: |
+      - Algorithm weights snapshot is dated 2026-04 — X's algorithm can shift, the skill notes this but you must re-check before betting on specific weights
+      - Methodology is distilled from 6 successful English-speaking creators — Chinese-market dynamics on X may differ, and survivorship bias is unavoidable
+      - Scenario E (account diagnosis) depends on host runtime providing computer-use / browser automation — Claude Code supports it; many runtimes don't. Manual CSV fallback works but is friction
+      - Style contract is advisory (LLM-enforced via prompt), not deterministic — there's no test harness in the repo that validates anti-slop / format rules on real LLM output (the README's A/B table is self-reported)
+      - Author is the same person who built "女娲.skill" (the generator) — every claim about the methodology being "verified" is the author's own internal A/B test, not third-party reproduction
+    zh: |
+      - 算法权重数据时点是 2026-04，X 算法会变，skill 自己也标了，但下注具体权重前要再核对
+      - 方法论蒸馏自 6 位英文圈成功创作者 —— 中文 X 用户的传播规律可能不同，幸存者偏差不可避免
+      - 场景 E（账号诊断）依赖宿主 runtime 提供 computer-use / 浏览器自动化 —— Claude Code 有，很多 runtime 没有；兜底是用户手动导 CSV，但流程不顺
+      - 风格契约是 advisory 的（靠 prompt 让 LLM 自查），不是 deterministic 的 —— 仓库里没有自动跑 anti-slop / 格式校验的测试套件（README 那张 A/B 评分表是作者自评）
+      - 作者和 generator「女娲.skill」是同一人 —— 所有「经验证有效」的说法本质是作者自己的内部 A/B，不是第三方复现
+
+  examples:
+    - context:
+        en: "You want to post about a project you just shipped — Claude Code + 48 hours, AI coding assistant."
+        zh: "你想发一条推文，关于你刚做完的项目：Claude Code + 48 小时，AI 编程助手。"
+      you_say:
+        en: "「帮我写一条推文，关于我用 Claude Code 做了一个 AI 编程助手」"
+        zh: "「帮我写一条推文，关于我用 Claude Code 做了一个 AI 编程助手」"
+      what_happens:
+        en: "Skill routes to Scenario A. Confirms short tweet vs Thread. Generates 3 hook variants, each tagged with its formula (Curiosity Gap / Credibility Anchor / Value Equation). Marks recommended posting time (US weekday 9-11am) and warns: don't put external link in main tweet — drop it in reply 1 (algorithm penalty 30-50%)."
+        zh: "Skill 路由到场景 A。先确认短推文还是 Thread。生成 3 个 Hook 版本，每个标了用的公式（好奇缺口 / 可信度锚点 / Value Equation）。标注建议发布时间（工作日上午 9-11 点）+ 警告：外链不要放主推文，放第一条回复（算法降触达 30-50%）。"
+
+    - context:
+        en: "Your X account is stuck at 500 followers, you've stopped growing."
+        zh: "你的 X 账号卡在 500 粉丝，最近涨不动了。"
+      you_say:
+        en: "「我 500 粉丝，最近涨不动了」"
+        zh: "「我 500 粉丝，最近涨不动了」"
+      what_happens:
+        en: "Skill routes to Scenario D, asks if you have Premium. If no: diagnoses TweepCred — non-Premium starts at -128, normal distribution threshold is +17, you're 145 points short. Recommends Premium (+100 instant). Then a concrete weekly action plan: 2-3 short tweets/day, 5-10 high-quality replies in AI mega-accounts' comments, 3 same-tier DM relationships, no Thread until you find a high-ER topic. Forecast: 5-10 new followers/day, 1K in 4-8 weeks."
+        zh: "Skill 路由到场景 D，先问你开没开 Premium。没开的话：诊断 TweepCred —— 非 Premium 起步 -128，正常分发门槛 +17，你差 145 分。推荐先开 Premium（瞬间 +100）。然后给周计划：每天 2-3 条短推、每天在 5-10 个 AI 大号评论区留高质量回复（200-400 字）、DM 3 个同量级创作者互助、暂时不写 Thread 直到找到高 ER 话题。预期：日均涨 5-10 粉，4-8 周到 1K。"
+
+    - context:
+        en: "You want to audit your existing X account's content mix."
+        zh: "你想审一下自己 X 账号的内容结构。"
+      you_say:
+        en: "「分析一下我的 X 账号 @AlchainHust」"
+        zh: "「分析一下我的 X 账号 @AlchainHust」"
+      what_happens:
+        en: "Skill routes to Scenario E. Tries computer-use to scroll x.com/@username and screenshot 100 tweets (falls back to claude-in-chrome, then to manual CSV upload). Saves data to user-data/{username}/. Generates a 6-dimension diagnostic report (KPI / content ROI by topic / virality funnel / posting time analysis / brand narrative / action plan) as an Economist-style HTML. Real example in examples/account-diagnosis-demo.md found: 'AI commentary' content at 34% of effort but 5-13× lower ROI than 'orange-book' build-in-public content."
+        zh: "Skill 路由到场景 E。先尝试 computer-use 滚 x.com/@username 截图 100 条推文（不行降级到 claude-in-chrome，再不行让你手动传 CSV）。数据存到 user-data/{username}/。然后生成 6 维诊断报告（KPI / 按话题分类的内容 ROI / 传播漏斗 / 发布时间分析 / 品牌叙事 / 行动建议），输出经济学人风格 HTML。examples/account-diagnosis-demo.md 里就有真实案例：作者 34% 精力给了 AI 评论类内容，ROI 比「橙皮书 build-in-public」类低 5-13 倍。"
+
+  next_step:
+    en: |
+      1. Add a small eval harness inside the repo (fixtures of bad / good tweets + a checklist runner) so the README's A/B claim becomes reproducible — currently it's only in references/research/ as narrative, not testable
+      2. Decouple Scenario E from runtime-specific computer-use — provide a documented JSON schema for "drop your tweet export here" so any runtime can use it without browser automation
+      3. Add release tags + CHANGELOG — the repo has 819 stars but no tagged versions; users can't pin to a known-good revision
+      4. Add English-language SKILL.md or split out an EN variant — current SKILL.md description triggers are mostly Chinese; en triggers exist but the body is Chinese-dominant
+    zh: |
+      1. 在仓库里加一套小的 eval harness（好 / 坏推文 fixtures + 一个 checklist runner），让 README 那张 A/B 评分表从「作者自评」变成「可复现」—— 现在 A/B 测试只在 references/research/ 里有叙事，没有可跑的测试
+      2. 把场景 E 从 runtime 的 computer-use 解耦 —— 提供一个文档化的「推文导出 JSON schema」，任何 runtime 不靠浏览器自动化也能跑
+      3. 加 release tag + CHANGELOG —— 819 stars 的仓库但没打 tag，用户没法 pin 到稳定版本
+      4. 加英文版 SKILL.md 或拆 EN 分支 —— 现在 description 触发词中英混合，但正文以中文为主
+
+# === Deployment ==============================================================
+deployment:
+  installable: true
+  install_methods:
+    - method: "npx skills add alchaincyf/x-mentor-skill"
+      platform: "any runtime supporting Agent Skills protocol (Claude Code, Codex, Cursor, OpenClaw, Hermes, Gemini CLI, OpenCode, 50+)"
+      complexity: easy
+    - method: "git clone https://github.com/alchaincyf/x-mentor-skill <runtime-skills-dir>"
+      platform: "any runtime, manual install"
+      complexity: easy
+  requires_compile: false
+  works_offline_after_install: true
+  auto_update: false
+
+# === Third-party services ====================================================
+third_party_services:
+  - name: "Host LLM (Claude / GPT-5 / Gemini / etc, depends on your runtime)"
+    purpose: "Executes the SKILL.md prompts. Skill itself has no API calls."
+    required: true
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "Inherits your agent runtime's billing — skill is pure markdown."
+  - name: "Runtime computer-use / browser tool (optional, scenario E only)"
+    purpose: "Scrapes x.com/@username to collect 100 tweets for the account diagnosis flow."
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "If not available, falls back to manual CSV upload from analytics.x.com."
+
+# === Workflow placement ======================================================
+workflow_placements:
+  - workflow_id: "park-content-v1"
+    stage_id: "04_curation"
+    role: support
+    reason:
+      en: "Helps you pick topics (Scenario B: 4A matrix) for X — sits in curation before production."
+      zh: "在 04_curation 阶段帮你 X 选题（场景 B：4A 矩阵）—— 在生产之前先选好角度。"
+  - workflow_id: "park-content-v1"
+    stage_id: "05_production"
+    role: primary
+    reason:
+      en: "Core fit: writes / reviews tweets and Threads (Scenarios A + C), runs growth-stage diagnostics (D), and produces account diagnostic reports (E). Pure drafting + review aid, not a crawler or publisher."
+      zh: "核心契合：写 / 审推文和 Thread（场景 A + C）、做增长阶段诊断（D）、产出账号诊断报告（E）。是起草 + 审稿工具，不抓数据、不发推。"
+  - workflow_id: "park-content-v1"
+    stage_id: "08_learning"
+    role: support
+    reason:
+      en: "Scenario E (account diagnosis) produces a 6-dimension retrospective HTML — feeds the learning / retrospective stage."
+      zh: "场景 E（账号诊断）会产出 6 维复盘 HTML —— 喂给 08_learning 复盘阶段。"
+
+# === Internal architecture ===================================================
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: "Atom: a single user-facing capability (X-mentor routing), deterministic routing table inside SKILL.md, no LLM-runtime sub-agent dispatch. Static eval can fully test the routing + reference-existence layer; live LLM run still needed to verify output quality."
+    zh: "Atom：单一面向用户能力（X 教练路由），SKILL.md 内部是确定性的路由表，没有 LLM 运行时的子 agent 分发。静态评测就能完整覆盖路由 + 引用完整性那一层；产出质量仍需真实 LLM 会话才能验证。"
+  nodes:
+    - id: input
+      type: start
+      rank: 0
+      lane: 0
+      label:
+        en: "User question (写推文 / 选题 / 审稿 / 增长 / 诊断)"
+        zh: "用户问题（写推文 / 选题 / 审稿 / 增长 / 诊断）"
+    - id: router
+      type: decision
+      rank: 1
+      lane: 0
+      label:
+        en: "SKILL.md routing table (10-row scenario map)"
+        zh: "SKILL.md 路由表（10 行场景映射）"
+    - id: scenario_a
+      type: step
+      rank: 2
+      lane: -2
+      label:
+        en: "A: Write tweet — 3 hooks + 1/3/1 body"
+        zh: "A：写推文 — 3 hook + 1/3/1"
+    - id: scenario_b
+      type: step
+      rank: 2
+      lane: -1
+      label:
+        en: "B: Topic pick — 4A matrix"
+        zh: "B：选题 — 4A 矩阵"
+    - id: scenario_c
+      type: step
+      rank: 2
+      lane: 0
+      label:
+        en: "C: Review — multi-layer diagnostic"
+        zh: "C：审稿 — 多层诊断"
+    - id: scenario_d
+      type: step
+      rank: 2
+      lane: 1
+      label:
+        en: "D: Growth — TweepCred + stage plan"
+        zh: "D：增长 — TweepCred + 阶段计划"
+    - id: scenario_e
+      type: step
+      rank: 2
+      lane: 2
+      label:
+        en: "E: Account diagnosis (needs computer-use)"
+        zh: "E：账号诊断（依赖 computer-use）"
+    - id: refs
+      type: step
+      rank: 3
+      lane: 0
+      label:
+        en: "Loads only relevant reference markdown"
+        zh: "按需加载对应 reference markdown"
+    - id: output
+      type: end
+      rank: 4
+      lane: 0
+      label:
+        en: "Actionable artifact (tweet / report / plan)"
+        zh: "可执行交付物（推文 / 报告 / 计划）"
+  edges:
+    - {from: input, to: router}
+    - {from: router, to: scenario_a}
+    - {from: router, to: scenario_b}
+    - {from: router, to: scenario_c}
+    - {from: router, to: scenario_d}
+    - {from: router, to: scenario_e}
+    - {from: scenario_a, to: refs}
+    - {from: scenario_b, to: refs}
+    - {from: scenario_c, to: refs}
+    - {from: scenario_d, to: refs}
+    - {from: scenario_e, to: refs}
+    - {from: refs, to: output}
+
+# === Comparison ==============================================================
+similar_repos: []

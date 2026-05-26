@@ -1,0 +1,197 @@
+claims:
+  - id: claim-001
+    user_icon: "📑"
+    user_title:
+      en: "Skill loads without parse errors"
+      zh: "Skill 加载时不会报 parse 错误"
+    user_description:
+      en: "SKILL.md has valid YAML frontmatter (name + description). Agent hosts accept it without falling back to generic chat."
+      zh: "SKILL.md 的 YAML frontmatter 合法（name / description 齐全）。Agent 加载时不会因 parse 错而退化为普通对话。"
+    title: SKILL.md 结构合法
+    source: SKILL.md
+    source_ref: "frontmatter (lines 1-10)"
+    priority: critical
+    area: skill-structure
+    statement: |
+      SKILL.md 有效的 YAML frontmatter，包含 name / description 必填字段。
+    evidence_needed: |
+      YAML parse 成功 + 必填字段非空。
+    status: pass
+    evidence: |
+      python3 yaml.safe_load 解析 frontmatter 成功，返回 {name, description}。
+      name = "x-mastery-mentor"，description 含完整触发词列表（X运营/推特/Twitter
+      /怎么写推文/怎么涨粉/X策略 等中英文 trigger）。
+      验证命令：见 README + 直接读取 /tmp/x-mentor-skill/SKILL.md L1-10。
+
+  - id: claim-002
+    user_icon: "🔗"
+    user_title:
+      en: "Internal links don't 404"
+      zh: "内部引用都打得开"
+    user_description:
+      en: "Every relative path SKILL.md references (./references, ./references/research) actually exists. No broken links to send the LLM hallucinating."
+      zh: "SKILL.md 里引用的每个相对路径都真实存在。不会因为找不到 reference 文件就让 LLM 瞎编。"
+    title: 内部引用都能解析
+    source: SKILL.md
+    source_ref: "./references/*.md + ./references/research/*.md (lines 237-252)"
+    priority: critical
+    area: skill-integrity
+    statement: |
+      SKILL.md 中引用的 11 个 reference 文件全部真实存在。
+    evidence_needed: |
+      文件存在检查的完整输出。
+    status: pass
+    evidence: |
+      检查 SKILL.md 引用的全部 11 个 markdown 文件，全部存在：
+        ✓ references/writing-workshop.md (108 lines)
+        ✓ references/algorithm-niche.md (108 lines)
+        ✓ references/growth-monetization.md (90 lines)
+        ✓ references/quality-analytics.md (101 lines)
+        ✓ references/mental-models-heuristics.md (221 lines)
+        ✓ references/research/01-writing-methods.md (503 lines)
+        ✓ references/research/02-growth-engines.md (386 lines)
+        ✓ references/research/03-content-brand.md (398 lines)
+        ✓ references/research/04-platform-mechanics.md (415 lines)
+        ✓ references/research/05-ai-tech-niche.md (404 lines)
+        ✓ references/research/06-cases-antipatterns.md (369 lines)
+      行数与 README + SKILL.md 索引表声明的「~100-220 行 / 500 行」基本一致。
+
+  - id: claim-003
+    user_icon: "🎯"
+    user_title:
+      en: "README features all map to a real SKILL flow"
+      zh: "README 承诺的能力在 SKILL 里都有对应实现"
+    user_description:
+      en: "Every capability the README advertises (write tweet / pick topic / review draft / growth plan / account diagnosis) has a step-by-step scenario in SKILL.md."
+      zh: "README 说能做什么（写推文 / 选题 / 审稿 / 增长 / 账号诊断），SKILL.md 里都有对应的 step-by-step 场景，没有「宣传了但没接入」的功能。"
+    title: README 承诺的能力都在 SKILL.md 有对应 workflow
+    source: README + SKILL.md
+    source_ref: ""
+    priority: critical
+    area: coverage
+    statement: |
+      README 列出的 5 类能力在 SKILL.md 都有对应 scenario A-E。
+    evidence_needed: |
+      一一对应表 + 行号引用。
+    status: pass
+    evidence: |
+      README 承诺的能力 → SKILL.md 对应位置：
+        - 写推文/Thread       → 场景 A (SKILL.md L52-73)，3 hooks + 1/3/1
+        - 选题/没灵感         → 场景 B (SKILL.md L77-90)，4A 矩阵
+        - 审阅已写内容        → 场景 C (SKILL.md L94-115)，多层诊断
+        - 增长/策略           → 场景 D (SKILL.md L119-136)，TweepCred + 阶段计划
+        - 账号诊断 (v2 新增)  → 场景 E (SKILL.md L140-188)，3 级 fallback 采集
+      所有 6 个 mental models、10 条 heuristics、X 算法权重表 在
+      references/mental-models-heuristics.md + algorithm-niche.md 有正文，
+      且 references/research/*.md 标了 6 位创作者每条结论的来源链接（一手）。
+
+  - id: claim-004
+    user_icon: "🧪"
+    user_title:
+      en: "Real LLM run produces playbook-quality output"
+      zh: "真实 LLM 跑一次，产出符合 SKILL 承诺的质量"
+    user_description:
+      en: "Run a real prompt in Claude Code / Codex. Output follows the routing → format → algorithm-checklist contract, not a generic LLM tweet."
+      zh: "在真实 Claude Code / Codex 会话跑一次，产出真的按「路由 → 格式 → 算法 checklist」三步走，不是默认 LLM 那种通用味推文。"
+    title: 真实 LLM 会话产出达到 SKILL 承诺的质量
+    source: SKILL.md
+    source_ref: "scenarios A-E execution rules"
+    priority: critical
+    area: end-to-end-llm
+    statement: |
+      在真实 LLM 会话跑至少一个 prompt，产出符合 SKILL 声明的步骤契约。
+    evidence_needed: |
+      transcript + 对照各场景 step 的逐项打分。
+    status: skip
+    skip_reason: |
+      本次评测是静态 + GitHub API 审查，未在真实 Claude Code 会话激活 skill
+      并跑端到端 prompt。README 自报的 A/B 评分（无 skill 7/10 → 有 skill 8/10
+      等）是作者内部测试，不算第三方复现证据。按 prompt-skill atom 静态评测
+      上限处理。
+
+  - id: claim-005
+    user_icon: "🚫"
+    user_title:
+      en: "Style constraints are spelled out in the skill"
+      zh: "SKILL 把风格约束写清楚了"
+    user_description:
+      en: "SKILL.md explicitly lists style / format rules (1/3/1 cadence, hook formula tags, no external links in main tweet, confidence tagging) so a host LLM has something concrete to follow."
+      zh: "SKILL.md 明确写了风格 / 格式规则（1/3/1 节奏、Hook 标公式、主推文不放外链、不确定的建议标置信度），让宿主 LLM 有具体的契约可以遵守。"
+    title: 风格契约在 SKILL 里有具体规则
+    source: SKILL.md
+    source_ref: "通用规则 (lines 190-196) + scenario rules"
+    priority: high
+    area: contract-explicitness
+    statement: |
+      SKILL.md 包含可被 LLM 自查的具体格式 / 风格规则。
+    evidence_needed: |
+      引用 SKILL.md 中具体的规则条目。
+    status: pass
+    evidence: |
+      SKILL.md 「通用规则」(L190-196) + 各场景 step 中明确的规则：
+        - L67: 「短推文控制 120-130 字符」
+        - L66: 「Thread 用四段结构（Hook→Main→TL;DR→CTA）」
+        - L65: 「遵循 1/3/1 节奏」
+        - L72: 「标注外链风险（如有链接，建议移到第一条回复）」
+        - L192: 「英文推文用英文写，中文推文用中文写，不混用」
+        - L194: 「涉及算法数据时标注时效：『基于 2026 年 4 月 X 开源算法数据』」
+        - L195: 「不确定的建议标注置信度」
+      规则是 advisory 的（LLM 自查），不是 deterministic 的（没有自动测试），
+      但契约写得具体可执行 —— 不是「写好一点」这种模糊指令。
+
+  - id: claim-006
+    user_icon: "📖"
+    user_title:
+      en: "Methodology has cited, traceable sources"
+      zh: "方法论的引用链可追溯"
+    user_description:
+      en: "The skill's claims (X algorithm weights, 6 creators' methods) are traced to primary sources in references/research/ — not just 'someone on Twitter said'."
+      zh: "Skill 里的结论（X 算法权重、6 位创作者方法论）在 references/research/ 里能追溯到一手来源，不是「某条推文说」级别的引用。"
+    title: 蒸馏来源可追溯
+    source: references/research/
+    source_ref: "01-writing-methods.md ... 06-cases-antipatterns.md"
+    priority: high
+    area: research-quality
+    statement: |
+      research/ 下 6 份调研文件给出了具体的一手来源链接和引用。
+    evidence_needed: |
+      抽查 research 文件中的引用质量。
+    status: pass
+    evidence: |
+      抽查 references/research/01-writing-methods.md：
+        - Nicolas Cole / Dickie Bush 概念定义带 Ship 30 for 30 官方文章直链
+        - 概念 (Digital Writer / Atomic Essay) 都标「(一手)」标签
+        - 6 份 research 总计 2475 行，README 第 321 行声明「信息源已排除
+          知乎/微信公众号/百度百科」
+      X 算法权重表（150x 对话回复、27x 普通回复、20x 停留时间、2x 转发、1x 点赞）
+      与 X 开源 algorithm 仓库公开数据一致（链接在 references/research/
+      04-platform-mechanics.md 内）。
+
+  - id: claim-007
+    user_icon: "📦"
+    user_title:
+      en: "Repo is alive and trustworthy"
+      zh: "仓库活跃且可信"
+    user_description:
+      en: "MIT licensed, recently pushed, real maintainer presence — not abandoned, not vibes."
+      zh: "MIT 协议，最近有 push，作者真实存在（不是匿名号、不是弃坑仓）。"
+    title: 仓库活跃且作者真实
+    source: GitHub API
+    source_ref: "repos/alchaincyf/x-mentor-skill"
+    priority: high
+    area: trust-signals
+    statement: |
+      MIT 协议、最近 90 天有 push、作者有真实身份和其他公开作品。
+    evidence_needed: |
+      gh api 输出 + 作者主页交叉验证。
+    status: pass
+    evidence: |
+      gh api repos/alchaincyf/x-mentor-skill：
+        - license.spdx_id = "MIT"
+        - pushed_at = 2026-05-22T11:16:40Z (评测时 -4 天，活跃)
+        - stargazers_count = 819, forks_count = 161
+        - archived = false, disabled = false
+      作者「花叔」(@AlchainHust on X) 是真实独立开发者，作品「小猫补光灯」
+      在 App Store 付费榜 Top1，并且产出了一系列同源 skill（女娲 / 乔布斯 /
+      马斯克 / 纳瓦尔 / 芒格 / 费曼 / 塔勒布 / 张雪峰），都在同一 GitHub
+      account 下，呈系列产品。

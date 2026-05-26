@@ -1,273 +1,1021 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trading / Finance 8-step pipeline · repo-evals</title>
+<title>Gold Quant Trading System · repo-evals workflow</title>
+<link rel="icon" href="data:,">
 <style>
 :root {
-  /* Light theme */
-  --bg:        #fbf8f3;
-  --surface-1: #ffffff;
-  --surface-2: #f3eee5;
-  --surface-3: #ede5d4;
-  --border:    rgba(20, 18, 14, 0.10);
-  --border-strong: rgba(20, 18, 14, 0.18);
-  --text:   #1a1714;
-  --text-2: #5c5246;
-  --text-3: #8a7e6f;
-  --accent: #2563eb;
-  --layer-atom:     #2d7866;
-  --layer-molecule: #5a3aa1;
-  --layer-compound: #a13d30;
-  --cat-production: #16a34a;
-  --cat-available:  #2563eb;
-  --cat-risky:      #d97706;
-  --cat-dont_use:   #dc2626;
-  --ok: #16a34a; --warn: #d97706; --bad: #dc2626;
-  --font-sans: ui-sans-serif, system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-serif: ui-serif, Georgia, serif;
+  --ink: #17130c;
+  --muted: #675f51;
+  --faint: #918776;
+  --paper: #f7f1e7;
+  --panel: #fffaf1;
+  --panel-2: #eee5d5;
+  --line: rgba(38, 31, 18, 0.14);
+  --line-strong: rgba(38, 31, 18, 0.26);
+  --gold: #b78322;
+  --green: #1f7a55;
+  --red: #b64232;
+  --blue: #2f5f9f;
+  --violet: #6c4ba1;
+  --mono: "SFMono-Regular", Consolas, Menlo, monospace;
+  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  --serif: Georgia, "Times New Roman", "Songti SC", serif;
 }
+
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
-  font-family: var(--font-sans); background: var(--bg); color: var(--text);
-  font-size: 13.5px; line-height: 1.5;
-  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.55;
+  background:
+    linear-gradient(90deg, rgba(183, 131, 34, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(183, 131, 34, 0.08) 1px, transparent 1px),
+    var(--paper);
+  background-size: 34px 34px;
 }
-.page-header { max-width: 1400px; margin: 0 auto; padding: 28px 24px 18px; }
-a { color: var(--accent); text-decoration: none; }
+
+a { color: inherit; text-decoration: none; }
 a:hover { text-decoration: underline; }
-.crumb { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3); margin-bottom: 6px; }
-.crumb a { color: var(--text-3); }
-.crumb a:hover { color: var(--text-2); }
-h1 { font-family: var(--font-serif); font-size: 32px; font-weight: 700; margin: 0 0 10px; line-height: 1.1; }
-.lead { color: var(--text-2); max-width: 90ch; margin: 0 0 18px; font-size: 14px; }
 
-.lang-toggle { position: fixed; top: 14px; right: 16px; display: inline-flex; gap: 4px; padding: 4px;
-  background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px;
-  font-family: var(--font-mono); font-size: 11px; z-index: 100;
-  box-shadow: 0 2px 8px rgba(20,18,14,0.06); }
-.lang-toggle button { font: inherit; background: transparent; color: var(--text-3);
-  border: 0; padding: 4px 10px; border-radius: 999px; cursor: pointer; }
-.lang-toggle button.active { background: var(--text); color: var(--surface-1); }
-
-.i18n-block { display: none; }
-html[lang="en"] .en-block { display: block; }
-html[lang="en"] .en-block.inline { display: inline; }
-html[lang="zh"] .zh-block { display: block; }
-html[lang="zh"] .zh-block.inline { display: inline; }
-html[lang="en"] span.en-block.i18n-block { display: inline; }
-html[lang="zh"] span.zh-block.i18n-block { display: inline; }
-
-.summary-tiles { display: flex; gap: 10px; margin: 12px 0 20px; flex-wrap: wrap; }
-.tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; min-width: 140px; }
-.tile-label { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); margin-bottom: 4px; }
-.tile-value { font-family: var(--font-serif); font-size: 22px; font-weight: 700; line-height: 1; color: var(--text); }
-
-/* Main 8-column grid — horizontal scroll on narrow screens */
-.wf-scroll-wrap {
-  overflow-x: auto;
-  padding: 0 24px 24px;
-  background: var(--bg);
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 10px 22px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(247, 241, 231, 0.92);
+  backdrop-filter: blur(14px);
 }
-.wf-grid {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(280px, 1fr));
-  gap: 12px;
-  min-width: 2320px;
-  max-width: 1900px;
+.crumb {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.nav a {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.nav a:hover {
+  border-color: var(--line);
+  background: rgba(255, 250, 241, 0.72);
+  text-decoration: none;
+}
+
+.shell {
+  max-width: 1460px;
   margin: 0 auto;
+  padding: 28px 22px 52px;
 }
 
-/* Per-stage column */
-.wf-col {
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 14px 16px;
-  display: flex; flex-direction: column;
+.hero {
+  min-height: calc(100vh - 66px);
+  display: grid;
+  grid-template-columns: minmax(340px, 0.86fr) minmax(640px, 1.14fr);
+  gap: 24px;
+  align-items: stretch;
+  padding-bottom: 26px;
 }
-.wf-col-head {
-  display: grid; grid-template-columns: auto 1fr auto;
-  gap: 10px; align-items: start;
-  padding-bottom: 12px; border-bottom: 1px solid var(--border);
-  margin-bottom: 12px;
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 620px;
+  border-right: 1px solid var(--line);
+  padding-right: 26px;
 }
-.wf-col-num {
-  font-family: var(--font-mono); font-size: 18px; font-weight: 700;
-  color: var(--accent); line-height: 1; padding-top: 2px;
-  background: var(--surface-2); padding: 4px 8px; border-radius: 4px;
-  min-width: 38px; text-align: center;
+.eyebrow {
+  font-family: var(--mono);
+  color: var(--gold);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 12px;
 }
-.wf-col-titles h2 {
-  font-family: var(--font-serif); font-size: 16px; font-weight: 700;
-  margin: 0 0 3px; line-height: 1.15; color: var(--text);
+h1 {
+  margin: 14px 0 16px;
+  font-family: var(--serif);
+  font-size: clamp(44px, 5vw, 86px);
+  line-height: 0.95;
+  letter-spacing: 0;
 }
-.wf-col-artifact {
-  font-family: var(--font-mono); font-size: 10.5px;
-  color: var(--text-3); margin: 0; line-height: 1.4;
+.lead {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+  max-width: 35em;
 }
-.wf-col-count {
-  font-family: var(--font-mono); font-size: 10.5px;
-  color: var(--text-3); padding: 2px 8px;
-  background: var(--surface-2); border-radius: 999px;
-  white-space: nowrap; align-self: start;
+.hero-thesis {
+  margin-top: 28px;
+  display: grid;
+  gap: 10px;
 }
-.wf-col-body { display: flex; flex-direction: column; gap: 10px; }
+.thesis-line {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.thesis-line b {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.thesis-line span { color: var(--muted); }
 
-/* Repo card (used in both per-platform sections and direct stage stacks) */
-.wf-card {
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  border-left: 3px solid var(--text-3);
-  border-radius: 6px;
+.metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 250, 241, 0.62);
+}
+.metric {
+  min-height: 86px;
+  padding: 12px;
+  border-right: 1px solid var(--line);
+}
+.metric:last-child { border-right: 0; }
+.metric small {
+  display: block;
+  font-family: var(--mono);
+  color: var(--faint);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.metric strong {
+  display: block;
+  margin-top: 7px;
+  font-family: var(--serif);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.system-board {
+  position: relative;
+  min-height: 620px;
+  border: 1px solid var(--line-strong);
+  background:
+    radial-gradient(circle at 16% 20%, rgba(183, 131, 34, 0.18), transparent 32%),
+    linear-gradient(135deg, rgba(255,255,255,0.54), rgba(238,229,213,0.74));
   overflow: hidden;
 }
-.wf-card.wp-primary     { border-left-color: var(--ok); }
-.wf-card.wp-support     { border-left-color: var(--accent); }
-.wf-card.wp-alternative { border-left-color: var(--warn); }
-.wf-card.wp-reference   { border-left-color: var(--text-3); border-left-style: dashed; }
-.wf-card-link { display: block; padding: 10px 12px; color: var(--text); }
-.wf-card-link:hover { background: var(--surface-1); text-decoration: none; }
-.wf-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-.wf-card-name { font-size: 12.5px; line-height: 1.3; }
-.wf-card-name strong { color: var(--text); }
-.wf-card-meta { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
-.wf-score-pill {
-  font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
-  padding: 2px 7px; border-radius: 999px; background: var(--surface-1);
-  white-space: nowrap; border: 1px solid var(--border);
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 15px 16px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255,250,241,0.74);
 }
-.wf-score-pill.cat-production { color: var(--cat-production); }
-.wf-score-pill.cat-available  { color: var(--cat-available); }
-.wf-score-pill.cat-risky      { color: var(--cat-risky); }
-.wf-score-pill.cat-dont_use   { color: var(--cat-dont_use); }
-.wf-layer-pill {
-  font-family: var(--font-mono); font-size: 9px;
-  padding: 2px 6px; border-radius: 3px; background: var(--surface-1);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  border: 1px solid var(--border);
+.board-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
-.wf-layer-pill.layer-atom     { color: var(--layer-atom); }
-.wf-layer-pill.layer-molecule { color: var(--layer-molecule); }
-.wf-layer-pill.layer-compound { color: var(--layer-compound); }
-.wf-role-pill {
-  font-family: var(--font-mono); font-size: 9px;
-  padding: 2px 6px; border-radius: 3px; background: var(--surface-1);
-  text-transform: uppercase; letter-spacing: 0.06em;
-  border: 1px solid var(--border); color: var(--text-2);
+.status-led {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--green);
 }
-.wf-role-pill.wp-primary     { color: var(--ok); border-color: rgba(22, 163, 74, 0.2); }
-.wf-role-pill.wp-support     { color: var(--accent); border-color: rgba(37, 99, 235, 0.2); }
-.wf-role-pill.wp-alternative { color: var(--warn); border-color: rgba(217, 119, 6, 0.2); }
-.wf-medium-pill {
-  font-family: var(--font-mono); font-size: 9px;
-  padding: 2px 6px; border-radius: 3px; background: var(--surface-1);
-  color: var(--text-3); border: 1px solid var(--border);
+.status-led::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 5px rgba(31, 122, 85, 0.1);
 }
-.wf-card-oneliner {
-  font-size: 11.5px; color: var(--text-2); line-height: 1.45;
+.board-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 14px;
+  padding: 18px;
+}
+.node {
+  min-height: 120px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 250, 241, 0.86);
+}
+.node h3 {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.2;
+}
+.node h3 span {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--faint);
+}
+.node p { margin: 0; color: var(--muted); font-size: 12.5px; }
+.node ul {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 5px;
+}
+.node li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  border-top: 1px dotted var(--line);
+  padding-top: 5px;
+}
+.node-core {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  min-height: 430px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-color: rgba(183, 131, 34, 0.44);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 241, 0.94), rgba(238, 229, 213, 0.88));
+}
+.core-price {
+  font-family: var(--serif);
+  font-size: clamp(42px, 4vw, 64px);
+  line-height: 1;
+  margin: 8px 0 5px;
+}
+.core-sub {
+  color: var(--muted);
+  font-size: 13px;
+}
+.signal-tape {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+}
+.tape-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 54px;
+  gap: 8px;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.bar {
+  height: 9px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+}
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+}
+.action-queue {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.ticket {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  background: rgba(23,19,12,0.05);
+  border: 1px solid var(--line);
+}
+.ticket strong { display: block; font-size: 13px; }
+.ticket span { color: var(--muted); font-size: 12px; }
+.gate {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--red);
+  border: 1px solid rgba(182,66,50,0.32);
+  padding: 4px 6px;
+  white-space: nowrap;
+}
+
+section { margin-top: 36px; }
+.section-head {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.28fr) 1fr;
+  gap: 24px;
+  align-items: end;
+  border-top: 2px solid var(--ink);
+  padding-top: 13px;
+  margin-bottom: 16px;
+}
+.section-head h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 32px;
+  line-height: 1;
+}
+.section-head p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 76ch;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(210px, 1fr));
+  gap: 10px;
+}
+.module {
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+  min-height: 266px;
+  display: flex;
+  flex-direction: column;
+}
+.module-top {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.module-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 800;
+}
+.module h3 {
+  margin: 8px 0 6px;
+  font-size: 19px;
+  line-height: 1.15;
+}
+.module p { margin: 0; color: var(--muted); font-size: 12.5px; }
+.module-bottom {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+.module-bottom ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 7px;
+}
+.module-bottom li {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.module-bottom li::before {
+  content: "";
+  width: 7px;
+  height: 7px;
   margin-top: 6px;
+  border: 1px solid var(--gold);
+  background: rgba(183, 131, 34, 0.16);
+}
+.artifact {
+  font-family: var(--mono);
+  color: var(--ink);
+  font-size: 11px;
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
 }
 
-/* Per-platform sub-sections (inside 02 + 07) */
-.wf-platform-section { margin: 0; }
-.wf-platform-section + .wf-platform-section { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
-.wf-platform-header {
-  display: flex; align-items: center; gap: 6px;
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(170px, 1fr));
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.stage {
+  min-width: 170px;
+  border: 1px solid var(--line);
+  background: rgba(255, 250, 241, 0.8);
+}
+.stage-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.stage-num {
+  font-family: var(--mono);
+  color: var(--gold);
+  font-weight: 900;
+}
+.stage-kind {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--faint);
+}
+.stage-body { padding: 10px; }
+.stage h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.18;
+}
+.stage p { margin: 0; color: var(--muted); font-size: 12px; }
+.stage .out {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px dotted var(--line);
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink);
+}
+
+.stack {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 14px;
+}
+.repo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.repo-card, .principle, .dash-panel {
+  border: 1px solid var(--line-strong);
+  background: var(--panel);
+}
+.repo-card a {
+  display: block;
+  min-height: 190px;
+  padding: 13px;
+}
+.repo-card a:hover {
+  background: rgba(255,255,255,0.44);
+  text-decoration: none;
+}
+.repo-name {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
   margin-bottom: 8px;
-  font-family: var(--font-mono); font-size: 11px;
-  color: var(--text-2); font-weight: 700;
-  letter-spacing: 0.06em;
 }
-.wf-platform-logo { font-size: 14px; }
-.wf-platform-name { flex: 1; }
-.wf-platform-count {
-  font-size: 10px; padding: 1px 6px; border-radius: 999px;
-  background: var(--surface-3); color: var(--text-3);
+.repo-name strong { font-size: 15px; line-height: 1.2; }
+.score {
+  font-family: var(--mono);
+  color: var(--blue);
+  border: 1px solid rgba(47, 95, 159, 0.25);
+  padding: 2px 6px;
+  font-size: 11px;
+  white-space: nowrap;
 }
-.wf-platform-cards { display: flex; flex-direction: column; gap: 8px; }
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 2px 5px;
+}
+.repo-card p { margin: 0; color: var(--muted); font-size: 12.5px; }
+.repo-card .use {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px dotted var(--line);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 10.5px;
+}
 
-.wf-stage-gap {
-  font-size: 11.5px; color: var(--text-3);
-  padding: 14px; background: var(--surface-2);
-  border: 1px dashed var(--border-strong); border-radius: 6px;
-  text-align: center;
+.principles {
+  display: grid;
+  gap: 10px;
 }
-.wf-gap-icon { color: var(--warn); margin-right: 4px; font-size: 13px; }
+.principle {
+  padding: 13px;
+}
+.principle h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+.principle p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1.04fr 0.96fr;
+  gap: 12px;
+}
+.dash-panel {
+  padding: 13px;
+  min-height: 220px;
+}
+.dash-panel h3 {
+  margin: 0 0 11px;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.dash-panel h3 span {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--faint);
+}
+.watch-row, .order-row, .risk-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.watch-row:first-of-type, .order-row:first-of-type, .risk-row:first-of-type { border-top: 0; }
+.pill {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.buy { color: var(--green); border-color: rgba(31,122,85,0.28); }
+.sell { color: var(--red); border-color: rgba(182,66,50,0.28); }
+.hold { color: var(--blue); border-color: rgba(47,95,159,0.28); }
+.chart {
+  height: 155px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, transparent 24%, rgba(38,31,18,0.08) 25%, transparent 26%, transparent 49%, rgba(38,31,18,0.08) 50%, transparent 51%, transparent 74%, rgba(38,31,18,0.08) 75%, transparent 76%),
+    linear-gradient(90deg, transparent 19%, rgba(38,31,18,0.06) 20%, transparent 21%, transparent 39%, rgba(38,31,18,0.06) 40%, transparent 41%, transparent 59%, rgba(38,31,18,0.06) 60%, transparent 61%, transparent 79%, rgba(38,31,18,0.06) 80%, transparent 81%);
+  position: relative;
+  overflow: hidden;
+}
+.chart svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.next {
+  border: 1px solid var(--line-strong);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 18px;
+}
+.next h2 {
+  margin: 0 0 12px;
+  font-family: var(--serif);
+  font-size: 30px;
+}
+.next ol {
+  margin: 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 9px;
+}
+.next li { color: rgba(247,241,231,0.82); }
+.next strong { color: #fffaf1; }
 
 footer {
-  max-width: 1400px; margin: 24px auto 0; padding: 18px 24px;
-  border-top: 1px solid var(--border);
-  font-family: var(--font-mono); font-size: 11px; color: var(--text-3);
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+@media (max-width: 1180px) {
+  .hero, .stack, .dashboard { grid-template-columns: 1fr; }
+  .hero-copy { min-height: auto; border-right: 0; padding-right: 0; }
+  .module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .board-grid { grid-template-columns: 1fr 1fr; }
+  .node-core { grid-column: 1 / -1; grid-row: auto; }
+}
+
+@media (max-width: 720px) {
+  .topbar { position: static; align-items: flex-start; flex-direction: column; }
+  .nav { justify-content: flex-start; }
+  .shell { padding: 20px 14px 36px; }
+  .metrics-strip, .module-grid, .repo-grid, .section-head { grid-template-columns: 1fr; }
+  .metric { border-right: 0; border-bottom: 1px solid var(--line); }
+  .metric:last-child { border-bottom: 0; }
+  .board-grid { grid-template-columns: 1fr; padding: 12px; }
+  .thesis-line { grid-template-columns: 1fr; }
+  h1 { font-size: 44px; }
 }
 </style>
 </head>
 <body>
-<div class="lang-toggle">
-  <button data-lang="en" class="active">EN</button>
-  <button data-lang="zh">中文</button>
+<div class="topbar">
+  <div class="crumb"><a href="../all-evals.html">repo-evals</a> / trading workflow / gold-first system</div>
+  <nav class="nav" aria-label="page sections">
+    <a href="#modules">模块</a>
+    <a href="#pipeline">八步闭环</a>
+    <a href="#references">repo/skill</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#next">落地顺序</a>
+  </nav>
 </div>
 
-<header class="page-header">
-  <div class="crumb">
-    <a href="../all-evals.html">repo-evals</a> ·
-    <span class="i18n-block en-block">workflow overlay</span>
-    <span class="i18n-block zh-block">workflow overlay (工作流叠加层)</span>
-  </div>
-  <h1>
-    <span class="i18n-block en-block">Trading / Finance 8-step pipeline</span>
-    <span class="i18n-block zh-block">交易 / 金融八步管线</span>
-  </h1>
-  <p class="lead">
-    <span class="i18n-block en-block">8-stage pipeline view. Stages 02 (acquisition) and 07 (distribution &amp; feedback) are broken out per-platform — X / 抖音 / 小红书 / 微信公众号 / etc. Empty stages are roadmap gaps. Click any card to open the per-repo dossier.</span>
-    <span class="i18n-block zh-block">8 阶段流水线视图。02(内容获取) 和 07(分发反馈) 按平台拆开 —— X / 抖音 / 小红书 / 微信公众号 等。空阶段是路线图缺口。点任意卡片进入 repo 详细 dossier。</span>
-  </p>
-
-  <div class="summary-tiles">
-    <div class="tile">
-      <div class="tile-label"><span class="i18n-block en-block">Total stages</span><span class="i18n-block zh-block">总阶段数</span></div>
-      <div class="tile-value">8</div>
+<main class="shell">
+  <section class="hero" id="overview">
+    <div class="hero-copy">
+      <div>
+        <div class="eyebrow">Gold-first Quant Trading OS</div>
+        <h1>黄金量化交易系统</h1>
+        <p class="lead">先从 XAUUSD / COMEX Gold 做出最小可运行闭环：数据进来，清洗成可信时间序列，策略把市场状态翻译成信号，回测和风控把信号变成交易票据，最后在面板上人工确认。</p>
+        <div class="hero-thesis">
+          <div class="thesis-line">
+            <b>边界</b>
+            <span>自动化到“生成计划 + 排队审批”，真钱执行保留人工确认，不默认全自动下单。</span>
+          </div>
+          <div class="thesis-line">
+            <b>起点</b>
+            <span>黄金比股票池更窄，适合先打通数据质量、宏观因子、事件冲击、回测和风控。</span>
+          </div>
+          <div class="thesis-line">
+            <b>扩展</b>
+            <span>同一套接口后续可以接白银、美元指数、债券收益率、BTC、美股 ETF 和 A 股映射。</span>
+          </div>
+        </div>
+      </div>
+      <div class="metrics-strip" aria-label="system summary">
+        <div class="metric"><small>Asset v1</small><strong>Gold</strong></div>
+        <div class="metric"><small>Loop</small><strong>8 steps</strong></div>
+        <div class="metric"><small>Mode</small><strong>Human gate</strong></div>
+        <div class="metric"><small>Surface</small><strong>Dashboard</strong></div>
+      </div>
     </div>
-    <div class="tile">
-      <div class="tile-label"><span class="i18n-block en-block">Stages filled</span><span class="i18n-block zh-block">已填充阶段</span></div>
-      <div class="tile-value">6 / 8</div>
+
+    <div class="system-board" aria-label="gold trading system board">
+      <div class="board-header">
+        <div class="board-title">Live Architecture Sketch</div>
+        <div class="status-led">paper mode / approval required</div>
+      </div>
+      <div class="board-grid">
+        <div class="node">
+          <h3>数据获取 <span>ingest</span></h3>
+          <p>行情、宏观、新闻和账户状态按统一 contract 进入系统。</p>
+          <ul>
+            <li><span>XAUUSD / GC</span><b>1m, 1h, 1d</b></li>
+            <li><span>DXY / US10Y real</span><b>macro</b></li>
+            <li><span>Fed / CPI / ETF flow</span><b>events</b></li>
+          </ul>
+        </div>
+        <div class="node node-core">
+          <div>
+            <h3>黄金交易指挥台 <span>decision core</span></h3>
+            <div class="core-price">XAUUSD</div>
+            <div class="core-sub">一个标的先跑通：趋势、波动、宏观压力、事件情绪、仓位风险。</div>
+            <div class="signal-tape">
+              <div class="tape-row"><span>trend</span><div class="bar"><i style="width: 72%"></i></div><b>+0.72</b></div>
+              <div class="tape-row"><span>macro</span><div class="bar"><i style="width: 46%"></i></div><b>-0.08</b></div>
+              <div class="tape-row"><span>volatility</span><div class="bar"><i style="width: 63%"></i></div><b>high</b></div>
+              <div class="tape-row"><span>event</span><div class="bar"><i style="width: 38%"></i></div><b>watch</b></div>
+            </div>
+          </div>
+          <div class="action-queue">
+            <div class="ticket">
+              <div>
+                <strong>Trade ticket: long pullback only</strong>
+                <span>entry zone, invalidation, size cap, evidence links</span>
+              </div>
+              <div class="gate">manual approve</div>
+            </div>
+          </div>
+        </div>
+        <div class="node">
+          <h3>数据清洗 <span>quality</span></h3>
+          <p>把不同来源的价格、时区、缺口、复权和异常点压成可信 dataset。</p>
+          <ul>
+            <li><span>schema</span><b>OHLCV</b></li>
+            <li><span>checks</span><b>gap / spike</b></li>
+            <li><span>storage</span><b>sqlite/parquet</b></li>
+          </ul>
+        </div>
+        <div class="node">
+          <h3>数据分析 <span>research</span></h3>
+          <p>技术指标、宏观因子、新闻事件、相关资产共同生成可解释信号。</p>
+          <ul>
+            <li><span>trend</span><b>MA / breakout</b></li>
+            <li><span>regime</span><b>real yield</b></li>
+            <li><span>narrative</span><b>LLM score</b></li>
+          </ul>
+        </div>
+        <div class="node">
+          <h3>回测 / 实盘 / 风控 <span>trade</span></h3>
+          <p>先 paper，再小资金；任何实盘都必须经过仓位、止损和熔断约束。</p>
+          <ul>
+            <li><span>backtest</span><b>walk-forward</b></li>
+            <li><span>risk</span><b>max loss</b></li>
+            <li><span>execution</span><b>queued</b></li>
+          </ul>
+        </div>
+        <div class="node">
+          <h3>交易面板 <span>dashboard</span></h3>
+          <p>只展示需要判断的东西：市场状态、信号证据、待批订单、风控边界。</p>
+          <ul>
+            <li><span>view</span><b>state</b></li>
+            <li><span>act</span><b>approve/reject</b></li>
+            <li><span>learn</span><b>journal</b></li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div class="tile">
-      <div class="tile-label"><span class="i18n-block en-block">Repos placed</span><span class="i18n-block zh-block">已放置 repo</span></div>
-      <div class="tile-value">10</div>
+  </section>
+
+  <section id="modules">
+    <div class="section-head">
+      <h2>五大模块</h2>
+      <p>这不是五个孤立页面，而是一个交易生产线。每个模块都要交付可被下游消费的 artifact，避免策略逻辑散落在脚本和聊天记录里。</p>
     </div>
-  </div>
-</header>
+    <div class="module-grid">
+      <article class="module">
+        <div class="module-top">
+          <div class="module-num">01</div>
+          <h3>数据获取</h3>
+          <p>先接黄金主数据，再接解释黄金的宏观和事件数据。</p>
+        </div>
+        <div class="module-bottom">
+          <ul>
+            <li>价格：XAUUSD spot、COMEX GC futures、GLD ETF。</li>
+            <li>宏观：美元指数、实际利率、Fed 预期、CPI 日历。</li>
+            <li>事件：央行、地缘风险、ETF 持仓、新闻叙事。</li>
+          </ul>
+          <div class="artifact">artifact: raw_snapshots/YYYY-MM-DD/*</div>
+        </div>
+      </article>
+      <article class="module">
+        <div class="module-top">
+          <div class="module-num">02</div>
+          <h3>数据清洗</h3>
+          <p>交易系统最怕“看起来能跑”的脏数据，清洗层要单独可审计。</p>
+        </div>
+        <div class="module-bottom">
+          <ul>
+            <li>统一 symbol、交易时区、OHLCV schema 和频率。</li>
+            <li>标记缺口、异常 spike、重复 candle、供应商漂移。</li>
+            <li>保存原始数据引用，清洗结果不可覆盖。</li>
+          </ul>
+          <div class="artifact">artifact: clean_bars/gold_1h.parquet</div>
+        </div>
+      </article>
+      <article class="module">
+        <div class="module-top">
+          <div class="module-num">03</div>
+          <h3>数据分析</h3>
+          <p>从“指标堆砌”收敛成几个可解释的交易状态。</p>
+        </div>
+        <div class="module-bottom">
+          <ul>
+            <li>技术面：趋势、突破、均值回归、波动率压缩。</li>
+            <li>宏观面：实际利率、美元、风险偏好、通胀预期。</li>
+            <li>事件面：新闻情绪、央行发言、冲击传导链。</li>
+          </ul>
+          <div class="artifact">artifact: signals/YYYY-MM-DD.json</div>
+        </div>
+      </article>
+      <article class="module">
+        <div class="module-top">
+          <div class="module-num">04</div>
+          <h3>回测 / 实盘 / 风控</h3>
+          <p>策略先被历史和 paper 交易反复羞辱，再允许小资金上线。</p>
+        </div>
+        <div class="module-bottom">
+          <ul>
+            <li>回测：交易成本、滑点、walk-forward、参数稳定性。</li>
+            <li>实盘：paper account、订单队列、审批门、回执记录。</li>
+            <li>风控：仓位上限、日损失上限、熔断、相关性暴露。</li>
+          </ul>
+          <div class="artifact">artifact: trade_tickets/YYYY-MM-DD.json</div>
+        </div>
+      </article>
+      <article class="module">
+        <div class="module-top">
+          <div class="module-num">05</div>
+          <h3>交易面板</h3>
+          <p>Dashboard 不是装饰，是交易当天的操作台和审计入口。</p>
+        </div>
+        <div class="module-bottom">
+          <ul>
+            <li>看市场状态、信号强度、回测证据、风险预算。</li>
+            <li>处理待批 ticket：approve、reject、skip、notes。</li>
+            <li>沉淀 journal，反哺策略路由和风控参数。</li>
+          </ul>
+          <div class="artifact">artifact: dashboard + journal</div>
+        </div>
+      </article>
+    </div>
+  </section>
 
-<div class="wf-scroll-wrap">
-  <div class="wf-grid">
-    <section class="wf-col" id="01_market_data"><div class="wf-col-head"><div class="wf-col-num">01</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Market data</span><span class="i18n-block zh-block">行情数据</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ clean kline / OHLCV time series for instruments under watch</span><span class="i18n-block zh-block">→ 已清洗的 kline / OHLCV 时序数据,覆盖你关注的标的</span></p></div><div class="wf-col-count">1</div></div><div class="wf-col-body"><article class="wf-card wp-primary"><a class="wf-card-link" href="../../repos/zinan92--kline/verdicts/latest-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>zinan92/kline</strong></div><span class="wf-score-pill cat-risky">⚠️ 42</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-molecule">molecule</span><span class="wf-role-pill wp-primary"><span class="i18n-block en-block inline">Primary</span><span class="i18n-block zh-block inline">主要</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A multi-asset OHLCV candle service for the Park-trading pipeline — one ticker + one timeframe, returns standardised candles. 4 providers: 𝘁𝘂</span><span class="i18n-block zh-block">Park 交易管线的多资产 OHLCV 蜡烛数据服务 —— 一个 ticker + 一个 timeframe,返回标准化蜡烛。4 个 provider: 𝘁𝘂𝘀𝗵𝗮𝗿𝗲(A 股) / 𝘆𝗮𝗵𝗼𝗼(美股) / 𝗯𝗶𝗻𝗮𝗻𝗰𝗲(加密) / 𝗰𝗼𝗺𝗺𝗼𝗱𝗶𝘁𝘆(商品)。</span></div></a></article></div></section><section class="wf-col" id="02_intel"><div class="wf-col-head"><div class="wf-col-num">02</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Intel collection</span><span class="i18n-block zh-block">情报采集</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ dated intel ledger (news / filings / social / disclosure summaries)</span><span class="i18n-block zh-block">→ 带日期的情报账本(新闻 / 公告 / 社交 / 监管披露摘要)</span></p></div><div class="wf-col-count">1</div></div><div class="wf-col-body"><article class="wf-card wp-support"><a class="wf-card-link" href="../../repos/RKiding--Awesome-finance-skills/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>RKiding/Awesome-finance-skills</strong></div><span class="wf-score-pill cat-available">🛠 59</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-molecule">molecule</span><span class="wf-role-pill wp-support"><span class="i18n-block en-block inline">Support</span><span class="i18n-block zh-block inline">辅助</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A 10-skill bundle for Antigravity / OpenCode / OpenClaw that turns your AI agent into a finance analyst — fetches multi-source news (Cailian</span><span class="i18n-block zh-block">一组 10 个金融分析 skill，适配 Antigravity / OpenCode / OpenClaw —— 把 AI agent 变成金融分析员：拉多源新闻（财联社、Polymarket 等）、A 股 / 港股 / 美股行情、FinBERT 情绪打分、画市场传导链图（dr</span></div></a></article></div></section><section class="wf-col" id="03_signal_synthesis"><div class="wf-col-head"><div class="wf-col-num">03</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Signal synthesis</span><span class="i18n-block zh-block">信号合成</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ signal table — composite scores / direction / conviction per instrument</span><span class="i18n-block zh-block">→ 信号表 —— 每个标的的合成分数 / 方向 / 信心度</span></p></div><div class="wf-col-count">0</div></div><div class="wf-col-body"><div class="wf-stage-gap"><span class="wf-gap-icon">⚠</span><div class="i18n-block en-block">No evaluated repo here yet — roadmap gap.</div><div class="i18n-block zh-block">这一阶段还没有评测过的 repo —— 路线图缺口。</div></div></div></section><section class="wf-col" id="04_methodology_routing"><div class="wf-col-head"><div class="wf-col-num">04</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Methodology routing</span><span class="i18n-block zh-block">方法论路由</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ strategy assignment — which methodology for which signal</span><span class="i18n-block zh-block">→ 策略分配 —— 哪条信号走哪个方法论</span></p></div><div class="wf-col-count">2</div></div><div class="wf-col-body"><article class="wf-card wp-primary"><a class="wf-card-link" href="../../repos/tukuaiai--tradecat/verdicts/2026-05-07-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>tukuaiai/tradecat</strong></div><span class="wf-score-pill cat-available">🛠 63</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-molecule">molecule</span><span class="wf-role-pill wp-primary"><span class="i18n-block en-block inline">Primary</span><span class="i18n-block zh-block inline">主要</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A local-only Python CLI/TUI that pulls 4 public market-data snapshots from Google Sheets, caches them as JSON, and lets you browse them in a</span><span class="i18n-block zh-block">一个完全本地的 Python CLI/TUI 工具：从 Google Sheets 拉 4 个公开行情和事件流快照，存为本地 JSON 缓存，在终端面板里浏览。不要 API key，不要服务端，不要数据库，一条命令装完。新版重构成 Skill 外壳 + 项目源的双层结构，根目录带</span></div></a></article><article class="wf-card wp-support"><a class="wf-card-link" href="../../repos/RKiding--Awesome-finance-skills/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>RKiding/Awesome-finance-skills</strong></div><span class="wf-score-pill cat-available">🛠 59</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-molecule">molecule</span><span class="wf-role-pill wp-support"><span class="i18n-block en-block inline">Support</span><span class="i18n-block zh-block inline">辅助</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A 10-skill bundle for Antigravity / OpenCode / OpenClaw that turns your AI agent into a finance analyst — fetches multi-source news (Cailian</span><span class="i18n-block zh-block">一组 10 个金融分析 skill，适配 Antigravity / OpenCode / OpenClaw —— 把 AI agent 变成金融分析员：拉多源新闻（财联社、Polymarket 等）、A 股 / 港股 / 美股行情、FinBERT 情绪打分、画市场传导链图（dr</span></div></a></article></div></section><section class="wf-col" id="05_backtest"><div class="wf-col-head"><div class="wf-col-num">05</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Backtest validation</span><span class="i18n-block zh-block">回测验证</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ backtest report — Sharpe / drawdown / trade count + variance analysis</span><span class="i18n-block zh-block">→ 回测报告 —— Sharpe / 回撤 / 交易次数 + 方差分析</span></p></div><div class="wf-col-count">1</div></div><div class="wf-col-body"><article class="wf-card wp-primary"><a class="wf-card-link" href="../../repos/brokermr810--QuantDinger/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>brokermr810/QuantDinger</strong></div><span class="wf-score-pill cat-available">🛠 76</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-compound">compound</span><span class="wf-role-pill wp-primary"><span class="i18n-block en-block inline">Primary</span><span class="i18n-block zh-block inline">主要</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A self-hosted Docker Compose stack for AI-assisted quantitative trading: charting, indicator and strategy generation, backtesting, and live </span><span class="i18n-block zh-block">一个自托管的 AI 量化交易 Docker Compose 平台：行情图表、AI 辅助生成指标和策略、回测、加密货币 / IBKR 美股 / MT5 外汇实盘下单都在一套 stack 里。通过 MCP server 接你的 AI Agent，自带 Postgres + Redis</span></div></a></article></div></section><section class="wf-col" id="06_risk"><div class="wf-col-head"><div class="wf-col-num">06</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Risk management</span><span class="i18n-block zh-block">风控决策</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ position sizing / max-loss caps / kill-switch rules</span><span class="i18n-block zh-block">→ 仓位规模 / 最大损失上限 / kill-switch 规则</span></p></div><div class="wf-col-count">1</div></div><div class="wf-col-body"><article class="wf-card wp-primary"><a class="wf-card-link" href="../../repos/brokermr810--QuantDinger/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>brokermr810/QuantDinger</strong></div><span class="wf-score-pill cat-available">🛠 76</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-compound">compound</span><span class="wf-role-pill wp-primary"><span class="i18n-block en-block inline">Primary</span><span class="i18n-block zh-block inline">主要</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A self-hosted Docker Compose stack for AI-assisted quantitative trading: charting, indicator and strategy generation, backtesting, and live </span><span class="i18n-block zh-block">一个自托管的 AI 量化交易 Docker Compose 平台：行情图表、AI 辅助生成指标和策略、回测、加密货币 / IBKR 美股 / MT5 外汇实盘下单都在一套 stack 里。通过 MCP server 接你的 AI Agent，自带 Postgres + Redis</span></div></a></article></div></section><section class="wf-col" id="07_execution"><div class="wf-col-head"><div class="wf-col-num">07</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Execution engine</span><span class="i18n-block zh-block">执行引擎</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ filled orders + execution receipts on the broker</span><span class="i18n-block zh-block">→ broker 端的成交单 + 执行回执</span></p></div><div class="wf-col-count">2</div></div><div class="wf-col-body"><article class="wf-card wp-primary"><a class="wf-card-link" href="../../repos/brokermr810--QuantDinger/verdicts/2026-05-04-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>brokermr810/QuantDinger</strong></div><span class="wf-score-pill cat-available">🛠 76</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-compound">compound</span><span class="wf-role-pill wp-primary"><span class="i18n-block en-block inline">Primary</span><span class="i18n-block zh-block inline">主要</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A self-hosted Docker Compose stack for AI-assisted quantitative trading: charting, indicator and strategy generation, backtesting, and live </span><span class="i18n-block zh-block">一个自托管的 AI 量化交易 Docker Compose 平台：行情图表、AI 辅助生成指标和策略、回测、加密货币 / IBKR 美股 / MT5 外汇实盘下单都在一套 stack 里。通过 MCP server 接你的 AI Agent，自带 Postgres + Redis</span></div></a></article><article class="wf-card wp-alternative"><a class="wf-card-link" href="../../repos/tukuaiai--tradecat/verdicts/2026-05-07-verdict.html"><div class="wf-card-head"><div class="wf-card-name"><strong>tukuaiai/tradecat</strong></div><span class="wf-score-pill cat-available">🛠 63</span></div><div class="wf-card-meta"><span class="wf-layer-pill layer-molecule">molecule</span><span class="wf-role-pill wp-alternative"><span class="i18n-block en-block inline">Alternative</span><span class="i18n-block zh-block inline">替代</span></span></div><div class="wf-card-oneliner"><span class="i18n-block en-block">A local-only Python CLI/TUI that pulls 4 public market-data snapshots from Google Sheets, caches them as JSON, and lets you browse them in a</span><span class="i18n-block zh-block">一个完全本地的 Python CLI/TUI 工具：从 Google Sheets 拉 4 个公开行情和事件流快照，存为本地 JSON 缓存，在终端面板里浏览。不要 API key，不要服务端，不要数据库，一条命令装完。新版重构成 Skill 外壳 + 项目源的双层结构，根目录带</span></div></a></article></div></section><section class="wf-col" id="08_journal"><div class="wf-col-head"><div class="wf-col-num">08</div><div class="wf-col-titles"><h2><span class="i18n-block en-block">Journal &amp; review</span><span class="i18n-block zh-block">复盘学习</span></h2><p class="wf-col-artifact"><span class="i18n-block en-block">→ post-trade journal — what happened, what worked, what to fix</span><span class="i18n-block zh-block">→ 交易后复盘 —— 发生了什么 / 哪招管用 / 还要修什么</span></p></div><div class="wf-col-count">0</div></div><div class="wf-col-body"><div class="wf-stage-gap"><span class="wf-gap-icon">⚠</span><div class="i18n-block en-block">No evaluated repo here yet — roadmap gap.</div><div class="i18n-block zh-block">这一阶段还没有评测过的 repo —— 路线图缺口。</div></div></div></section>
-  </div>
-</div>
+  <section id="pipeline">
+    <div class="section-head">
+      <h2>八步闭环</h2>
+      <p>沿用你已有的交易管线：`kline → intel → signal → copilot → backtest → risk → executor → journal`。五大模块负责系统边界，八步闭环负责每日运行顺序。</p>
+    </div>
+    <div class="pipeline" role="list">
+      <article class="stage" role="listitem">
+        <div class="stage-head"><span class="stage-num">01</span><span class="stage-kind">kline</span></div>
+        <div class="stage-body"><h3>行情数据</h3><p>拉取黄金多周期 OHLCV，后续扩到 DXY、US10Y、GLD、白银。</p><div class="out">out: clean bars</div></div>
+      </article>
+      <article class="stage" role="listitem">
+        <div class="stage-head"><span class="stage-num">02</span><span class="stage-kind">intel</span></div>
+        <div class="stage-body"><h3>情报采集</h3><p>抓取新闻、宏观日历、央行发言、ETF flow 和市场叙事。</p><div class="out">out: event ledger</div></div>
+      </article>
+      <article class="stage" role="listitem">
+        <div class="stage-head"><span class="stage-num">03</span><span class="stage-kind">signal</span></div>
+        <div class="stage-body"><h3>信号合成</h3><p>把价格状态、宏观状态、事件状态合成方向、强度和置信度。</p><div class="out">out: signal table</div></div>
+      </article>
+      <article class="stage" role="listitem">
+        <div class="stage-head"><span class="stage-num">04</span><span class="stage-kind">copilot</span></div>
+        <div class="stage-body"><h3>方法论路由</h3><p>趋势跟随、均值回归、事件冲击、区间突破分别走不同规则。</p><div class="out">out: strategy route</div></div>
+      </article>
+      <article class="stage" role="listitem">
+        <div class="stage-head"><span class="stage-num">05</span><span class="stage-kind">backtest</span></div>
+        <div class="stage-body"><h3>回测验证</h3><p>检查策略在相似波动、相似宏观 regime 下是否站得住。</p><div class="out">out: evidence pack</div></div>
+      </article>
+      <article class="stage" role="listitem">
+        <div class="stage-head"><span class="stage-num">06</span><span class="stage-kind">risk</span></div>
+        <div class="stage-body"><h3>风控决策</h3><p>仓位、止损、目标、最大亏损、日内熔断先于任何订单生成。</p><div class="out">out: risk envelope</div></div>
+      </article>
+      <article class="stage" role="listitem">
+        <div class="stage-head"><span class="stage-num">07</span><span class="stage-kind">executor</span></div>
+        <div class="stage-body"><h3>执行引擎</h3><p>paper 或 broker 订单队列，真钱默认只排队，不自动发出。</p><div class="out">out: order receipt</div></div>
+      </article>
+      <article class="stage" role="listitem">
+        <div class="stage-head"><span class="stage-num">08</span><span class="stage-kind">journal</span></div>
+        <div class="stage-body"><h3>复盘学习</h3><p>每笔决定都记录原始信号、人工理由、执行结果和修正建议。</p><div class="out">out: review loop</div></div>
+      </article>
+    </div>
+  </section>
 
-<footer>
-  <span class="i18n-block en-block">Generated by scripts/build_workflow_dashboard.py from workflows/park-trading-v1.yaml + repos/*/repo.yaml.workflow_placements.</span>
-  <span class="i18n-block zh-block">由 scripts/build_workflow_dashboard.py 从 workflows/park-trading-v1.yaml + repos/*/repo.yaml.workflow_placements 生成。</span>
-</footer>
+  <section id="references">
+    <div class="section-head">
+      <h2>借鉴位</h2>
+      <p>这里不是简单搬 repo，而是把你 star/评测过的交易相关项目拆成可复用能力：数据服务、情报 skill、轻量市场终端、完整量化平台。</p>
+    </div>
+    <div class="stack">
+      <div class="repo-grid">
+        <article class="repo-card">
+          <a href="../../repos/zinan92--kline/verdicts/latest-verdict.html">
+            <div class="repo-name"><strong>zinan92/kline</strong><span class="score">42 risky</span></div>
+            <div class="tags"><span class="tag">OHLCV</span><span class="tag">FastAPI</span><span class="tag">commodity</span></div>
+            <p>统一多资产 candle 服务。黄金系统 v1 可以直接借鉴它的 provider registry 和统一 API contract。</p>
+            <div class="use">use as: data acquisition backbone</div>
+          </a>
+        </article>
+        <article class="repo-card">
+          <a href="../../repos/zinan92--intel/verdicts/2026-04-24-verdict.html">
+            <div class="repo-name"><strong>zinan92/intel</strong><span class="score">reusable</span></div>
+            <div class="tags"><span class="tag">news</span><span class="tag">events</span><span class="tag">signals</span></div>
+            <p>自托管市场情报管线。适合承接黄金的新闻、宏观事件、叙事聚类和来源健康检查。</p>
+            <div class="use">use as: qualitative data layer</div>
+          </a>
+        </article>
+        <article class="repo-card">
+          <a href="../../repos/RKiding--Awesome-finance-skills/verdicts/2026-05-04-verdict.html">
+            <div class="repo-name"><strong>Awesome-finance-skills</strong><span class="score">59 usable</span></div>
+            <div class="tags"><span class="tag">finance skill</span><span class="tag">sentiment</span><span class="tag">report</span></div>
+            <p>金融分析 skill 包。对“贵金属跳水影响传导”“新闻情绪”“报告生成”这类人工分析环节有参考价值。</p>
+            <div class="use">use as: analyst copilot and event explainer</div>
+          </a>
+        </article>
+        <article class="repo-card">
+          <a href="../../repos/tukuaiai--tradecat/verdicts/2026-05-07-verdict.html">
+            <div class="repo-name"><strong>tukuaiai/tradecat</strong><span class="score">63 usable</span></div>
+            <div class="tags"><span class="tag">TUI</span><span class="tag">snapshot</span><span class="tag">local</span></div>
+            <p>轻量本地行情面板。可借鉴它“低配置、先看市场快照”的产品感，不必一开始就做重平台。</p>
+            <div class="use">use as: lightweight operator view</div>
+          </a>
+        </article>
+        <article class="repo-card">
+          <a href="../../repos/brokermr810--QuantDinger/verdicts/2026-05-04-verdict.html">
+            <div class="repo-name"><strong>brokermr810/QuantDinger</strong><span class="score">76 usable</span></div>
+            <div class="tags"><span class="tag">backtest</span><span class="tag">MCP</span><span class="tag">broker</span></div>
+            <p>完整 AI 量化交易平台。重点借鉴 backtest、paper/live 分层、人工审批门和 broker 集成边界。</p>
+            <div class="use">use as: future platform reference</div>
+          </a>
+        </article>
+      </div>
+      <div class="principles">
+        <article class="principle">
+          <h3>先建 contract，再换供应商</h3>
+          <p>黄金数据源可能会漂移。下游只认 `clean_bars`、`events`、`signals`、`trade_tickets`，不直接依赖某个供应商 SDK。</p>
+        </article>
+        <article class="principle">
+          <h3>先 paper，再真钱</h3>
+          <p>任何策略上线前必须经历历史回测、参数稳定性检查、paper account 和小资金限额。Dashboard 的 approve 按钮是风控的一部分。</p>
+        </article>
+        <article class="principle">
+          <h3>每个信号必须可解释</h3>
+          <p>黄金经常被宏观叙事驱动。信号不能只有分数，还要有来源、反方证据、失效条件和复盘入口。</p>
+        </article>
+        <article class="principle">
+          <h3>先做黄金，不锁死黄金</h3>
+          <p>v1 只做黄金是为了降低复杂度；数据接口、策略接口、风控接口都要为多资产预留字段。</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
-<script>
-const buttons = document.querySelectorAll('.lang-toggle button');
-const setLang = (lang) => {
-  document.documentElement.lang = lang;
-  buttons.forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-  try { localStorage.setItem('repo-evals-master-lang', lang); } catch (e) {}
-};
-buttons.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
-let _lang = 'en';
-try {
-  const stored = localStorage.getItem('repo-evals-master-lang');
-  if (stored === 'zh' || stored === 'en') _lang = stored;
-  else if ((navigator.language || '').toLowerCase().startsWith('zh')) _lang = 'zh';
-} catch (e) {}
-setLang(_lang);
-</script>
+  <section id="dashboard">
+    <div class="section-head">
+      <h2>交易面板草图</h2>
+      <p>第一版面板应该像驾驶舱，不像报表站。它每天只回答四个问题：现在是什么状态，系统想做什么，风险能不能承受，最后是谁批准的。</p>
+    </div>
+    <div class="dashboard">
+      <div class="dash-panel">
+        <h3>Gold State <span>multi-timeframe</span></h3>
+        <div class="chart" aria-label="gold price sketch">
+          <svg viewBox="0 0 520 155" preserveAspectRatio="none">
+            <polyline points="0,104 38,98 72,110 110,92 148,87 186,101 224,73 262,65 300,76 338,52 376,58 414,42 452,47 490,31 520,35" fill="none" stroke="#b78322" stroke-width="4"/>
+            <polyline points="0,118 44,114 88,112 132,108 176,104 220,96 264,90 308,82 352,73 396,68 440,58 484,49 520,45" fill="none" stroke="#2f5f9f" stroke-width="2" stroke-dasharray="6 6"/>
+          </svg>
+        </div>
+        <div class="watch-row"><span>XAUUSD 1h trend</span><b>up</b><span class="pill buy">long bias</span></div>
+        <div class="watch-row"><span>real yield pressure</span><b>mixed</b><span class="pill hold">wait</span></div>
+        <div class="watch-row"><span>event risk window</span><b>CPI/Fed</b><span class="pill sell">size down</span></div>
+      </div>
+      <div class="dash-panel">
+        <h3>Signal Queue <span>approval required</span></h3>
+        <div class="order-row"><span>Long pullback near VWAP</span><b>0.64</b><span class="pill buy">ticket</span></div>
+        <div class="order-row"><span>Breakout chase</span><b>0.41</b><span class="pill hold">reject</span></div>
+        <div class="order-row"><span>Event hedge before CPI</span><b>0.52</b><span class="pill hold">review</span></div>
+        <div class="order-row"><span>Mean reversion short</span><b>0.28</b><span class="pill sell">blocked</span></div>
+      </div>
+      <div class="dash-panel">
+        <h3>Risk Envelope <span>account guardrails</span></h3>
+        <div class="risk-row"><span>max risk per trade</span><b>0.50%</b><span class="pill">cap</span></div>
+        <div class="risk-row"><span>daily loss stop</span><b>1.25%</b><span class="pill">kill</span></div>
+        <div class="risk-row"><span>event size multiplier</span><b>0.40x</b><span class="pill sell">active</span></div>
+        <div class="risk-row"><span>manual gate</span><b>on</b><span class="pill buy">required</span></div>
+      </div>
+      <div class="dash-panel">
+        <h3>Journal Feed <span>learning loop</span></h3>
+        <div class="order-row"><span>Skipped breakout chase</span><b>news risk</b><span class="pill">note</span></div>
+        <div class="order-row"><span>Approved pullback long</span><b>small size</b><span class="pill buy">paper</span></div>
+        <div class="order-row"><span>Rejected short signal</span><b>trend conflict</b><span class="pill sell">rule</span></div>
+        <div class="order-row"><span>Review needed</span><b>slippage</b><span class="pill hold">todo</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="next" class="next">
+    <h2>建议落地顺序</h2>
+    <ol>
+      <li><strong>先做黄金数据 contract。</strong> 定义 `Instrument`、`Bar`、`Event`、`Signal`、`TradeTicket`、`JournalEntry`，不要先写花哨策略。</li>
+      <li><strong>打通单策略 paper 闭环。</strong> 用一个趋势/回撤策略跑 `daily pipeline → ticket → manual decision → journal`。</li>
+      <li><strong>再接 Dashboard。</strong> 面板只读本地产物，先展示状态和待批 ticket，确认有用后再加 broker。</li>
+      <li><strong>最后扩资产和实盘。</strong> 黄金稳定后再接白银、DXY、债券收益率、BTC 或美股 ETF；真钱先限额、审批门常开。</li>
+    </ol>
+  </section>
+
+  <footer>
+    Reworked from repo-evals workflow overlay. Gold-first system view based on local trading pipeline memory and evaluated trading repos.
+  </footer>
+</main>
 </body>
 </html>
