@@ -1,0 +1,42 @@
+{
+  "name": "repo-evals-marketplace",
+  "owner": {
+    "name": "zinan92"
+  },
+  "metadata": {
+    "description": "Plugin distribution metadata for repo-evals",
+    "version": "0.1.0",
+    "pluginRoot": "./"
+  },
+  "plugins": [
+    {
+      "name": "repo-evals",
+      "source": "./",
+      "description": "Claim-first repository evaluation skill that turns README promises into auditable 0-100 dossiers.",
+      "version": "0.1.0",
+      "author": {
+        "name": "zinan92"
+      },
+      "repository": "https://github.com/zinan92/repo-evals",
+      "license": "MIT",
+      "keywords": [
+        "repo-evaluation",
+        "agent-skills",
+        "claim-map",
+        "adoption-review",
+        "bilingual-dossier"
+      ],
+      "category": "development",
+      "tags": [
+        "evaluation",
+        "developer-tools",
+        "skills",
+        "html-report",
+        "code-review"
+      ],
+      "skills": [
+        "./"
+      ]
+    }
+  ]
+}

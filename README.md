@@ -5,6 +5,8 @@
 **Claim-first 仓库评测框架 — 把"这个 skill / repo 到底能不能用"变成一份可审计、可对比的双语 dossier。**
 
 [![Python](https://img.shields.io/badge/python-3.11+-3776ab.svg)](https://www.python.org/)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-repo--evals-blueviolet.svg)](SKILL.md)
+[![skills.sh](https://skills.sh/b/zinan92/repo-evals)](https://skills.sh/zinan92/repo-evals)
 [![Framework](https://img.shields.io/badge/framework-claim--first-blue.svg)](docs/FRAMEWORK.md)
 [![Score](https://img.shields.io/badge/score-0--100-orange.svg)](docs/VERDICT-CALCULATOR.md)
 [![Categories](https://img.shields.io/badge/categories-4_bands-purple.svg)](docs/VERDICT-CALCULATOR.md)
@@ -30,9 +32,9 @@ out  bilingual dossier with:
 
 fail  no claim-map.yaml          → render falls back to legacy fields
 fail  similar slug not in corpus → comparison block stays empty (honest)
-fail  static-only eval           → score capped <90 (Production-ready
-                                   reserved for repos with logged
-                                   live e2e evidence)
+fail  static-only eval           → reader-facing category cannot outrank
+                                   final bucket ceilings; Production needs
+                                   score + live/core evidence
 ```
 
 The framework is its own first user: **30+ repos already evaluated** under
@@ -44,6 +46,28 @@ reader who disagrees with a number can challenge that exact number.
 Latest self-eval: the **2026-06-27 credibility pass** fixed archetype
 scaffold YAML drift, added a logged live onboarding e2e, and brought the
 suite to **153 passing tests** with zero coverage gaps.
+
+![repo-evals demo](assets/repo-evals-demo.gif)
+
+<sub>Demo source: [`assets/repo-evals-demo.tape`](assets/repo-evals-demo.tape). Current self-eval: [`repos/zinan92--repo-evals/verdicts/2026-06-27-verdict.html`](repos/zinan92--repo-evals/verdicts/2026-06-27-verdict.html).</sub>
+
+## Install as an Agent Skill
+
+```bash
+npx skills add zinan92/repo-evals -g
+```
+
+Then ask your agent:
+
+```text
+Evaluate https://github.com/owner/repo against its README promises. Write the result in Chinese, and tell me whether I should adopt it.
+```
+
+Use this skill when you need to decide whether to install, depend on, fork,
+recommend, or avoid a repo. It is strongest when the target repo has a README,
+install path, visible claims, or a SKILL.md to compare against real files.
+
+Example runbook: [`examples/quickstart.md`](examples/quickstart.md).
 
 ## 示例输出
 
@@ -130,6 +154,10 @@ Sum is clamped to 0–100 and dropped into one of 4 categories:
 | ⚠️ **Risky** | 30–49 | Runs but has unverified critical issues |
 | 🛑 **Don't use** | <30 | Won't install / core feature broken / archived |
 
+Range is the raw score band. The reader-facing category is also capped by the
+final bucket, so hard ceilings still win: a score of 80 with `final_bucket:
+usable` renders as 🛠 Available, not 🏭 Production-ready.
+
 ## Layer model — atom · molecule · compound
 
 | Layer | What it means | Visualisation |
@@ -183,6 +211,14 @@ cost lives in step 2 (authoring a thoughtful claim-map, ~30-60 min
 per repo). Step 1 + 5 are tooling, step 3 is the human verifying
 each claim against the actual repo.
 
+## Trigger Phrases
+
+- "评测一下这个 repo，看看能不能依赖"
+- "eval 这个 skill，给我 adoption verdict"
+- "这个 GitHub 项目 README 说的是真的吗?"
+- "Compare these two repos and tell me which one is safer to adopt"
+- "Audit this repo's claims vs reality and render a dossier"
+
 ## What the new dossier surfaces
 
 Every dossier (since 2026-05-05) renders these blocks in priority order:
@@ -207,6 +243,14 @@ Every dossier (since 2026-05-05) renders these blocks in priority order:
 | `scripts/build_master_dashboard.py` | Rebuild `dashboard/all-evals.html` master index |
 | `scripts/reeval_diff.py <slug>` | Structured diff between two evals of the same repo |
 
+## Safety Boundaries
+
+- It does not install or run untrusted target repos on your live system by default.
+- It treats source inspection, GitHub API metadata, isolated subprocesses, and saved artifacts as preferred evidence.
+- It does not treat GitHub stars, README badges, or passing CI as proof of user value.
+- If a claim needs credentials, private data, browser profiles, or risky local state, mark it untested and surface the ceiling instead of bypassing safety.
+- The rendered verdict is a decision aid, not a guarantee; bad claim maps still produce bad scores.
+
 ## For AI agents
 
 ```yaml
@@ -218,7 +262,7 @@ capability:
   fail:
     - "no claim-map → render falls back to legacy product_view fields"
     - "similar slug not in corpus → comparison stays empty (honest stub)"
-    - "static-only eval → score capped below 90 (Production reserved for live e2e)"
+    - "static-only eval → reader-facing category capped by final bucket ceilings"
 cli_commands:
   - cmd: scripts/new-repo-eval.sh
     args: ["<owner/repo>", "[skill|tool|framework]"]

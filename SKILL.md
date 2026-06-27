@@ -5,14 +5,21 @@ description: Runs a claim-first evaluation of any open-source repo, tool, or ski
 
 # repo-evals
 
-Both a **skill** (so Claude Code triggers it on the right user phrases) and the full **framework**. Install the skill as a symlink:
+Both a **skill** (so compatible coding agents trigger it on the right user phrases)
+and the full **framework**. Install from GitHub:
 
 ```bash
-git clone https://github.com/zinan92/repo-evals.git ~/work/agents-co/wendy/repo-evals
-ln -s ~/work/agents-co/wendy/repo-evals ~/.claude/skills/repo-evals
+npx skills add zinan92/repo-evals -g
 ```
 
-`git pull` updates both.
+For local development, clone wherever you keep repos and symlink that checkout:
+
+```bash
+git clone https://github.com/zinan92/repo-evals.git ~/repo-evals
+ln -s ~/repo-evals ~/.claude/skills/repo-evals
+```
+
+`git pull` updates the local framework and the symlinked skill together.
 
 ## ⚠️ Standing rule — output is a product page, not a test report
 
@@ -59,7 +66,7 @@ SCORE_BASE        = 40   (project is real, not archived, has license)
 | ≥30 | `risky`     | ⚠️ | Risky / 慎用 |
 | <30 | `broken`    | 🛑 | Don't use / 别用 |
 
-Both the score and category are computed by `scripts/verdict_calculator.py` — never by judgement. Don't write a category into `repo.yaml.current_bucket` and expect it to stick; the calculator overwrites it.
+Both the score and category are computed by `scripts/verdict_calculator.py` — never by judgement. The raw score chooses the tier, then the reader-facing category is capped by the final bucket ceiling. Don't write a category into `repo.yaml.current_bucket` and expect it to stick; the calculator overwrites it.
 
 ## Dossier sections + which `repo.yaml` field drives each
 
