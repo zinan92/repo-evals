@@ -163,6 +163,20 @@ Score → tier → category:
 
 The 4 categories are what filter pills + dashboard headers show. The 6 tiers are for fine-grained sort.
 
+Reader-facing category is then capped by the final legacy bucket, so score
+does not outrank hard ceilings:
+
+| Final bucket | Maximum category |
+|---|---|
+| `unusable` | 🛑 `dont_use` |
+| `usable` | 🛠 `available` |
+| `reusable` | 🏭 `production` |
+| `recommendable` | 🏭 `production` |
+
+Example: score `80` still sorts as `team`, but if live evidence caps
+`final_bucket` at `usable`, the dossier shows 🛠 `available` rather than
+🏭 `production`.
+
 ## Legacy 4-bucket rule table (still emitted for compatibility)
 
 ### Baseline bucket from claim results

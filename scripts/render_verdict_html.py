@@ -2154,6 +2154,10 @@ def render_why_not_next_tier(vd: VerdictData) -> str:
     repo = vd.repo
     layer = str(repo.get("layer", "") or "").lower()
     inputs = vd.verdict_input.get("inputs_summary") or {}
+    evidence = (
+        str(inputs.get("evidence_completeness") or "")
+        or str(vd.verdict_input.get("evidence_completeness") or "")
+    ).lower()
     has_license = bool(repo.get("has_license", False))
     crit_failed = inputs.get("critical_failed", 0) or 0
     crit_untested = (inputs.get("critical_total", 0) or 0) - (inputs.get("critical_covered", 0) or 0)
@@ -2171,6 +2175,9 @@ def render_why_not_next_tier(vd: VerdictData) -> str:
     elif layer == "compound":
         en = f"Static evidence is strong; live agent runtime behaviour has not been observed. Run one logged end-to-end scenario to move toward {target_label_en}."
         zh = f"静态证据强;但实际 agent 运行时行为还没观测过。跑一次有日志记录的端到端场景就能向 {target_label_zh} 推进。"
+    elif evidence == "portable":
+        en = f"Partial live evidence exists; a full core-layer run on an unseen repo is the next step toward {target_label_en}."
+        zh = f"已有部分实际证据;下一步需要拿真正未见过的 repo 跑完整核心层流程,才能向 {target_label_zh} 推进。"
     elif crit_untested > 0:
         en = f"{crit_untested} critical claim(s) are still untested — they likely need a logged live run to close out, the next step toward {target_label_en}."
         zh = f"{crit_untested} 条关键 claim 还没验证 —— 通常需要跑一次有日志记录的实际场景来收尾,这是到 {target_label_zh} 的下一步。"

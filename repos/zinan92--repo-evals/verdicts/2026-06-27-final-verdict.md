@@ -17,7 +17,7 @@
 | 004 3-layout workflow diagrams | passed | io / linear / tree branches exist and render |
 | 005 similar-repos live scores | passed | Peer cards compute current verdict data at render time |
 | 006 corpus exists for cross-comparison | passed | The corpus is past cold start and dashboard-indexed |
-| 007 tests pass | passed | `151 passed` on 2026-06-27 |
+| 007 tests pass | passed | `153 passed` on 2026-06-27 |
 | 008 LICENSE | passed | MIT LICENSE exists at repo root |
 | 009 README is current | passed | README describes the current 0-100 + 4-category model |
 | 010 live e2e onboarding | passed | Fresh-clone style scaffold → fill → render → dashboard smoke test logged |
@@ -42,7 +42,7 @@
 ## Why the verdict improved
 
 - All 10 self-eval claims are now passed.
-- The full test suite is green: `151 passed`.
+- The full test suite is green: `153 passed`.
 - License and README drift were already fixed; the stale self-eval wording has
   been replaced by this fresh verdict.
 - Live e2e onboarding evidence now exists under

@@ -9,7 +9,7 @@
 [![Score](https://img.shields.io/badge/score-0--100-orange.svg)](docs/VERDICT-CALCULATOR.md)
 [![Categories](https://img.shields.io/badge/categories-4_bands-purple.svg)](docs/VERDICT-CALCULATOR.md)
 [![Layers](https://img.shields.io/badge/layers-atom_·_molecule_·_compound-2d7866.svg)](docs/LAYERS.md)
-[![Tests](https://img.shields.io/badge/tests-151_passing-4ade80.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-153_passing-4ade80.svg)](tests/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ### 👉 [Browse the live evaluated-repo catalog](https://zinan92.github.io/repo-evals/) · [浏览已评测仓库目录](https://zinan92.github.io/repo-evals/)
@@ -43,7 +43,7 @@ reader who disagrees with a number can challenge that exact number.
 
 Latest self-eval: the **2026-06-27 credibility pass** fixed archetype
 scaffold YAML drift, added a logged live onboarding e2e, and brought the
-suite to **151 passing tests** with zero coverage gaps.
+suite to **153 passing tests** with zero coverage gaps.
 
 ## 示例输出
 

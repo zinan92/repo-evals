@@ -141,7 +141,7 @@ claims:
     verdict calculator, layer, dashboard, and renderer-related tests.
   status: passed
   last_run: runs/2026-06-27/run-live-e2e
-  note: 151/151 passing on 2026-06-27 after registering pytest unit/integration marks.
+  note: 153/153 passing on 2026-06-27 after registering pytest unit/integration marks and category-ceiling regressions.
 - id: claim-008
   title: Repository has a LICENSE file
   source: framework

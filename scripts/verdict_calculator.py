@@ -176,6 +176,22 @@ CATEGORIES: tuple[dict[str, object], ...] = (
      "blurb_zh": "装不上 / 核心功能坏 / 已 archived。"},
 )
 
+CATEGORY_RANK = {
+    "dont_use": 0,
+    "risky": 1,
+    "available": 2,
+    "production": 3,
+}
+
+CATEGORY_BY_KEY = {str(c["key"]): c for c in CATEGORIES}
+
+BUCKET_CATEGORY_CEILING = {
+    "unusable": "dont_use",
+    "usable": "available",
+    "reusable": "production",
+    "recommendable": "production",
+}
+
 
 def category_for_score(score: int) -> dict[str, object]:
     """Look up the 4-category bucket for a given 0-100 score."""
@@ -183,6 +199,22 @@ def category_for_score(score: int) -> dict[str, object]:
         if score >= c["min"]:  # type: ignore[operator]
             return c
     return CATEGORIES[-1]
+
+
+def category_for_score_and_bucket(score: int, final_bucket: str) -> dict[str, object]:
+    """Return score category capped by the final compatibility bucket.
+
+    The score is the fine-grained sort key, but the reader-facing category
+    must not outrank hard ceilings. A repo with score=80 and
+    final_bucket=usable is still Available, not Production-ready.
+    """
+
+    score_category = category_for_score(score)
+    ceiling_key = BUCKET_CATEGORY_CEILING.get(final_bucket, "production")
+    score_key = str(score_category["key"])
+    if CATEGORY_RANK[score_key] <= CATEGORY_RANK[ceiling_key]:
+        return score_category
+    return CATEGORY_BY_KEY[ceiling_key]
 
 
 def _stars_band_points(stars: int) -> int:
@@ -602,6 +634,7 @@ def compute_verdict(inp: dict) -> dict:
     # consumers can switch over without breaking; bucket stays for
     # backward compat (existing tests, JSON sidecars, dashboards).
     score_block = compute_score(inp, claims)
+    category = category_for_score_and_bucket(score_block["score"], final)
 
     return {
         "repo": repo,
@@ -632,12 +665,12 @@ def compute_verdict(inp: dict) -> dict:
         "tier_zh": score_block["tier_zh"],
         "tier_blurb_en": score_block["tier_blurb_en"],
         "tier_blurb_zh": score_block["tier_blurb_zh"],
-        "category_key": score_block["category_key"],
-        "category_emoji": score_block["category_emoji"],
-        "category_en": score_block["category_en"],
-        "category_zh": score_block["category_zh"],
-        "category_blurb_en": score_block["category_blurb_en"],
-        "category_blurb_zh": score_block["category_blurb_zh"],
+        "category_key": category["key"],
+        "category_emoji": category["emoji"],
+        "category_en": category["en"],
+        "category_zh": category["zh"],
+        "category_blurb_en": category["blurb_en"],
+        "category_blurb_zh": category["blurb_zh"],
     }
 
 

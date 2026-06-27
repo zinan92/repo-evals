@@ -53,7 +53,7 @@ notes: 'A claim-first evaluation framework for skill / repo quality. Inputs:
 
   migration. Both defects are now fixed, and the 2026-06-27 pass adds
 
-  a logged live e2e onboarding run plus a green 151-test suite.
+  a logged live e2e onboarding run plus a green 153-test suite.
 
   '
 product_view:

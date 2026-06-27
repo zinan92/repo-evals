@@ -471,6 +471,67 @@ def test_compute_verdict_emits_category_fields():
     assert "category_zh" in result
 
 
+def test_final_bucket_caps_reader_facing_category():
+    """A high score must not outrank a hard final-bucket ceiling.
+
+    Score stays useful as a fine-grained sort key, but a repo capped at
+    `usable` is reader-facing Available, not Production-ready.
+    """
+
+    result = compute_verdict({
+        "repo": "test/high-static-no-live",
+        "archetype": "pure-cli",
+        "layer": "molecule",
+        "core_layer_tested": False,
+        "evidence_completeness": "partial",
+        "claims": [
+            {"id": "c1", "priority": "critical", "status": "passed"},
+            {"id": "c2", "priority": "critical", "status": "passed"},
+            {"id": "c3", "priority": "critical", "status": "passed"},
+            {"id": "c4", "priority": "critical", "status": "passed"},
+            {"id": "c5", "priority": "critical", "status": "passed"},
+            {"id": "c6", "priority": "critical", "status": "passed"},
+        ],
+        "stars": 50_000,
+        "has_license": True,
+        "release_pipeline_score": 3,
+        "eval_discipline_score": 3,
+        "recently_active": True,
+    })
+
+    assert result["score"] >= 80
+    assert result["tier_key"] in {"team", "recommend"}
+    assert result["final_bucket"] == "usable"
+    assert result["category_key"] == "available"
+    assert result["category_en"] == "Available"
+
+
+def test_unusable_final_bucket_caps_reader_facing_category_to_dont_use():
+    result = compute_verdict({
+        "repo": "test/high-ecosystem-critical-fail",
+        "archetype": "pure-cli",
+        "core_layer_tested": True,
+        "evidence_completeness": "full",
+        "claims": [
+            {"id": "c1", "priority": "critical", "status": "failed"},
+            {"id": "c2", "priority": "critical", "status": "passed"},
+            {"id": "c3", "priority": "critical", "status": "passed"},
+            {"id": "c4", "priority": "critical", "status": "passed"},
+            {"id": "c5", "priority": "critical", "status": "passed"},
+            {"id": "c6", "priority": "critical", "status": "passed"},
+        ],
+        "stars": 50_000,
+        "has_license": True,
+        "release_pipeline_score": 3,
+        "eval_discipline_score": 3,
+        "recently_active": True,
+    })
+
+    assert result["score"] >= 50
+    assert result["final_bucket"] == "unusable"
+    assert result["category_key"] == "dont_use"
+
+
 # --- Ad-hoc runner (so tests work without pytest) --------------------------
 
 if __name__ == "__main__":
