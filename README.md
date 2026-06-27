@@ -9,7 +9,7 @@
 [![Score](https://img.shields.io/badge/score-0--100-orange.svg)](docs/VERDICT-CALCULATOR.md)
 [![Categories](https://img.shields.io/badge/categories-4_bands-purple.svg)](docs/VERDICT-CALCULATOR.md)
 [![Layers](https://img.shields.io/badge/layers-atom_·_molecule_·_compound-2d7866.svg)](docs/LAYERS.md)
-[![Tests](https://img.shields.io/badge/tests-142_passing-4ade80.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-151_passing-4ade80.svg)](tests/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ### 👉 [Browse the live evaluated-repo catalog](https://zinan92.github.io/repo-evals/) · [浏览已评测仓库目录](https://zinan92.github.io/repo-evals/)
@@ -40,6 +40,10 @@ this model. The score for any repo is auditable point-by-point — the
 six named components (`base / static_eval / maintainer_evidence /
 ecosystem / layer_bonus / penalties`) appear in every dossier, so a
 reader who disagrees with a number can challenge that exact number.
+
+Latest self-eval: the **2026-06-27 credibility pass** fixed archetype
+scaffold YAML drift, added a logged live onboarding e2e, and brought the
+suite to **151 passing tests** with zero coverage gaps.
 
 ## 示例输出
 
@@ -198,7 +202,7 @@ Every dossier (since 2026-05-05) renders these blocks in priority order:
 | `scripts/new-repo-eval.sh <owner/repo>` | Scaffold a new evaluation directory |
 | `scripts/extract_claims.py <target>` | Draft a claim-map from README/SKILL.md (every claim marked `needs_review: true`) |
 | `scripts/coverage_gap_detector.py <slug>` | Surface critical / warning / info gaps in claim coverage |
-| `scripts/verdict_calculator.py <slug>` | Compute the 0-100 score with full breakdown |
+| `scripts/verdict_calculator.py <verdict-input.yaml>` | Compute a verdict recommendation from a structured input file |
 | `scripts/render_verdict_html.py <slug>` | Render the bilingual HTML dossier |
 | `scripts/build_master_dashboard.py` | Rebuild `dashboard/all-evals.html` master index |
 | `scripts/reeval_diff.py <slug>` | Structured diff between two evals of the same repo |
@@ -220,6 +224,8 @@ cli_commands:
     args: ["<owner/repo>", "[skill|tool|framework]"]
   - cmd: scripts/render_verdict_html.py
     args: ["<owner--repo>"]
+  - cmd: scripts/verdict_calculator.py
+    args: ["repos/<owner--repo>/verdicts/<date>-verdict-input.yaml"]
   - cmd: scripts/build_master_dashboard.py
     args: []
 artifacts:
@@ -259,9 +265,10 @@ subprocess.run(
 
 The framework was used to evaluate itself — see
 [`repos/zinan92--repo-evals/verdicts/`](repos/zinan92--repo-evals/) for
-the meta-eval, including the two real defects the framework caught on
-itself (no LICENSE before this README, README was stale before this
-README) plus the path to higher score.
+the historical meta-eval and the 2026-06-27 credibility pass. The first
+self-eval caught real defects (no LICENSE before this README, README was
+stale before this README); the latest pass records the fixes plus a live
+onboarding e2e artifact.
 
 A handful of representative evaluated peers:
 

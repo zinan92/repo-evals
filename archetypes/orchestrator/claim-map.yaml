@@ -69,7 +69,7 @@ claims:
       zh: "部分失败不会假装成完全成功"
     user_description:
       en: "When N-of-M downstreams fail, the final output marks which succeeded and which failed. Doesn't ship a 'looks complete but missing pieces' artifact. Downstream consumers don't get tricked into processing incomplete data."
-      zh: "M 个下游里挂了 N 个，最终结果会清楚标出哪部分成功、哪部分失败。不会输出一个看起来"完整"但实际缺失的产物。下游消费者不会被骗去处理不完整数据。"
+      zh: 'M 个下游里挂了 N 个，最终结果会清楚标出哪部分成功、哪部分失败。不会输出一个看起来"完整"但实际缺失的产物。下游消费者不会被骗去处理不完整数据。'
     title: 部分失败不伪装成完全成功
     source: framework
     source_ref: "partial failure"

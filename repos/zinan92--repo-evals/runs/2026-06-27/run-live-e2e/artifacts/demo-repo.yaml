@@ -1,0 +1,120 @@
+owner: demo
+repo: live-e2e-check
+display_name: live-e2e-check
+repo_url: https://github.com/demo/live-e2e-check
+repo_type: skill
+archetype: pure-cli
+layer: atom
+complexity: simple
+uses_areas: false
+status: evaluated
+last_evaluated: '2026-06-27'
+version_tested: ''
+stars: 0
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 0
+eval_discipline_score: 1
+recently_active: true
+business_category: ''
+use_case_tags: []
+notes: '…
+
+  '
+product_view:
+  one_liner:
+    en: A minimal live e2e fixture for repo-evals onboarding.
+    zh: repo-evals onboarding 的最小端到端验证夹具。
+  persona:
+    en: A first-time evaluator checking whether the scaffold and renderer work.
+    zh: 第一次使用 repo-evals、要确认 scaffold 和 renderer 能跑通的评测者。
+  scenario:
+    en: You create a new evaluation from scratch and need a rendered dossier.
+    zh: 你从零创建一份新评测,并需要生成 HTML dossier。
+  without_this:
+    en: You only know the script exists, but not whether the onboarding path produces
+      a page.
+    zh: 你只知道脚本存在,但不知道 onboarding 路径能不能产出页面。
+  with_this:
+    en: The scaffold, claim map, final verdict template, renderer, and dashboard builder
+      all complete.
+    zh: scaffold、claim map、final verdict 模板、renderer 和 dashboard builder 全部跑通。
+  cost_summary:
+    en: Local Python + PyYAML only.
+    zh: 只需要本地 Python + PyYAML。
+  watch_out:
+    en: This is a smoke fixture, not a real third-party repository assessment.
+    zh: 这是冒烟验证夹具,不是对真实第三方仓库的评测。
+  examples:
+  - context:
+      en: A new evaluator tries the documented commands.
+      zh: 新评测者尝试文档里的命令。
+    you_say:
+      en: Create an eval for demo/live-e2e-check.
+      zh: 为 demo/live-e2e-check 创建评测。
+    what_happens:
+      en: repo-evals creates files and renders a bilingual dossier.
+      zh: repo-evals 创建文件并渲染双语 dossier。
+  how:
+    en: Run new-repo-eval.sh, fill repo.yaml and claim-map.yaml, then render.
+    zh: 运行 new-repo-eval.sh,填写 repo.yaml 与 claim-map.yaml,然后渲染。
+  next_step:
+    en: Replace this smoke fixture with a real unseen repo when testing adoption quality.
+    zh: 测试采纳质量时,用真实未见过的 repo 替代这个冒烟夹具。
+deployment:
+  installable: false
+  install_methods:
+  - method: ''
+    platform: ''
+    complexity: easy
+  requires_compile: false
+  works_offline_after_install: false
+  auto_update: false
+third_party_services:
+- name: ''
+  purpose: ''
+  required: false
+  api_key_needed: false
+  signup_needed: false
+  free_tier: true
+  cost_note: ''
+workflow_placements:
+- workflow_id: ''
+  stage_id: ''
+  role: primary
+  reason:
+    en: ''
+    zh: ''
+workflow_diagram:
+  layout: io
+  why_layer: 'Atom smoke fixture: one input becomes one rendered dossier.'
+  nodes:
+  - id: input
+    type: start
+    rank: 0
+    lane: 0
+    label:
+      en: owner/repo
+      zh: owner/repo
+  - id: render
+    type: end
+    rank: 1
+    lane: 0
+    label:
+      en: HTML dossier
+      zh: HTML dossier
+  edges:
+  - from: input
+    to: render
+similar_repos:
+- slug: ''
+  shared_purpose:
+    en: ''
+    zh: ''
+  this_better_at:
+    en: ''
+    zh: ''
+  other_better_at:
+    en: ''
+    zh: ''

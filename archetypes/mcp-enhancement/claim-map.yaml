@@ -34,7 +34,7 @@ claims:
       zh: "文档列出的每个 MCP 工具都能跑"
     user_description:
       en: "Every MCP tool advertised in the README runs to a successful response with one realistic input. No 'listed but stubbed' tools."
-      zh: "README 列出的每个 MCP 工具都能用一个真实输入跑出成功响应。没有"列了但 stub 的"工具。"
+      zh: 'README 列出的每个 MCP 工具都能用一个真实输入跑出成功响应。没有"列了但 stub 的"工具。'
     title: 每个 MCP 工具 happy-path 成功
     source: README
     source_ref: "tool catalog section"

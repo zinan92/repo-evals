@@ -8,8 +8,8 @@ layer: molecule
 complexity: complex
 uses_areas: false
 status: evaluated
-last_evaluated: '2026-05-05'
-version_tested: main@b94031e
+last_evaluated: '2026-06-27'
+version_tested: main@e9d45a19+credibility-pass
 stars: 0
 archived: false
 has_license: true
@@ -43,13 +43,17 @@ notes: 'A claim-first evaluation framework for skill / repo quality. Inputs:
 
   Self-evaluation is the meta-test: the framework needs to be willing
 
-  to flag its own gaps. It found two real ones — no LICENSE file
+  to flag its own gaps. It found two real historical defects — no
 
-  despite a README MIT claim (same defect we flagged on karpathy/
+  LICENSE file despite a README MIT claim (same defect we flagged on
 
-  autoresearch), and a README that still describes the deprecated
+  karpathy/autoresearch), and a README that still described the
 
-  4-bucket model from before the 2026-05-05 score-model migration.
+  deprecated 4-bucket model from before the 2026-05-05 score-model
+
+  migration. Both defects are now fixed, and the 2026-06-27 pass adds
+
+  a logged live e2e onboarding run plus a green 151-test suite.
 
   '
 product_view:
@@ -69,11 +73,11 @@ product_view:
     en: 'You get a structured one-page dossier: layer (atom / molecule / compound), 0-100 score with a 4-zone band, what the workflow actually looks like, who would reach for it and when, what specifically goes wrong, and how it stacks up against alternatives we''ve already evaluated. Every score is auditable; every claim has a status. You can disagree with the verdict but you have to do it on the evidence.'
     zh: '你拿到一份结构化的单页 dossier: 层级(原子 / 分子 / 复合物)、0-100 分加 4 档可用性带、工作流实际长啥样、谁会用 + 什么时候用、具体哪里会坏、跟我们已经评测过的同类比哪个更好。每一分可审计;每条 claim 有状态。你可以不认同结论,但必须基于证据反对。'
   cost_summary:
-    en: 'Free framework but unlicensed (README claims MIT, no LICENSE file yet). Requires Python 3.11+ + PyYAML. Manual labour cost: writing claim-map.yaml for each new repo (~30-60 min for a thoughtful 6-10 claim set). No external services, no API keys.'
-    zh: '框架免费但 license 缺失(README 写 MIT 但没 LICENSE 文件)。需要 Python 3.11+ + PyYAML。人工成本: 每个新 repo 要手写一份 claim-map.yaml(认真写 6-10 条 claim 大约 30-60 分钟)。没有外部服务,没有 API key。'
+    en: 'MIT-licensed framework. Requires Python 3.11+ + PyYAML. Manual labour cost: writing claim-map.yaml for each new repo (~30-60 min for a thoughtful 6-10 claim set). No external services, no API keys.'
+    zh: 'MIT 许可框架。需要 Python 3.11+ + PyYAML。人工成本: 每个新 repo 要手写一份 claim-map.yaml(认真写 6-10 条 claim 大约 30-60 分钟)。没有外部服务,没有 API key。'
   watch_out:
-    en: Score for any repo is only as good as the claim-map you wrote for it — bad claims = bad score. Static-only evals can never reach 90+ ("Production-ready") because that band is reserved for repos with logged live e2e runs; live-eval tooling isn't built yet. Self-evaluation found two real defects in this very framework (no LICENSE file, README is stale). Treat the evaluator as fallible.
-    zh: 任何 repo 的分数只跟你给它写的 claim-map 一样好 —— claim 写得烂分数就烂。纯静态评测永远到不了 90+ ("可用于生产")—— 那个档位留给跑过 live e2e 日志的 repo,live-eval 工具链还没建。自评在这个框架自己身上就发现了两个真问题(缺 LICENSE 文件、README 过时)。把评测人当成会犯错的人对待。
+    en: Score for any repo is only as good as the claim-map you wrote for it — bad claims = bad score. Static-only evals can never reach 90+ ("Production-ready") because that band is reserved for repos with logged live e2e runs. The framework has now logged its own onboarding e2e smoke test, but broad confidence still needs a run on a genuinely unseen third-party repo. Treat the evaluator as fallible.
+    zh: 任何 repo 的分数只跟你给它写的 claim-map 一样好 —— claim 写得烂分数就烂。纯静态评测永远到不了 90+ ("可用于生产")—— 那个档位留给跑过 live e2e 日志的 repo。框架已经给自己的 onboarding 路径补了一次 e2e 冒烟记录,但更强信心还需要拿一个真正未见过的第三方 repo 跑通。把评测人当成会犯错的人对待。
   examples:
   - context:
       en: A team lead picking between three "skill catalogue" repos to recommend to their team
@@ -106,8 +110,8 @@ product_view:
     en: Clone + `pip install pyyaml`. Run `scripts/new-repo-eval.sh owner/repo` to scaffold a directory under `repos/`. Hand-author 6-10 claims in `claims/claim-map.yaml`, fill `repo.yaml` (product_view + workflow_diagram + similar_repos). Run `scripts/render_verdict_html.py owner--repo` for the bilingual dossier. Run `scripts/build_master_dashboard.py` to refresh the corpus index.
     zh: Clone + `pip install pyyaml`。`scripts/new-repo-eval.sh owner/repo` 在 `repos/` 下生成目录。手写 6-10 条 claim 到 `claims/claim-map.yaml`,填 `repo.yaml`(product_view + workflow_diagram + similar_repos)。`scripts/render_verdict_html.py owner--repo` 出双语 dossier。`scripts/build_master_dashboard.py` 刷新总目录。
   next_step:
-    en: Log a fresh-clone-to-rendered-dossier session for a never-seen repo. Stopwatch the steps; save the resulting dossier. Updates claim-010 (live e2e) from untested to passed. With LICENSE + README already fixed, this single live run pushes 78 → 80+.
-    zh: 给一个从没见过的 repo 跑一次从 clone 到 dossier 出炉的有日志 session。计时每步;保存最终 dossier。把 claim-010(端到端)从未验证转为通过。LICENSE + README 已经修了,加上这一次实际运行,把 78 推过 80。
+    en: Run a public-packaging pass (demo GIF, marketplace metadata, install badge) if repo-evals should ship as a public skill, then test the full flow on a genuinely unseen third-party repo.
+    zh: 如果 repo-evals 要作为公开 skill 发布,下一步做 demo GIF、marketplace metadata、安装徽章这一轮公开包装;然后拿一个真正未见过的第三方 repo 跑完整流程。
 similar_repos: []
 similar_repos_pending:
 - slug_note: 'Pending evaluation: an evaluation framework comparable to repo-evals

@@ -1,0 +1,15 @@
+# repo-evals live e2e 2026-06-27
+## clone committed baseline
+baseline_commit=e9d45a19e4cd6befa5a86dd8c80ac15b85d8cd58
+## apply current credibility patch subset
+## dependency check
+pyyaml_ok 6.0.3
+## scaffold
+Created eval scaffold at /tmp/repo-evals-live-e2e-2026-06-27/repo-evals/repos/demo--live-e2e-check (archetype=pure-cli)
+## fill minimal repo.yaml + claim-map
+## render dossier
+Wrote /private/tmp/repo-evals-live-e2e-2026-06-27/repo-evals/repos/demo--live-e2e-check/verdicts/2026-06-27-verdict.html
+## build dashboard
+  collected 43 evaluated repos
+  wrote /private/tmp/repo-evals-live-e2e-2026-06-27/repo-evals/dashboard/all-evals.html
+## e2e complete

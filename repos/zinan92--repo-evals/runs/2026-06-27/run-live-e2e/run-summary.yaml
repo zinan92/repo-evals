@@ -1,0 +1,31 @@
+run:
+  id: run-live-e2e
+  date: '2026-06-27'
+  evaluator: codex-luban-pass
+  target_commit: e9d45a19e4cd6befa5a86dd8c80ac15b85d8cd58 plus credibility patch subset
+  notes: |
+    Fresh-clone style onboarding smoke test for claim-010.
+    The run cloned the committed repository into /tmp, applied the current
+    credibility patch subset needed for archetype YAML validity, verified
+    PyYAML availability, scaffolded a new demo/live-e2e-check evaluation with
+    --archetype pure-cli, filled minimal repo.yaml and claim-map.yaml fields,
+    rendered a bilingual HTML dossier, and rebuilt the master dashboard.
+provenance:
+  repo_evals_commit: e9d45a19e4cd6befa5a86dd8c80ac15b85d8cd58
+  target_repo_ref: local working tree
+  runner: codex
+  agent: Codex
+  evaluated_at: '2026-06-27'
+metrics:
+  pass_rate: 1.0
+  total_claims: 1
+  passed: 1
+  failed: 0
+  untested: 0
+results_by_claim:
+  claim-010: passed
+artifacts:
+  command_log: logs/live-e2e.txt
+  demo_repo_yaml: artifacts/demo-repo.yaml
+  demo_claim_map: artifacts/demo-claim-map.yaml
+  demo_verdict_html: artifacts/demo-verdict.html

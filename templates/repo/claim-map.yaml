@@ -20,7 +20,7 @@ claims:
       en: ""                         # 1-2 sentences; what the user gets / loses
       zh: ""
     # --- Reviewer view -------------------------------------------------------
-    title: ""                        # technical name of the claim
+    title: "Main claim"              # technical name of the claim
     source: README                   # README | --help | docs | API | code | …
     source_ref: ""                   # path/anchor inside the source
     priority: critical               # critical | high | medium | low

@@ -48,7 +48,7 @@ claims:
       zh: "README 承诺的能力在 SKILL 里都有对应实现"
     user_description:
       en: "Every feature the README advertises has a corresponding execution path inside SKILL.md or commands/. No 'mentioned but not built' features."
-      zh: "README 说能做什么，SKILL 或 commands/ 里就真有对应路径。没有"PR 提了功能、Skill 没接入"的情况。"
+      zh: 'README 说能做什么，SKILL 或 commands/ 里就真有对应路径。没有"PR 提了功能、Skill 没接入"的情况。'
     title: README 承诺的每个能力在 SKILL 里都有对应 workflow
     source: README + SKILL.md
     source_ref: ""

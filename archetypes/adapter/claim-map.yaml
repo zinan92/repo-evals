@@ -9,7 +9,7 @@ claims:
       zh: "README 列的每个平台都能跑通"
     user_description:
       en: "Every platform listed in README's supported-platforms table runs to a successful happy path with one real input. No 'mentioned but unimplemented' adapters."
-      zh: "README 列出的每个平台都能用一个真实输入跑通 happy path。没有"挂名却没接通"的 adapter。"
+      zh: 'README 列出的每个平台都能用一个真实输入跑通 happy path。没有"挂名却没接通"的 adapter。'
     title: 每个已声明平台 happy-path 成功
     source: README
     source_ref: "supported platforms table"
@@ -106,7 +106,7 @@ claims:
       zh: "上游接口变了会响亮报错"
     user_description:
       en: "When an external platform changes its signing / fields / structure, the adapter errors instead of returning 'looks-right but missing-fields' fake success. Pipelines don't silently consume bad data."
-      zh: "外部平台改签名 / 字段 / 结构时，adapter 会报错，不会输出"看起来对但缺字段"的假成功。pipeline 不会悄悄消费坏数据。"
+      zh: '外部平台改签名 / 字段 / 结构时，adapter 会报错，不会输出"看起来对但缺字段"的假成功。pipeline 不会悄悄消费坏数据。'
     title: 上游漂移时响亮失败
     source: framework
     source_ref: "adapter drift"
