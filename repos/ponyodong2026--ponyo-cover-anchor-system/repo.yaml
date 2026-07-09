@@ -1,0 +1,246 @@
+# repo.yaml — ponyo-cover-anchor-system dossier
+# Evaluated 2026-07-09 by Mark (Claude Code / claude-opus-4-8) for Park Agent OS.
+# Feeds the Vera（视觉/配图 Manager）adoption decision for the 公众号 content pipeline.
+
+# === Identity ================================================================
+owner: ponyodong2026
+repo: ponyo-cover-anchor-system
+display_name: ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面
+repo_url: https://github.com/ponyodong2026/ponyo-cover-anchor-system
+
+repo_type: skill
+archetype: prompt-skill
+
+# Fixed prompt-assembly pipeline (identify content/platform → pick template →
+# read reference → emit cover plan + image prompt). The LLM makes local choices
+# (which template, which palette) but does NO runtime sub-agent routing → not a
+# compound. NOT an atom either: the real user output is a cover IMAGE rendered by
+# an EXTERNAL image model (ChatGPT Image 2 / DALL-E) this eval cannot run, so the
+# user-facing contract is NOT statically verifiable. → molecule, core untested.
+layer: molecule
+
+complexity: simple
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-07-09"
+version_tested: "main@HEAD (2026-06-22 push), commit f03b7bc"
+
+# === Maintainer / ecosystem signals (verified via gh api) ====================
+stars: 134
+archived: false
+has_license: false         # ADOPTION FLAG. gh api license field = null AND
+                           # /contents/LICENSE + /contents/LICENSE.md → 404.
+                           # No license = all-rights-reserved: no legal grant to
+                           # use / modify / redistribute. Not just a scoring ding.
+multilingual_readme: false # single README.md mixes EN + ZH; no separate language file
+release_pipeline_score: 0  # no releases, no tags, no CI, no changelog (1 push)
+eval_discipline_score: 0   # no tests, no validators, no eval harness — pure prompt skill
+recently_active: true      # created 2026-06-21, pushed 2026-06-22 — within 90d BUT a
+                           # single 2-day burst 17 days ago, bus-factor 1 (see notes)
+
+business_category: content
+use_case_tags: ["xiaohongshu-cover", "social-cover-design", "visual-anchor", "image-prompt", "content-visual"]
+
+notes: |
+  波妞 PONYO 出品的 Codex prompt-skill：把「主题 + 人群 + 内容类型 + 标题」变成一条可直接
+  粘进 ChatGPT Image 2 / DALL-E 的**成品小红书封面**提示词，建立在明确的「信息密度 × 视觉锚点」
+  点击率模型上。134★ / 21 forks，仓库极年轻：2026-06-21 建、2026-06-22 一次推送后至今（17 天）
+  无活动，单一 committer（Dong Ponyo），bus-factor 1，无 release / CI / 测试。
+
+  静态实测（可验证、已通过）：
+    - SKILL.md frontmatter 合法（name: cover-anchor-system + 富触发 description）。
+    - SKILL.md 引用的 6 个 reference 文件全部存在（template-formulas / finished-cover-prompts /
+      doodle-outline-fresh-style / sunlit-scrapbook-cutout-style / cover-diagnosis-checklist /
+      image-prompts）。
+    - README 承诺的 4 条工作流 + 6 套模板/风格在 references/ 里都有对应文件。
+    - template-formulas.md 参数具体（4 套模板 HEX 配色、锚点位置、4.5:1 对比度阈值、
+      数字占高 30-40%、字重比、80px 缩略图测试）；diagnosis-checklist 是可执行的 10 点打分表。
+    - finished-cover-prompts.md 有 13 条成品封面提示词 + Universal Prompt Contract；
+      两套 lifestyle 风格包（涂鸦描边 / 阳光胶片拼贴）各带 4 条 ready prompt。
+    - anti-slop / 水印规则在 SKILL.md Quality Bar + 每个 style 文件里一致声明
+      （无糊字、无假 logo/QR、无编造数据、默认不打「波妞/PONYO/@」水印）。
+    - 随包 16 张示例 PNG（12 cover-cases + 4 doodle）+ 2 张预览图 —— 证明「能出图」。
+
+  **未实测（核心，image-model-dependent）**：真正的用户产物是封面「图」，由外部图像模型
+  （ChatGPT Image 2 / DALL-E）生成；本次评估无凭证、无法运行该模型，因此**封面出图的调性对不对、
+  钩子强不强、中文字形糊不糊，全部未验证**。随包示例 PNG 只证明「产出存在」，不证明「稳定产好图」。
+  → layer=molecule，core_layer_tested=false，evidence=partial。
+
+  **平台真相（对 Park = 公众号 的关键）**：这是**小红书（3:4）系统**。finished-cover-prompts.md
+  的 13 条成品提示词**全部写死 `3:4 vertical Xiaohongshu 1080x1440`，零条公众号 3:1 成品模板**；
+  唯一的公众号 3:1 指引在 legacy `image-prompts.md`（无字背景 + 手动叠字），而 SKILL.md/README
+  明确弃用该路径用于发布。对 Park 的公众号渠道适配差。
+
+  **头对头**：op7418--guizang-social-card-skill（4809★ / AGPL-3.0）**显式产出公众号 21:9+1:1
+  封面对**、走确定性 single-file HTML→PNG（无外部图模型、中文永远清晰、可复现），正是 Park 公众号
+  要的东西 → 公众号 primary 应给 guizang；ponyo 至多是**小红书 lane 的 backup**，且须先拿到授权。
+
+# === Product view ============================================================
+product_view:
+  one_liner:
+    en: "A Codex prompt-skill that turns a topic + audience + title into a ready-to-paste ChatGPT Image 2 / DALL-E prompt for a finished, high-hook Xiaohongshu cover — built on an explicit 信息密度 × 视觉锚点 formula with 6 template/style families, a 10-point diagnosis checklist, and a 16-image example gallery. The cover image itself is produced by an external image model this eval cannot run."
+    zh: "一个 Codex prompt-skill：把「主题 + 人群 + 标题」变成可直接粘进 ChatGPT Image 2 / DALL-E 的成品小红书封面提示词——建立在明确的「信息密度 × 视觉锚点」公式上，含 6 套模板/风格、10 点诊断清单、16 张示例图库。封面成品图由外部图像模型生成，本次评估无法运行该模型。"
+  persona:
+    en: "A content visual / cover-design lead (Park's Vera) who needs on-brand, thumb-stopping Xiaohongshu covers fast and hands image URLs to the downstream gzh-design formatting skill."
+    zh: "需要快速产出强钩子、调性统一的小红书封面，并把图片 URL 交给下游 gzh-design 排版技能的配图/视觉负责人（Park 的 Vera）。"
+  scenario:
+    en: "You have a finished note and need a cover that makes people click in the feed within 3 seconds — you want the anchor, palette, type hierarchy, and a copy-paste image prompt decided for you."
+    zh: "你有一篇成稿，需要一张能让人在信息流里 3 秒内点进来的封面——希望锚点、配色、字重层级和一条可复制的生图提示词都替你定好。"
+  without_this:
+    en: "Hand-brief an image model yourself (covers drift off-brand, Chinese text garbles, no anchor discipline), or design covers manually in Figma / Canva per post."
+    zh: "自己手写生图指令（封面调性飘、中文易糊、没有锚点纪律），或每篇在 Figma / Canva 手动做封面。"
+  with_this:
+    en: "Say '$cover-anchor-system, 小红书 cover for <topic/title>' — it picks a template, fixes the anchor / palette / type hierarchy with HEX values, and emits a finished-cover ChatGPT Image 2 prompt with exact Chinese copy and an 80px-thumbnail quality bar."
+    zh: "说「$cover-anchor-system，给<主题/标题>做小红书封面」——它选模板、用 HEX 定好锚点/配色/字重层级，产出带准确中文文案、含 80px 缩略图质量卡点的成品封面提示词。"
+  cost_summary:
+    en: "Repo is free to read but has NO LICENSE (all-rights-reserved — no legal grant to use / modify / redistribute). Actually rendering a cover needs an external PAID image model (ChatGPT Image 2 / DALL-E): API key / paid account required. The skill files themselves are plain text."
+    zh: "仓库可免费阅读但无 LICENSE（保留所有权利——法律上未授予使用/修改/再分发权）。真正出图需外部付费图像模型（ChatGPT Image 2 / DALL-E）：需 API key / 付费账号。skill 文件本身是纯文本。"
+  how:
+    en: "Copy the cover-anchor-system folder into ~/.codex/skills/ (or read SKILL.md directly), then call it with topic / audience / title; take the emitted prompt to ChatGPT Image 2 / DALL-E to render the cover."
+    zh: "把 cover-anchor-system 文件夹拷进 ~/.codex/skills/（或直接读 SKILL.md），用主题/人群/标题调用；把产出的提示词拿到 ChatGPT Image 2 / DALL-E 出图。"
+  watch_out:
+    en: "(1) NO LICENSE — all-rights-reserved; you have no legal right to adopt, fork, or redistribute it in Park's pipeline until the author grants one. (2) It is a 小红书 (3:4) system: all 13 finished-cover prompts hard-code 3:4 Xiaohongshu 1080x1440; there is NO finished 公众号 (3:1) template — the only 公众号 3:1 guidance lives in the legacy image-prompts.md text-free-background path, which SKILL.md itself deprecates for publishing. For Park's 公众号 channel this is a poor fit. (3) The cover IMAGE is produced by an external image model (ChatGPT Image 2 / DALL-E); output quality, on-brand-ness, and Chinese-text fidelity are model-dependent and were NOT verified here (no credentials) — the bundled example PNGs prove 'produces something,' not repeatable quality. (4) Very young, single-committer repo: created 2026-06-21, one push 2026-06-22, bus-factor 1, no releases / CI / tests."
+    zh: "(1) 无 LICENSE——保留所有权利；作者授权前，你在法律上无权把它纳入 Park pipeline、fork 或再分发。(2) 这是小红书（3:4）系统：13 条成品封面提示词全部写死 3:4 小红书 1080x1440；没有成品公众号（3:1）模板——唯一的公众号 3:1 指引在被 SKILL.md 明确弃用的 image-prompts.md 无字背景路径里。对 Park 的公众号渠道适配差。(3) 封面成品图由外部图像模型（ChatGPT Image 2 / DALL-E）生成，出图质量/调性/中文字形依赖模型，本次评估未验证（无凭证）——随包示例 PNG 只能证明「能出图」，不能证明「稳定出好图」。(4) 极年轻、单人仓库：2026-06-21 建、2026-06-22 一次推送、bus-factor 1，无 release/CI/测试。"
+  examples:
+    - context:
+        en: "A 小红书 note about AI video tools."
+        zh: "一篇讲 AI 视频工具的小红书笔记。"
+      you_say:
+        en: "$cover-anchor-system, 数字型 cover for '5个AI视频提示词公式'."
+        zh: "$cover-anchor-system，用数字型给「5个AI视频提示词公式」做封面。"
+      what_happens:
+        en: "Picks 数字型, sets a giant-number anchor + tech-neon palette with HEX values + 3-level type hierarchy, and emits a finished 3:4 ChatGPT Image 2 prompt with exact Chinese copy and an 80px-thumbnail readability check."
+        zh: "选数字型，定大号数字锚点 + 科技渐变配色（附 HEX）+ 三级字重层级，产出带准确中文、含 80px 缩略图可读性卡点的成品 3:4 生图提示词。"
+    - context:
+        en: "An existing cover that isn't getting clicks."
+        zh: "一张点击率上不去的旧封面。"
+      you_say:
+        en: "Diagnose this cover."
+        zh: "诊断一下这张封面。"
+      what_happens:
+        en: "Scores it 1-10 on information density / visual anchor / thumbnail readability / color contrast / trust, returns the top-3 fixes and a ready-to-use replacement finished-cover prompt."
+        zh: "对信息密度/视觉锚点/缩略图可读性/色彩对比/信任感各打 1-10 分，给出前 3 项修改 + 一条可直接用的替换成品封面提示词。"
+    - context:
+        en: "A travel-vlog note that wants a photographic lifestyle cover (not a graphic card)."
+        zh: "一篇想要真实照片感 lifestyle 封面（而非图形卡片）的旅行 vlog 笔记。"
+      you_say:
+        en: "Doodle-outline fresh cover for 周末逃跑计划."
+        zh: "给「周末逃跑计划」做涂鸦描边小清新封面。"
+      what_happens:
+        en: "Emits a real-photo base + thick white doodle-outline + handwritten-sticker headline 3:4 prompt — a lifestyle-photography look HTML/CSS card systems structurally cannot produce."
+        zh: "产出真实照片底 + 厚白涂鸦描边 + 手写贴纸标题的 3:4 提示词——这种实拍 lifestyle 观感是 HTML/CSS 卡片系统结构上做不出来的。"
+  next_step:
+    en: "(1) Get a license from the author (issue / email) — until then adoption is legally blocked; this is the #1 gate, not a scoring nicety. (2) Render 2+ live covers through ChatGPT Image 2 and score them against the SKILL.md Quality Bar (80px thumbnail readable, one dominant anchor, crisp correct Chinese) → lifts core_layer_tested + evidence partial→portable. (3) For 公众号 use, either author a real finished 公众号 3:1 + 1:1 template, or default 公众号 to guizang-social-card and scope ponyo to the 小红书 lane only."
+    zh: "(1) 向作者要授权（issue / 邮件）——在此之前采用在法律上被卡死，这是第一关，不是评分小事。(2) 用 ChatGPT Image 2 真出 2+ 张封面，对照 SKILL.md Quality Bar（80px 缩略图可读、单一主锚点、中文清晰无误）打分 → 抬升 core_layer_tested + 证据 partial→portable。(3) 若要用于公众号：要么补真正的成品公众号 3:1 + 1:1 模板，要么公众号默认用 guizang-social-card、把 ponyo 限定在小红书 lane。"
+
+# === Deployment ==============================================================
+deployment:
+  installable: true
+  install_methods:
+    - method: "Copy the cover-anchor-system folder into ~/.codex/skills/cover-anchor-system"
+      platform: "Codex (or any agent that reads SKILL.md)"
+      complexity: easy
+    - method: "Read cover-anchor-system/SKILL.md directly and use references/finished-cover-prompts.md"
+      platform: "any agent"
+      complexity: easy
+  requires_compile: false
+  works_offline_after_install: false   # the cover IMAGE requires an external image model
+  auto_update: false
+
+# === Third-party services ====================================================
+third_party_services:
+  - name: "ChatGPT Image 2 / DALL-E (OpenAI)"
+    purpose: "Render the finished cover IMAGE from the prompt this skill emits — the skill produces prompts, not pixels."
+    required: true
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "The whole point (a cover image) cannot be produced without a paid external image model. This eval had no credentials, so the core output layer was NOT verified. Cross-model portability (Gemini / domestic models) is also unverified."
+
+# === Workflow placement ======================================================
+workflow_placements:
+  - workflow_id: park-content-v1
+    stage_id: '05_production'
+    role: support
+    reason:
+      en: "Produces the cover / hero image during content production. But it is 小红书-primary (no finished 公众号 template) and unlicensed, so for Park's 公众号 channel it is a backup, not the primary — guizang-social-card (公众号 21:9+1:1 pairs) owns that lane."
+      zh: "在内容生产阶段产出封面/头图。但它是小红书为主（无成品公众号模板）且无授权，所以对 Park 的公众号渠道只能是 backup，不是 primary——公众号封面对由 guizang-social-card 主导。"
+
+# === Internal architecture (Atom / Molecule / Compound) ======================
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: "Fixed prompt-assembly pipeline: identify content/platform → pick a template from the matrix → read the matching reference → emit a cover plan + a ready-to-use image prompt. The LLM makes local choices (which template, which palette) but performs no runtime sub-agent routing or plan generation — so the skill layer is a molecule, not a compound. Crucially, the user's real output — the cover IMAGE — is produced by an EXTERNAL image model (ChatGPT Image 2 / DALL-E) this eval had no credentials to run, so the core output layer is unverified (core_layer_tested=false). Static checks confirm the prompt library is coherent and complete; they cannot confirm the rendered cover is on-brand or high-hook. That is why it is NOT scored as an atom with auto core_layer_tested=true."
+    zh: "固定的提示词装配 pipeline：识别内容/平台 → 从矩阵选模板 → 读对应 reference → 产出封面方案 + 可直接用的生图提示词。LLM 只做局部选择（选哪个模板、哪套配色），运行时不做子 agent 路由或计划生成——所以 skill 层是 molecule 而非 compound。关键在于：用户真正的产物——封面「图」——由外部图像模型（ChatGPT Image 2 / DALL-E）生成，本次评估无凭证运行，因此核心产物层未验证（core_layer_tested=false）。静态检查能确认提示词库自洽完整，但不能确认出图调性对、钩子强。这就是为什么不把它当 atom 自动记 core_layer_tested=true。"
+  nodes:
+    - id: input
+      type: start
+      rank: 0
+      lane: 0
+      label:
+        en: "Topic + audience + platform + title"
+        zh: "主题 + 人群 + 平台 + 标题"
+    - id: template
+      type: step
+      rank: 1
+      lane: 0
+      label:
+        en: "Pick template (选择矩阵)"
+        zh: "从矩阵选模板"
+    - id: reference
+      type: step
+      rank: 2
+      lane: 0
+      label:
+        en: "Read reference (formulas / prompts / diagnosis)"
+        zh: "读 reference（公式/提示词/诊断）"
+    - id: prompt
+      type: step
+      rank: 3
+      lane: 0
+      label:
+        en: "Emit cover plan + finished-image prompt"
+        zh: "产出封面方案 + 成品生图提示词"
+    - id: imagemodel
+      type: decision
+      rank: 4
+      lane: 0
+      label:
+        en: "External image model (ChatGPT Image 2) — NOT run in this eval"
+        zh: "外部图像模型（ChatGPT Image 2）— 本次评估未运行"
+    - id: output
+      type: end
+      rank: 5
+      lane: 0
+      label:
+        en: "Finished cover image (quality unverified)"
+        zh: "成品封面图（质量未验证）"
+  edges:
+    - {from: input, to: template}
+    - {from: template, to: reference}
+    - {from: reference, to: prompt}
+    - {from: prompt, to: imagemodel}
+    - {from: imagemodel, to: output}
+
+# === Comparison ==============================================================
+similar_repos:
+  - slug: "op7418--guizang-social-card-skill"
+    shared_purpose:
+      en: "Generate social-media covers (小红书 + 公众号) from a topic via an agent skill."
+      zh: "用 agent skill 从主题生成社媒封面（小红书 + 公众号）。"
+    this_better_at:
+      en: "小红书 hook pedagogy: an explicit 信息密度 × 视觉锚点 click-through model, a 10-point cover-diagnosis / redesign checklist, and PHOTOGRAPHIC lifestyle-cover styles (doodle-outline, sunlit-scrapbook photo-collage) that render as real photography — a look HTML/CSS card systems structurally cannot produce. Purpose-built for 小红书 3:4."
+      zh: "小红书钩子方法论：明确的「信息密度 × 视觉锚点」点击率模型、10 点封面诊断/改版清单、以及真实照片感的 lifestyle 风格（涂鸦描边、阳光胶片拼贴）——这种实拍观感 HTML/CSS 卡片系统结构上做不出来。为小红书 3:4 而生。"
+    other_better_at:
+      en: "Explicitly produces 公众号 21:9 + 1:1 cover PAIRS (exactly Park's channel) via deterministic single-file HTML → PNG — no external image model, always-crisp correct Chinese text, reproducible — with 28 layouts / 10 themes. Carries a real AGPL-3.0 license and 4809★ (36x ponyo's 134) with a longer track record (created 2026-05-27, pushed 2026-07-01). For Park's 公众号 pipeline it is the primary; ponyo is at best a 小红书-lane backup, and only if a license is obtained."
+      zh: "显式产出公众号 21:9 + 1:1 封面对（正是 Park 的渠道），走确定性 single-file HTML → PNG——无外部图像模型、中文永远清晰正确、可复现——28 套版式 / 10 套主题。带真实 AGPL-3.0 授权、4809★（是 ponyo 134★ 的 36 倍）、历史更长（2026-05-27 建、2026-07-01 推送）。对 Park 公众号 pipeline 它是 primary；ponyo 至多是小红书 lane 的 backup，且须先拿到授权。"
+
+# guizang-social-card is not yet in this repo-evals corpus (only gh-api facts
+# checked, not a full eval), so the structured card above cannot resolve a score
+# and the renderer drops it. Surface the head-to-head as a pending peer note so
+# it still appears in the dossier — this is the decision-relevant comparison.
+similar_repos_pending:
+  - slug: "op7418--guizang-social-card-skill"
+    slug_note:
+      en: "op7418/guizang-social-card-skill (4809★, AGPL-3.0 — not yet in this corpus, gh-api facts only) is the main head-to-head and the 公众号 PRIMARY: it explicitly generates 公众号 21:9 + 1:1 cover PAIRS via deterministic single-file HTML → PNG — no external image model, always-crisp correct Chinese text, reproducible — with 28 layouts / 10 themes, a real license, and 36x ponyo's stars. ponyo wins only on 小红书 hook pedagogy (信息密度 × 视觉锚点 formula + 10-point diagnosis checklist) and PHOTOGRAPHIC lifestyle looks (doodle-outline, sunlit-scrapbook photo-collage) that HTML card systems structurally cannot produce. Net: guizang owns Park's 公众号 lane; ponyo is at best a 小红书-lane backup, and only once a license is granted."
+      zh: "op7418/guizang-social-card-skill（4809★、AGPL-3.0——尚未纳入本 corpus，仅 gh-api 事实核对）是主要头对头，也是公众号 PRIMARY：它显式产出公众号 21:9 + 1:1 封面对，走确定性 single-file HTML → PNG——无外部图像模型、中文永远清晰正确、可复现——28 套版式 / 10 套主题，有真实授权，star 是 ponyo 的 36 倍。ponyo 只在小红书钩子方法论（信息密度 × 视觉锚点公式 + 10 点诊断清单）和真实照片感 lifestyle 风格（涂鸦描边、阳光胶片拼贴——HTML 卡片系统结构上做不出来）上更强。结论：Park 的公众号 lane 归 guizang；ponyo 至多是小红书 lane 的 backup，且须先拿到授权。"

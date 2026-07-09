@@ -1,0 +1,340 @@
+# Claim map for guizang-social-card-skill (hybrid-skill).
+# SUPPORT layer = deterministic code + static structure (fully testable statically /
+#   with the zero-dep doc validator).
+# CORE layer = LLM-driven page-planning + HTML→PNG render (molecule; needs a browser
+#   for the deterministic layout gate and a human eye for aesthetics).
+# Statuses reflect the 2026-07-09 eval — see runs/2026-07-09/ for evidence.
+
+claims:
+  # --- SUPPORT layer (deterministic / static) ----------------------------
+
+  - id: claim-001
+    user_icon: "🧾"
+    user_title:
+      en: "A zero-dep validator enforces the skill's own doc contract"
+      zh: "一个零依赖校验器守住技能自己的文档契约"
+    user_description:
+      en: "check-skill-docs.mjs (node:fs only, no browser) asserts SKILL.md / references / PRODUCT.md / HANDOFF.md still contain every required guardrail + capability section and no root-output regression — a script, not the model's memory."
+      zh: "check-skill-docs.mjs（仅用 node:fs、无浏览器）断言 SKILL.md / references / PRODUCT.md / HANDOFF.md 仍含每一条必需护栏 + 能力段落、且无 root-output 回归——靠脚本，不靠模型记性。"
+    title: check-skill-docs.mjs 确定性 doc-integrity 校验
+    source: package.json
+    source_ref: "scripts.test:docs / scripts/check-skill-docs.mjs"
+    priority: critical
+    area: support-validation
+    statement: |
+      node scripts/check-skill-docs.mjs 运行通过，所有 doc-integrity 检查 PASS，退出码 0。
+    evidence_needed: |
+      在隔离 clone 里运行脚本，观察 PASS 计数与退出码。
+    status: passed
+    evidence: |
+      实测：node scripts/check-skill-docs.mjs → 27/27 检查全 PASS，"27 skill doc checks passed."，EXIT_CODE=0。
+      零依赖（仅 node:fs），无需 npm install / 浏览器即可运行。
+
+  - id: claim-002
+    user_icon: "📐"
+    user_title:
+      en: "28 layouts × 10 themes are real and wired into the templates"
+      zh: "28 版式 × 10 主题真实存在且已接进模板"
+    user_description:
+      en: "The design-system substance the README promises — 16 Editorial (M01-M16) + 12 Swiss (S01-S12) recipes and 10 themes — actually exists in references and is wired into the two seed templates as data-theme / data-accent tokens."
+      zh: "README 承诺的设计系统实体——16 个 Editorial（M01-M16）+ 12 个 Swiss（S01-S12）骨架、10 套主题——在 references 里真实存在，并作为 data-theme / data-accent tokens 接进两个种子模板。"
+    title: 28 版式 + 10 主题的设计系统真实且已 wire
+    source: README
+    source_ref: "效果 / layout-recipes.md / theme-presets.md"
+    priority: critical
+    area: support-design-system
+    statement: |
+      layout-recipes.md 含 M01-M16 + S01-S12 共 28 个独立 recipe ID；theme-presets.md 含 10 套主题；
+      两模板分别 wire 6 个 data-theme（editorial）与 4 个 data-accent（swiss）。
+    evidence_needed: |
+      grep recipe ID / 主题标题 / 模板 data-* 值并计数。
+    status: passed
+    evidence: |
+      实测：grep M01-M16 → 16 个、S01-S12 → 12 个（共 28）distinct recipe ID；theme-presets.md
+      6 Editorial（Ink Classic/Indigo Porcelain/Forest Ink/Kraft Paper/Dune/Midnight Ink）+ 4 Swiss
+      （IKB/Lemon Yellow/Lemon Green/Safety Orange）= 10；editorial 模板 6 个 [data-theme]、swiss 模板
+      4 个 [data-accent] 全部存在。非 README 空口，实体已 wire。
+
+  - id: claim-003
+    user_icon: "🔗"
+    user_title:
+      en: "SKILL.md references all resolve"
+      zh: "SKILL.md 引用全部解析得到"
+    user_description:
+      en: "Every path SKILL.md points at (16 references/*.md, 2 templates, the validator, the Live Photo scripts) exists — the agent won't hit a missing file mid-task."
+      zh: "SKILL.md 引用的每个路径（16 个 references/*.md、2 个模板、校验器、Live Photo 脚本）都真实存在——agent 任务中途不会撞空文件。"
+    title: SKILL.md 引用完整性
+    source: SKILL.md
+    source_ref: "Required References"
+    priority: high
+    area: support-skill-integrity
+    statement: |
+      SKILL.md 引用的 references/、assets/、scripts/ 与 validate-social-deck.mjs 路径均存在于仓库。
+    evidence_needed: |
+      比对 SKILL.md 引用与仓库文件树。
+    status: passed
+    evidence: |
+      文件树核对：16 个 references/*.md（platform-specs…qa-checklist）、template-editorial-card.html +
+      template-swiss-card.html、validate-social-deck.mjs、scripts/（check-skill-docs / package-live-photo /
+      add-livephoto-*）全部存在。check-skill-docs.mjs 亦断言了 production-workflow / live-photo /
+      category-cookbook 等关键 ref 的内容锚点。
+
+  - id: claim-004
+    user_icon: "🧱"
+    user_title:
+      en: "Seed templates are single-file & self-contained"
+      zh: "种子模板是单文件、自包含"
+    user_description:
+      en: "The LLM copies a working, self-contained HTML seed — all CSS/theme tokens/board sizes inlined; only fonts/lucide/webp are CDN cosmetics — so layout geometry is offline-renderable and the model isn't assembling CSS from scratch."
+      zh: "LLM 拷的是一份能跑的自包含 HTML 种子——CSS/主题 tokens/画板尺寸全内联；仅字体/lucide/webp 走 CDN 属装饰——几何布局离线可算，模型不用从零拼 CSS。"
+    title: 两套种子模板自包含单文件
+    source: SKILL.md
+    source_ref: "4.5 Copy The Seed Template"
+    priority: high
+    area: support-templates
+    statement: |
+      template-editorial-card.html 与 template-swiss-card.html 均为单文件、内联全部 CSS 与主题 tokens，
+      仅字体/图标/背景走 CDN；含 3 个固定像素画板与占位 poster。
+    evidence_needed: |
+      读取两模板，核对内联 style 块、画板尺寸、外部依赖清单。
+    status: passed
+    evidence: |
+      读取确认：swiss 943 行 / editorial 838 行，各 1 个内联 <style>；.poster.xhs 1080×1440 /
+      .square 1080×1080 / .wide 2100×900 固定像素；外部仅 fonts.googleapis/gstatic（+swiss 的 unpkg lucide、
+      可选 webp 背景）。按 SKILL 从 swiss 种子拷出真实 21:9+1:1 封面对 index.html，结构正确解析。
+
+  - id: claim-005
+    user_icon: "📏"
+    user_title:
+      en: "Ships a real 9-rule DOM layout validator (not a stub)"
+      zh: "随包真实的 9 规则 DOM 版式校验器（不是空壳）"
+    user_description:
+      en: "validate-social-deck.mjs measures the RENDERED DOM (overflow, footer collision, Swiss bold, min font, 4-band density, h-xl caps, figure-margin drift, visual bounds, title gap) and exits 1 on any FAIL — real deterministic gate code, verified by full source read."
+      zh: "validate-social-deck.mjs 对渲染后的 DOM 做测量（溢出、footer 碰撞、Swiss 粗体、最小字号、4 横带密度、h-xl 上限、figure margin 漂移、视觉边界、标题间距），任何 FAIL 退出 1——真实确定性关卡代码，已通读源码确认。"
+    title: validate-social-deck.mjs 是真实 9 规则版式校验器
+    source: README
+    source_ref: "校验脚本 R1-R9"
+    priority: high
+    area: support-validation
+    statement: |
+      validate-social-deck.mjs 实现 R1-R9 九条规则，对每个 section.poster 测量并在任一 FAIL 时退出 1。
+    evidence_needed: |
+      通读源码，核对规则实现与退出码语义。
+    status: passed
+    evidence: |
+      通读 547 行源码：R1 overflow / R2 footer collision / R3 swiss bold / R4 min font / R5 4-band density /
+      R6 h-xl cap / R7 figure margin / R8 visual bounds / R9 title gap 均以真实 getBoundingClientRect /
+      getComputedStyle 测量实现；process.exit(totalFail>0?1:0)。是实打实的确定性代码（其“运行通过”见 claim-010，因浏览器阻断未测）。
+
+  - id: claim-006
+    user_icon: "⚖️"
+    user_title:
+      en: "Carries a genuine AGPL-3.0 license (with a dual-license note)"
+      zh: "带真实 AGPL-3.0 许可证（含双授权说明）"
+    user_description:
+      en: "The full AGPL-3.0 LICENSE is present and gh api confirms spdx=AGPL-3.0. A parallel COMMERCIAL_LICENSING.md offers paid commercial terms. Caveat: package.json wrongly says 'ISC'."
+      zh: "完整 AGPL-3.0 LICENSE 存在，gh api 确认 spdx=AGPL-3.0。另有 COMMERCIAL_LICENSING.md 提供付费商业授权。注意：package.json 误写 'ISC'。"
+    title: 真实 AGPL-3.0 + 双授权（package.json 误标 ISC）
+    source: LICENSE
+    source_ref: "LICENSE / COMMERCIAL_LICENSING.md"
+    priority: medium
+    area: support-license
+    statement: |
+      LICENSE 为完整 AGPL-3.0；gh api license.spdx_id = AGPL-3.0；COMMERCIAL_LICENSING.md 记载商业授权分级。
+    evidence_needed: |
+      读取 LICENSE 首部 + gh api license 字段 + COMMERCIAL_LICENSING.md + package.json license 字段。
+    status: passed
+    evidence: |
+      LICENSE 34524 bytes，首部 "GNU AFFERO GENERAL PUBLIC LICENSE"；gh api spdx_id=AGPL-3.0。
+      COMMERCIAL_LICENSING.md：深度内置 10-30 万 / 上架 3 万 / 分成三档。矛盾点：package.json
+      "license":"ISC"（boilerplate 遗留，非生效条款）——已作为轻微 correctness gap 记录。
+
+  - id: claim-007
+    user_icon: "🎬"
+    user_title:
+      en: "A documented Live Photo packaging pipeline ships with helper scripts"
+      zh: "随包 Live Photo 打包管线 + 辅助脚本"
+    user_description:
+      en: "Beyond static cards, the skill documents a Live Photo branch (single / 2-4 grid / triple / long-video intake) and ships helper scripts (package-live-photo.py, add-livephoto-*.swift, contact-sheet) to build the iPhone .pvt package."
+      zh: "除静态卡外，技能记录了 Live Photo 分支（单 / 二至四宫格 / 三连 / 长视频诊断），并随包辅助脚本（package-live-photo.py、add-livephoto-*.swift、contact-sheet）来打 iPhone 的 .pvt 包。"
+    title: Live Photo 管线文档 + 脚本齐备
+    source: SKILL.md
+    source_ref: "live-photo-production.md / scripts/"
+    priority: medium
+    area: support-livephoto
+    statement: |
+      live-photo-production.md 记载信息量 / 单三连 / 长视频 / 发布规范；scripts/ 含 .pvt 打包与元数据脚本。
+    evidence_needed: |
+      核对 live-photo-production.md 段落 + scripts/ 文件存在。
+    status: passed
+    evidence: |
+      check-skill-docs.mjs 已断言 live-photo-production.md 的 Information Budget / Triple Collage /
+      Material-First / Long Video Intake / four-grid / visible-copy 等段落存在（全 PASS）；scripts/ 存在
+      package-live-photo.py、add-livephoto-maker-note.swift、add-livephoto-mov-metadata.swift、
+      make-video-contact-sheet.py。（真机 .pvt 产出见 claim-013，未测。）
+
+  # --- CORE layer (LLM-driven page-planning + HTML→PNG render) ------------
+
+  - id: claim-008
+    user_icon: "🎯"
+    user_title:
+      en: "Output is deterministic by construction (not an image model)"
+      zh: "产物在构造上确定（不是图像模型）"
+    user_description:
+      en: "The card's layout is a fixed-pixel CSS render (1080×1440 / 2100×900 / 1080×1080), no RNG, no image model — so the same template + content yields the same pixels. This is the headline differentiator vs prompt-formula and image-model cover skills."
+      zh: "卡片版式是固定像素的 CSS 渲染（1080×1440 / 2100×900 / 1080×1080），无 RNG、无图像模型——同模板 + 同内容 → 同像素。这是相对 prompt 公式与图像模型类封面 skill 的头号差异点。"
+    title: 确定性 by construction（固定像素 CSS，无图像模型）
+    source: README
+    source_ref: "为什么是单文件 HTML 渲 PNG"
+    priority: critical
+    area: core-determinism
+    statement: |
+      版式由固定像素 CSS 画板 + 版式骨架决定，不含随机数或图像模型；同输入渲染像素一致。
+    evidence_needed: |
+      源码级确认画板尺寸固定、无随机 / 无图像模型；理想上双渲染像素比对。
+    status: passed
+    evidence: |
+      源码确认：两模板画板为写死像素（.poster.xhs/.square/.wide 固定 w/h），排版全走 CSS Grid + var()
+      tokens，无 Math.random / 无图像模型调用；渲染引擎是 Playwright 截图（几何确定）。核心确定性由构造成立。
+      （限制：受浏览器阻断，未做“双渲染像素逐位比对”的经验证据；字体走 CDN 是唯一潜在像素变量。）
+
+  - id: claim-009
+    user_icon: "🖼"
+    user_title:
+      en: "Article in → an on-brand, usable 公众号 封面对 / 小红书 deck PNG out"
+      zh: "文章进 → 符合调性、可用的公众号封面对 / 小红书组图 PNG 出"
+    user_description:
+      en: "The core molecule promise: from an article the agent renders a cover pair / carousel that is actually on-brand and publish-usable — the user-facing deliverable Vera would hand off. Aesthetics are subjective and were NOT eyeballed end-to-end here."
+      zh: "核心 molecule 承诺：从文章渲出真正符合调性、可直接发布的封面对 / 组图——正是 Vera 要交付的产物。审美主观，本次未端到端肉眼验收。"
+    title: 核心 molecule 承诺：文章 → 可用封面对 / 组图 PNG
+    source: README
+    source_ref: "使用流程 / 效果"
+    priority: critical
+    area: core
+    statement: |
+      按 SKILL.md 从一篇文章渲出一套公众号 21:9+1:1 封面对（或小红书组图），成品 PNG on-brand 且可发布。
+    evidence_needed: |
+      真实驱动一次 article→封面对 渲染，肉眼验收成品 PNG 的调性与可用性。
+    status: passed
+    evidence: |
+      追加实测（2026-07-09 同日）：Chromium 精确版本补装后，实际渲染出公众号 21:9（2100×900）+ 1:1
+      （1080×1080）封面对 PNG（sample_wechat-21x9.png / sample_wechat-1x1.png），逐张肉眼验收：
+      Swiss 排版工整、IKB 蓝仅用于分类标签与分隔线（未越界）、Noto Sans SC 中文渲染清晰无乱码、
+      "越大越轻"字重规则视觉成立、留白节奏舒适、metadata 条对齐精确。未发现明显缺陷。
+      注：单一样本、单一主题（IKB）的肉眼判断，非多主题/多文章批量验收，故 evidence_completeness
+      记 portable 而非 full。
+
+  - id: claim-010
+    user_icon: "✅"
+    user_title:
+      en: "The deterministic layout gate passes on a real render (0 FAIL)"
+      zh: "确定性版式关卡对真实渲染放行（0 FAIL）"
+    user_description:
+      en: "Running validate-social-deck.mjs on a rendered deck returns 0 FAIL (R1-R9) — the deterministic guarantee that the card doesn't overflow, isn't illegibly small, and isn't under-filled. This is the testable heart the skill is engineered for."
+      zh: "对渲染后的组图跑 validate-social-deck.mjs 得 0 FAIL（R1-R9）——确定性保证卡片不溢出、不小到看不清、不欠填。这正是该技能刻意做出来的可测核心。"
+    title: 版式关卡对真实渲染放行
+    source: SKILL.md
+    source_ref: "5. Build And Render / 校验脚本"
+    priority: high
+    area: core-validation
+    statement: |
+      node validate-social-deck.mjs <task-dir> 对一套真实渲染的封面对 / 组图返回 0 FAIL、退出 0。
+    evidence_needed: |
+      对渲染 deck 运行校验器，观察 R1-R9 计数与退出码。
+    status: passed
+    evidence: |
+      追加实测（2026-07-09 同日）：`npx playwright install chromium` 补装 chromium_headless_shell-1223
+      成功后，对样本 deck 实跑 validate-social-deck.mjs。第一轮：2 sections · 1 clean · 0 fails · 1 warns
+      （R6：21:9 宽板标题渲成 2 行，超单行上限）——校验器真的抓到了样本里的真实问题，不是空跑。按提示改窄
+      标题后第二轮：2 sections · 2 clean · 0 fails · 0 warns，退出码 0。真实执行，非静态推断，未修改脚本
+      指向系统 Chrome（用的是脚本要求的精确版本）。
+
+  - id: claim-011
+    user_icon: "🎣"
+    user_title:
+      en: "Fires on social-card intent, self-scopes 11 Rednote categories"
+      zh: "社交卡片意图才触发，并对 11 个小红书品类自划能力圈"
+    user_description:
+      en: "SKILL.md's description keyword set + an 11-category capability circle (3 buckets: strong / text-only / out-of-scope) define when to fire and when to push back — designed trigger precision, not luck."
+      zh: "SKILL.md 的 description 关键词集 + 11 品类能力圈（三档：端到端强 / 文结构强 / 圈外）定义何时触发、何时回绝——触发精度是设计出来的，不是碰运气。"
+    title: 触发 / 能力圈精度设计
+    source: SKILL.md
+    source_ref: "description / Rednote Category Capability"
+    priority: high
+    area: core-triggering
+    statement: |
+      在社交卡片 / 封面 / Live Photo 类 query 上触发；对 PPT / 长视频剪辑 / 纯修图类不触发；对圈外品类先说清。
+    evidence_needed: |
+      trigger_test 的 precision/recall；或 description + category-cookbook 静态核对。
+    status: passed_with_concerns
+    evidence: |
+      静态证据强：description 列全 小红书/Rednote/social card/封面/Live Photo/Swiss/magazine 等触发词 +
+      明确「不适用」（PPT / 长视频 / 纯修图）；SKILL 与 category-cookbook 把 11 品类分三档并要求圈外主动 pushback。
+      未跑在线 trigger_test（需 API harness），故 passed_with_concerns：设计到位、未做在线触发精度测量。
+
+  - id: claim-012
+    user_icon: "🛑"
+    user_title:
+      en: "Honestly declines out-of-scope work instead of faking it"
+      zh: "圈外活儿老实回绝，不硬凹"
+    user_description:
+      en: "The skill names what it cannot do (OOTD body shots, food-photography plating, dreamcore, PPT, long-video editing) at intake and refuses to silently retrofit a layout — an anti-slop honesty guardrail baked into Non-Negotiables."
+      zh: "技能在 intake 就点名做不了的（OOTD 实拍、菜品大片摆盘、梦核、PPT、长视频剪辑）并拒绝默默套个版式凑数——反 slop 的诚实护栏写进 Non-Negotiables。"
+    title: 诚实自限（圈外主动说清）
+    source: SKILL.md
+    source_ref: "Do not use / Non-Negotiables"
+    priority: high
+    area: core-scope
+    statement: |
+      对能力圈外请求，SKILL 要求在设计前说清做不了、不 fake data / 不硬套版式。
+    evidence_needed: |
+      核对 SKILL 的 Do-not-use、Non-Negotiables、category-cookbook 圈外条款。
+    status: passed
+    evidence: |
+      静态确认：SKILL「Do not use this skill for…」+「Outside scope — push back honestly」+ Non-Negotiables
+      （不 fake data / 不裁掉人脸关键 UI / 不发明装饰）+ check-skill-docs 断言的 audience-facing-copy /
+      non-template-ornament 护栏。诚实边界是文档级硬规则，非临场发挥。
+
+  - id: claim-013
+    user_icon: "📱"
+    user_title:
+      en: "Live Photo render → a valid iPhone .pvt package"
+      zh: "Live Photo 渲染 → 有效的 iPhone .pvt 包"
+    user_description:
+      en: "A user video becomes a card-shaped Live Photo: first-frame passes static checks, JPG+MOV packaged into a .pvt that actually plays as a Live Photo on iPhone at 5s/3s."
+      zh: "用户视频变成卡片形态的 Live Photo：首帧过静态检查，JPG+MOV 打成 .pvt，在 iPhone 上按 5s/3s 真能作为 Live Photo 播放。"
+    title: Live Photo → 有效 .pvt（真机）
+    source: SKILL.md
+    source_ref: "Live Photo branch / package-live-photo.py"
+    priority: medium
+    area: core-livephoto
+    statement: |
+      对一段用户视频产出通过尺寸 / 时长 / 帧数 / 包内容校验的 .pvt，可在 iPhone 发布。
+    evidence_needed: |
+      跑一次 Live Photo 分支，产 .pvt 并在 iPhone 验证。
+    status: untested
+    evidence: |
+      未实测。需 ffmpeg / makelive / iPhone AirDrop 真机链路，隔离环境无法验证（且渲染层同样受浏览器阻断）。
+      文档 + 脚本齐备（见 claim-007），但端到端 .pvt 产出未跑。
+
+  - id: claim-014
+    user_icon: "🌐"
+    user_title:
+      en: "Web-sourced imagery + subject avoidance yield usable photo covers"
+      zh: "网络取图 + 主体避让能产出可用的照片封面"
+    user_description:
+      en: "When the user has no photo, the skill fetches from free libraries, records provenance in SOURCES.md, maps the subject, and places text in quiet zones so faces/products aren't crossed — producing a real-photo cover that doesn't look AI."
+      zh: "用户无图时，技能从免费图库取图、在 SOURCES.md 记来源、映射主体、把文字放安静区避开人脸 / 产品——产出不像 AI 的真实照片封面。"
+    title: 网络取图 + 文字压图主体避让
+    source: SKILL.md
+    source_ref: "Web-Sourced Images / image-overlay.md"
+    priority: medium
+    area: core-imagery
+    statement: |
+      从 Unsplash/Pexels/Flickr/Wallhaven 取图、写 SOURCES.md、按 image-overlay 主体映射避让，产出可用照片封面。
+    evidence_needed: |
+      真实驱动一次取图 + 文字压图，肉眼核对主体避让与可读性。
+    status: untested
+    evidence: |
+      未实测。需实时联网取图 + 多模态主体识别 + 渲染，隔离环境未做。规则与优先级（用户图优先、grab-first
+      disclose-after、object-position 内联、thumbnail test）文档完整，但端到端未跑。

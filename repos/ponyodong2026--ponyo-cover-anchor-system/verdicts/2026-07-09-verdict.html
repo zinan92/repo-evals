@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="zh" data-bucket="usable" data-category="available">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面 — verdict · repo-evals</title>
+<style>
+/* ============================================================
+   REPO-EVALS VERDICT PAGE — Editorial Dossier style
+   Pure HTML + CSS, zero external dependencies, zero JS frameworks.
+   One small inline <script> at the bottom handles language toggle.
+   ============================================================ */
+
+/* ---------- Design tokens ---------- */
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", "Courier New", monospace;
+
+  --bg:            #0a0908;
+  --surface-0:     #141210;
+  --surface-1:     #1c1a17;
+  --surface-2:     #26231f;
+  --border:        rgba(255, 248, 235, 0.07);
+  --border-strong: rgba(255, 248, 235, 0.16);
+
+  --text:   #f5efe6;
+  --text-2: #a6998a;
+  --text-3: #6b6157;
+
+  --bucket:      #f59e0b;
+  --bucket-bg:   rgba(245, 158, 11, 0.10);
+  --bucket-soft: rgba(245, 158, 11, 0.16);
+
+  --ok:      #4ade80;
+  --ok-bg:   rgba(74, 222, 128, 0.10);
+  --warn:    #fbbf24;
+  --warn-bg: rgba(251, 191, 36, 0.10);
+  --bad:     #f87171;
+  --bad-bg:  rgba(248, 113, 113, 0.10);
+  --skip:    #a6998a;
+  --skip-bg: rgba(166, 153, 138, 0.08);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+}
+
+html[data-bucket="usable"]        { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-bucket="reusable"]      { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-bucket="recommendable"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+/* 4-category theming (2026-05-05). Replaces the per-tier accent
+   so the page color tracks the top-level category, not the fine
+   tier inside it. */
+html[data-category="production"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
+html[data-category="available"]  { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-category="risky"]      { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
+html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
+
+/* --- Category chip (above score number) --- */
+.category-chip {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 10px 18px; margin-bottom: 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: 999px;
+}
+.category-emoji { font-size: 22px; line-height: 1; }
+.category-text { display: flex; flex-direction: column; line-height: 1.25; }
+.category-name {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--bucket); font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.category-blurb { font-size: 13px; color: var(--text-2); }
+
+/* --- Cost chip (one-line cost summary near the score) --- */
+.cost-chip {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  font-size: 14px; line-height: 1.55; color: var(--text);
+}
+.cost-label {
+  display: block;
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}
+.cost-body { color: var(--text-2); }
+
+/* --- Decision Card — top-of-dossier 5-second answer --------------- */
+.decision-card {
+  margin: 0 0 36px;
+  padding: 16px 20px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 1px var(--bucket-soft);
+}
+.dec-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--bucket); text-transform: uppercase;
+  letter-spacing: 0.16em; font-weight: 700;
+  padding-bottom: 12px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.dec-cat-emoji { font-size: 16px; }
+.dec-score {
+  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2); letter-spacing: 0.06em;
+}
+.dec-row {
+  display: grid; grid-template-columns: 24px 110px 1fr;
+  gap: 10px; align-items: baseline;
+  padding: 7px 0;
+}
+.dec-row + .dec-row { border-top: 1px solid var(--border); }
+.dec-icon { font-size: 14px; line-height: 1; text-align: center; }
+.dec-label {
+  font-family: var(--font-mono); font-size: 10.5px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--text-3);
+}
+.dec-row.dec-use  .dec-label { color: var(--ok); }
+.dec-row.dec-dont .dec-label { color: var(--warn); }
+.dec-row.dec-next .dec-label { color: var(--bucket); }
+.dec-row.dec-risk .dec-label { color: var(--bad); }
+.dec-body { font-size: 14px; line-height: 1.55; color: var(--text); }
+@media (max-width: 720px) {
+  .dec-row { grid-template-columns: 24px 1fr; }
+  .dec-label { grid-column: 2; padding-bottom: 2px; }
+  .dec-body { grid-column: 2; }
+}
+
+/* --- Layer strip (atom · molecule · compound) ---------------------- */
+.layer-strip-section { margin-bottom: 40px; }
+.layer-strip-biz-row { margin: -8px 0 14px; }
+.use-case-row {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  margin: 0 0 14px;
+}
+.use-case-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-right: 4px;
+}
+.use-case-pill {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}
+
+/* Workflow placement strip (Park content / trading / dev pipelines) */
+.wp-section { margin: 14px 0 16px; }
+.wp-block + .wp-block { margin-top: 16px; }
+.wp-eyebrow {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}
+.wp-pin-emoji { font-size: 14px; }
+.wp-name { color: var(--text-2); text-transform: none; letter-spacing: 0; }
+
+.wp-canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  overflow-x: auto;
+}
+.wp-canvas svg {
+  display: block; max-width: 100%; height: auto;
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+}
+
+.wp-stage {
+  fill: var(--surface-2);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+.wp-stage-active.wp-primary    { fill: rgba(74, 222, 128, 0.18); stroke: rgba(74, 222, 128, 0.85); stroke-width: 2; }
+.wp-stage-active.wp-support    { fill: rgba(96, 165, 250, 0.16); stroke: rgba(96, 165, 250, 0.75); stroke-width: 2; }
+.wp-stage-active.wp-alternative { fill: rgba(251, 191, 36, 0.14); stroke: rgba(251, 191, 36, 0.7); stroke-width: 2; }
+.wp-stage-active.wp-reference  { fill: rgba(166, 153, 138, 0.14); stroke: rgba(166, 153, 138, 0.65); stroke-width: 1.5; stroke-dasharray: 4,3; }
+
+.wp-stage-num {
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+  text-anchor: middle; fill: var(--text);
+}
+.wp-stage-name {
+  font-family: system-ui, -apple-system, sans-serif; font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+}
+html[lang="zh"] .wp-stage-name { font-size: 9.5px; letter-spacing: -0.01em; }
+
+.wp-arrow { fill: none; stroke: var(--text-3); stroke-width: 1.4; }
+.wp-arrowhead-path { fill: var(--text-3); }
+
+/* Per-language SVG text toggle (matches workflow_diagram pattern) */
+.wp-lang-en, .wp-lang-zh { display: none; }
+html[lang="en"] .wp-lang-en { display: block; }
+html[lang="zh"] .wp-lang-zh { display: block; }
+
+.wp-callouts { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.wp-callout {
+  padding: 10px 14px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-3);
+  border-radius: var(--radius-md);
+}
+.wp-callout.wp-primary     { border-left-color: var(--ok); }
+.wp-callout.wp-support     { border-left-color: #60a5fa; }
+.wp-callout.wp-alternative { border-left-color: var(--warn); }
+.wp-callout.wp-reference   { border-left-color: var(--text-3); border-left-style: dashed; }
+.wp-callout-head {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.wp-callout-pin { font-size: 13px; }
+.wp-callout-stage { font-size: 13px; color: var(--text); font-weight: 600; }
+.wp-callout-role {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  padding: 2px 7px; border-radius: 999px;
+  background: var(--surface-2); color: var(--text-2);
+}
+.wp-callout.wp-primary     .wp-callout-role { color: var(--ok); }
+.wp-callout.wp-support     .wp-callout-role { color: #60a5fa; }
+.wp-callout.wp-alternative .wp-callout-role { color: var(--warn); }
+.wp-medium-pill {
+  font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 7px; border-radius: 4px;
+  background: var(--surface-2); color: var(--text-3);
+}
+.wp-callout-reason { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+.layer-strip {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch; gap: 0;
+}
+@media (max-width: 720px) {
+  .layer-strip { grid-template-columns: 1fr; }
+  .layer-strip-arrow { display: none; }
+}
+.layer-strip-card {
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 22px 22px 24px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: opacity .15s, border-color .15s;
+}
+.layer-strip-card.is-dim { opacity: 0.42; }
+.layer-strip-card.is-active {
+  background: var(--bucket-bg);
+  border-color: var(--bucket-soft);
+  box-shadow: 0 0 0 2px var(--bucket-soft);
+}
+.layer-strip-card.layer-atom.is-active     { --bucket: #2d7866; --bucket-bg: rgba(45,120,102,0.10); --bucket-soft: rgba(45,120,102,0.4); }
+.layer-strip-card.layer-molecule.is-active { --bucket: #5a3aa1; --bucket-bg: rgba(192,132,252,0.10); --bucket-soft: rgba(192,132,252,0.4); }
+.layer-strip-card.layer-compound.is-active { --bucket: #a13d30; --bucket-bg: rgba(248,113,113,0.10); --bucket-soft: rgba(248,113,113,0.4); }
+.layer-strip-emoji { font-size: 32px; line-height: 1; }
+.layer-strip-name {
+  font-family: var(--font-mono); font-size: 13px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text); font-weight: 700;
+}
+.layer-strip-desc { font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
+.layer-strip-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); color: var(--text-3);
+  padding: 0 8px;
+}
+
+/* --- Category strip (4-zone score bar with pointer) ---------------- */
+.category-strip-section { margin-bottom: 40px; }
+.cat-strip-wrap { position: relative; margin-bottom: 14px; }
+.cat-strip {
+  display: flex; gap: 4px;
+  background: var(--surface-1);
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.cat-zone {
+  padding: 14px 14px 16px;
+  text-align: center;
+  background: var(--surface-2);
+  opacity: 0.55;
+  transition: opacity .15s;
+}
+.cat-zone.is-active { opacity: 1; }
+.cat-zone-emoji { font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.cat-zone-name {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text); font-weight: 600;
+}
+.cat-zone-range { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }
+.cat-zone-dont_use.is-active   { background: rgba(248, 113, 113, 0.18); }
+.cat-zone-risky.is-active      { background: rgba(245, 158, 11, 0.18); }
+.cat-zone-available.is-active  { background: rgba(96, 165, 250, 0.18); }
+.cat-zone-production.is-active { background: rgba(74, 222, 128, 0.18); }
+
+.cat-pointer-lane {
+  position: relative; height: 32px;
+  margin-top: 6px;
+}
+.cat-pointer {
+  position: absolute; top: 0; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--font-mono);
+}
+.cat-pointer-arrow { color: var(--bucket); font-size: 14px; line-height: 1; }
+.cat-pointer-score { font-size: 13px; color: var(--bucket); font-weight: 700; line-height: 1.2; }
+
+.cat-summary {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}
+.cat-summary-headline { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.cat-summary-emoji { font-size: 18px; }
+.cat-summary-name { font-family: var(--font-mono); font-size: 12px; color: var(--bucket); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.cat-summary-score { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.cat-summary-blurb { font-size: 14px; color: var(--text-2); }
+.cat-summary-production { --bucket: #4ade80; }
+.cat-summary-available  { --bucket: #60a5fa; }
+.cat-summary-risky      { --bucket: #f59e0b; }
+.cat-summary-dont_use   { --bucket: #f87171; }
+
+/* "Why not at the next tier yet" — auto-derived one-liner under category strip */
+.why-not-next {
+  margin-top: 14px;
+  padding: 12px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+}
+.why-not-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px;
+}
+.why-not-body { font-size: 14px; line-height: 1.55; color: var(--text); }
+
+/* "Next step to upgrade the score" — manually authored per repo */
+.next-step {
+  margin-top: 10px;
+  padding: 12px 18px;
+  background: var(--bucket-bg);
+  border: 1px solid var(--bucket-soft);
+  border-radius: var(--radius-md);
+}
+.next-step-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--bucket); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 4px; font-weight: 700;
+}
+.next-step-body { font-size: 14px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }
+
+/* Trust strip — what we did vs didn't check */
+.trust-strip {
+  margin-top: 14px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.trust-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}
+.trust-list { list-style: none; padding: 0; margin: 0; }
+.trust-row {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  gap: 12px; align-items: baseline;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13.5px; line-height: 1.5;
+}
+.trust-row:first-child { border-top: 0; }
+.trust-mark {
+  font-family: var(--font-mono); font-size: 14px;
+  text-align: center; line-height: 1;
+}
+.tr-yes  .trust-mark { color: var(--ok); }
+.tr-no   .trust-mark { color: var(--bad); }
+.tr-warn .trust-mark { color: var(--warn); }
+.tr-half .trust-mark { color: var(--warn); }
+.tr-pending .trust-mark { color: var(--text-3); }
+.trust-label { color: var(--text); }
+.trust-detail {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3);
+}
+@media (max-width: 720px) {
+  .trust-row { grid-template-columns: 26px 1fr; }
+  .trust-detail { display: none; }
+}
+
+/* --- Similar repos comparison ------------------------------------- */
+.similar-section { margin-bottom: 80px; }
+.similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
+.similar-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+.similar-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.similar-card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.similar-card-name { color: var(--text); font-size: 14px; text-decoration: none; }
+.similar-card-name:hover strong { text-decoration: underline; }
+.similar-card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.similar-cat-pill {
+  font-family: var(--font-mono); font-size: 10.5px; padding: 3px 9px;
+  border-radius: 999px; background: var(--surface-2); color: var(--text-2);
+  letter-spacing: 0.06em; white-space: nowrap;
+}
+.similar-cat-pill.cat-production { color: #4ade80; }
+.similar-cat-pill.cat-available  { color: #60a5fa; }
+.similar-cat-pill.cat-risky      { color: #f59e0b; }
+.similar-cat-pill.cat-dont_use   { color: #f87171; }
+.similar-layer-pill {
+  font-family: var(--font-mono); font-size: 10px; padding: 2px 8px;
+  border-radius: 4px; background: var(--surface-2); color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.similar-layer-pill.layer-atom     { color: #6cae9d; }
+.similar-layer-pill.layer-molecule { color: #c084fc; }
+.similar-layer-pill.layer-compound { color: #f87171; }
+
+.similar-row {
+  display: grid; grid-template-columns: 110px 1fr;
+  gap: 12px; padding: 8px 0; border-top: 1px solid var(--border);
+}
+.similar-row:first-of-type { border-top: 0; }
+.similar-row-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); padding-top: 2px; line-height: 1.55;
+}
+.similar-row-body { font-size: 13px; line-height: 1.55; color: var(--text-2); white-space: pre-wrap; }
+.similar-row-this  .similar-row-label { color: var(--ok); }
+.similar-row-other .similar-row-label { color: #c084fc; }
+
+.similar-pending {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--surface-1);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+}
+.similar-pending-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.similar-pending-row {
+  font-size: 13.5px; line-height: 1.55;
+  color: var(--text-2); white-space: pre-wrap;
+}
+.similar-pending-row + .similar-pending-row { margin-top: 8px; }
+
+/* --- Workflow diagram (atom / molecule / compound) ----------------- */
+.workflow-diagram-section { margin-bottom: 80px; }
+.wd-why {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--bucket);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.wd-why-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 6px;
+}
+.wd-why-body { font-size: 14px; color: var(--text-2); line-height: 1.55; white-space: pre-wrap; }
+
+.wd-legend {
+  list-style: none; padding: 0; margin: 0 0 14px;
+  display: flex; gap: 18px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.wd-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.wd-legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.wd-legend-atom     { background: rgba(96, 165, 250, 0.4); }
+.wd-legend-decision { background: rgba(251, 191, 36, 0.55); transform: rotate(45deg); }
+.wd-legend-start    { background: rgba(166, 153, 138, 0.5); border-radius: 5px; }
+
+.wd-canvas {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  overflow-x: auto;
+}
+.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+
+.wd-shape { stroke-width: 1.5; }
+.wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
+.wd-molecule { fill: rgba(192, 132, 252, 0.10); stroke: rgba(192, 132, 252, 0.55); }
+.wd-decision { fill: rgba(251, 191, 36, 0.18); stroke: rgba(251, 191, 36, 0.85); stroke-width: 2; }
+.wd-start    { fill: rgba(166, 153, 138, 0.18); stroke: rgba(166, 153, 138, 0.65); }
+.wd-end      { fill: rgba(74, 222, 128, 0.14);  stroke: rgba(74, 222, 128, 0.6); }
+
+.wd-canvas svg { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+.wd-label {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12.5px;
+  font-weight: 400;
+  text-anchor: middle;
+  fill: var(--text);
+  letter-spacing: 0.01em;
+}
+/* SVG text language toggle — pseudo-elements don't work in SVG, so
+   we duplicate text in EN + ZH and toggle display based on <html lang>. */
+.wd-lang-en, .wd-lang-zh { display: none; }
+html[lang="en"] .wd-lang-en { display: block; }
+html[lang="zh"] .wd-lang-zh { display: block; }
+/* CJK gets a slightly smaller size + tighter tracking so 4-character
+   labels feel even-density next to 2-character labels. */
+html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
+.wd-edge { fill: none; stroke: rgba(166, 153, 138, 0.6); stroke-width: 1.6; }
+.wd-edge-dashed { stroke-dasharray: 5,4; }
+.wd-arrowhead { fill: rgba(166, 153, 138, 0.85); }
+
+.wd-edge-label-bg {
+  fill: var(--surface-1); stroke: var(--border); stroke-width: 1;
+}
+.wd-edge-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-anchor: middle; fill: var(--text-2);
+  letter-spacing: 0.04em;
+}
+
+/* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
+.benefits-section { margin-bottom: 80px; }
+.benefits-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 720px) {
+  .benefits-grid { grid-template-columns: 1fr; }
+}
+.benefit-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.benefit-card.benefit-without {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.15);
+}
+.benefit-card.benefit-with {
+  background: linear-gradient(to bottom right, var(--surface-1), var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}
+.benefit-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
+}
+.benefit-num {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--bucket); font-weight: 700;
+  padding: 2px 6px; background: var(--bucket-bg);
+  border-radius: 3px;
+}
+.benefit-icon { font-size: 16px; }
+.benefit-body {
+  font-size: 15px; line-height: 1.62;
+  color: var(--text); white-space: pre-wrap;
+}
+
+/* Card #4 — Before & After comparison */
+.benefit-ba {
+  grid-column: 1 / -1;  /* span both columns of benefits-grid */
+  background: var(--surface-1);
+}
+.ba-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 4px;
+}
+@media (max-width: 720px) { .ba-grid { grid-template-columns: 1fr; } }
+.ba-side {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+.ba-before {
+  background: linear-gradient(to bottom right, transparent, var(--bad-bg));
+  border-color: rgba(248, 113, 113, 0.18);
+}
+.ba-after {
+  background: linear-gradient(to bottom right, transparent, var(--ok-bg));
+  border-color: rgba(74, 222, 128, 0.18);
+}
+.ba-side-label {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 8px; font-weight: 700;
+}
+.ba-before .ba-side-label { color: var(--bad); }
+.ba-after .ba-side-label  { color: var(--ok); }
+.ba-side-body { font-size: 14px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }
+
+/* business_category pill — content / finance / development */
+.biz-cat-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.08em; font-weight: 600;
+  background: var(--surface-2); border: 1px solid var(--border);
+}
+.biz-cat-pill.biz-content     { color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
+.biz-cat-pill.biz-finance     { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); }
+.biz-cat-pill.biz-development { color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); }
+
+/* Concrete usage examples (lives inside the benefits section) */
+.usex-block { margin-top: 28px; }
+.usex-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 12px;
+}
+.usex-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.usex-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.usex-row { display: flex; flex-direction: column; gap: 4px; }
+.usex-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-3); letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+}
+.usex-body { font-size: 13.5px; line-height: 1.55; color: var(--text); }
+.usex-row.usex-quote .usex-body {
+  margin: 0; padding: 10px 14px;
+  border-left: 3px solid var(--bucket);
+  background: var(--bucket-bg);
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--text); border-radius: 0 4px 4px 0;
+  font-style: normal;
+}
+.usex-row.usex-quote .usex-body::before { content: "\201C"; color: var(--bucket); margin-right: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-quote .usex-body::after { content: "\201D"; color: var(--bucket); margin-left: 4px; font-size: 16px; line-height: 0; }
+.usex-row.usex-what .usex-body { color: var(--text-2); }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11", "tnum";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 1200px 800px at 70% -10%, var(--bucket-bg), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 0% 100%, rgba(255,248,235,0.025), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+main { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; padding: 0 32px 120px; }
+
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 0 48px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.wordmark { color: var(--text-2); font-weight: 600; }
+.wordmark .dot { color: var(--bucket); }
+
+.lang-toggle { display: inline-flex; gap: 2px; background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px; padding: 3px; }
+.lang-toggle button {
+  background: transparent; border: 0; cursor: pointer;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  color: var(--text-3); padding: 5px 12px; border-radius: 999px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  transition: color 0.15s, background 0.15s;
+}
+.lang-toggle button:hover { color: var(--text); }
+html[lang="en"] .lang-toggle button[data-lang="en"],
+html[lang="zh"] .lang-toggle button[data-lang="zh"] {
+  background: var(--text); color: var(--bg);
+}
+
+.hero { padding: 16px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
+
+.eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.16em; margin-bottom: 32px;
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}
+.eyebrow .sep { color: var(--border-strong); }
+
+h1.repo-title {
+  font-size: clamp(40px, 6vw, 68px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  margin: 0 0 14px;
+  color: var(--text);
+}
+.repo-slug {
+  font-family: var(--font-mono); font-size: 14px;
+  color: var(--text-2); margin-bottom: 36px;
+}
+.repo-slug::before { content: "↳ "; color: var(--text-3); }
+
+.tagline {
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.45; font-weight: 400;
+  color: var(--text); max-width: 62ch;
+  margin: 0;
+}
+
+.verdict-block { display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: end; }
+@media (max-width: 720px) { .verdict-block { grid-template-columns: 1fr; gap: 40px; } }
+
+.verdict-word {
+  font-size: clamp(80px, 14vw, 168px);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.85;
+  color: var(--bucket);
+  text-transform: lowercase;
+  margin: 0;
+  position: relative;
+  padding-right: 0.1em;
+}
+.verdict-word::after {
+  content: "";
+  display: inline-block;
+  width: 0.18em; height: 0.18em;
+  background: var(--bucket);
+  border-radius: 50%;
+  margin-left: 0.08em;
+  margin-bottom: 0.08em;
+  vertical-align: baseline;
+}
+
+.verdict-meta { padding-bottom: 14px; }
+.verdict-meta .label {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; margin-bottom: 10px;
+}
+.verdict-meta .confidence {
+  font-family: var(--font-mono); font-size: 15px;
+  color: var(--text); margin-bottom: 28px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.verdict-meta .confidence .value { color: var(--bucket); font-weight: 700; }
+.verdict-meta .layer-row { margin-bottom: 18px; }
+
+/* --- 0-100 score hero ----------------------------------------------- */
+
+.score-hero { margin: 0; }
+.score-hero-row {
+  display: flex; align-items: baseline; gap: 16px;
+  flex-wrap: wrap;
+}
+.score-emoji { font-size: 60px; line-height: 1; }
+.score-num {
+  font-family: var(--font-display, var(--font-sans));
+  font-size: clamp(80px, 12vw, 144px); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 0.85;
+}
+.score-denom {
+  font-family: var(--font-mono); font-size: 16px;
+  color: var(--text-3); letter-spacing: 0.04em;
+}
+.score-tier {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+  margin-top: 4px;
+}
+.score-blurb {
+  margin: 14px 0 0; max-width: 60ch;
+  color: var(--text-2); font-size: 16px; line-height: 1.55;
+}
+
+/* tier-driven accent — overrides --bucket */
+.score-hero.tier-recommend  .score-num { color: #4ade80; }
+.score-hero.tier-team       .score-num { color: #60a5fa; }
+.score-hero.tier-self       .score-num { color: #c084fc; }
+.score-hero.tier-try        .score-num { color: #f59e0b; }
+.score-hero.tier-risky      .score-num { color: #f87171; }
+.score-hero.tier-broken     .score-num { color: #f87171; }
+
+/* --- score breakdown (collapsible) ---------------------------------- */
+
+details.score-breakdown {
+  margin-top: 22px; border: 1px solid var(--border);
+  border-radius: 10px; padding: 0;
+}
+details.score-breakdown > summary {
+  list-style: none; cursor: pointer;
+  padding: 10px 14px; font-family: var(--font-mono);
+  font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--text-3);
+}
+details.score-breakdown > summary::-webkit-details-marker { display: none; }
+details.score-breakdown > summary::after {
+  content: "+"; float: right; font-weight: 700;
+}
+details.score-breakdown[open] > summary::after { content: "−"; }
+.breakdown-table { width: 100%; border-collapse: collapse; }
+.breakdown-table th, .breakdown-table td {
+  padding: 8px 14px; border-top: 1px solid var(--border);
+  font-size: 13px; text-align: left;
+}
+.breakdown-table th { font-weight: 500; color: var(--text-2); width: 60%; }
+.breakdown-table td.num {
+  text-align: right; font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums; color: var(--text);
+}
+
+/* --- ✅ / ❌ scenarios section -------------------------------------- */
+
+.scenarios-section { margin: 24px 0 56px; }
+.scenarios {
+  list-style: none; padding: 0; margin: 12px 0 0;
+  display: grid; gap: 10px;
+}
+.scenario {
+  display: flex; gap: 12px; padding: 12px 16px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface-1); align-items: baseline;
+  font-size: 15px; line-height: 1.55;
+}
+.scenario-mark { font-size: 18px; flex-shrink: 0; }
+.scenario-yes { border-left: 3px solid #4ade80; }
+.scenario-no  { border-left: 3px solid #f87171; color: var(--text-2); }
+
+/* --- Deployment + 3rd-party services section ------------------------ */
+
+.deployment-section { margin: 24px 0 48px; }
+.deploy-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 12px;
+}
+@media (max-width: 720px) { .deploy-grid { grid-template-columns: 1fr; } }
+
+.deploy-card, .services-card {
+  background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+}
+.card-eyebrow {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 10px;
+}
+.card-headline { margin-bottom: 14px; }
+
+.deploy-status {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}
+.deploy-status.status-good { color: #4ade80; }
+.deploy-status.status-bad { color: #f87171; }
+
+.install-table {
+  width: 100%; border-collapse: collapse; margin-top: 6px; margin-bottom: 14px;
+}
+.install-table th, .install-table td {
+  padding: 8px 10px; border-top: 1px solid var(--border);
+  text-align: left; vertical-align: top; font-size: 13px;
+}
+.install-table th {
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-weight: 600;
+}
+.install-table td code { font-size: 12px; word-break: break-word; }
+
+.install-table .badge {
+  display: inline-block; padding: 1px 7px; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.install-table .complexity-easy { color: #4ade80; border-color: rgba(74,222,128,.3); }
+.install-table .complexity-moderate { color: #f59e0b; border-color: rgba(245,158,11,.3); }
+.install-table .complexity-hard { color: #f87171; border-color: rgba(248,113,113,.3); }
+
+.deploy-flags { list-style: none; padding: 0; margin: 8px 0 0; }
+.deploy-flags li {
+  padding: 6px 0; font-size: 13px; color: var(--text-2);
+  display: flex; gap: 10px; align-items: baseline;
+}
+.flag-icon { flex-shrink: 0; }
+
+.service-card {
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 10px;
+  background: var(--surface-2);
+}
+.service-card:last-child { margin-bottom: 0; }
+.service-head {
+  display: flex; justify-content: space-between;
+  gap: 12px; align-items: flex-start;
+}
+.service-name { font-weight: 600; color: var(--text); font-size: 14px; }
+.service-purpose {
+  font-size: 12px; color: var(--text-2);
+  margin-top: 2px; line-height: 1.45;
+}
+.service-pills {
+  display: flex; flex-direction: column;
+  gap: 4px; flex-shrink: 0; align-items: flex-end;
+}
+.service-pill {
+  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.service-pill.status-must  { background: rgba(248,113,113,.14); color: #f87171; }
+.service-pill.status-opt   { background: var(--surface-1); color: var(--text-3); }
+.service-pill.status-paid  { background: rgba(245,158,11,.14); color: #f59e0b; }
+.service-pill.status-free  { background: rgba(96,165,250,.14); color: #60a5fa; }
+.service-pill.status-signup { background: rgba(192,132,252,.14); color: #c084fc; }
+.service-pill.status-easy  { background: rgba(74,222,128,.14); color: #4ade80; }
+
+.service-cost {
+  margin-top: 8px; padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px; color: var(--text-2); line-height: 1.5;
+}
+
+.stats-bar {
+  display: flex; height: 10px; border-radius: 999px;
+  overflow: hidden; background: var(--surface-1);
+  border: 1px solid var(--border);
+  min-width: 280px; max-width: 420px;
+}
+.stats-bar span { display: block; height: 100%; }
+.stats-bar .s-pass { background: var(--ok); }
+.stats-bar .s-warn { background: var(--warn); }
+.stats-bar .s-bad  { background: var(--bad); }
+.stats-bar .s-skip { background: var(--skip); }
+
+.stats-legend {
+  display: flex; gap: 20px; margin-top: 14px;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2); flex-wrap: wrap;
+}
+.stats-legend .item { display: inline-flex; align-items: center; gap: 6px; }
+.stats-legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.stats-legend .num { color: var(--text); font-weight: 700; }
+
+.pull-quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 96px; }
+@media (max-width: 720px) { .pull-quotes { grid-template-columns: 1fr; } }
+
+.pull {
+  padding: 28px 32px;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  border-top: 3px solid;
+  position: relative;
+}
+.pull.best   { border-top-color: var(--ok); }
+.pull.watch  { border-top-color: var(--warn); }
+.pull .kicker {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  margin-bottom: 14px; font-weight: 700;
+}
+.pull.best .kicker  { color: var(--ok); }
+.pull.watch .kicker { color: var(--warn); }
+.pull .body { font-size: 16px; line-height: 1.55; color: var(--text); }
+
+.section-head {
+  display: flex; align-items: baseline; gap: 16px;
+  margin-bottom: 36px; padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-head h2 {
+  font-size: 32px; font-weight: 700;
+  letter-spacing: -0.022em; margin: 0;
+}
+.section-head .count {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+section { margin-bottom: 56px; }
+
+.capabilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+}
+
+.capability-card {
+  position: relative;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 24px 24px 28px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+.capability-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+
+.capability-card::before {
+  content: ""; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--skip);
+}
+.capability-card.status-passed::before,
+.capability-card.status-passed_with_concerns::before { background: var(--ok); }
+.capability-card.status-partial::before { background: var(--warn); }
+.capability-card.status-failed::before,
+.capability-card.status-failed_partial::before { background: var(--bad); }
+.capability-card.status-untested::before { background: var(--skip); }
+
+.cap-header {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.cap-badge {
+  padding: 3px 9px; border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 10px;
+  background: var(--skip-bg); color: var(--skip);
+}
+.capability-card.status-passed .cap-badge,
+.capability-card.status-passed_with_concerns .cap-badge { background: var(--ok-bg); color: var(--ok); }
+.capability-card.status-partial .cap-badge { background: var(--warn-bg); color: var(--warn); }
+.capability-card.status-failed .cap-badge,
+.capability-card.status-failed_partial .cap-badge { background: var(--bad-bg); color: var(--bad); }
+.capability-card.status-untested .cap-badge { background: var(--skip-bg); color: var(--skip); }
+
+.cap-id { margin-left: auto; color: var(--text-3); }
+
+.cap-title {
+  font-size: 20px; font-weight: 700;
+  letter-spacing: -0.015em; line-height: 1.25;
+  color: var(--text); margin: 4px 0 0;
+}
+.cap-description {
+  font-size: 14px; line-height: 1.55;
+  color: var(--text-2); margin: 0;
+}
+.cap-skip {
+  margin-top: 4px;
+  font-size: 12.5px; color: var(--text-3);
+  font-family: var(--font-mono); line-height: 1.55;
+  padding: 10px 12px;
+  background: var(--surface-1);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--border-strong);
+  white-space: pre-wrap;
+}
+
+details.section-fold {
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+details.section-fold[open] { border-color: var(--border-strong); }
+details.section-fold > summary {
+  padding: 22px 28px;
+  cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.14em;
+  font-weight: 600; user-select: none;
+  list-style: none;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+details.section-fold > summary::-webkit-details-marker { display: none; }
+details.section-fold > summary::after {
+  content: "+"; font-family: var(--font-mono);
+  font-size: 18px; color: var(--text-3);
+  transition: transform 0.2s;
+  display: inline-block; line-height: 1;
+}
+details.section-fold[open] > summary::after { transform: rotate(45deg); color: var(--text); }
+details.section-fold > summary:hover { color: var(--text); background: var(--surface-1); }
+details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var(--border); }
+
+.subsection { margin: 28px 0; }
+.subsection h3 {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--text-3); font-weight: 700;
+  margin: 0 0 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .grid-two { grid-template-columns: 1fr; } }
+
+.mini-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+}
+.mini-card h4 {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 0 0 12px; font-weight: 700;
+}
+.mini-card ul { margin: 0; padding: 0; list-style: none; }
+.mini-card li {
+  padding: 8px 0; font-size: 14px; color: var(--text-2);
+  border-bottom: 1px dashed var(--border);
+  line-height: 1.5;
+}
+.mini-card li:last-child { border-bottom: 0; padding-bottom: 0; }
+.mini-card li:first-child { padding-top: 0; }
+
+/* --- Layer (atom / molecule / compound) section -------------------- */
+
+.layer-pill {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  padding: 4px 12px; border-radius: 999px;
+  background: var(--surface-1); border: 1px solid var(--border-strong);
+  font-family: var(--font-mono); font-size: 12px;
+  margin-left: 12px;
+}
+.layer-pill-eyebrow {
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); font-size: 10px;
+}
+.layer-pill.layer-atom     { border-color: #4a9d8a; color: #2d7866; }
+.layer-pill.layer-molecule { border-color: #7a5fb8; color: #5a3aa1; }
+.layer-pill.layer-compound { border-color: #c75441; color: #a13d30; }
+
+.layer-hero {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px 28px; margin-bottom: 22px;
+}
+.layer-hero-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}
+.layer-hero-name {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 32px; font-weight: 700; line-height: 1.1;
+  margin-bottom: 10px;
+}
+.layer-hero-name.layer-atom     { color: #2d7866; }
+.layer-hero-name.layer-molecule { color: #5a3aa1; }
+.layer-hero-name.layer-compound { color: #a13d30; }
+.layer-hero-summary { font-size: 16px; color: var(--text-2); line-height: 1.55; max-width: 70ch; }
+.layer-hero-source { margin-top: 10px; font-family: var(--font-mono); font-size: 12px; color: var(--text-3); }
+
+.layer-stack { display: grid; gap: 18px; margin-bottom: 28px; }
+
+.layer-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+}
+.layer-card-head {
+  display: flex; align-items: baseline;
+  justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.layer-card-head h3 {
+  margin: 0;
+  font-family: var(--font-display, var(--font-serif));
+  font-size: 18px; font-weight: 700;
+}
+.layer-card-tag {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-3); padding: 2px 8px;
+  border: 1px solid var(--border); border-radius: 4px;
+}
+.layer-card-summary { color: var(--text-2); margin: 4px 0 14px; line-height: 1.55; }
+
+.layer-card.layer-card-atom     { border-left: 3px solid #4a9d8a; }
+.layer-card.layer-card-molecule { border-left: 3px solid #7a5fb8; }
+.layer-card.layer-card-compound { border-left: 3px solid #c75441; }
+
+.layer-dim-table { width: 100%; border-collapse: collapse; }
+.layer-dim-table th, .layer-dim-table td {
+  text-align: left; padding: 10px 12px;
+  border-top: 1px solid var(--border); vertical-align: top;
+  font-size: 14px; line-height: 1.55;
+}
+.layer-dim-table th {
+  width: 28%; font-weight: 600; color: var(--text);
+}
+.layer-dim-table td { color: var(--text-2); }
+.layer-dim-table th code {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 2px 6px; border-radius: 4px;
+}
+
+.layer-experiments {
+  margin-top: 28px; padding-top: 22px;
+  border-top: 1px dashed var(--border);
+}
+.layer-experiments-eyebrow {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 6px;
+}
+.layer-experiments-intro {
+  color: var(--text-2); margin: 0 0 18px; max-width: 70ch; line-height: 1.55;
+}
+
+.layer-experiment {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px; margin-bottom: 14px;
+}
+.layer-experiment-head {
+  display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px;
+}
+.layer-experiment-num {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3);
+  padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px;
+}
+.layer-experiment h4 {
+  margin: 0; font-family: var(--font-display, var(--font-serif));
+  font-size: 17px; font-weight: 700;
+}
+.layer-experiment-label {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin: 12px 0 6px;
+}
+.layer-experiment-prompt {
+  margin: 0 0 4px; padding: 12px 16px;
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface-2);
+  font-family: var(--font-serif); font-size: 14px; font-style: italic;
+  color: var(--text); line-height: 1.55;
+}
+.layer-experiment-watch {
+  margin: 0 0 4px; padding: 0 0 0 18px;
+}
+.layer-experiment-watch li { padding: 4px 0; color: var(--text-2); line-height: 1.5; }
+.layer-experiment-meta {
+  margin-top: 10px; font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3);
+}
+
+.flow {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+  overflow-x: auto;
+}
+.flow-row {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 13px;
+}
+.flow-node {
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+.flow-node.start { color: var(--text-2); }
+.flow-node.decision { background: var(--warn-bg); color: var(--warn); border-color: var(--warn); }
+.flow-node.final { background: var(--bucket-bg); color: var(--bucket); border-color: var(--bucket); font-weight: 700; }
+.flow-arrow { color: var(--text-3); font-family: var(--font-mono); }
+.flow-notes { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--border); }
+.flow-notes .note {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-3); padding: 4px 0; line-height: 1.5;
+}
+.flow-notes .note::before {
+  content: "▸"; color: var(--warn);
+  margin-right: 8px;
+}
+
+.metric-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+@media (max-width: 640px) { .metric-tiles { grid-template-columns: 1fr; } }
+.metric-tile {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 20px;
+}
+.metric-tile .mt-label {
+  font-family: var(--font-mono); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--text-3); margin-bottom: 14px;
+}
+.metric-tile .mt-value {
+  font-size: 38px; font-weight: 800;
+  letter-spacing: -0.025em; line-height: 1;
+  color: var(--text); font-variant-numeric: tabular-nums;
+}
+.metric-tile .mt-unit { font-size: 16px; color: var(--text-3); font-weight: 500; margin-left: 4px; }
+.metric-tile .mt-bar {
+  margin-top: 14px; height: 4px;
+  background: var(--surface-2); border-radius: 2px; overflow: hidden;
+}
+.metric-tile .mt-bar-fill { height: 100%; background: var(--bucket); border-radius: 2px; }
+.metric-tile .mt-compare {
+  margin-top: 10px; font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+.claims-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.claims-table th, .claims-table td {
+  text-align: left; padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.claims-table th {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.1em; font-weight: 700;
+  background: var(--surface-1);
+}
+.claims-table td.c-id { font-family: var(--font-mono); color: var(--text-2); white-space: nowrap; }
+.claims-table td.c-title { color: var(--text); }
+.claims-table td.c-status { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; }
+.claims-table td.c-skip { font-size: 12px; color: var(--text-3); white-space: pre-wrap; line-height: 1.5; max-width: 320px; }
+.claims-table tr.prio-critical td.c-id::before { content: "◆"; color: var(--bad); margin-right: 6px; }
+.claims-table tr.prio-high td.c-id::before     { content: "◆"; color: var(--warn); margin-right: 6px; }
+.claims-table tr.prio-medium td.c-id::before   { content: "◆"; color: var(--text-2); margin-right: 6px; }
+.claims-table tr.prio-low td.c-id::before      { content: "◆"; color: var(--text-3); margin-right: 6px; }
+
+.prio-pill {
+  display: inline-block; font-family: var(--font-mono); font-size: 10px;
+  padding: 2px 8px; border-radius: 3px; text-transform: uppercase;
+  letter-spacing: 0.08em; font-weight: 700;
+}
+.prio-pill.critical { background: var(--bad-bg); color: var(--bad); }
+.prio-pill.high     { background: var(--warn-bg); color: var(--warn); }
+.prio-pill.medium   { background: var(--surface-2); color: var(--text-2); }
+.prio-pill.low      { background: var(--surface-2); color: var(--text-3); }
+
+.run-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  margin-bottom: 12px;
+}
+.run-card h3 { font-family: var(--font-mono); font-size: 14px; margin: 0; color: var(--text); }
+.run-card .run-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); margin: 4px 0 16px; }
+.run-metrics { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.run-metric {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--surface-2); padding: 6px 12px;
+  border-radius: var(--radius-sm); color: var(--text-2);
+}
+.run-metric b { color: var(--text-3); font-weight: 500; margin-right: 6px; }
+.run-metric .v { color: var(--text); font-weight: 600; }
+.run-rbc { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.run-rbc li {
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--surface-2); padding: 4px 8px;
+  border-radius: 3px; color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.run-rbc li.pass    { border-left: 2px solid var(--ok); }
+.run-rbc li.partial { border-left: 2px solid var(--warn); }
+.run-rbc li.fail    { border-left: 2px solid var(--bad); }
+.run-rbc li.skip    { border-left: 2px solid var(--skip); }
+
+pre.md {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+pre.md code { color: var(--text); }
+
+footer {
+  margin-top: 80px; padding-top: 32px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+footer a { color: var(--text-2); text-decoration: none; border-bottom: 1px solid var(--border); }
+footer a:hover { color: var(--text); border-color: var(--text-3); }
+
+.dim { color: var(--text-3); }
+
+/* i18n — dual-language content swap */
+.i18n::before { content: attr(data-en); }
+html[lang="zh"] .i18n::before { content: attr(data-zh); }
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:            #fbf8f3;
+    --surface-0:     #ffffff;
+    --surface-1:     #f6f1e9;
+    --surface-2:     #ede6d9;
+    --border:        rgba(20, 18, 14, 0.07);
+    --border-strong: rgba(20, 18, 14, 0.16);
+    --text:   #1a1714;
+    --text-2: #5c5246;
+    --text-3: #8a7e6f;
+    --skip:    #8a7e6f;
+    --skip-bg: rgba(138, 126, 111, 0.10);
+  }
+}
+
+@media (max-width: 720px) {
+  main { padding: 0 20px 80px; }
+  .hero { padding: 8px 0 48px; margin-bottom: 48px; }
+  section { margin-bottom: 64px; }
+  h1.repo-title { font-size: 40px; }
+  .tagline { margin-bottom: 48px; }
+  .section-head h2 { font-size: 24px; }
+  .capabilities-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<main>
+
+  <div class="topbar">
+    <div class="wordmark">repo<span class="dot">·</span>evals</div>
+    <div class="lang-toggle" aria-label="language toggle">
+      <button data-lang="en" onclick="setLang('en')">EN</button>
+      <button data-lang="zh" onclick="setLang('zh')">中</button>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">
+      <span class="i18n" data-en="Verdict report" data-zh="评测结论"></span>
+      <span class="sep">·</span>
+      <span>2026-07-09</span>
+      <span class="sep">·</span><span>main@HEAD (2026-06-22 push), commit f03b7bc</span>
+    </div>
+
+    <h1 class="repo-title">ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面</h1>
+    <div class="repo-slug">ponyodong2026/ponyo-cover-anchor-system</div>
+
+    <p class="tagline"><span class="i18n" data-en="A Codex prompt-skill that turns a topic + audience + title into a ready-to-paste ChatGPT Image 2 / DALL-E prompt for a finished, high-hook Xiaohongshu cover — built on an explicit 信息密度 × 视觉锚点 formula with 6 template/style families, a 10-point diagnosis checklist, and a 16-image example gallery. The cover image itself is produced by an external image model this eval cannot run." data-zh="一个 Codex prompt-skill：把「主题 + 人群 + 标题」变成可直接粘进 ChatGPT Image 2 / DALL-E 的成品小红书封面提示词——建立在明确的「信息密度 × 视觉锚点」公式上，含 6 套模板/风格、10 点诊断清单、16 张示例图库。封面成品图由外部图像模型生成，本次评估无法运行该模型。"></span></p>
+
+  </header>
+
+  <section class="decision-card"><div class="dec-eyebrow"><span class="dec-cat-emoji">🛠</span><span class="i18n" data-en="Decision snapshot" data-zh="决策快照"></span><span class="dec-score">55 / 100</span></div><div class="dec-row dec-use"><div class="dec-icon">✅</div><div class="dec-label"><span class="i18n" data-en="Use" data-zh="用"></span></div><div class="dec-body"><span class="i18n" data-en="Yes for self-use; not yet for production-critical paths." data-zh="自用可以;还不到放进生产关键路径的程度。"></span></div></div><div class="dec-row dec-dont"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Don&#x27;t use for" data-zh="别用在"></span></div><div class="dec-body"><span class="i18n" data-en="(1) NO LICENSE — all-rights-reserved; you have no legal right to adopt, fork, or redistribute it in Park&#x27;s pipeline until the author grants one." data-zh="(1) 无 LICENSE——保留所有权利；作者授权前，你在法律上无权把它纳入 Park pipeline、fork 或再分发。"></span></div></div><div class="dec-row dec-next"><div class="dec-icon">🎯</div><div class="dec-label"><span class="i18n" data-en="Best next step" data-zh="最佳下一步"></span></div><div class="dec-body"><span class="i18n" data-en="(1) Get a license from the author (issue / email) — until then adoption is legally blocked; this is the #1 gate, not a scoring nicety." data-zh="(1) 向作者要授权（issue / 邮件）——在此之前采用在法律上被卡死，这是第一关，不是评分小事。"></span></div></div><div class="dec-row dec-risk"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Main risk" data-zh="主要风险"></span></div><div class="dec-body"><span class="i18n" data-en="No LICENSE file — legal blocker for redistribution / company adoption." data-zh="没有 LICENSE 文件 —— 再分发 / 企业采用的法律阻碍。"></span></div></div></section>
+
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip-biz-row"><span class="biz-cat-pill biz-content"><span>📝</span><span class="i18n" data-en="Content" data-zh="内容类"></span></span></div><div class="wp-section"><div class="wp-block"><div class="wp-eyebrow"><span class="wp-pin-emoji">🗺</span><span class="i18n" data-en="In this workflow:" data-zh="在这条工作流里:"></span><span class="wp-name"><span class="i18n" data-en="Content / Self-media 8-step pipeline" data-zh="内容 / 自媒体八步管线"></span></span></div><div class="wp-canvas"><svg viewBox="0 0 766 110" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wp-arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wp-arrowhead-path"/></marker></defs><path d="M94,44.0 L108,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M188,44.0 L202,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M282,44.0 L296,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M376,44.0 L390,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M470,44.0 L484,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M564,44.0 L578,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M658,44.0 L672,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><rect x="14" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="54.0" y="40" class="wp-stage-num">01</text><text x="54.0" y="60" class="wp-stage-name wp-lang-en">Signal scanning</text><text x="54.0" y="60" class="wp-stage-name wp-lang-zh">信号发现</text><rect x="108" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="148.0" y="40" class="wp-stage-num">02</text><text x="148.0" y="60" class="wp-stage-name wp-lang-en">Content acquisition</text><text x="148.0" y="60" class="wp-stage-name wp-lang-zh">内容获取</text><rect x="202" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="242.0" y="40" class="wp-stage-num">03</text><text x="242.0" y="60" class="wp-stage-name wp-lang-en">Content understanding</text><text x="242.0" y="60" class="wp-stage-name wp-lang-zh">内容理解</text><rect x="296" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="336.0" y="40" class="wp-stage-num">04</text><text x="336.0" y="60" class="wp-stage-name wp-lang-en">Topic curation</text><text x="336.0" y="60" class="wp-stage-name wp-lang-zh">选题决策</text><rect x="390" y="14" width="80" height="60" rx="10" class="wp-stage wp-stage-active wp-support"/><text x="430.0" y="40" class="wp-stage-num">05</text><text x="430.0" y="60" class="wp-stage-name wp-lang-en">Content production</text><text x="430.0" y="60" class="wp-stage-name wp-lang-zh">内容生产</text><rect x="484" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="524.0" y="40" class="wp-stage-num">06</text><text x="524.0" y="60" class="wp-stage-name wp-lang-en">Creative assembly</text><text x="524.0" y="60" class="wp-stage-name wp-lang-zh">创意组装</text><rect x="578" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="618.0" y="40" class="wp-stage-num">07</text><text x="618.0" y="60" class="wp-stage-name wp-lang-en">Distribution &amp; feedback</text><text x="618.0" y="60" class="wp-stage-name wp-lang-zh">分发反馈</text><rect x="672" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="712.0" y="40" class="wp-stage-num">08</text><text x="712.0" y="60" class="wp-stage-name wp-lang-en">Learning</text><text x="712.0" y="60" class="wp-stage-name wp-lang-zh">学习</text></svg></div><div class="wp-callouts"><div class="wp-callout wp-support"><div class="wp-callout-head"><span class="wp-callout-pin">📍</span><span class="wp-callout-stage"><span class="i18n" data-en="Content production" data-zh="内容生产"></span></span><span class="wp-callout-role"><span class="i18n" data-en="Support" data-zh="辅助"></span></span></div><div class="wp-callout-reason"><span class="i18n" data-en="Produces the cover / hero image during content production. But it is 小红书-primary (no finished 公众号 template) and unlicensed, so for Park&#x27;s 公众号 channel it is a backup, not the primary — guizang-social-card (公众号 21:9+1:1 pairs) owns that lane." data-zh="在内容生产阶段产出封面/头图。但它是小红书为主（无成品公众号模板）且无授权，所以对 Park 的公众号渠道只能是 backup，不是 primary——公众号封面对由 guizang-social-card 主导。"></span></div></div></div></div></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+
+  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available is-active" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:55%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">55</div></div></div></div><div class="cat-summary cat-summary-available"><div class="cat-summary-headline"><span class="cat-summary-emoji">🛠</span><span class="cat-summary-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></span><span class="cat-summary-score">· 55 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Use it; not yet for production-critical paths." data-zh="可以用;还不到放进生产关键路径的程度。"></span></div></div><div class="why-not-next"><div class="why-not-eyebrow"><span class="i18n" data-en="Why not at the next tier yet" data-zh="为什么还没到下一档"></span></div><div class="why-not-body"><span class="i18n" data-en="Add a LICENSE file at the repo root → recovers the small-repo penalty + clears the critical-claim gap toward Production-ready." data-zh="在仓库根目录加 LICENSE 文件 —— 找回小仓罚分 + 清掉到 可用于生产 路径上的 critical claim 缺口。"></span></div></div><div class="next-step"><div class="next-step-eyebrow"><span class="i18n" data-en="Next step to upgrade the score" data-zh="提升评分的下一步"></span></div><div class="next-step-body"><span class="i18n" data-en="(1) Get a license from the author (issue / email) — until then adoption is legally blocked; this is the #1 gate, not a scoring nicety. (2) Render 2+ live covers through ChatGPT Image 2 and score them against the SKILL.md Quality Bar (80px thumbnail readable, one dominant anchor, crisp correct Chinese) → lifts core_layer_tested + evidence partial→portable. (3) For 公众号 use, either author a real finished 公众号 3:1 + 1:1 template, or default 公众号 to guizang-social-card and scope ponyo to the 小红书 lane only." data-zh="(1) 向作者要授权（issue / 邮件）——在此之前采用在法律上被卡死，这是第一关，不是评分小事。(2) 用 ChatGPT Image 2 真出 2+ 张封面，对照 SKILL.md Quality Bar（80px 缩略图可读、单一主锚点、中文清晰无误）打分 → 抬升 core_layer_tested + 证据 partial→portable。(3) 若要用于公众号：要么补真正的成品公众号 3:1 + 1:1 模板，要么公众号默认用 guizang-social-card、把 ponyo 限定在小红书 lane。"></span></div></div><div class="trust-strip"><div class="trust-eyebrow"><span class="i18n" data-en="What we checked vs still missing" data-zh="检查过的 vs 还差哪些"></span></div><ul class="trust-list"><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="Static structure verified" data-zh="结构静态验证通过"></span></span><span class="trust-detail">7 claims passed, no critical failures</span></li><li class="trust-row tr-warn"><span class="trust-mark">⚠</span><span class="trust-label"><span class="i18n" data-en="Install path documented but LICENSE file missing" data-zh="安装路径已记录但缺 LICENSE 文件"></span></span><span class="trust-detail">README may claim a license but no LICENSE file exists</span></li><li class="trust-row tr-half"><span class="trust-mark">◐</span><span class="trust-label"><span class="i18n" data-en="Maintainer signals partial" data-zh="维护信号有一半"></span></span><span class="trust-detail">release_pipeline=0, recently_active=True</span></li><li class="trust-row tr-pending"><span class="trust-mark">⚪</span><span class="trust-label"><span class="i18n" data-en="Docs single-language" data-zh="文档单语"></span></span><span class="trust-detail">EN-only or ZH-only README</span></li><li class="trust-row tr-pending"><span class="trust-mark">⚪</span><span class="trust-label"><span class="i18n" data-en="Live end-to-end run not yet logged" data-zh="实际端到端 run 尚未记录"></span></span><span class="trust-detail">static-only eval; live e2e pending</span></li></ul></div></section>
+
+  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-num">#1</span><span class="benefit-icon">👤</span><span class="i18n" data-en="Who" data-zh="谁用"></span></div><div class="benefit-body"><span class="i18n" data-en="A content visual / cover-design lead (Park&#x27;s Vera) who needs on-brand, thumb-stopping Xiaohongshu covers fast and hands image URLs to the downstream gzh-design formatting skill." data-zh="需要快速产出强钩子、调性统一的小红书封面，并把图片 URL 交给下游 gzh-design 排版技能的配图/视觉负责人（Park 的 Vera）。"></span></div></article>
+<article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-num">#2</span><span class="benefit-icon">🎯</span><span class="i18n" data-en="When" data-zh="什么时候用"></span></div><div class="benefit-body"><span class="i18n" data-en="You have a finished note and need a cover that makes people click in the feed within 3 seconds — you want the anchor, palette, type hierarchy, and a copy-paste image prompt decided for you." data-zh="你有一篇成稿，需要一张能让人在信息流里 3 秒内点进来的封面——希望锚点、配色、字重层级和一条可复制的生图提示词都替你定好。"></span></div></article>
+<article class="benefit-card benefit-how"><div class="benefit-eyebrow"><span class="benefit-num">#3</span><span class="benefit-icon">🧭</span><span class="i18n" data-en="How" data-zh="怎么用"></span></div><div class="benefit-body"><span class="i18n" data-en="Copy the cover-anchor-system folder into ~/.codex/skills/ (or read SKILL.md directly), then call it with topic / audience / title; take the emitted prompt to ChatGPT Image 2 / DALL-E to render the cover." data-zh="把 cover-anchor-system 文件夹拷进 ~/.codex/skills/（或直接读 SKILL.md），用主题/人群/标题调用；把产出的提示词拿到 ChatGPT Image 2 / DALL-E 出图。"></span></div></article>
+<article class="benefit-card benefit-ba"><div class="benefit-eyebrow"><span class="benefit-num">#4</span><span class="benefit-icon">⇄</span><span class="i18n" data-en="Before &amp; After" data-zh="前后对比"></span></div><div class="ba-grid"><div class="ba-side ba-before"><div class="ba-side-label"><span class="i18n" data-en="Before — without it" data-zh="之前 —— 没它的时候"></span></div><div class="ba-side-body"><span class="i18n" data-en="Hand-brief an image model yourself (covers drift off-brand, Chinese text garbles, no anchor discipline), or design covers manually in Figma / Canva per post." data-zh="自己手写生图指令（封面调性飘、中文易糊、没有锚点纪律），或每篇在 Figma / Canva 手动做封面。"></span></div></div><div class="ba-side ba-after"><div class="ba-side-label"><span class="i18n" data-en="After — with it" data-zh="之后 —— 有了它之后"></span></div><div class="ba-side-body"><span class="i18n" data-en="Say &#x27;$cover-anchor-system, 小红书 cover for &lt;topic/title&gt;&#x27; — it picks a template, fixes the anchor / palette / type hierarchy with HEX values, and emits a finished-cover ChatGPT Image 2 prompt with exact Chinese copy and an 80px-thumbnail quality bar." data-zh="说「$cover-anchor-system，给&lt;主题/标题&gt;做小红书封面」——它选模板、用 HEX 定好锚点/配色/字重层级，产出带准确中文文案、含 80px 缩略图质量卡点的成品封面提示词。"></span></div></div></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A 小红书 note about AI video tools." data-zh="一篇讲 AI 视频工具的小红书笔记。"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="$cover-anchor-system, 数字型 cover for &#x27;5个AI视频提示词公式&#x27;." data-zh="$cover-anchor-system，用数字型给「5个AI视频提示词公式」做封面。"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Picks 数字型, sets a giant-number anchor + tech-neon palette with HEX values + 3-level type hierarchy, and emits a finished 3:4 ChatGPT Image 2 prompt with exact Chinese copy and an 80px-thumbnail readability check." data-zh="选数字型，定大号数字锚点 + 科技渐变配色（附 HEX）+ 三级字重层级，产出带准确中文、含 80px 缩略图可读性卡点的成品 3:4 生图提示词。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="An existing cover that isn&#x27;t getting clicks." data-zh="一张点击率上不去的旧封面。"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Diagnose this cover." data-zh="诊断一下这张封面。"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Scores it 1-10 on information density / visual anchor / thumbnail readability / color contrast / trust, returns the top-3 fixes and a ready-to-use replacement finished-cover prompt." data-zh="对信息密度/视觉锚点/缩略图可读性/色彩对比/信任感各打 1-10 分，给出前 3 项修改 + 一条可直接用的替换成品封面提示词。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A travel-vlog note that wants a photographic lifestyle cover (not a graphic card)." data-zh="一篇想要真实照片感 lifestyle 封面（而非图形卡片）的旅行 vlog 笔记。"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="Doodle-outline fresh cover for 周末逃跑计划." data-zh="给「周末逃跑计划」做涂鸦描边小清新封面。"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Emits a real-photo base + thick white doodle-outline + handwritten-sticker headline 3:4 prompt — a lifestyle-photography look HTML/CSS card systems structurally cannot produce." data-zh="产出真实照片底 + 厚白涂鸦描边 + 手写贴纸标题的 3:4 提示词——这种实拍 lifestyle 观感是 HTML/CSS 卡片系统结构上做不出来的。"></span></span></div></article></div></div></section>
+
+  
+
+  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is molecule" data-zh="为什么是分子"></span></div><div class="wd-why-body"><span class="i18n" data-en="Fixed prompt-assembly pipeline: identify content/platform → pick a template from the matrix → read the matching reference → emit a cover plan + a ready-to-use image prompt. The LLM makes local choices (which template, which palette) but performs no runtime sub-agent routing or plan generation — so the skill layer is a molecule, not a compound. Crucially, the user&#x27;s real output — the cover IMAGE — is produced by an EXTERNAL image model (ChatGPT Image 2 / DALL-E) this eval had no credentials to run, so the core output layer is unverified (core_layer_tested=false). Static checks confirm the prompt library is coherent and complete; they cannot confirm the rendered cover is on-brand or high-hook. That is why it is NOT scored as an atom with auto core_layer_tested=true." data-zh="固定的提示词装配 pipeline：识别内容/平台 → 从矩阵选模板 → 读对应 reference → 产出封面方案 + 可直接用的生图提示词。LLM 只做局部选择（选哪个模板、哪套配色），运行时不做子 agent 路由或计划生成——所以 skill 层是 molecule 而非 compound。关键在于：用户真正的产物——封面「图」——由外部图像模型（ChatGPT Image 2 / DALL-E）生成，本次评估无凭证运行，因此核心产物层未验证（core_layer_tested=false）。静态检查能确认提示词库自洽完整，但不能确认出图调性对、钩子强。这就是为什么不把它当 atom 自动记 core_layer_tested=true。"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 1528 104" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M204,52.0 C244.0,52.0 244.0,52.0 284,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M464,52.0 C504.0,52.0 504.0,52.0 544,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M724,52.0 C764.0,52.0 764.0,52.0 804,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M984,52.0 C1024.0,52.0 1024.0,52.0 1064,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M1244,52.0 C1284.0,52.0 1284.0,52.0 1324,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="24" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-start"/><text x="114.0" y="56.0" class="wd-label wd-lang-en">Topic + audience + platform + title</text><text x="114.0" y="56.0" class="wd-label wd-lang-zh">主题 + 人群 + 平台 + 标题</text></g><g class="wd-node wd-type-step"><rect x="284" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="374.0" y="56.0" class="wd-label wd-lang-en">Pick template (选择矩阵)</text><text x="374.0" y="56.0" class="wd-label wd-lang-zh">从矩阵选模板</text></g><g class="wd-node wd-type-step"><rect x="544" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="634.0" y="56.0" class="wd-label wd-lang-en">Read reference (formulas / prompts / diagnosis)</text><text x="634.0" y="56.0" class="wd-label wd-lang-zh">读 reference（公式/提示词/诊断）</text></g><g class="wd-node wd-type-step"><rect x="804" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="894.0" y="56.0" class="wd-label wd-lang-en">Emit cover plan + finished-image prompt</text><text x="894.0" y="56.0" class="wd-label wd-lang-zh">产出封面方案 + 成品生图提示词</text></g><g class="wd-node wd-type-decision"><polygon points="1154.0,24 1244,52.0 1154.0,80 1064,52.0" class="wd-shape wd-decision"/><text x="1154.0" y="56.0" class="wd-label wd-lang-en">External image model (ChatGPT Image 2) — NOT run in this eval</text><text x="1154.0" y="56.0" class="wd-label wd-lang-zh">外部图像模型（ChatGPT Image 2）— 本次评估未运行</text></g><g class="wd-node wd-type-end"><rect x="1324" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-end"/><text x="1414.0" y="56.0" class="wd-label wd-lang-en">Finished cover image (quality unverified)</text><text x="1414.0" y="56.0" class="wd-label wd-lang-zh">成品封面图（质量未验证）</text></g></svg></div></section>
+
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="#"><strong>op7418/guizang-social-card · 归藏社交卡片技能</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-dont_use">🛑 <span class="i18n" data-en="Don&#x27;t use" data-zh="不可使用"></span> · 49</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Generate social-media covers (小红书 + 公众号) from a topic via an agent skill." data-zh="用 agent skill 从主题生成社媒封面（小红书 + 公众号）。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面 wins at" data-zh="ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="小红书 hook pedagogy: an explicit 信息密度 × 视觉锚点 click-through model, a 10-point cover-diagnosis / redesign checklist, and PHOTOGRAPHIC lifestyle-cover styles (doodle-outline, sunlit-scrapbook photo-collage) that render as real photography — a look HTML/CSS card systems structurally cannot produce. Purpose-built for 小红书 3:4." data-zh="小红书钩子方法论：明确的「信息密度 × 视觉锚点」点击率模型、10 点封面诊断/改版清单、以及真实照片感的 lifestyle 风格（涂鸦描边、阳光胶片拼贴）——这种实拍观感 HTML/CSS 卡片系统结构上做不出来。为小红书 3:4 而生。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="guizang-social-card · 归藏社交卡片技能 wins at" data-zh="guizang-social-card · 归藏社交卡片技能 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Explicitly produces 公众号 21:9 + 1:1 cover PAIRS (exactly Park&#x27;s channel) via deterministic single-file HTML → PNG — no external image model, always-crisp correct Chinese text, reproducible — with 28 layouts / 10 themes. Carries a real AGPL-3.0 license and 4809★ (36x ponyo&#x27;s 134) with a longer track record (created 2026-05-27, pushed 2026-07-01). For Park&#x27;s 公众号 pipeline it is the primary; ponyo is at best a 小红书-lane backup, and only if a license is obtained." data-zh="显式产出公众号 21:9 + 1:1 封面对（正是 Park 的渠道），走确定性 single-file HTML → PNG——无外部图像模型、中文永远清晰正确、可复现——28 套版式 / 10 套主题。带真实 AGPL-3.0 授权、4809★（是 ponyo 134★ 的 36 倍）、历史更长（2026-05-27 建、2026-07-01 推送）。对 Park 公众号 pipeline 它是 primary；ponyo 至多是小红书 lane 的 backup，且须先拿到授权。"></span></div></div></article></div><div class="similar-pending"><div class="similar-pending-eyebrow"><span class="i18n" data-en="↳ Closer peers we have not evaluated yet" data-zh="↳ 还没评测过的更接近的同类"></span></div><div class="similar-pending-row"><span class="i18n" data-en="op7418/guizang-social-card-skill (4809★, AGPL-3.0 — not yet in this corpus, gh-api facts only) is the main head-to-head and the 公众号 PRIMARY: it explicitly generates 公众号 21:9 + 1:1 cover PAIRS via deterministic single-file HTML → PNG — no external image model, always-crisp correct Chinese text, reproducible — with 28 layouts / 10 themes, a real license, and 36x ponyo&#x27;s stars. ponyo wins only on 小红书 hook pedagogy (信息密度 × 视觉锚点 formula + 10-point diagnosis checklist) and PHOTOGRAPHIC lifestyle looks (doodle-outline, sunlit-scrapbook photo-collage) that HTML card systems structurally cannot produce. Net: guizang owns Park&#x27;s 公众号 lane; ponyo is at best a 小红书-lane backup, and only once a license is granted." data-zh="op7418/guizang-social-card-skill（4809★、AGPL-3.0——尚未纳入本 corpus，仅 gh-api 事实核对）是主要头对头，也是公众号 PRIMARY：它显式产出公众号 21:9 + 1:1 封面对，走确定性 single-file HTML → PNG——无外部图像模型、中文永远清晰正确、可复现——28 套版式 / 10 套主题，有真实授权，star 是 ponyo 的 36 倍。ponyo 只在小红书钩子方法论（信息密度 × 视觉锚点公式 + 10 点诊断清单）和真实照片感 lifestyle 风格（涂鸦描边、阳光胶片拼贴——HTML 卡片系统结构上做不出来）上更强。结论：Park 的公众号 lane 归 guizang；ponyo 至多是小红书 lane 的 backup，且须先拿到授权。"></span></div></div></section>
+
+  <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>Copy the cover-anchor-system folder into ~/.codex/skills/cover-anchor-system</code></td><td>Codex (or any agent that reads SKILL.md)</td><td><span class="badge complexity-easy">easy</span></td></tr><tr><td><code>Read cover-anchor-system/SKILL.md directly and use references/finished-cover-prompts.md</code></td><td>any agent</td><td><span class="badge complexity-easy">easy</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">ChatGPT Image 2 / DALL-E (OpenAI)</div><div class="service-purpose">Render the finished cover IMAGE from the prompt this skill emits — the skill produces prompts, not pixels.</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-paid"><span class="i18n" data-en="💰 Paid API key" data-zh="💰 需付费 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>The whole point (a cover image) cannot be produced without a paid external image model. This eval had no credentials, so the core output layer was NOT verified. Cross-model portability (Gemini / domestic models) is also unverified.</div></div></div></div></section>
+
+  <div class="pull-quotes">
+    
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="(1) NO LICENSE — all-rights-reserved; you have no legal right to adopt, fork, or redistribute it in Park&#x27;s pipeline until the author grants one. (2) It is a 小红书 (3:4) system: all 13 finished-cover prompts hard-code 3:4 Xiaohongshu 1080x1440; there is NO finished 公众号 (3:1) template — the only 公众号 3:1 guidance lives in the legacy image-prompts.md text-free-background path, which SKILL.md itself deprecates for publishing. For Park&#x27;s 公众号 channel this is a poor fit. (3) The cover IMAGE is produced by an external image model (ChatGPT Image 2 / DALL-E); output quality, on-brand-ness, and Chinese-text fidelity are model-dependent and were NOT verified here (no credentials) — the bundled example PNGs prove &#x27;produces something,&#x27; not repeatable quality. (4) Very young, single-committer repo: created 2026-06-21, one push 2026-06-22, bus-factor 1, no releases / CI / tests." data-zh="(1) 无 LICENSE——保留所有权利；作者授权前，你在法律上无权把它纳入 Park pipeline、fork 或再分发。(2) 这是小红书（3:4）系统：13 条成品封面提示词全部写死 3:4 小红书 1080x1440；没有成品公众号（3:1）模板——唯一的公众号 3:1 指引在被 SKILL.md 明确弃用的 image-prompts.md 无字背景路径里。对 Park 的公众号渠道适配差。(3) 封面成品图由外部图像模型（ChatGPT Image 2 / DALL-E）生成，出图质量/调性/中文字形依赖模型，本次评估未验证（无凭证）——随包示例 PNG 只能证明「能出图」，不能证明「稳定出好图」。(4) 极年轻、单人仓库：2026-06-21 建、2026-06-22 一次推送、bus-factor 1，无 release/CI/测试。"></span></div></section>
+  </div>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Score breakdown · how the 55 was computed" data-zh="分数明细 · 55 是怎么算的"></span></summary>
+    <div class="body">
+      <div class="claim-stats-row">
+        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 12 <span class="i18n" data-en="total" data-zh="共"></span></div>
+        <div class="stats-bar"><span class="s-pass" style="flex: 7"></span><span class="s-bad" style="flex: 2"></span><span class="s-skip" style="flex: 3"></span></div>
+        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">7</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--bad)"></span><span class="num">2</span> <span class="i18n" data-en="failed" data-zh="失败"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">3</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
+      </div>
+      <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+12</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+5</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">-2</td></tr></tbody></table></details>
+    </div>
+  </details>
+
+  <section>
+    <div class="section-head">
+      <h2><span class="i18n" data-en="What we verified" data-zh="我们验证了什么"></span></h2>
+      <span class="count">9 / 12</span>
+    </div>
+    <div class="capabilities-grid">
+      <article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-001</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Skill loads without parse errors" data-zh="Skill 加载时不会报 parse 错误"></span></h3>  <p class="cap-description"><span class="i18n" data-en="SKILL.md has valid YAML frontmatter (name + a rich description). A Codex / Claude Code host accepts it as a skill instead of falling back to generic chat." data-zh="SKILL.md 的 YAML frontmatter 合法（name + 富触发 description）。Codex / Claude Code 会把它当 skill 加载，而非退化为普通对话。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-002</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Internal references all resolve" data-zh="内部引用全部解析得到"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Every reference file SKILL.md points at actually exists — the agent won&#x27;t hit a missing file mid-workflow." data-zh="SKILL.md 指向的每个 reference 文件都真实存在——agent 不会在工作流中途撞空文件。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-003</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Every README workflow has a real reference behind it" data-zh="README 每条工作流都有对应 reference 支撑"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The 4 README workflows (finished cover / diagnose / doodle-outline / sunlit-scrapbook) and 6 templates each map to a concrete reference file. No &#x27;advertised but not built.&#x27;" data-zh="README 的 4 条工作流（成品封面 / 诊断 / 涂鸦描边 / 阳光拼贴）和 6 套模板各自对应一个真实 reference 文件。没有「宣传了但没做」。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-004</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="The formulas are concrete, not vibes" data-zh="公式是具体参数，不是玄学"></span></h3>  <p class="cap-description"><span class="i18n" data-en="template-formulas.md gives per-template HEX palettes, anchor positions, a 4.5:1 contrast floor, number-height %, type-weight ratios, and an 80px thumbnail test; the diagnosis file is a runnable 10-point 1-10 scoring rubric." data-zh="template-formulas.md 给每套模板的 HEX 配色、锚点位置、4.5:1 对比度下限、数字占高百分比、字重比、80px 缩略图测试；诊断文件是可执行的 10 点 1-10 打分表。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-005</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="A real finished-cover prompt library ships (not a stub)" data-zh="随包真实的成品封面提示词库（非占位）"></span></h3>  <p class="cap-description"><span class="i18n" data-en="finished-cover-prompts.md has a Universal Prompt Contract + 13 full finished-cover prompts; the two lifestyle style packs (doodle-outline, sunlit-scrapbook) add 4 ready prompts each with a style contract and failure modes." data-zh="finished-cover-prompts.md 有 Universal Prompt Contract + 13 条完整成品封面提示词；两套 lifestyle 风格包（涂鸦描边、阳光拼贴）各带 4 条 ready prompt + style contract + 失败模式。"></span></p>  </article>
+<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-006</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Anti-slop + watermark rules are declared and consistent" data-zh="anti-slop + 水印规则一致声明"></span></h3>  <p class="cap-description"><span class="i18n" data-en="SKILL.md&#x27;s Quality Bar bans garbled Chinese, fake logos / QR, invented revenue/data, and any hard-coded 波妞 / PONYO / @ watermark; the same watermark policy is repeated in every style file and prompt block." data-zh="SKILL.md 的 Quality Bar 禁止糊字、假 logo/QR、编造收益/数据，以及任何写死的「波妞 / PONYO / @」水印；同一水印规则在每个 style 文件和提示词块里重复声明。"></span></p>  </article>
+<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-009</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="The emitted prompt actually renders an on-brand, high-hook cover" data-zh="产出的提示词真能出一张调性对、钩子强的封面"></span></h3>  <p class="cap-description"><span class="i18n" data-en="THE core promise. Whether the prompt yields a genuinely thumb-stopping, on-brand finished cover depends on an EXTERNAL image model (ChatGPT Image 2 / DALL-E). This eval had no credentials to run it, so the output was NOT verified." data-zh="核心承诺。提示词能否真出一张能拦住拇指、调性对的成品封面，取决于外部图像模型（ChatGPT Image 2 / DALL-E）。本次评估无凭证运行，故产出未验证。"></span></p>  </article>
+<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-010</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Rendered covers pass the skill&#x27;s own Quality Bar" data-zh="出图能过 skill 自己的 Quality Bar"></span></h3>  <p class="cap-description"><span class="i18n" data-en="SKILL.md states a Quality Bar: readable at 80px thumbnail, one dominant anchor, crisp non-garbled Chinese, no fake logos/QR, no un-requested watermark. Whether real renders pass can only be checked on an actual image — not run here." data-zh="SKILL.md 声明 Quality Bar：80px 缩略图可读、单一主锚点、中文清晰不糊、无假 logo/QR、无未经请求的水印。真出图是否达标只能在真实图片上验证——本次未跑。"></span></p>  </article>
+<article class="capability-card status-failed_partial">  <div class="cap-header">    <span class="cap-badge">failed</span>    <span class="cap-id">claim-011</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Delivers finished 公众号 covers (not just 小红书)" data-zh="能产出成品公众号封面（不只是小红书）"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The README/description claim 小红书 AND 公众号 covers. But the default finished-cover workflow does not deliver a 公众号-shaped finished cover: all 13 finished-cover prompts hard-code 3:4 Xiaohongshu 1080x1440. The only 公众号 3:1 guidance is in the legacy image-prompts.md text-free-background path, which SKILL.md deprecates for publishing." data-zh="README/description 声称小红书「和」公众号封面。但默认成品封面工作流并不产出公众号形状的成品封面：13 条成品提示词全部写死 3:4 小红书 1080x1440。唯一的公众号 3:1 指引在 legacy image-prompts.md 无字背景路径，而 SKILL.md 弃用该路径用于发布。"></span></p>  </article>
+<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-012</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Fires on cover-design intent, not unrelated asks" data-zh="封面设计意图才触发，不误触无关请求"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The SKILL.md description carries a specific &#x27;Use when …&#x27; trigger list (Xiaohongshu covers, WeChat article covers, cover diagnosis / redesign, doodle / sunlit styles). But there are no eval-cases negative examples and no live trigger test, so precision/recall is unmeasured." data-zh="SKILL.md description 有具体的「Use when …」触发集（小红书封面、公众号文章封面、封面诊断/改版、涂鸦/阳光风格）。但没有 eval-cases 反例、没有在线触发测试，precision/recall 未测量。"></span></p>  </article>
+    </div>
+  </section>
+
+  <section><div class='section-head'><h2><span class='i18n' data-en='How we evaluated this · by layer' data-zh='我们如何按层级评测'></span></h2></div>
+    <div class="layer-hero">
+      <div class="layer-hero-eyebrow">
+        <span class="i18n" data-en="Composition layer" data-zh="组合层级"></span>
+      </div>
+      <div class="layer-hero-name layer-molecule"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div>
+      <div class="layer-hero-summary"><span class="i18n" data-en="2–10 atoms wired by predefined orchestration. No runtime LLM routing." data-zh="2–10 个原子，按预定义编排串起来。运行时不让 LLM 临时决定路由。"></span></div>
+      <div class="layer-hero-source"><span class="i18n"
+        data-en="Declared in repo.yaml"
+        data-zh="已在 repo.yaml 中显式声明"></span></div>
+    </div>
+    <div class="layer-stack"><div class="layer-card layer-card-atom"><div class="layer-card-head"><h3><span class="i18n" data-en="Atom-level checks" data-zh="原子层检查"></span></h3><span class="layer-card-tag"><span class="i18n" data-en="applies (lower-level dependency)" data-zh="适用（下层依赖）"></span></span></div><p class="layer-card-summary"><span class="i18n" data-en="Single responsibility. Same input → same output. No skill-level callouts." data-zh="单一职责。同样输入产出同样输出。不调用其他 skill 级单元。"></span></p><table class="layer-dim-table"><tbody><tr><th><code>input_contract</code></th><td><span class="i18n" data-en="Does the atom reject malformed input with a clear, actionable error?" data-zh="原子在收到非法输入时，是否抛出一个清晰、可操作的错误？"></span></td></tr><tr><th><code>output_contract</code></th><td><span class="i18n" data-en="Does the output shape match what the README/SKILL.md claims?" data-zh="输出的结构是否与 README/SKILL.md 的承诺一致？"></span></td></tr><tr><th><code>determinism</code></th><td><span class="i18n" data-en="Same input → same output within stated tolerance. (LLM atoms: structurally equivalent, not byte-equal.)" data-zh="同样输入产出同样输出（容差内）。LLM 原子的容差是「结构等价」，不是字节相等。"></span></td></tr><tr><th><code>idempotence</code></th><td><span class="i18n" data-en="Re-running with the same input produces the same observable end state." data-zh="同样输入重复运行，最终可观察状态保持一致。"></span></td></tr><tr><th><code>no_skill_callouts</code></th><td><span class="i18n" data-en="Does the atom avoid invoking other documented skills? Primitives only (LLM API, stdlib, OS)." data-zh="原子是否避免调用其他 skill？只能调用 primitive（LLM API、stdlib、OS）。"></span></td></tr><tr><th><code>failure_mode_clarity</code></th><td><span class="i18n" data-en="Does each documented failure mode produce a distinct, recognisable error?" data-zh="每一种文档化的失败模式，是否都对应一个独特且可识别的错误？"></span></td></tr></tbody></table></div><div class="layer-card layer-card-molecule"><div class="layer-card-head"><h3><span class="i18n" data-en="Molecule-level checks" data-zh="分子层检查"></span></h3><span class="layer-card-tag"><span class="i18n" data-en="applies (this layer)" data-zh="适用（当前层）"></span></span></div><p class="layer-card-summary"><span class="i18n" data-en="2–10 atoms wired by predefined orchestration. No runtime LLM routing." data-zh="2–10 个原子，按预定义编排串起来。运行时不让 LLM 临时决定路由。"></span></p><table class="layer-dim-table"><tbody><tr><th><code>workflow_correctness</code></th><td><span class="i18n" data-en="Does an end-to-end happy path run from initial input to final output?" data-zh="从初始输入到最终输出，端到端 happy path 能跑通吗？"></span></td></tr><tr><th><code>declared_call_graph</code></th><td><span class="i18n" data-en="Are the atoms the molecule documents as using actually the ones it calls? No undocumented hidden dependencies." data-zh="分子文档里声明依赖的原子，是否就是它实际调用的原子？没有未文档化的隐藏依赖？"></span></td></tr><tr><th><code>stop_conditions</code></th><td><span class="i18n" data-en="Do documented stop conditions (success, max-retries, timeout) trigger and halt cleanly?" data-zh="文档化的停止条件（成功 / 重试上限 / 超时）是否真的触发并干净退出？"></span></td></tr><tr><th><code>handoff_points</code></th><td><span class="i18n" data-en="When the molecule should hand back to a human, does it do so at the documented trigger?" data-zh="分子需要把控制权交还给人时，是否按文档化的触发点执行？"></span></td></tr><tr><th><code>atom_evidence</code></th><td><span class="i18n" data-en="Does every declared atom dependency have a passing atom-level eval (referenced or co-located)?" data-zh="每一个声明依赖的原子，是否都有对应的、通过的 atom 级评测（引用或同仓）？"></span></td></tr><tr><th><code>error_propagation</code></th><td><span class="i18n" data-en="Does a downstream atom failure surface at the molecule boundary with enough info to act?" data-zh="下游原子失败时，错误是否在分子边界处响亮地冒泡出来，并带足够信息让人定位？"></span></td></tr><tr><th><code>partial_failure_handling</code></th><td><span class="i18n" data-en="When one atom fails, does the molecule avoid silently producing an incomplete &#x27;success&#x27;?" data-zh="某个原子失败时，分子是否避免静默输出一个看似「成功」其实不完整的产物？"></span></td></tr></tbody></table></div></div></section>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Technical details" data-zh="技术细节"></span></summary>
+    <div class="body">
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Ceiling &amp; blocking reasons" data-zh="Ceiling 与 Blocking 理由"></span></h3>
+        <div class="grid-two">
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Why capped" data-zh="为什么封顶"></span></h4>
+            <ul><li>core user-facing layer untested → capped at &#x27;usable&#x27;</li><li>hybrid-repo rule: archetype &#x27;prompt-skill&#x27; requires end-to-end evaluation of the user-facing layer</li><li>evidence_completeness=&#x27;partial&#x27; (not portable) → capped at &#x27;usable&#x27;</li></ul>
+          </div>
+          <div class="mini-card">
+            <h4><span class="i18n" data-en="Blocking issues" data-zh="Blocking 问题"></span></h4>
+            <ul><li>only 2/3 critical claims covered</li></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Derivation" data-zh="推导路径"></span></h3>
+        <div class="flow"><div class="flow-row"><span class="flow-node start">archetype: prompt-skill</span><span class="flow-arrow">→</span><span class="flow-node decision">core_layer_tested? <b style="color:inherit">False</b></span><span class="flow-arrow">→</span><span class="flow-node">evidence: partial</span><span class="flow-arrow">→</span><span class="flow-node">recommended: usable</span><span class="flow-arrow">→</span><span class="flow-node final">final: usable</span></div><div class="flow-notes"><div class="note">ceiling 1 · core user-facing layer untested → capped at &#x27;usable&#x27;</div><div class="note">ceiling 2 · hybrid-repo rule: archetype &#x27;prompt-skill&#x27; requires end-to-end evaluation of the user-facing layer</div><div class="note">ceiling 3 · evidence_completeness=&#x27;partial&#x27; (not portable) → capped at &#x27;usable&#x27;</div></div></div>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Claim ledger" data-zh="Claim 清单"></span></h3>
+        <table class="claims-table">
+          <thead>
+            <tr>
+              <th style="width:110px"><span class="i18n" data-en="ID" data-zh="ID"></span></th>
+              <th><span class="i18n" data-en="Title" data-zh="标题"></span></th>
+              <th style="width:100px"><span class="i18n" data-en="Priority" data-zh="优先级"></span></th>
+              <th style="width:170px"><span class="i18n" data-en="Area" data-zh="领域"></span></th>
+              <th style="width:130px"><span class="i18n" data-en="Status" data-zh="状态"></span></th>
+              <th><span class="i18n" data-en="Note" data-zh="备注"></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="prio-critical"><td class="c-id">claim-001</td><td class="c-title">SKILL.md frontmatter 合法</td><td><span class="prio-pill critical">critical</span></td><td>skill-structure</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-002</td><td class="c-title">SKILL.md 引用完整性</td><td><span class="prio-pill critical">critical</span></td><td>skill-integrity</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-003</td><td class="c-title">README 能力 ↔ SKILL workflow 覆盖</td><td><span class="prio-pill high">high</span></td><td>coverage</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-004</td><td class="c-title">模板参数 / 诊断清单具体可执行</td><td><span class="prio-pill high">high</span></td><td>support-formulas</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-005</td><td class="c-title">成品封面提示词库完整</td><td><span class="prio-pill high">high</span></td><td>support-prompts</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-006</td><td class="c-title">风格契约 / 水印规则声明一致</td><td><span class="prio-pill high">high</span></td><td>support-anti-slop</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-medium"><td class="c-id">claim-007</td><td class="c-title">示例图库存在</td><td><span class="prio-pill medium">medium</span></td><td>support-artifacts</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-medium"><td class="c-id">claim-008</td><td class="c-title">无 LICENSE（保留所有权利）</td><td><span class="prio-pill medium">medium</span></td><td>support-license</td><td class="c-status" style="color:var(--bad)">✕ failed</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-009</td><td class="c-title">核心：成品封面出图质量</td><td><span class="prio-pill critical">critical</span></td><td>core</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-010</td><td class="c-title">出图达到 Quality Bar</td><td><span class="prio-pill high">high</span></td><td>core</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-011</td><td class="c-title">成品公众号封面交付（默认工作流）</td><td><span class="prio-pill high">high</span></td><td>core-platform-fit</td><td class="c-status" style="color:var(--bad)">✕ failed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-012</td><td class="c-title">触发精度</td><td><span class="prio-pill high">high</span></td><td>core-triggering</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="subsection">
+        <h3><span class="i18n" data-en="Runs &amp; metrics" data-zh="Runs 与指标"></span></h3>
+        <div class="metric-tiles">
+          <div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="pass rate" data-zh="通过率"></span></div>  <div class="mt-value">0<span class="mt-unit">%</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="elapsed" data-zh="耗时"></span></div>  <div class="mt-value">0.00<span class="mt-unit">s</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="token output" data-zh="token 输出"></span></div>  <div class="mt-value">0</div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="in · 0 / out · 0" data-zh="输入 · 0 / 输出 · 0"></span></div></div>
+        </div>
+        <p class="dim"><span class="i18n" data-en="none" data-zh="无"></span></p>
+      </div>
+
+    </div>
+  </details>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Test log — all probes we ran" data-zh="测试日志 — 我们跑过的所有探针"></span></summary>
+    <div class="body">
+      <p class="dim"><span class="i18n" data-en="none" data-zh="无"></span></p>
+    </div>
+  </details>
+
+  <details class="section-fold">
+    <summary><span class="i18n" data-en="Raw verdict archive (authored by evaluator)" data-zh="原始 verdict 存档（评测者原文）"></span></summary>
+    <div class="body">
+<pre class="md"># Final Verdict
+
+## Repo
+
+- **Name**: ponyodong2026/ponyo-cover-anchor-system
+- **Version tested**: main@HEAD (2026-06-22 push), commit f03b7bc
+- **Date**: 2026-07-09
+- **Archetype**: prompt-skill
+- **Layer**: molecule
+- **Score**: 55 /100  (from `verdict_calculator.py`, not judgement)
+- **Category**: 🛠 Available / 可使用
+- **Tier**: 🧪 Try once (try ≥50)
+
+## Plain English
+
+- Outcome if adopted: Vera gets a disciplined 小红书 cover-prompt system — an explicit 信息密度 × 视觉锚点 formula, 6 template/style families (incl. real-photo doodle-outline &amp; sunlit-scrapbook looks), a 10-point diagnosis checklist, and a copy-paste ChatGPT Image 2 prompt — that turns &quot;make a cover&quot; into a decided anchor/palette/type plan in seconds.
+- Regret scenario: You need it for Park&#x27;s 公众号 channel — but it has NO 公众号 finished-cover template (all 13 prompts hard-code 3:4 小红书) and, more decisively, NO LICENSE at all (all-rights-reserved), so you have no legal right to embed or redistribute it; the cover image also comes from an external image model whose quality this eval never verified.
+
+## Why This Score
+
+The user-visible outcome — a topic/title turned into a finished-cover image prompt on an explicit hook formula — is real at the prompt layer: SKILL.md loads, all 6 references resolve, the formulas carry HEX/anchor/contrast/thumbnail specifics, 13 finished-cover prompts + two lifestyle style packs ship, and 16 example PNGs prove the pipeline produces covers. But the thing the user actually keeps — the rendered cover — is made by an external image model (ChatGPT Image 2 / DALL-E) this eval had no credentials to run, so core quality is unverified; and the repo is unlicensed and 小红书-only.
+
+### Top 3 score drivers
+
+- +12 : static structure — 2/2 support-critical claims passed (frontmatter + references resolve) plus 4 high support claims (coverage, concrete formulas, prompt library, anti-slop declared); net of the −4 for the 公众号-fit gap and −2 for the untested core promise.
+- +5 / 0 / 0 : maintainer +5 (pushed within 90d) is the only maintainer point — no releases/CI (release_pipeline 0), no tests/eval harness (eval_discipline 0); ecosystem +0 (134★ &lt; 1000 band); layer_bonus +0 (molecule, not atom).
+- −2 : NO LICENSE penalty (small-repo band). The real cost of no-license is the adoption FLAG, not these 2 points; and the core promise stays untested (image-model-dependent) so no atom bonus and evidence capped at partial.
+
+### Core outcome
+Observably works (static): SKILL→references integrity, quantified template formulas, a runnable cover-diagnosis rubric, a 13-prompt finished-cover library, and a shipped example gallery.
+Observably NOT verified: the rendered cover&#x27;s quality / on-brand-ness / hook strength / Chinese-text fidelity (image-model-dependent, not run — no credentials); cross-model portability; trigger precision; and finished 公众号 covers, which the default workflow does not produce at all.
+
+### Scenario breadth
+Zero live renders in this eval. Static breadth is good — 4 templates × HEX palettes, 2 lifestyle style packs, 16 example covers across all 4 base templates — but every core-quality dimension (platform, subject, model) is unexercised → evidence_completeness = partial.
+
+### Repeatability
+File-level reproducible: the prompt library and formulas are fixed text, so the same brief yields the same *prompt*. The rendered *image* is not reproducible here — image models vary run-to-run, and this eval never ran one, so image-level repeatability is unmeasured.
+
+### Failure transparency
+No runtime/error surface to speak of (it emits text prompts). The honest failure mode is silent: an off-brand or garbled-Chinese cover only shows up when a human looks at the render — the skill has no self-check that the image met its own Quality Bar.
+
+## What Would Move The Score Up
+
+1. Obtain a license from the author (issue/email). This is the adoption gate, not a scoring line — until it exists, Park cannot legally embed or redistribute it regardless of score. (unblocks adoption; ~+2 direct)
+2. Render 2+ live covers through ChatGPT Image 2 and score them against the SKILL.md Quality Bar (80px thumbnail, one anchor, crisp correct Chinese) → lifts core_layer_tested and evidence partial→portable (~+layer/evidence, moves toward reusable).
+3. Add a real finished 公众号 3:1 + 1:1 template to finished-cover-prompts.md (or scope ponyo to 小红书-only and route 公众号 to guizang-social-card) → clears the failed_partial platform-fit claim (~+4).
+
+## Remaining Risks
+
+Ranked. Each risk with severity + impact + mitigation if known.
+
+| Risk | Severity | Impact | Mitigation |
+|---|---|---|---|
+| NO LICENSE (all-rights-reserved) | Critical | No legal right to use/modify/redistribute in Park&#x27;s pipeline; fork/embed exposes Park. | Get explicit license from author before any pipeline use; until then treat as read-only reference. |
+| 小红书-only, not 公众号 | High | Park&#x27;s channel is 公众号; default workflow emits zero 公众号 finished covers (all 13 prompts 3:4). | Use guizang-social-card as 公众号 primary; scope ponyo to 小红书 lane, or author a 公众号 template. |
+| Image-model dependency (core unverified) | High | Cover quality / on-brand / Chinese fidelity depend on ChatGPT Image 2; not run here; garbled Chinese is a known image-model weakness. | Live-render + score vs Quality Bar; pin model + settings; human review each render. |
+| Bus-factor 1 / very young | Medium | Created 2026-06-21, one push 2026-06-22, single committer, no releases/CI/tests — longevity untested. | Watch maintenance 2–4 weeks; vendor the folder so Park isn&#x27;t exposed to upstream churn. |
+| No trigger eval / anti-slop only declared | Low | Trigger precision unmeasured; anti-slop rules stated but not verified on real output. | Add eval-cases with negative examples; check watermark/anti-slop on live renders. |
+
+## Related Artifacts
+
+- Claim map: ../claims/claim-map.yaml
+- Plan: ../plans/2026-07-09-eval-plan.md
+- Runs: ../runs/ (no live run — core is image-model-dependent, no credentials)
+- Verdict calculator input: ./2026-07-09-verdict-input.yaml
+- Rendered HTML dossier: ./2026-07-09-verdict.html
+
+## Verdict
+
+Conditional. As a 小红书 cover-prompt reference it is genuinely useful and well-built, and belongs to Vera in the 封面 lane — but as a BACKUP, not the primary. For Park&#x27;s 公众号 pipeline the primary is guizang-social-card (公众号 21:9+1:1 pairs, deterministic HTML→PNG, AGPL-3.0, 4809★). Do NOT embed ponyo in Park&#x27;s pipeline until the author grants a license; until then, use it only as a read-only 小红书 idea/formula reference. Next minimal action: open a license request, then live-render 2 covers against the Quality Bar to lift core evidence.
+</pre>
+    </div>
+  </details>
+
+  <footer>
+    <div><span class="i18n" data-en="Rendered by repo-evals · render_verdict_html.py" data-zh="由 repo-evals · render_verdict_html.py 生成"></span></div>
+    <div><a href="https://github.com/ponyodong2026/ponyo-cover-anchor-system" target="_blank" rel="noopener">ponyodong2026/ponyo-cover-anchor-system</a></div>
+  </footer>
+
+</main>
+
+<script>
+  const LANG_KEY = 'repoEvalsVerdictLang';
+  const INITIAL_LANG = "zh";
+  function detectLang() {
+    try {
+      const p = new URLSearchParams(location.search).get('lang');
+      if (p === 'en' || p === 'zh') return p;
+    } catch (_) {}
+    const stored = localStorage.getItem(LANG_KEY);
+    if (stored === 'en' || stored === 'zh') return stored;
+    if (INITIAL_LANG === 'en' || INITIAL_LANG === 'zh') return INITIAL_LANG;
+    if ((navigator.language || '').toLowerCase().startsWith('zh')) return 'zh';
+    return 'en';
+  }
+  function setLang(lang) {
+    document.documentElement.lang = lang;
+    try { localStorage.setItem(LANG_KEY, lang); } catch (_) {}
+  }
+  setLang(detectLang());
+</script>
+
+</body>
+</html>

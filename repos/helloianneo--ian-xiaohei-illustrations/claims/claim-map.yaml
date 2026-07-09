@@ -1,0 +1,287 @@
+# Claim map for ian-xiaohei-illustrations (prompt-skill).
+# SUPPORT layer = static prompt scaffolding (fully testable statically): frontmatter,
+#   reference resolution, README↔SKILL coverage, style/QA coherence, license, triggers.
+# CORE layer = the actual IMAGE output (molecule; image-model-dependent). The real
+#   renderer is an EXTERNAL image model we have no credentials for → core claims are
+#   UNTESTED. The author's example gallery proves "it renders something", not quality.
+# Statuses reflect the 2026-07-09 static eval (no live image-model run performed).
+
+claims:
+  # --- SUPPORT layer (static prompt scaffolding) -------------------------
+
+  - id: claim-001
+    user_icon: "📑"
+    user_title:
+      en: "Skill loads without parse errors and declares its triggers"
+      zh: "Skill 能正常加载，且声明了触发词"
+    user_description:
+      en: "SKILL.md has valid YAML frontmatter (name + a rich description). The agent host accepts it and knows when to fire it, instead of falling back to generic chat."
+      zh: "SKILL.md 的 YAML frontmatter 合法（name + 丰富的 description）。Agent 能加载并知道何时触发，而不是退化成普通对话。"
+    title: SKILL.md frontmatter 合法且含触发规格
+    source: SKILL.md
+    source_ref: "frontmatter (name / description)"
+    priority: critical
+    area: skill-structure
+    statement: |
+      SKILL.md 有合法 YAML frontmatter，name 与 description 均非空，
+      description 内含中文触发词（怪诞 / 小黑 / 手绘 / 正文配图 / shot list / 去标题）。
+    evidence_needed: |
+      解析 frontmatter，确认必填字段非空且 description 列出触发场景。
+    status: passed
+    evidence: |
+      frontmatter: name=ian-xiaohei-illustrations，description 明列「中文文章 / 帖子 /
+      博客 / Notion / 方法论 / 流程 / 隐喻」+「怪诞 / 小黑 / 手绘 / 正文配图 / 文章插图 /
+      shot list / 去标题/改图」等触发词。合法、可加载。
+
+  - id: claim-002
+    user_icon: "🔗"
+    user_title:
+      en: "Every referenced file actually exists"
+      zh: "引用的每个文件都真实存在"
+    user_description:
+      en: "SKILL.md points the agent at 5 reference files + an examples dir. All resolve, so the agent won't hallucinate a missing style rule mid-generation."
+      zh: "SKILL.md 让 agent 去读 5 份参考文件 + 示例目录。全部解析得到，agent 不会因为某条风格规则文件缺失而在生成中途瞎编。"
+    title: SKILL.md 引用完整性
+    source: SKILL.md
+    source_ref: "references/*.md + assets/examples/"
+    priority: critical
+    area: skill-integrity
+    statement: |
+      SKILL.md「先读这些参考」列出的 references/style-dna.md、xiaohei-ip.md、
+      composition-patterns.md、prompt-template.md、qa-checklist.md 与 assets/examples/
+      均存在于仓库。
+    evidence_needed: |
+      比对 SKILL.md 引用路径与实际文件树。
+    status: passed
+    evidence: |
+      文件树核对：5 份 references/*.md 全部存在；ian-xiaohei-illustrations/assets/examples/
+      下 14 张 PNG 存在。零悬挂引用。
+
+  - id: claim-003
+    user_icon: "🎯"
+    user_title:
+      en: "Every capability the README sells has a real workflow"
+      zh: "README 卖的每个能力在 SKILL 里都有路径"
+    user_description:
+      en: "README advertises shot-list planning, generating body illustrations, single-concept images, and title-removal edits. All four map to a real step in SKILL.md or prompt-template.md — no 'advertised but not built'."
+      zh: "README 承诺 shot list 规划、生成正文配图、单概念一张图、去标题改图。四项都能在 SKILL.md 工作流或 prompt-template.md 找到对应步骤——没有「宣传了但没实现」。"
+    title: README 能力↔SKILL 覆盖
+    source: README + SKILL.md
+    source_ref: "怎么用 / 工作流"
+    priority: high
+    area: coverage
+    statement: |
+      README 的 4 类能力（shot list 规划 / 生成配图 / 单概念一张图 / 去标题改图）
+      在 SKILL.md 工作流或 prompt-template.md 中均有对应执行路径。
+    evidence_needed: |
+      一一对应表 + 证据引用。
+    status: passed
+    evidence: |
+      shot list→SKILL 步骤2；生成配图→步骤3（单张 image_gen）；单概念→prompt-template 主模板；
+      去标题/改图→prompt-template.md「图像编辑提示」段（Remove-title + 增强怪诞感两条）。4/4 覆盖。
+
+  - id: claim-004
+    user_icon: "🧬"
+    user_title:
+      en: "A complete, coherent style-DNA + QA system (not a vibe)"
+      zh: "有完整自洽的风格 DNA + QA 体系（不是一句口号）"
+    user_description:
+      en: "style-dna, xiaohei-ip, composition-patterns and qa-checklist form one consistent contract (pure white bg, 40-60% subject, sparse red/orange/blue labels, 小黑 as actor, anti-PPT). The rules don't contradict each other."
+      zh: "style-dna、xiaohei-ip、composition-patterns、qa-checklist 构成一套自洽契约（纯白底、主体 40-60%、少量红橙蓝标注、小黑当动作主体、反 PPT）。规则之间不打架。"
+    title: 风格 DNA / 构图 / QA 三件套自洽完整
+    source: references/
+    source_ref: "style-dna.md / xiaohei-ip.md / composition-patterns.md / qa-checklist.md"
+    priority: high
+    area: skill-content
+    statement: |
+      风格 DNA（颜色语义 + 禁忌）、小黑 IP（形象 + 动作库 + 禁止）、构图（8 结构类型 +
+      原创隐喻三步法 + 反复刻规则）、QA（必过项 + 失败信号 + 迭代）互相一致、可执行。
+    evidence_needed: |
+      逐份读并核对规则一致性（颜色 / 留白 / 小黑参与 / 反 PPT 在四份里是否统一）。
+    status: passed
+    evidence: |
+      四份规则一致：白底 + 35-60% 主体 + 红=重点/橙=主路径/蓝=补充 + 小黑承担核心动作 +
+      禁 PPT/可爱/左上角标题，在 style-dna、qa-checklist、prompt-template 中口径一致。QA 有
+      可执行的失败信号→迭代映射。
+
+  - id: claim-005
+    user_icon: "🧩"
+    user_title:
+      en: "The per-image prompt template is parameterized and self-contained"
+      zh: "单张生图模板是参数化、自足的"
+    user_description:
+      en: "prompt-template.md is a fill-in-the-blanks English prompt with slots (theme / structure / composition / labels / color) plus baked-in constraints — you can drop it into any image model, not just Codex."
+      zh: "prompt-template.md 是一段可填空的英文提示词，带槽位（主题 / 结构 / 构图 / 标注 / 颜色）+ 内置约束——可直接投给任意图像模型，不限 Codex。"
+    title: prompt-template 参数化且模型无关
+    source: references/prompt-template.md
+    source_ref: "生图提示词模板"
+    priority: high
+    area: skill-content
+    statement: |
+      prompt-template.md 含明确变量槽位与硬约束（16:9 / 纯白底 / 小黑主体 / ≤5-8 中文标注 /
+      禁标题），可移植到任意外部图像模型。
+    evidence_needed: |
+      读模板确认槽位 + 约束齐备且不依赖特定模型 API。
+    status: passed
+    evidence: |
+      模板有 {正文配图主题}/{结构类型}/{核心意思}/{Composition}/{Suggested elements}/
+      {Chinese labels}/Color use/Constraints 槽位，英文 prompt，模型无关。附两段改图提示。
+
+  - id: claim-006
+    user_icon: "🎣"
+    user_title:
+      en: "Trigger spec is specific enough to fire on the right asks"
+      zh: "触发规格够具体，能在正确的请求上触发"
+    user_description:
+      en: "The description enumerates concrete trigger scenarios and keywords (怪诞 / 小黑 / 手绘 / 正文配图 / shot list / 去标题) so the host fires it on body-illustration intent rather than generic image asks."
+      zh: "description 列了具体触发场景与关键词（怪诞 / 小黑 / 手绘 / 正文配图 / shot list / 去标题），让 host 在「正文配图」意图上触发，而非任意画图请求。"
+    title: 触发词规格具体
+    source: SKILL.md
+    source_ref: "description"
+    priority: high
+    area: triggering
+    statement: |
+      description 枚举触发场景 + 关键词，覆盖规划 / 生成 / 单概念 / 改图四类意图。
+    evidence_needed: |
+      静态核对 description 触发词覆盖 README 用例；未做在线 trigger_test。
+    status: passed_with_concerns
+    evidence: |
+      静态强：description 明列文章/帖子/Notion/方法论/流程/隐喻 + 怪诞/小黑/手绘/正文配图/
+      shot list/去标题。但未运行在线 trigger_test.py 测 precision/recall（需 API harness），
+      故记 passed_with_concerns：规格到位、未做在线触发精度测量。
+
+  - id: claim-007
+    user_icon: "🖼"
+    user_title:
+      en: "Ships a calibration example gallery"
+      zh: "随包风格校准样例图库"
+    user_description:
+      en: "8 README samples + 14 assets/examples PNGs show the intended look. They are explicitly calibration-only (do not copy composition) — proof the style has been rendered before, not proof of your article's result."
+      zh: "8 张 README 样例 + 14 张 assets/examples PNG 展示目标风格。明确只作校准（不要照抄构图）——证明这套风格出过图，不证明你这篇的结果。"
+    title: 校准样例图库存在
+    source: README + NOTICE.md
+    source_ref: "示例效果 / assets/examples"
+    priority: medium
+    area: artifacts
+    statement: |
+      examples/images/ 8 张 + assets/examples/ 14 张 PNG 存在，NOTICE 标注为作者生成的校准样例。
+    evidence_needed: |
+      清点 PNG 数量 + 读 NOTICE 说明。
+    status: passed
+    evidence: |
+      examples/images/ 8 张（01-08）；ian-xiaohei-illustrations/assets/examples/ 14 张（01-14）。
+      NOTICE.md 声明为 Ian 生成、作校准用。属静态资产，非质量证明。
+
+  - id: claim-008
+    user_icon: "⚖️"
+    user_title:
+      en: "Carries a real OSI license"
+      zh: "带真实 OSI 许可证"
+    user_description:
+      en: "A genuine standard MIT LICENSE file (not just a badge). GitHub reports spdx_id=MIT cleanly — internal reuse and adaptation are unambiguously permitted."
+      zh: "真实标准 MIT LICENSE 文件（不是只挂徽章）。GitHub 干净地报 spdx_id=MIT——内部复用与改编无歧义地被许可。"
+    title: 真实 MIT 许可证
+    source: LICENSE
+    source_ref: "LICENSE"
+    priority: medium
+    area: license
+    statement: |
+      LICENSE 为标准 MIT 文本；gh api license.spdx_id = MIT。
+    evidence_needed: |
+      读 LICENSE + gh api license 字段。
+    status: passed
+    evidence: |
+      LICENSE 1060 bytes 标准 MIT（Copyright (c) 2026 Ian）。gh api → license.spdx_id="MIT"
+      （无 NOASSERTION）。NOTICE.md 仅请求保留 IP 署名，不改变 MIT 许可。
+
+  # --- CORE layer (the IMAGE output — image-model-dependent, UNTESTED) ---
+
+  - id: claim-009
+    user_icon: "🎨"
+    user_title:
+      en: "The generated image is actually on-brand and usable"
+      zh: "生成的图真的 on-brand、能用"
+    user_description:
+      en: "The core promise: a rendered image is 16:9, pure-white, hand-drawn, ~40-60% subject, with 小黑 truly carrying the core action and legible sparse Chinese labels. UNVERIFIED — the render needs an external image model this eval could not run."
+      zh: "核心承诺：出来的图是 16:9、纯白、手绘、主体约 40-60%、小黑真承担核心动作、中文标注少而可读。未验证——出图要一个本次评估无法运行的外部图像模型。"
+    title: 核心承诺：图 on-brand 且可用
+    source: README + SKILL.md
+    source_ref: "视觉风格 / 输出口径"
+    priority: critical
+    area: core
+    statement: |
+      按 skill 生成的实际图像满足风格契约（16:9 / 纯白 / 手绘 / 小黑主体 / 少字可读 /
+      非 PPT），且可直接用作正文配图。
+    evidence_needed: |
+      在真实图像模型上生成 4-8 张并逐项对照 qa-checklist 打分（需图像模型凭证）。
+    status: untested
+    evidence: |
+      未测。产物是外部图像模型（默认 Codex 内置 image_gen）渲染，本次评估无凭证、无法运行。
+      作者示例图仅证明「这套 prompt 出过图」，不证明「你这篇每张都 on-brand / 可用」。
+      image-model-dependent，isolation 下不可静态验证 → 核心层全黑。
+
+  - id: claim-010
+    user_icon: "🚫"
+    user_title:
+      en: "The banned looks (PPT / cute / top-left title) really stay out"
+      zh: "禁忌样式（PPT / 可爱 / 左上角标题）真的没出现"
+    user_description:
+      en: "SKILL.md and qa-checklist explicitly ban PPT-infographic feel, cute mascots, and top-left type titles. Whether real output respects that anti-slop contract is unverified without generating images."
+      zh: "SKILL.md 与 qa-checklist 明确禁 PPT 信息图感、可爱吉祥物、左上角类型标题。真实产出是否遵守这套 anti-slop 契约，不生图就无法验证。"
+    title: anti-slop 规则在产出中被遵守
+    source: SKILL.md
+    source_ref: "绝对不要 / 失败信号"
+    priority: high
+    area: core
+    statement: |
+      真实生成图中不出现被禁模式（PPT / 课件 / 可爱卡通 / 左上角类型标题 / 复杂架构 / 纸纹阴影）。
+    evidence_needed: |
+      对生成产物逐条对照 anti-slop 列表 pass/fail（需图像模型）。
+    status: untested
+    evidence: |
+      未测。anti-slop 契约在提示词侧写得很硬，但图像模型是否遵守取决于模型与那次发挥，
+      无凭证无法验证。作者示例图看似合规，但不能代表任意文章的产出。
+
+  - id: claim-011
+    user_icon: "🌀"
+    user_title:
+      en: "It invents a fresh metaphor instead of cloning old cases"
+      zh: "每篇重新发明隐喻，而非复刻旧案例"
+    user_description:
+      en: "The skill's anti-cloning rule tells the agent to reinvent a metaphor per article rather than reuse the gallery compositions. Whether the image model actually avoids clones is unverified statically."
+      zh: "skill 的反复刻规则要求每篇重新发明隐喻、不复用图库构图。图像模型实际是否避免复刻，静态无法验证。"
+    title: 原创隐喻 / 非复刻
+    source: references/composition-patterns.md
+    source_ref: "反复刻规则"
+    priority: medium
+    area: core
+    statement: |
+      对新文章生成的图使用新隐喻，不与 assets/examples/ 旧构图雷同。
+    evidence_needed: |
+      多篇生成后与旧案例做相似度对照（需图像模型）。
+    status: untested
+    evidence: |
+      未测。反复刻规则文档完整（列了 9 个禁止复用构图 + 换隐喻示例），但是否真的不复刻要看
+      模型生成结果，无凭证无法验证。
+
+  - id: claim-012
+    user_icon: "🔤"
+    user_title:
+      en: "The Chinese labels render legibly (no garbled text)"
+      zh: "图里中文标注清晰可读（不出乱码错字）"
+    user_description:
+      en: "Chinese text baked into AI images is a known failure mode (typos / hallucinated tags). The skill itself warns about this and asks for review — so 'labels are legible' is a real, unverified risk."
+      zh: "AI 图里烧录中文是已知坑（错字 / 幻觉标签）。skill 自己也警告并要求检查——所以「标注清晰」是一个真实、未验证的风险点。"
+    title: 中文标注可读性
+    source: README + qa-checklist.md
+    source_ref: "注意事项 / 失败信号"
+    priority: medium
+    area: core
+    statement: |
+      生成图中的中文手写标注拼写正确、可读，无明显乱码 / 幻觉标签。
+    evidence_needed: |
+      对生成产物人工核字（需图像模型）。
+    status: untested
+    evidence: |
+      未测。skill 明确承认「AI 图像模型可能出现错字 / 幻觉标签 / 风格漂移」并给了「减少标注词并
+      重生成」的对策——即作者自己也把它当已知风险。无凭证无法验证实际错字率。

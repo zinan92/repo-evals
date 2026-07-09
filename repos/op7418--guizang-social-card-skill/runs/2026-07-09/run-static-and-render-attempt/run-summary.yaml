@@ -1,0 +1,73 @@
+run_name: static-and-render-attempt
+date: 2026-07-09
+area: core
+scenario: "Static verification of the deterministic layer (zero-dep doc validator + design-system + templates + license) plus an ATTEMPTED render/layout-validator run on a real 公众号 21:9+1:1 封面对 assembled from the Swiss seed template."
+provenance:
+  provenance_source: "auto"
+  captured: true
+  partial: true
+  runner: "cc"
+  agent: "Claude Code"
+  model: "claude-opus-4-8"
+  target_repo_path: "/tmp/veval-guizang-card (isolated clone)"
+  target_repo_ref: "main"
+  target_repo_commit: "cf4b810"
+  evaluated_at: "2026-07-09"
+  session_replay_notes: "Mark governance eval for Park / Vera. Static grep + zero-dep doc validator RAN; Playwright layout validator BLOCKED (browser uninstallable in isolation)."
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
+fixtures:
+  - "assets/template-swiss-card.html (from target repo — seed used to assemble the 封面对)"
+  - "artifacts/live-e2e_wechat-cover-pair_deck.html (my assembled 21:9+1:1 pair, IKB accent)"
+commands:
+  - "node scripts/check-skill-docs.mjs                 # → 27/27 PASS, exit 0 (zero-dep doc-integrity)"
+  - "grep M01-M16 + S01-S12 references/layout-recipes.md # → 28 distinct recipe IDs"
+  - "grep themes references/theme-presets.md            # → 10 themes (6 Editorial + 4 Swiss)"
+  - "grep data-theme/data-accent on both templates      # → 6 + 4 tokens wired"
+  - "gh api repos/op7418/guizang-social-card-skill      # → 4808★, spdx AGPL-3.0, 0 releases/tags"
+  - "npm install                                        # → added 3 packages, exit 0 (playwright 1.60)"
+  - "npx playwright install chromium                    # → BLOCKED: full build download throttled >3min"
+  - "node validate-social-deck.mjs /tmp/veval-guizang-render  # → BLOCKED: Executable doesn't exist (chromium_headless_shell-1223)"
+result: pass_partial
+results_by_claim:
+  claim-001: passed                # check-skill-docs.mjs 27/27, exit 0
+  claim-002: passed                # 28 recipes + 10 themes wired into templates
+  claim-003: passed                # SKILL refs all resolve
+  claim-004: passed                # both seed templates self-contained single-file
+  claim-005: passed                # validate-social-deck.mjs is a real 9-rule DOM validator (source read)
+  claim-006: passed                # AGPL-3.0 real (package.json ISC mislabel noted)
+  claim-007: passed                # Live Photo pipeline documented + scripts present
+  claim-008: passed                # determinism by construction (fixed-px CSS, no image model)
+  claim-009: untested              # on-brand render not produced/eyeballed (render blocked)
+  claim-010: untested              # BLOCKED: Playwright chromium not installable in isolation
+  claim-011: passed_with_concerns  # strong static trigger/scope spec; no live trigger_test
+  claim-012: passed                # honest self-limiting (out-of-scope pushback)
+  claim-013: untested              # Live Photo .pvt not produced (needs ffmpeg/makelive/iPhone)
+  claim-014: untested              # web image sourcing + subject avoidance not run e2e
+notes: |
+  SUPPORT layer (deterministic / static): all 7 claims passed.
+    - check-skill-docs.mjs: 27/27 doc-integrity checks PASS, exit 0. Zero-dep (node:fs only) — no
+      npm install or browser needed. Verifies SKILL/refs/PRODUCT/HANDOFF contain required guardrails
+      + capability sections and catches root-output regressions.
+    - Design system: 28 layout recipes (M01-M16 + S01-S12) + 10 themes (6 Editorial + 4 Swiss)
+      confirmed present in references AND wired into the two seed templates (6 data-theme + 4 data-accent).
+    - Both seed templates are single-file/self-contained (inline CSS+tokens; only fonts/lucide/webp CDN).
+      Assembled a real 公众号 21:9+1:1 cover-pair index.html from the Swiss seed — parses cleanly.
+    - License: full AGPL-3.0 (gh api spdx AGPL-3.0); package.json wrongly says ISC; COMMERCIAL_LICENSING.md
+      documents paid dual-license tiers.
+
+  CORE layer (LLM molecule + HTML→PNG render): 1/4 critical/high passed statically (claim-008
+  determinism-by-construction), the rest untested.
+    - claim-010 (deterministic layout gate) BLOCKED: Playwright 1.60 requires chromium_headless_shell-1223;
+      isolation only had mismatched 1208/1228 shells and the full chromium download was throttled past the
+      3-minute guard. Ran validate-social-deck.mjs on the assembled deck → "Executable doesn't exist at
+      …chromium_headless_shell-1223". Did NOT repoint the script at system Chrome (would test a modified script).
+    - claim-009 (on-brand PNG) untested: aesthetic is subjective and no PNG was rendered to eyeball.
+    - The irony worth recording: this repo is engineered to be MORE testable than image-model skills
+      (ships a deterministic layout validator), but the browser could not be provisioned here, so that
+      advantage could not be demonstrated. core_layer_tested=false, evidence_completeness=partial.
+
+  NOT tested (breadth): Live Photo→.pvt (claim-013), web image sourcing + subject avoidance (claim-014),
+  map component, cross-model consistency, and the aesthetic quality of any of the 28×10 combinations.

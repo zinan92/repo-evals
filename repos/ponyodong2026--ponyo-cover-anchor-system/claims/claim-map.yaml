@@ -1,0 +1,285 @@
+# Claim map for ponyo-cover-anchor-system (prompt-skill).
+# SUPPORT layer = static structure (SKILL.md, references, formulas, gallery) —
+#                 fully checkable by reading files.
+# CORE layer = the cover IMAGE rendered by an EXTERNAL image model (ChatGPT
+#              Image 2 / DALL-E). image-model-dependent, NOT run in this eval
+#              (no credentials) → untested. Author example PNGs prove "produces
+#              something," not repeatable quality.
+# Statuses reflect the 2026-07-09 static eval.
+
+claims:
+  # --- SUPPORT layer (static structure — checkable by reading files) -----
+
+  - id: claim-001
+    user_icon: "📑"
+    user_title:
+      en: "Skill loads without parse errors"
+      zh: "Skill 加载时不会报 parse 错误"
+    user_description:
+      en: "SKILL.md has valid YAML frontmatter (name + a rich description). A Codex / Claude Code host accepts it as a skill instead of falling back to generic chat."
+      zh: "SKILL.md 的 YAML frontmatter 合法（name + 富触发 description）。Codex / Claude Code 会把它当 skill 加载，而非退化为普通对话。"
+    title: SKILL.md frontmatter 合法
+    source: SKILL.md
+    source_ref: "frontmatter"
+    priority: critical
+    area: skill-structure
+    statement: |
+      SKILL.md 有效 YAML frontmatter，name / description 非空。
+    evidence_needed: |
+      读取 frontmatter，确认 name + description 存在。
+    status: passed
+    evidence: |
+      frontmatter：name: cover-anchor-system；description 含具体「Use when …」触发集
+      （Xiaohongshu covers / WeChat article covers / cover diagnosis / redesign / doodle /
+      sunlit scrapbook / ChatGPT Image 2 prompts）。合法。
+
+  - id: claim-002
+    user_icon: "🔗"
+    user_title:
+      en: "Internal references all resolve"
+      zh: "内部引用全部解析得到"
+    user_description:
+      en: "Every reference file SKILL.md points at actually exists — the agent won't hit a missing file mid-workflow."
+      zh: "SKILL.md 指向的每个 reference 文件都真实存在——agent 不会在工作流中途撞空文件。"
+    title: SKILL.md 引用完整性
+    source: SKILL.md
+    source_ref: "参考文件 / Operating Flow"
+    priority: critical
+    area: skill-integrity
+    statement: |
+      SKILL.md 引用的每个 references/ 路径都指向真实文件。
+    evidence_needed: |
+      比对 SKILL.md 引用清单与仓库文件树。
+    status: passed
+    evidence: |
+      6 个 reference 全部存在：template-formulas.md、finished-cover-prompts.md、
+      doodle-outline-fresh-style.md、sunlit-scrapbook-cutout-style.md、
+      cover-diagnosis-checklist.md、image-prompts.md。零悬挂引用。
+
+  - id: claim-003
+    user_icon: "🎯"
+    user_title:
+      en: "Every README workflow has a real reference behind it"
+      zh: "README 每条工作流都有对应 reference 支撑"
+    user_description:
+      en: "The 4 README workflows (finished cover / diagnose / doodle-outline / sunlit-scrapbook) and 6 templates each map to a concrete reference file. No 'advertised but not built.'"
+      zh: "README 的 4 条工作流（成品封面 / 诊断 / 涂鸦描边 / 阳光拼贴）和 6 套模板各自对应一个真实 reference 文件。没有「宣传了但没做」。"
+    title: README 能力 ↔ SKILL workflow 覆盖
+    source: README + SKILL.md
+    source_ref: "Workflows / 模板与风格一览"
+    priority: high
+    area: coverage
+    statement: |
+      README 列出的每条工作流 / 模板都能在 references/ 找到对应执行路径。
+    evidence_needed: |
+      README 能力表 ↔ references/ 文件一一对应。
+    status: passed
+    evidence: |
+      finished cover→finished-cover-prompts.md；diagnose→cover-diagnosis-checklist.md；
+      doodle→doodle-outline-fresh-style.md；sunlit→sunlit-scrapbook-cutout-style.md；
+      模板参数→template-formulas.md；text-free 背景→image-prompts.md。全部对应。
+
+  - id: claim-004
+    user_icon: "📐"
+    user_title:
+      en: "The formulas are concrete, not vibes"
+      zh: "公式是具体参数，不是玄学"
+    user_description:
+      en: "template-formulas.md gives per-template HEX palettes, anchor positions, a 4.5:1 contrast floor, number-height %, type-weight ratios, and an 80px thumbnail test; the diagnosis file is a runnable 10-point 1-10 scoring rubric."
+      zh: "template-formulas.md 给每套模板的 HEX 配色、锚点位置、4.5:1 对比度下限、数字占高百分比、字重比、80px 缩略图测试；诊断文件是可执行的 10 点 1-10 打分表。"
+    title: 模板参数 / 诊断清单具体可执行
+    source: references/template-formulas.md + cover-diagnosis-checklist.md
+    source_ref: "结构参数 / 配色规则 / 10-Point Audit"
+    priority: high
+    area: support-formulas
+    statement: |
+      模板参数含 HEX、锚点、对比度阈值、字重比、缩略图测试；诊断是结构化打分表。
+    evidence_needed: |
+      读取两文件，核对是否含可操作的量化参数。
+    status: passed
+    evidence: |
+      4 套模板各带 4 组 HEX 配色 + 锚点规格 + 4.5:1（缩略图建议 7:1）对比度 + 数字占高
+      30-40% + 字重层级；diagnosis-checklist 有 10 点审计 + 5 维 1-10 打分 + Fix Plan +
+      Replacement Prompt 输出格式。可执行。
+
+  - id: claim-005
+    user_icon: "🖼"
+    user_title:
+      en: "A real finished-cover prompt library ships (not a stub)"
+      zh: "随包真实的成品封面提示词库（非占位）"
+    user_description:
+      en: "finished-cover-prompts.md has a Universal Prompt Contract + 13 full finished-cover prompts; the two lifestyle style packs (doodle-outline, sunlit-scrapbook) add 4 ready prompts each with a style contract and failure modes."
+      zh: "finished-cover-prompts.md 有 Universal Prompt Contract + 13 条完整成品封面提示词；两套 lifestyle 风格包（涂鸦描边、阳光拼贴）各带 4 条 ready prompt + style contract + 失败模式。"
+    title: 成品封面提示词库完整
+    source: references/finished-cover-prompts.md + 两套 style 包
+    source_ref: "Universal Prompt Contract / Ready Prompts"
+    priority: high
+    area: support-prompts
+    statement: |
+      finished-cover-prompts.md 含通用契约 + 13 条成品提示词；lifestyle 风格包各带 ready prompts。
+    evidence_needed: |
+      读取文件并计数提示词模板。
+    status: passed
+    evidence: |
+      finished-cover-prompts.md：Universal Prompt Contract + 13 条「Create a finished 3:4 …」
+      模板（冲突/数字/截图/情绪各 3 + sunlit skeleton）。doodle 4 条 + sunlit 4 条 ready prompt，
+      均带 constraints / 水印规则 / failure modes。
+
+  - id: claim-006
+    user_icon: "🚫"
+    user_title:
+      en: "Anti-slop + watermark rules are declared and consistent"
+      zh: "anti-slop + 水印规则一致声明"
+    user_description:
+      en: "SKILL.md's Quality Bar bans garbled Chinese, fake logos / QR, invented revenue/data, and any hard-coded 波妞 / PONYO / @ watermark; the same watermark policy is repeated in every style file and prompt block."
+      zh: "SKILL.md 的 Quality Bar 禁止糊字、假 logo/QR、编造收益/数据，以及任何写死的「波妞 / PONYO / @」水印；同一水印规则在每个 style 文件和提示词块里重复声明。"
+    title: 风格契约 / 水印规则声明一致
+    source: SKILL.md
+    source_ref: "Quality Bar / Watermark Rule"
+    priority: high
+    area: support-anti-slop
+    statement: |
+      SKILL.md + 各 style 文件显式声明 anti-slop（无糊字/假logo/编造数据）与「默认不打水印」。
+    evidence_needed: |
+      核对 SKILL.md Quality Bar 与各 style 文件的 constraints 是否一致声明。
+    status: passed
+    evidence: |
+      SKILL.md Quality Bar 7 条 + Default Behavior 水印段；finished-cover / doodle / sunlit
+      三处均重复「no watermark / no 波妞 / PONYO / @ unless user-supplied」。声明一致。
+      注：这是「声明」，真正遵守与否需真出图验证（见 claim-010）。
+
+  - id: claim-007
+    user_icon: "🎨"
+    user_title:
+      en: "An example gallery shows the intended output exists"
+      zh: "示例图库证明产出确实存在"
+    user_description:
+      en: "16 ChatGPT Image 2 example PNGs ship (12 cover-cases across all 4 templates + 4 doodle-outline) plus 2 preview sheets — proof the pipeline can produce real covers, not just describe them."
+      zh: "随包 16 张 ChatGPT Image 2 示例 PNG（12 张覆盖 4 套模板的 cover-cases + 4 张涂鸦描边）+ 2 张预览拼图——证明 pipeline 真能产出封面，而非只会描述。"
+    title: 示例图库存在
+    source: examples/
+    source_ref: "cover-cases / doodle-outline-fresh"
+    priority: medium
+    area: support-artifacts
+    statement: |
+      仓库随包多张示例成品封面 PNG。
+    evidence_needed: |
+      清点 examples/ 下 PNG 数量与覆盖模板。
+    status: passed
+    evidence: |
+      examples/cover-cases 12 张 PNG（冲突/数字/截图/情绪各 3）+ preview；
+      examples/doodle-outline-fresh 4 张 + preview。证明「能出图」，不证明「稳定出好图」。
+
+  - id: claim-008
+    user_icon: "⚖️"
+    user_title:
+      en: "Carries a license you can legally build on"
+      zh: "带可合法依赖的许可证"
+    user_description:
+      en: "NEGATIVE: the repo has NO license file at all. GitHub's license field is null and both LICENSE and LICENSE.md 404. All-rights-reserved by default — no legal grant to use, modify, or redistribute in Park's pipeline."
+      zh: "反向：仓库根本没有 license 文件。GitHub license 字段为 null，LICENSE 与 LICENSE.md 均 404。默认保留所有权利——法律上未授予在 Park pipeline 中使用/修改/再分发的权利。"
+    title: 无 LICENSE（保留所有权利）
+    source: gh api
+    source_ref: "license field / contents/LICENSE"
+    priority: medium
+    area: support-license
+    statement: |
+      仓库无任何 LICENSE 文件，默认 all-rights-reserved。
+    evidence_needed: |
+      gh api license 字段 + /contents/LICENSE(.md) 状态码。
+    status: failed
+    evidence: |
+      gh api repos/ponyodong2026/ponyo-cover-anchor-system → "license": null；
+      /contents/LICENSE → 404；/contents/LICENSE.md → 404。确认无授权 = ADOPTION FLAG。
+
+  # --- CORE layer (image-model-dependent — the real user output) ---------
+
+  - id: claim-009
+    user_icon: "🧪"
+    user_title:
+      en: "The emitted prompt actually renders an on-brand, high-hook cover"
+      zh: "产出的提示词真能出一张调性对、钩子强的封面"
+    user_description:
+      en: "THE core promise. Whether the prompt yields a genuinely thumb-stopping, on-brand finished cover depends on an EXTERNAL image model (ChatGPT Image 2 / DALL-E). This eval had no credentials to run it, so the output was NOT verified."
+      zh: "核心承诺。提示词能否真出一张能拦住拇指、调性对的成品封面，取决于外部图像模型（ChatGPT Image 2 / DALL-E）。本次评估无凭证运行，故产出未验证。"
+    title: 核心：成品封面出图质量
+    source: README + SKILL.md
+    source_ref: "What It Does / Core Formula"
+    priority: critical
+    area: core
+    statement: |
+      按 skill 产出的提示词经图像模型生成一张 on-brand、高钩子、缩略图可读的成品封面。
+    evidence_needed: |
+      用 ChatGPT Image 2 真出封面，对照品牌 / 钩子 / 可读性评判。
+    status: untested
+    evidence: |
+      image-model-dependent，本次评估无凭证、未运行外部图模型 → 未验证。随包示例 PNG 只证明
+      「产出存在」，不证明 skill 提示词在任意主题上稳定产出好封面（跨模型一致性亦未测）。
+
+  - id: claim-010
+    user_icon: "🔍"
+    user_title:
+      en: "Rendered covers pass the skill's own Quality Bar"
+      zh: "出图能过 skill 自己的 Quality Bar"
+    user_description:
+      en: "SKILL.md states a Quality Bar: readable at 80px thumbnail, one dominant anchor, crisp non-garbled Chinese, no fake logos/QR, no un-requested watermark. Whether real renders pass can only be checked on an actual image — not run here."
+      zh: "SKILL.md 声明 Quality Bar：80px 缩略图可读、单一主锚点、中文清晰不糊、无假 logo/QR、无未经请求的水印。真出图是否达标只能在真实图片上验证——本次未跑。"
+    title: 出图达到 Quality Bar
+    source: SKILL.md
+    source_ref: "Quality Bar"
+    priority: high
+    area: core
+    statement: |
+      真实出图满足 80px 缩略图可读 + 单锚点 + 中文清晰 + 无假元素/水印。
+    evidence_needed: |
+      对真实出图逐条对照 Quality Bar 打分。
+    status: untested
+    evidence: |
+      Quality Bar 定义清晰、可作验收标准，但需在真实图像上检验；本次无出图 → 未验证。
+      中文字形保真是图模型已知弱点，风险实存但未量化。
+
+  - id: claim-011
+    user_icon: "📐"
+    user_title:
+      en: "Delivers finished 公众号 covers (not just 小红书)"
+      zh: "能产出成品公众号封面（不只是小红书）"
+    user_description:
+      en: "The README/description claim 小红书 AND 公众号 covers. But the default finished-cover workflow does not deliver a 公众号-shaped finished cover: all 13 finished-cover prompts hard-code 3:4 Xiaohongshu 1080x1440. The only 公众号 3:1 guidance is in the legacy image-prompts.md text-free-background path, which SKILL.md deprecates for publishing."
+      zh: "README/description 声称小红书「和」公众号封面。但默认成品封面工作流并不产出公众号形状的成品封面：13 条成品提示词全部写死 3:4 小红书 1080x1440。唯一的公众号 3:1 指引在 legacy image-prompts.md 无字背景路径，而 SKILL.md 弃用该路径用于发布。"
+    title: 成品公众号封面交付（默认工作流）
+    source: README + SKILL.md + finished-cover-prompts.md
+    source_ref: "平台尺寸规范 / finished-cover-prompts.md"
+    priority: high
+    area: core-platform-fit
+    statement: |
+      默认成品封面工作流能产出公众号（3:1 头图 / 1:1 次图）成品封面。
+    evidence_needed: |
+      在 finished-cover-prompts.md 里找公众号 3:1 成品模板。
+    status: failed_partial
+    evidence: |
+      finished-cover-prompts.md 13 条模板全部「Create a finished 3:4 vertical Xiaohongshu」，
+      grep 3:1 / 公众号 / WeChat / banner → 零命中。公众号 3:1 仅见于 legacy image-prompts.md
+      （无字背景，需手动叠字），SKILL.md 明确弃用于发布。partial：有尺寸表 + legacy 3:1 背景，
+      但无成品公众号封面路径 → 对 Park 公众号渠道适配差。
+
+  - id: claim-012
+    user_icon: "🎣"
+    user_title:
+      en: "Fires on cover-design intent, not unrelated asks"
+      zh: "封面设计意图才触发，不误触无关请求"
+    user_description:
+      en: "The SKILL.md description carries a specific 'Use when …' trigger list (Xiaohongshu covers, WeChat article covers, cover diagnosis / redesign, doodle / sunlit styles). But there are no eval-cases negative examples and no live trigger test, so precision/recall is unmeasured."
+      zh: "SKILL.md description 有具体的「Use when …」触发集（小红书封面、公众号文章封面、封面诊断/改版、涂鸦/阳光风格）。但没有 eval-cases 反例、没有在线触发测试，precision/recall 未测量。"
+    title: 触发精度
+    source: SKILL.md
+    source_ref: "description"
+    priority: high
+    area: core-triggering
+    statement: |
+      在封面设计类 query 上触发、在无关 query 上不触发。
+    evidence_needed: |
+      触发测试的 precision/recall，或 eval-cases 静态核对。
+    status: untested
+    evidence: |
+      description 触发词具体，但无反例集、无在线触发测试 → 未测量。相较有 eval-cases 的 skill，
+      触发精度证据偏弱。

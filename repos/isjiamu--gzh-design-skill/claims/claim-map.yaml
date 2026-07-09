@@ -1,0 +1,310 @@
+# Claim map for gzh-design-skill (hybrid-skill).
+# SUPPORT layer = deterministic scripts (fully testable statically).
+# CORE layer = LLM-driven assembly (molecule; needs live e2e).
+# Statuses reflect the 2026-07-09 eval — see runs/2026-07-09/ for evidence.
+
+claims:
+  # --- SUPPORT layer (deterministic code) --------------------------------
+
+  - id: claim-001
+    user_icon: "🛡"
+    user_title:
+      en: "Blocks WeChat-illegal HTML deterministically"
+      zh: "确定性拦截公众号会过滤的写法"
+    user_description:
+      en: "A script — not the model's memory — flags <style>/<div>/class/id/position/grid/CSS-vars/external-fonts that WeChat strips or breaks on paste."
+      zh: "由脚本（而非模型记性）检出 <style>/<div>/class/id/position/grid/CSS 变量/外部字体等公众号会过滤或粘贴后失效的写法。"
+    title: validate_gzh_html.py 确定性检出平台禁用项
+    source: README
+    source_ref: "双关卡质量校验 / 平台红线"
+    priority: critical
+    area: support-validation
+    statement: |
+      对含禁用标签/属性/样式的 HTML，validate_gzh_html.py 报 ERROR 并退出码 1。
+    evidence_needed: |
+      对故意不合规 HTML 运行脚本，观察 ERROR 计数与退出码。
+    status: passed
+    evidence: |
+      TEST C：<div class><style> + 未包裹中文 → 4 ERROR，退出 1。检出真实生效。
+
+  - id: claim-002
+    user_icon: "📌"
+    user_title:
+      en: "Enforces the <span leaf> wrap that keeps styles on paste"
+      zh: "强制 <span leaf> 包裹——粘贴后样式不掉的关键"
+    user_description:
+      en: "The #1 reason WeChat styles vanish on paste is missing <span leaf=\"\"> wrapping. The validator catches unwrapped CJK text so the output survives."
+      zh: "公众号粘贴后样式整片丢失，最常见就是漏了 <span leaf=\"\"> 包裹。校验器专门抓未包裹的中文文本，保证产物不塌。"
+    title: 校验器强制 span leaf 包裹
+    source: SKILL.md
+    source_ref: "平台红线 / Gotchas"
+    priority: critical
+    area: support-validation
+    statement: |
+      全文无 span leaf 时报 ERROR；部分中文未包裹时报 WARNING 并给出片段。
+    evidence_needed: |
+      对无包裹 HTML 与已包裹 HTML 分别运行，比较结论。
+    status: passed
+    evidence: |
+      TEST C：全文无 leaf → ERROR。TEST B：随包 moyu-green.html 122 处 leaf → 合规。
+
+  - id: claim-003
+    user_icon: "✅"
+    user_title:
+      en: "Passes clean HTML; half-width punctuation is a warning, not a block"
+      zh: "合规 HTML 直接放行；半角标点是 warning 不是 error"
+    user_description:
+      en: "Compliant output exits 0. Half-width punctuation after Chinese is surfaced as a WARNING (fix-before-ship) rather than a hard failure — matches the documented design."
+      zh: "合规产物退出 0。中文后的半角标点作为 WARNING 提示（交付前修）而非硬失败——与文档设计一致。"
+    title: 合规放行 + 半角标点分级为 WARNING
+    source: SKILL.md
+    source_ref: "第 5 步 校验"
+    priority: high
+    area: support-validation
+    statement: |
+      合规 HTML 退出 0；中文后半角 ,;!? 与 ASCII 引号报 WARNING。
+    evidence_needed: |
+      对合规 HTML 与含半角标点 HTML 分别运行。
+    status: passed
+    evidence: |
+      TEST D：合规 → 退出 0。TEST D2：半角标点 → WARNING、退出 0。
+
+  - id: claim-004
+    user_icon: "📐"
+    user_title:
+      en: "Ships component libraries that pass their own source lint"
+      zh: "随包组件库自身过源头 lint（0 ERROR）"
+    user_description:
+      en: "component_lint.py scans every theme library's html blocks for anti-patterns (white-space:pre, forbidden tags). All shipped libraries pass at 0 ERROR."
+      zh: "component_lint.py 扫每套主题库的 html 块查反模式（white-space:pre、禁用标签）。随包所有库 0 ERROR。"
+    title: 组件库源头 lint 0 ERROR
+    source: README
+    source_ref: "可验证循环 / 源头关"
+    priority: critical
+    area: support-components
+    statement: |
+      component_lint.py 扫 references/ 所有组件库，ERROR 计数为 0、退出 0。
+    evidence_needed: |
+      对仓库 references/ 运行 component_lint.py。
+    status: passed
+    evidence: |
+      TEST A：11 个库，0 ERROR，退出 0（2 WARN 为主题特征虚线组件，脚本按 CENTERED 豁免规则容许）。
+
+  - id: claim-005
+    user_icon: "🖼"
+    user_title:
+      en: "Shipped gallery output is actually paste-safe (not just claimed)"
+      zh: "随包 gallery 产物是真合规（不是嘴上说）"
+    user_description:
+      en: "The bundled docs/gallery/*.html are genuine pipeline outputs and pass the validator — proof the pipeline has produced compliant artifacts, not just promises."
+      zh: "随包 docs/gallery/*.html 是真实 pipeline 产物且过校验——证明 pipeline 真能产出合规产物，不是空头承诺。"
+    title: 随包 gallery 产物过产物关
+    source: README
+    source_ref: "效果预览 / docs/gallery"
+    priority: high
+    area: support-artifacts
+    statement: |
+      docs/gallery/moyu-green.html 过 validate_gzh_html.py，完全合规。
+    evidence_needed: |
+      对随包 gallery HTML 运行产物关校验。
+    status: passed
+    evidence: |
+      TEST B：moyu-green.html 122 leaf wraps，完全合规，退出 0。
+
+  - id: claim-006
+    user_icon: "🪶"
+    user_title:
+      en: "docx ingestion needs zero third-party libraries"
+      zh: "docx 解析零第三方库"
+    user_description:
+      en: "extract_docx.py parses .docx with only the Python stdlib (zipfile + xml). No python-docx install, no version hell — trivially portable."
+      zh: "extract_docx.py 只用 Python 标准库（zipfile + xml）解析 .docx。无需装 python-docx，无依赖地狱——极易移植。"
+    title: extract_docx.py 仅用 stdlib
+    source: SKILL.md
+    source_ref: "格式归一化"
+    priority: medium
+    area: support-ingest
+    statement: |
+      extract_docx.py 的 import 全部为标准库。
+    evidence_needed: |
+      AST 解析脚本 import 列表。
+    status: passed
+    evidence: |
+      TEST F：imports = argparse, os, re, sys, xml, zipfile（全 stdlib）。
+
+  - id: claim-007
+    user_icon: "📋"
+    user_title:
+      en: "One-click 'copy into WeChat' preview page"
+      zh: "一键「复制到公众号」预览页"
+    user_description:
+      en: "wrap_preview.py wraps the clean section in a preview shell with a copy button (execCommand) — click once, paste into WeChat, no manual select-all. The button/JS stay outside the copied section."
+      zh: "wrap_preview.py 把干净 section 包进带复制按钮（execCommand）的预览外壳——点一下即复制、直接粘公众号，免手动全选。按钮/JS 不在被复制的 section 内。"
+    title: wrap_preview.py 生成一键复制预览页
+    source: README
+    source_ref: "一键复制"
+    priority: high
+    area: support-preview
+    statement: |
+      wrap_preview.py 产出含「复制到公众号」按钮 + 剪贴板逻辑的预览页。
+    evidence_needed: |
+      运行脚本并检查产物含复制按钮与剪贴板调用。
+    status: passed
+    evidence: |
+      TEST E：产物含「复制到公众号」+ execCommand。按钮在预览外壳、不在 section 内。
+
+  - id: claim-008
+    user_icon: "🔗"
+    user_title:
+      en: "SKILL.md references all resolve"
+      zh: "SKILL.md 引用全部解析得到"
+    user_description:
+      en: "Every path SKILL.md points at (theme-index, theme-*.md, common-components, format-normalize, eval-cases, scripts) exists — the agent won't hit a missing file."
+      zh: "SKILL.md 引用的每个路径（theme-index、theme-*.md、common-components、format-normalize、eval-cases、scripts）都真实存在——agent 不会撞空文件。"
+    title: SKILL.md 引用完整性
+    source: SKILL.md
+    source_ref: ""
+    priority: high
+    area: support-skill-integrity
+    statement: |
+      SKILL.md 引用的 references/ 与 scripts/ 路径均存在于仓库。
+    evidence_needed: |
+      比对 SKILL.md 引用与仓库文件树。
+    status: passed
+    evidence: |
+      文件树核对：theme-index.md、6 套 theme-*.md、common-components.md、format-normalize.md、
+      theme-generator.md、eval-cases.md、4 个 scripts 全部存在。
+
+  - id: claim-009
+    user_icon: "⚖️"
+    user_title:
+      en: "Carries a real OSI license"
+      zh: "带真实 OSI 许可证"
+    user_description:
+      en: "A genuine full AGPL-3.0 LICENSE file (not just a badge). GitHub shows NOASSERTION only because a custom 联名 preamble precedes the standard text."
+      zh: "真实完整的 AGPL-3.0 LICENSE 文件（不是只挂徽章）。GitHub 显示 NOASSERTION 仅因标准文本前有一段联名前言。"
+    title: 真实 AGPL-3.0 许可证
+    source: LICENSE
+    source_ref: "LICENSE"
+    priority: medium
+    area: support-license
+    statement: |
+      LICENSE 为完整 AGPL-3.0 文本。
+    evidence_needed: |
+      读取 LICENSE 首部 + gh api license 字段。
+    status: passed
+    evidence: |
+      LICENSE 34992 bytes，首部 "GNU Affero General Public License"。gh api = NOASSERTION（因前言）。
+
+  # --- CORE layer (LLM-driven assembly — the molecule promise) -----------
+
+  - id: claim-010
+    user_icon: "🎯"
+    user_title:
+      en: "Markdown in → themed, paste-safe WeChat HTML out (validated)"
+      zh: "Markdown 进 → 主题化、粘贴安全的公众号 HTML 出（过校验）"
+    user_description:
+      en: "The core promise: following SKILL.md with a real theme library, an agent assembles a themed section that passes the validator at 0 ERROR. Verified firsthand in a live run."
+      zh: "核心承诺：按 SKILL.md + 真实主题库，agent 装配出过校验 0 ERROR 的主题化 section。本次评估亲手 live run 验证。"
+    title: 核心 molecule 承诺：md → 合规主题化 HTML
+    source: README
+    source_ref: "使用流程 / 核心特性"
+    priority: critical
+    area: core
+    statement: |
+      按 SKILL.md 用某套主题库把 Markdown 装配成 section，产物过 validate_gzh_html.py
+      达 0 ERROR / 0 半角 WARN。
+    evidence_needed: |
+      实际驱动一次装配并对自产物运行产物关校验。
+    status: passed
+    evidence: |
+      LIVE E2E：读 theme-moyu-green.md，按 SKILL.md 把 sample-article.md 的
+      「Skill 是能力商品」节装配成 section（编号章节 + 逐段关键词下划线 + 绿色加粗 + 黄色高亮，
+      全 span leaf 包裹、全角标点）；自产物过 validate_gzh_html.py → 0 ERROR / 0 WARN /
+      13 leaf wraps，退出 0。molecule 核心层已实测 → core_layer_tested 抬升。
+
+  - id: claim-011
+    user_icon: "🎣"
+    user_title:
+      en: "Fires on WeChat-formatting intent, not on web/PPT asks"
+      zh: "公众号排版意图才触发，不误触网页/PPT"
+    user_description:
+      en: "SKILL.md description + eval-cases.md define explicit positive/negative trigger sets (公众号/微信排版/gzh yes; landing page/PPT/write-an-article no)."
+      zh: "SKILL.md description + eval-cases.md 定义了明确的正/反例触发集（公众号/微信排版/gzh 触发；落地页/PPT/写文章 不触发）。"
+    title: 触发精度设计
+    source: SKILL.md
+    source_ref: "description / eval-cases.md"
+    priority: high
+    area: core-triggering
+    statement: |
+      在公众号排版类 query 上触发、在网页/PPT/写作类 query 上不触发。
+    evidence_needed: |
+      trigger_test.py 的 precision/recall；或 eval-cases 静态核对。
+    status: passed_with_concerns
+    evidence: |
+      静态证据强（eval-cases.md 明列正/反例，description 具体）。但本次未运行 live
+      trigger_test.py（需 API harness），故记 passed_with_concerns：设计到位、未做在线触发精度测量。
+
+  - id: claim-012
+    user_icon: "🎨"
+    user_title:
+      en: "Theme generator produces a new registered theme"
+      zh: "主题生成器产出可登记的新主题"
+    user_description:
+      en: "The second workflow: from a one-line vibe or reference image, generate a 45–75 block component library, convert to a standard theme-*.md, register it and pass component_lint at 0 ERROR."
+      zh: "第二条工作流：从一句气质描述或参考图，生成 45–75 区块组件库，转成标准 theme-*.md、登记并过 component_lint 0 ERROR。"
+    title: 主题生成器第二条工作流
+    source: README
+    source_ref: "主题生成器 / theme-generator.md"
+    priority: high
+    area: core
+    statement: |
+      给定描述/参考图，走 theme-generator 流程生成并登记一套新主题，lint 0 ERROR。
+    evidence_needed: |
+      实跑一次生成 → 转换 → 登记 → lint。
+    status: untested
+    evidence: |
+      未实测。theme-generator.md（25935 bytes）与样例 theme-mono-blue-editorial.html 存在，
+      但未亲手驱动生成一套新主题。
+
+  - id: claim-013
+    user_icon: "📄"
+    user_title:
+      en: "docx / pdf / txt normalize into faithful Markdown"
+      zh: "docx / pdf / txt 归一化为忠实 Markdown"
+    user_description:
+      en: "Non-Markdown inputs are normalized (docx via extract_docx.py, pdf via paged Read, txt via heading heuristics) before formatting."
+      zh: "非 Markdown 输入先归一化（docx 用 extract_docx.py、pdf 分页 Read、txt 标题启发式）再排版。"
+    title: 多格式输入归一化
+    source: SKILL.md
+    source_ref: "0. 输入与格式归一化 / format-normalize.md"
+    priority: medium
+    area: core-ingest
+    statement: |
+      真实 .docx/.pdf/.txt 归一化为结构正确的 Markdown 草稿。
+    evidence_needed: |
+      对真实样本文件跑归一化并核对结构。
+    status: untested
+    evidence: |
+      未实测端到端（仅确认 extract_docx.py 零依赖、format-normalize.md 存在）。
+
+  - id: claim-014
+    user_icon: "🔁"
+    user_title:
+      en: "Consistent output across models (换模型不走样)"
+      zh: "跨模型输出一致（换模型不走样）"
+    user_description:
+      en: "Because formatting logic lives in component libraries + scripts, the README claims Claude / GPT / Gemini / domestic models all produce consistent results."
+      zh: "因排版逻辑沉淀在组件库+脚本，README 称 Claude / GPT / Gemini / 国产模型都能一致产出。"
+    title: 跨模型一致性
+    source: README
+    source_ref: "为什么这么设计 / FAQ"
+    priority: medium
+    area: core
+    statement: |
+      同一文章在不同模型下装配，产物均过校验且气质稳定。
+    evidence_needed: |
+      多模型各跑一次并比较合规性与版式一致性。
+    status: untested
+    evidence: |
+      未实测。合规性有脚本兜底较可信，但版式「气质一致」是主观、依赖模型发挥，未做多模型对比。

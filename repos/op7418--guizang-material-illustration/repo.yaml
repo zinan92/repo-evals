@@ -1,0 +1,267 @@
+# repo.yaml — guizang-material-illustration dossier
+# Evaluated 2026-07-09 by Mark (Claude Code / claude-opus-4-8) for Park Agent OS.
+# Feeds the new role Vera (视觉/配图 Manager) — should Vera own this, for which lane?
+
+# === Identity ================================================================
+owner: op7418
+repo: guizang-material-illustration
+display_name: 归藏的材质插画 skill
+repo_url: https://github.com/op7418/guizang-material-illustration
+
+repo_type: skill
+archetype: prompt-skill
+
+# Fixed illustration pipeline (read source → infer diagram type → optional
+# reference lookup → compress to 3-5 short labels → write a constraint-rich
+# image prompt → call an EXTERNAL image model → QA/regen → deliver). The LLM
+# picks the diagram type and writes the prompt but does NOT do runtime
+# sub-agent routing or plan generation → molecule, not compound. The real
+# output is a raster IMAGE produced by an external image model the skill does
+# not control — so the CORE quality layer is NOT statically verifiable and this
+# is deliberately scored as molecule (core_layer_tested=false), not atom.
+layer: molecule
+
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-07-09"
+version_tested: "main@cf26e19 (2026-07-07, depth-1 isolated clone)"
+
+# === Maintainer / ecosystem signals (verified via gh api) ====================
+stars: 385                 # gh api 2026-07-09 (task brief said 384; same band, no score effect)
+archived: false
+has_license: false         # VERIFIED NO LICENSE: gh api license field = null AND
+                           # contents/LICENSE + contents/LICENSE.md both 404.
+                           # → ADOPTION FLAG: default all-rights-reserved, no legal
+                           # grant to modify/redistribute. Not just a scoring ding.
+multilingual_readme: false # README.md is zh-only. English exists only in SKILL.md
+                           # frontmatter (agent trigger text), not a README.en.md.
+release_pipeline_score: 0  # no releases/tags, no CI, no CHANGELOG; single push day.
+eval_discipline_score: 1   # ad-hoc only: a qa-checklist.md + documented test-case
+                           # list in HANDOFF, but no automated harness/fixtures/CI.
+                           # (< 2 → contributes 0 to the maintainer score.)
+recently_active: true      # created + pushed 2026-07-07 (within 90 days) — but that
+                           # "activity" is the repo being brand new, not sustained upkeep.
+
+business_category: content
+use_case_tags: ["explanatory-illustration", "chart-beautify", "labeled-diagram", "content-illustration", "material-illustration"]
+
+notes: |
+  归藏(op7418)出品,guizang-social-card-skill 的配套"配图层"项目。2 天内 385 stars /
+  34 forks —— 传播快,但仓库极年轻(2026-07-07 创建、约 5 commits、单一作者、单日推送,
+  bus-factor 1),且 NO LICENSE(默认保留所有权利)。
+
+  这是一个纯 prompt-skill:SKILL.md + 6 个 references(visual-style / prompt-patterns /
+  chart-beautify / use-cases-and-routing / reference-gathering / qa-checklist)+
+  assets/prompt-template.md + agents/openai.yaml,无任何可执行脚本。
+
+  本次评估实测的是"静态支撑层"(可核对的事实):
+    - SKILL.md 引用的 6 个 reference + prompt-template 全部解析得到(0 断链),frontmatter 合法。
+    - 6 个 reference 内部一致、互不矛盾、职责清晰(风格/提示结构/图表/路由/参考/QA)。
+    - assets/prompt-template.md + prompt-patterns.md 提供完整、可直接填空的约束型提示词外壳
+      (base shell + cycle/pipeline/hub/before-after/layer 5 种结构 + goal/time 变体)。
+    - chart-beautify.md 提供严格的"数据优先"协议:只抽语义(类型/标题/数值/坐标/单位/类别序/
+      误差线)、Required chart accuracy 块逐值列明、"漂亮但数据错→拒收"的 QA。
+    - qa-checklist.md 覆盖图内文字/数据/裁切/参考准确性/社交卡尺寸可读性的交付前检查。
+    - 边界清晰:只出中心配图,整卡/PPT 排版交给 social-card / PPT skill。
+
+  未实测(核心层,image-model-dependent,本次无凭证):
+    - 外部图像模型是否真能产出可用、on-brand 的归藏材质图。
+    - 图内中文短标签是否清晰不乱码(多数图像模型的已知难点)。
+    - 图表美化产物是否真的逐值保真。
+    - 参考辅助图的事实/视觉线索准确性。
+    - 触发是否真的按 description 精准命中(未装进 live config 跑 trigger_test)。
+  → 因此 evidence_completeness = partial,core_layer_tested = false,category 被 molecule +
+  核心未测 + evidence=partial 三重上限压在 available(不进 production)。
+
+# === Product view (bilingual {en, zh}) =======================================
+product_view:
+  one_liner:
+    en: "Solves the 'middle picture' problem — from an article, dataset, or ugly chart screenshot it produces a Chinese-labeled Guizang-material explanatory diagram, a material-styled chart that preserves the exact numbers, or a reference-informed illustration, then hands the image to a layout skill. The core image is rendered by an EXTERNAL image model this skill does not control."
+    zh: "解决内容里'中间那张图'的问题——把文章、一组数据或一张丑图表截图,变成带中文标签的归藏材质解释图 / 逐值保真的材质化图表 / 参考辅助配图,再把图交给排版 skill 拼成成品。核心那张图由一个本 skill 并不掌控的外部图像模型渲染。"
+  persona:
+    en: "Vera (Park's 视觉/配图 Manager) producing illustrations for the 公众号 pipeline; more broadly any content producer, knowledge blogger, product/tech writer, or teacher who needs to make a complex idea legible in one picture."
+    zh: "Vera(Park 的视觉/配图 Manager),为公众号内容管线产配图;更广义上是任何需要把复杂内容一张图讲清楚的内容生产者、知识博主、产品/技术作者、老师。"
+  scenario:
+    en: "The article / weekly report / deck / tutorial / raw chart is done, but the central picture is either decorative-but-meaningless, a cramped screenshot, or a pretty AI image nobody can read — and it has no in-image labels."
+    zh: "文章 / 周报 / PPT / 教程 / 原始图表都有了,但中间那张图要么漂亮却没意义、要么是密密麻麻的截图、要么是 AI 画的一张没人看懂的图——而且图里没有字。"
+  without_this:
+    en: "Prompt a generic text-to-image model for a pretty but unreadable, label-less, off-topic decoration; or hand-assemble in a design tool; or paste the ugly chart screenshot as-is. Data charts risk invented numbers."
+    zh: "用通用文生图随手画一张漂亮但看不懂、无字、跑题的装饰图;或在设计工具里手动拼;或把丑图表截图直接贴上去。数据图还容易被模型编数。"
+  with_this:
+    en: "Tell the agent 'turn this mechanism into a Chinese-labeled process diagram': the skill infers the diagram type, optionally looks up references, compresses each concept to one sentence + 3-5 short labels, writes a constraint-rich image prompt (exact label text, exact chart values, aspect ratio, safe margins, negative constraints), calls the external image model, QA-checks labels/data/crop, and delivers the image + a reproducible prompt record."
+    zh: "对 agent 说「用归藏材质插画把这段机制做成带中文标签的流程图」:skill 内部判断图型 →(必要时)查参考 → 把每个概念压成一句话 + 3-5 个短标签 → 写出约束齐全的图像提示词(精确标签文字、精确图表数值、比例、安全区、负向约束)→ 调外部图像模型出图 → 按 qa-checklist 核对文字/数据/裁切 → 交付图片 + 可复现的提示词记录。"
+  cost_summary:
+    en: "Source is free to read but carries NO LICENSE (default all-rights-reserved — no legal grant to modify or redistribute). The core deliverable REQUIRES an external image model (GPT-Image / imagegen / whatever the agent has) — bring your own quota/credentials. Needs a skill-reading agent (Claude Code / Codex). Optional web access for reference lookup."
+    zh: "源码可读但**无 LICENSE**(默认保留所有权利——法律上未授权修改或再分发)。核心产物**必须依赖外部图像模型**(GPT-Image / imagegen / agent 当前可用的图像能力)——需自备额度/凭证。需要一个能读 skill 的 agent(Claude Code / Codex)。参考搜索需可选联网。"
+  how:
+    en: "npx skills add (or git clone into your skills dir), then say 'make a labeled explainer image / beautify this chart / this concept is niche, look up references first then generate'. Review the image against the QA checklist; if Chinese labels or data are wrong, regenerate. Then pass the image to the social-card / PPT skill for final layout."
+    zh: "npx skills add(或 git clone 到 skills 目录),然后说「做一张带字解释图 / 把这张图表美化一下 / 这个概念冷门,先查参考再出图」。按 QA 清单检查产物;中文标签或数据错了就重生。再把图交给 social-card / PPT skill 做最终排版。"
+  watch_out:
+    en: "(1) NO LICENSE — default all-rights-reserved; there is no legal grant to modify or redistribute, so even internal adoption is a gray zone until a license is added or an all-rights-reserved internal-use call is accepted in writing. (2) Brand-new repo (created 2026-07-07, single author, ~5 commits, one push day) — longevity untested. (3) The core output is an IMAGE from an external model; this eval had no credentials and did NOT verify output quality. In-image Chinese labels are a known weak spot for most image models (garbling / typos) — real success rate unknown. (4) It only makes the central illustration; full card / PPT layout needs a separate skill. (5) 'Never invent data' is enforced by prompt discipline + human QA, NOT by a deterministic validator — a wrong number ships unless a human catches it and regenerates."
+    zh: "(1) 无 LICENSE——默认 all-rights-reserved;法律上没有授权你修改/再分发,所以在上游补证或团队书面接受'仅内部自用'之前,连内部采用都处于灰区。(2) 极新仓库(2026-07-07 创建、单一作者、约 5 commits、单日推送),长期维护未经检验。(3) 核心产物是外部模型出的图;本次评估无凭证、**未验证出图质量**。图内中文标签是多数图像模型的已知弱点(易乱码/错字),真实成功率未知。(4) 只出中心配图,整卡/PPT 排版要另配 skill。(5) '不编数据'靠提示词纪律 + 人工 QA,**不是确定性校验**——错的数字若没人抓出来重生就会被交付。"
+  examples:
+    - context:
+        en: "You have a product paragraph explaining an agent loop."
+        zh: "你有一段讲 agent 循环的产品说明。"
+      you_say:
+        en: "Use the Guizang material illustration skill to make this into a labeled mechanism diagram."
+        zh: "用归藏的材质插画 skill,把这段做成一张带中文标签的机制图。"
+      what_happens:
+        en: "Infers a cycle/pipeline structure, compresses to labels like 用户提示 / AI 执行 / 结果检查 / 下一轮, writes a constraint-rich prompt, and (with an image model) renders a Swiss-editorial 3D labeled illustration."
+        zh: "判定为循环/管线结构,压成 用户提示 / AI 执行 / 结果检查 / 下一轮 等标签,写出约束齐全的提示词,并(在有图像模型时)渲染一张 Swiss editorial 3D 带标签插画。"
+    - context:
+        en: "You have an ugly benchmark bar-chart screenshot."
+        zh: "你有一张丑的 benchmark 柱状图截图。"
+      you_say:
+        en: "Redraw this chart in Guizang material style; do not change the data or axes."
+        zh: "把这张柱状图重新画成归藏材质风格,数据和坐标不要改。"
+      what_happens:
+        en: "Extracts only chart type / title / values / axis / units / order, drops the screenshot's styling, and emits a prompt with a Required-chart-accuracy block listing every exact value, plus a reject-if-wrong QA step."
+        zh: "只抽取图表类型/标题/数值/坐标/单位/类别序,丢掉截图样式,产出带 Required chart accuracy 块(逐值列明)的提示词,并附'数据错就拒收'的 QA 步骤。"
+    - context:
+        en: "The topic is a niche concept (e.g. PKCE, Zettelkasten, a lever's fulcrum)."
+        zh: "题目是个冷门概念(如 PKCE、Zettelkasten、杠杆的支点)。"
+      you_say:
+        en: "This concept is niche — look up references first, then make a diagram."
+        zh: "这个概念比较冷门,先搜参考信息再生成图。"
+      what_happens:
+        en: "Runs the reference-gathering protocol (facts + stable visual cues only, no style-copying), then translates those cues into the unified Guizang material system with correct part labels."
+        zh: "走 reference-gathering 协议(只取事实 + 稳定视觉线索,不抄画风),再把线索统一转成归藏材质风格,标注正确部件名。"
+  next_step:
+    en: "(1) Run a real credentialed image-model batch (mechanism diagram / chart beautify / Chinese-labeled diagram) and score it against qa-checklist for label accuracy, data fidelity, and crop — this lifts core_layer_tested from false and evidence from partial→portable, unlocking the available ceiling with proof. (2) Push upstream to add a LICENSE (or record a written all-rights-reserved internal-use-only decision) — removes the −2 penalty and clears the adoption-flag. (3) Watch maintenance for 2-4 weeks (commits / issue response) to see whether the single-author bus-factor eases before any external dependency."
+    zh: "(1) 用真实图像模型凭证跑一组实测(机制图 / 图表美化 / 带中文标签图),按 qa-checklist 打分:标签准确率、数据保真、裁切——把 core_layer_tested 从 false 抬起、evidence 从 partial 升 portable,用证据解锁 available 上限。(2) 促上游补 LICENSE(或书面记录'仅内部自用'的 all-rights-reserved 结论)——去掉 −2 罚分与采用阻断旗标。(3) 观察维护度 2-4 周(commits / issue 响应),看单作者 bus-factor 是否缓解,再谈任何对外依赖。"
+
+# === Deployment ==============================================================
+deployment:
+  installable: true
+  install_methods:
+    - method: "npx skills add https://github.com/op7418/guizang-material-illustration --skill guizang-material-illustration"
+      platform: "any agent with a skills dir (Claude Code / Codex)"
+      complexity: easy
+    - method: "git clone into ~/.claude/skills/guizang-material-illustration"
+      platform: "any skill-reading agent"
+      complexity: easy
+  requires_compile: false
+  works_offline_after_install: false   # core deliverable calls an external image
+                                        # model (network + credentials); reference
+                                        # lookup also wants web access.
+  auto_update: false
+
+# === Third-party services ====================================================
+third_party_services:
+  - name: "外部图像生成模型 / external image model (GPT-Image / imagegen / agent 内置图像能力)"
+    purpose: "渲染最终插画/图表——这是 skill 的核心产物,没有它只能产出提示词计划、出不了图"
+    required: true
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "需自备图像模型额度/凭证;不同 agent 环境对应不同模型,成本随之变化。本次评估无凭证 → 核心出图质量未实测。"
+  - name: "Web 搜索 / reference lookup (可选)"
+    purpose: "reference-gathering:冷门概念/品牌/科学装置/历史物件先查事实与稳定视觉线索"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "仅在题材冷门、视觉准确性重要时触发;通用概念不需要。"
+
+# === Workflow placement ======================================================
+workflow_placements:
+  - workflow_id: park-content-v1
+    stage_id: '05_production'
+    role: primary
+    reason:
+      en: "Produces the explanatory-illustration / infographic ASSET during content production — the labeled mechanism diagram, the beautified data chart, the reference-informed visual that a piece needs before it can be assembled. This is Vera's core 解释图/图表美化 lane."
+      zh: "在内容生产阶段产出解释图/信息图 ASSET——带标签的机制图、美化后的数据图、参考辅助视觉,是内容成型前需要的那张图。正是 Vera 的解释图/图表美化主线。"
+  - workflow_id: park-content-v1
+    stage_id: '06_assembly'
+    role: support
+    reason:
+      en: "Deliberately stops at the central image and hands off to the layout skill (guizang-social-card / PPT) that assembles the platform-ready card or deck — the illustration is placed INTO the assembly artifact, not the artifact itself."
+      zh: "刻意只做到中心图,交给排版 skill(guizang-social-card / PPT)拼成平台可用的卡片或页面——插画是被放进组装产物里的,而不是组装产物本身。"
+
+# === Internal architecture (Atom / Molecule / Compound) ======================
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: "Fixed sequential illustration pipeline: read source → infer diagram type → optional reference lookup → compress to 3-5 labels → write a constraint-rich image prompt → call an external image model → QA/regen → deliver. The LLM picks the type and writes the prompt but performs no runtime sub-agent routing or plan generation → molecule, not compound. Crucially the real output is a raster IMAGE rendered by an EXTERNAL image model the skill does not control and this eval could not run — so the core quality contract is NOT statically verifiable. That is exactly why this is scored molecule with core_layer_tested=false, not atom: 'produces a prompt plan' is verifiable, 'produces a usable on-brand image' is not."
+    zh: "固定顺序出图管线:读材料 → 判断图型 →(可选)查参考 → 压成 3-5 个标签 → 写约束齐全的图像提示词 → 调外部图像模型 → QA/重生 → 交付。LLM 只判类型、写提示词,运行时不做子 agent 路由或计划生成 → molecule 而非 compound。关键在于:真实产物是一张由本 skill 不掌控、且本次无法运行的**外部图像模型**渲染的位图——核心质量契约无法静态验证。这正是判 molecule + core_layer_tested=false 而非 atom 的原因:'能产出提示词计划'可验,'能产出可用 on-brand 图片'不可验。"
+  nodes:
+    - id: input
+      type: start
+      rank: 0
+      lane: 0
+      label:
+        en: "Article / data / chart screenshot"
+        zh: "文章 / 数据 / 图表截图"
+    - id: infer
+      type: step
+      rank: 1
+      lane: 0
+      label:
+        en: "Infer diagram type (no mode-asking)"
+        zh: "内部判断图型(不让用户选模式)"
+    - id: reference
+      type: step
+      rank: 2
+      lane: 0
+      label:
+        en: "Optional reference lookup (facts + cues)"
+        zh: "可选查参考(事实 + 视觉线索)"
+    - id: compress
+      type: step
+      rank: 3
+      lane: 0
+      label:
+        en: "Compress to 1 line + 3-5 short labels"
+        zh: "压成一句话 + 3-5 个短标签"
+    - id: prompt
+      type: step
+      rank: 4
+      lane: 0
+      label:
+        en: "Write constraint-rich image prompt"
+        zh: "写约束齐全的图像提示词"
+    - id: imagemodel
+      type: step
+      rank: 5
+      lane: 0
+      label:
+        en: "EXTERNAL image model renders (untested)"
+        zh: "外部图像模型渲染(未实测)"
+    - id: qa
+      type: decision
+      rank: 6
+      lane: 0
+      label:
+        en: "QA: labels / data / crop OK? else regen"
+        zh: "QA:标签/数据/裁切对吗?否则重生"
+    - id: output
+      type: end
+      rank: 7
+      lane: 0
+      label:
+        en: "Labeled material illustration + prompt record"
+        zh: "带标签材质插画 + 提示词记录"
+  edges:
+    - {from: input, to: infer}
+    - {from: infer, to: reference}
+    - {from: reference, to: compress}
+    - {from: compress, to: prompt}
+    - {from: prompt, to: imagemodel}
+    - {from: imagemodel, to: qa}
+    - {from: qa, to: output}
+
+# === Comparison ==============================================================
+# The two closest peers have NO existing eval in our corpus, so they render via
+# similar_repos_pending (non-evaluated peers) with the comparison axis in-note.
+# (similar_repos cards are dropped by the renderer when the slug has no eval.)
+similar_repos_pending:
+  - slug: "op7418--guizang-social-card-skill"
+    slug_note:
+      en: "Same author, the paired LAYOUT layer. guizang-social-card owns the whole card — title, body, theme color, aspect ratio, cover. THIS repo owns only the central illustration that sits inside it. Explicit 配图层 × 排版层 split; use them together (illustration → card)."
+      zh: "同作者、配套的排版层。guizang-social-card 负责整张卡片——标题/正文/主题色/尺寸/封面;本 repo 只负责卡片里的中心插画。明确的'配图层 × 排版层'分工,组合使用(先出图 → 再排卡)。"
+  - slug: "helloianneo--ian-xiaohei-illustrations"
+    slug_note:
+      en: "Both make 公众号 illustrations. ian-xiaohei leans to inline 正文配图 / mood images threaded through body text; THIS repo leans to the 'middle explanatory picture' — mechanism/process diagrams, chart beautify, and reference-informed visuals — and insists on in-image Chinese labels + data fidelity. Different lanes: 正文情绪配图 vs 中心解释图/图表."
+      zh: "两者都做公众号配图。ian-xiaohei 偏正文内嵌小配图 / 情绪图,穿插在正文里;本 repo 偏'中间那张解释图'——机制/流程图、图表美化、参考辅助视觉——且强调图内中文标签 + 数据保真。不同赛道:正文情绪配图 vs 中心解释图/图表。"

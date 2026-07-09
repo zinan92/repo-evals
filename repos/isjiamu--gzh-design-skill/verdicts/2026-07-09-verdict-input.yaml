@@ -1,0 +1,47 @@
+# Hand-authored verdict input for gzh-design-skill (2026-07-09).
+# Authored (not auto-derived) because a live molecule e2e was run — the
+# auto-deriver hard-codes core_layer_tested=false for non-atom layers, which
+# would ignore the run logged in runs/2026-07-09/run-static-and-live-e2e/.
+repo: isjiamu/gzh-design-skill
+archetype: hybrid-skill
+layer: molecule
+
+# Lifted to true: live e2e in runs/2026-07-09/run-static-and-live-e2e/ assembled a
+# themed section from sample-article.md and the self-produced output passed
+# validate_gzh_html.py (0 ERROR / 0 WARN / 13 leaf wraps).
+core_layer_tested: true
+
+# portable: evidence is reproducible (script runs w/ exit codes + committed e2e
+# artifact) but not exhaustive — theme-generator, docx/pdf e2e, cross-model and
+# 5/6 themes were not exercised. Caps legacy bucket at reusable (production category OK).
+evidence_completeness: portable
+
+# Maintainer / ecosystem signals (verified via gh api)
+stars: 1539
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 1   # tagged releases but no CI / no changelog
+eval_discipline_score: 2    # functional dual-gate validators + eval-cases + verifiable loop
+recently_active: true
+
+claims:
+  - {id: claim-001, priority: critical, status: passed,                area: support-validation}
+  - {id: claim-002, priority: critical, status: passed,                area: support-validation}
+  - {id: claim-003, priority: high,     status: passed,                area: support-validation}
+  - {id: claim-004, priority: critical, status: passed,                area: support-components}
+  - {id: claim-005, priority: high,     status: passed,                area: support-artifacts}
+  - {id: claim-006, priority: medium,   status: passed,                area: support-ingest}
+  - {id: claim-007, priority: high,     status: passed,                area: support-preview}
+  - {id: claim-008, priority: high,     status: passed,                area: support-skill-integrity}
+  - {id: claim-009, priority: medium,   status: passed,                area: support-license}
+  - {id: claim-010, priority: critical, status: passed,                area: core}
+  - {id: claim-011, priority: high,     status: passed_with_concerns,  area: core-triggering}
+  - {id: claim-012, priority: high,     status: untested,              area: core}
+  - {id: claim-013, priority: medium,   status: untested,              area: core-ingest}
+  - {id: claim-014, priority: medium,   status: untested,              area: core}
+
+override:
+  apply: false
+  bucket: null
+  reason: null

@@ -1,0 +1,50 @@
+# Hand-authored verdict input for ian-xiaohei-illustrations (2026-07-09).
+# Authored (not auto-derived) to pin the anti-inflation stance explicitly:
+# the real output is an IMAGE produced by an EXTERNAL image model (Codex built-in
+# image_gen / nano-banana / Gemini / Flux). This eval had NO image-model credentials,
+# so the core output layer is unverified in isolation.
+repo: helloianneo/ian-xiaohei-illustrations
+archetype: prompt-skill
+layer: molecule
+
+# FALSE, deliberately. The user-facing deliverable is an image-model render this eval
+# could not execute. The author's example gallery proves "it renders something", not
+# that any given article's output is good / on-brand. reason: output is
+# image-model-dependent, unverified in isolation.
+core_layer_tested: false
+
+# partial: the static prompt scaffolding is verified and reproducible (frontmatter,
+# reference resolution, README↔SKILL coverage, license), but an ENTIRE layer — the
+# actual image output — is dark (no model run). Not 'portable' because the core
+# deliverable was never exercised even once by this eval. Caps legacy bucket at usable.
+evidence_completeness: partial
+
+# Maintainer / ecosystem signals (verified via gh api on 2026-07-09)
+stars: 7354
+archived: false
+has_license: true            # MIT, clean spdx_id (no NOASSERTION); LICENSE present
+multilingual_readme: false   # README.md zh-only; no README.en.md
+release_pipeline_score: 1    # 1 tag + 1 release, NO CI (.github absent), no changelog
+eval_discipline_score: 1     # prompt-side qa-checklist.md only; no executable validator/harness
+recently_active: true        # pushed 2026-06-03 (~36 days before eval)
+
+claims:
+  # SUPPORT layer (static prompt scaffolding — verified)
+  - {id: claim-001, priority: critical, status: passed,                area: skill-structure}
+  - {id: claim-002, priority: critical, status: passed,                area: skill-integrity}
+  - {id: claim-003, priority: high,     status: passed,                area: coverage}
+  - {id: claim-004, priority: high,     status: passed,                area: skill-content}
+  - {id: claim-005, priority: high,     status: passed,                area: skill-content}
+  - {id: claim-006, priority: high,     status: passed_with_concerns,  area: triggering}
+  - {id: claim-007, priority: medium,   status: passed,                area: artifacts}
+  - {id: claim-008, priority: medium,   status: passed,                area: license}
+  # CORE layer (the image output — image-model-dependent, UNTESTED)
+  - {id: claim-009, priority: critical, status: untested,              area: core}
+  - {id: claim-010, priority: high,     status: untested,              area: core}
+  - {id: claim-011, priority: medium,   status: untested,              area: core}
+  - {id: claim-012, priority: medium,   status: untested,              area: core}
+
+override:
+  apply: false
+  bucket: null
+  reason: null

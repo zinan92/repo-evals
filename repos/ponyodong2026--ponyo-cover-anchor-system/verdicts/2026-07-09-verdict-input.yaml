@@ -1,0 +1,47 @@
+# Hand-authored verdict input for ponyo-cover-anchor-system (2026-07-09).
+# Authored (not auto-derived) to make the layer-rule explicit:
+#   - The real user output is a cover IMAGE from an EXTERNAL image model
+#     (ChatGPT Image 2 / DALL-E) that this eval had NO credentials to run.
+#   - So core output quality is UNVERIFIABLE statically → layer: molecule,
+#     core_layer_tested: false. It is NOT scored as an atom with auto-true core.
+#   - Author example PNGs prove "produces something," not quality →
+#     evidence_completeness: partial (core claims untested).
+repo: ponyodong2026/ponyo-cover-anchor-system
+archetype: prompt-skill
+layer: molecule
+
+# false: cover-image quality is image-model-dependent and was not run here.
+core_layer_tested: false
+
+# partial: static structure fully checkable + author example PNGs exist, but the
+# core (rendered cover quality / on-brand / hook / Chinese fidelity), cross-model
+# portability, and trigger precision were NOT exercised.
+evidence_completeness: partial
+
+# Maintainer / ecosystem signals (verified via gh api)
+stars: 134
+archived: false
+has_license: false          # ADOPTION FLAG — no license file (null + 404). -2 penalty.
+multilingual_readme: false  # single mixed EN/ZH README, no separate language file
+release_pipeline_score: 0   # no releases / tags / CI / changelog
+eval_discipline_score: 0    # no tests / validators / eval harness
+recently_active: true       # pushed within 90d (single 2-day burst 17 days ago, bus-factor 1)
+
+claims:
+  - {id: claim-001, priority: critical, status: passed,          area: skill-structure}
+  - {id: claim-002, priority: critical, status: passed,          area: skill-integrity}
+  - {id: claim-003, priority: high,     status: passed,          area: coverage}
+  - {id: claim-004, priority: high,     status: passed,          area: support-formulas}
+  - {id: claim-005, priority: high,     status: passed,          area: support-prompts}
+  - {id: claim-006, priority: high,     status: passed,          area: support-anti-slop}
+  - {id: claim-007, priority: medium,   status: passed,          area: support-artifacts}
+  - {id: claim-008, priority: medium,   status: failed,          area: support-license}
+  - {id: claim-009, priority: critical, status: untested,        area: core}
+  - {id: claim-010, priority: high,     status: untested,        area: core}
+  - {id: claim-011, priority: high,     status: failed_partial,  area: core-platform-fit}
+  - {id: claim-012, priority: high,     status: untested,        area: core-triggering}
+
+override:
+  apply: false
+  bucket: null
+  reason: null

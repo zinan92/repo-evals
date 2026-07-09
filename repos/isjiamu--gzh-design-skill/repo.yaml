@@ -1,0 +1,228 @@
+# repo.yaml — gzh-design-skill dossier
+# Evaluated 2026-07-09 by Mark (Claude Code / claude-opus-4-8) for Park Agent OS.
+
+# === Identity ================================================================
+owner: isjiamu
+repo: gzh-design-skill
+display_name: gzh-design · 公众号排版技能
+repo_url: https://github.com/isjiamu/gzh-design-skill
+
+repo_type: skill
+archetype: hybrid-skill
+
+# Fixed pipeline (normalize → pick theme → read component lib → parse md →
+# assemble HTML → validate → preview). LLM fills content + makes local style
+# choices (theme pick, keyword underlines) but does NOT do runtime sub-agent
+# routing or plan generation → molecule, not compound. Validators are embedded
+# deterministic atoms.
+layer: molecule
+
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-07-09"
+version_tested: "main@HEAD (2026-07-08 push, v1.0.0)"
+
+# === Maintainer / ecosystem signals (verified via gh api) ====================
+stars: 1539
+archived: false
+has_license: true          # AGPL-3.0. GitHub reports NOASSERTION only because a
+                           # custom 联名 preamble precedes the standard text;
+                           # LICENSE file (34992 bytes) is the full AGPL-3.0.
+multilingual_readme: true  # README.md (zh) + README.en.md
+release_pipeline_score: 1  # tagged releases (v1.0.0, assets-v1) but NO CI, no CHANGELOG
+eval_discipline_score: 2   # real functional dual-gate validators + eval-cases.md
+                           # regression checklist + documented verifiable loop
+                           # (verified running). Not CI-gated / fixture-automated.
+recently_active: true      # created 2026-07-01, pushed 2026-07-08
+
+business_category: content
+use_case_tags: ["wechat-formatting", "gzh-typesetting", "markdown-to-html", "content-publishing"]
+
+notes: |
+  甲木 × 摸鱼小李 联名。8 天内 1539 stars / 171 forks —— 传播很快，但仓库极年轻
+  （git 仅 3 commits、单一 committer，bus-factor 1）。核心价值在 references/ 下
+  6 套厚组件库 + 主题生成器，以及 scripts/ 下两个确定性校验脚本。评估中实测：
+    - component_lint.py 扫 11 个组件库 → 0 ERROR（2 WARN 为主题特征虚线组件，脚本自身豁免）
+    - validate_gzh_html.py 正确判合规/不合规（坏 HTML 报 4 ERROR 退出 1；好 HTML 退出 0）
+    - 随包 gallery 产物 docs/gallery/moyu-green.html 真含 122 处 <span leaf> 且完全合规
+    - extract_docx.py 零第三方依赖（仅 stdlib：zipfile + xml）
+    - wrap_preview.py 生成含「复制到公众号」按钮 + execCommand 的预览页
+    - LIVE E2E：按 SKILL.md 用摸鱼绿组件库把 sample-article.md 片段装配成 section，
+      自产物过 validate_gzh_html.py → 0 ERROR / 0 WARN / 13 leaf wraps → molecule 上限已抬升
+  未实测：主题生成器第二条工作流、docx/pdf 真机归一化、跨模型一致性、6 套里的其余 5 套。
+
+# === Product view ============================================================
+product_view:
+  one_liner:
+    en: "Turns finished Markdown into polished, paste-ready WeChat (公众号) HTML that survives the editor intact — 6 themes + a theme generator, with two validator scripts deterministically enforcing the platform's rules instead of trusting the model to remember them."
+    zh: "把写好的 Markdown 一键排成可直接粘进公众号编辑器、粘完不掉格式的精致 HTML —— 6 套主题 + 主题生成器，靠两个校验脚本确定性兜住公众号平台红线，不靠模型自觉。"
+  persona:
+    en: "A content operator who writes in Markdown and publishes to WeChat 公众号 regularly, and is tired of hand-fixing styles that break on paste."
+    zh: "经常写 Markdown、发公众号的内容运营者（对 Park 来说就是 Joanna），受够了手动套样式、粘进去还掉格式。"
+  scenario:
+    en: "You finished a long Markdown article and need to publish it to WeChat. Hand-formatting in the editor is slow and styles routinely drop when you paste."
+    zh: "你写完一篇 Markdown 长文要发公众号。手动在编辑器里排版又慢、样式还经常一粘就掉。"
+  without_this:
+    en: "Hand-format in the WeChat editor or use an online md2wechat tool — styles drop on paste, theme look drifts article-to-article, half-width punctuation and code indentation need repeated rework."
+    zh: "手动在公众号编辑器排版，或用在线 md2wechat 工具——样式常粘贴后丢失，主题气质每篇飘忽，半角标点/代码缩进反复返工。"
+  with_this:
+    en: "Tell your agent 'format this with 摸鱼绿 for WeChat' — it emits a fully-inlined, <span leaf>-wrapped section with numbered chapters, per-paragraph keyword underlines and an intro card, passes the validator at 0 ERROR, and hands you a one-click copy preview page."
+    zh: "对 agent 说「用摸鱼绿把这篇排成公众号 HTML」——产出全内联、<span leaf> 包裹、编号章节、逐段关键词下划线、引言卡的 section 片段，过校验 0 ERROR，附一键复制预览页。"
+  cost_summary:
+    en: "Free & open-source (AGPL-3.0). Zero Python third-party deps (stdlib only). Needs a skill-reading agent (Claude Code / Codex / Cursor). No API key, no external service."
+    zh: "免费开源（AGPL-3.0）。Python 零第三方依赖（仅 stdlib）。需要一个能读 skill 的 agent（Claude Code / Codex / Cursor）。无 API key、无外部服务。"
+  how:
+    en: "npx skills add (or git clone into your skills dir), then say 'format this .md for WeChat with theme XX'. Open the preview page, click copy, paste into the WeChat editor."
+    zh: "npx skills add（或 git clone 到 skills 目录），然后说「用 XX 主题把这篇 md 排成公众号 HTML」。打开预览页点复制 → 粘进公众号编辑器。"
+  watch_out:
+    en: "(1) It only FORMATS, never writes — you need finished Markdown first. (2) Very young repo (8 days, 3 commits, single committer / bus-factor 1) — longevity untested. (3) The scripts guarantee platform-COMPLIANCE, not good TASTE — layout aesthetics and keyword picks still depend on the model's run and vary. (4) AGPL-3.0: internal use (Joanna formatting articles) does NOT trigger copyleft, but forking-and-redistributing or building an external SaaS on it does. (5) Only 1 of 6 themes was hands-on tested; theme-generator, docx/pdf normalization and cross-model consistency were not."
+    zh: "(1) 只排版、不写作——先得有成稿 Markdown。(2) 仓库极年轻（8 天、3 commits、单一 committer / bus-factor 1），长期维护未经检验。(3) 脚本只保证「平台合规」，不保证「排得好看」——版式审美与关键词选择仍看模型那次发挥、会浮动。(4) AGPL-3.0：内部自用（Joanna 排文章）不触发 copyleft；但 fork 改代码再分发、或基于它做对外 SaaS 就必须开源。(5) 6 套主题只实测 1 套；主题生成器、docx/pdf 归一化、跨模型一致性未实测。"
+  examples:
+    - context:
+        en: "You wrote an opinion long-read about Skills (in Markdown)."
+        zh: "你写完一篇讲 Skills 的观点长文（Markdown）。"
+      you_say:
+        en: "Format article.md for WeChat with 摸鱼绿."
+        zh: "用摸鱼绿把 article.md 排成公众号 HTML。"
+      what_happens:
+        en: "Emits a section with numbered chapters + per-paragraph keyword underlines + intro card; validate = 0 ERROR; ships a one-click copy preview page."
+        zh: "产出编号章节 + 逐段关键词下划线 + 引言卡的 section；validate 0 ERROR；附一键复制预览页。"
+    - context:
+        en: "You have a Word (.docx) draft."
+        zh: "手上是一篇 Word (.docx) 稿。"
+      you_say:
+        en: "Turn this docx into WeChat formatting."
+        zh: "把这个 docx 转成公众号排版。"
+      what_happens:
+        en: "Runs extract_docx.py (zero-dep) → markdown draft → structure confirm → pick theme → format → validate."
+        zh: "先跑 extract_docx.py（零依赖）转 md 草稿 → 结构确认 → 选主题 → 排版 → 校验。"
+    - context:
+        en: "None of the 6 themes fit the vibe you want."
+        zh: "6 套主题都不满意。"
+      you_say:
+        en: "Make a new theme: mono-magazine look with a Klein-blue accent."
+        zh: "按黑白杂志 + 克莱因蓝点睛做一套新主题。"
+      what_happens:
+        en: "Runs the theme-generator second workflow: produces a 45–75 block component library preview → you confirm the whole page → converts into a registered standard theme."
+        zh: "走 theme-generator 第二条工作流：产出 45–75 区块组件库预览 → 整页确认 → 转成登记在册的标准主题库。"
+  next_step:
+    en: "(1) Have Joanna run one real long article through the full pipeline (theme-confirm + one-click copy into the actual WeChat editor) to confirm styles survive on the real platform → lifts evidence to 'full'. (2) Exercise the theme-generator and docx/pdf normalization end-to-end. (3) Watch maintenance (commits / issue response) for 2–4 weeks to see if the bus-factor-1 risk eases."
+    zh: "(1) 让 Joanna 用真实一篇公众号长文跑完整 pipeline（选主题确认 + 一键复制粘进真机公众号），确认真机不掉格式 → 证据从 portable 升到 full。(2) 实测主题生成器与 docx/pdf 归一化端到端。(3) 观察维护度（commits / issue 响应）2–4 周，看 bus-factor 风险是否缓解。"
+
+# === Deployment ==============================================================
+deployment:
+  installable: true
+  install_methods:
+    - method: "npx skills add https://github.com/isjiamu/gzh-design-skill"
+      platform: "any agent with a skills dir (Claude Code / Codex / Cursor)"
+      complexity: easy
+    - method: "git clone into ~/.claude/skills/gzh-design (or equivalent)"
+      platform: "any (Python 3 for the 4 scripts)"
+      complexity: easy
+  requires_compile: false
+  works_offline_after_install: true   # core formatting + validators run locally;
+                                       # only user-supplied image URLs hit the network
+  auto_update: false
+
+# === Third-party services ====================================================
+third_party_services:
+  - name: "（无必需外部服务 / none required）"
+    purpose: "排版、校验、预览全部本地运行；图片用文章自带 URL，无内建外部调用"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "零外部依赖是它的一个卖点"
+
+# === Workflow placement ======================================================
+workflow_placements:
+  - workflow_id: park-content-v1
+    stage_id: '06_assembly'
+    role: primary
+    reason:
+      en: "Assembles a finished Markdown draft into publish-ready WeChat formatting — exactly the assembly stage's job for the 公众号 channel."
+      zh: "把成稿 Markdown 装配成公众号可发布的排版——正是 assembly 阶段针对公众号渠道要做的事。"
+  - workflow_id: park-content-v1
+    stage_id: '07_distribution'
+    role: support
+    reason:
+      en: "The one-click copy preview page hands off directly into the WeChat editor paste step."
+      zh: "一键复制预览页直接衔接公众号编辑器的粘贴发布步骤。"
+
+# === Internal architecture (Atom / Molecule / Compound) ======================
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: "Fixed sequential pipeline. The LLM fills content and makes local style decisions (theme pick, which keywords to underline) but performs no runtime sub-agent routing or plan generation — that makes it a molecule, not a compound. The two validators are embedded deterministic atoms that gate the output."
+    zh: "固定顺序 pipeline。LLM 只做内容填充与局部风格判断（选主题、标哪些关键词），运行时不做子 agent 路由或计划生成——所以是 molecule 而非 compound。两个校验脚本是嵌入的确定性 atom，为产物把关。"
+  nodes:
+    - id: input
+      type: start
+      rank: 0
+      lane: 0
+      label:
+        en: "Markdown / docx / pdf / txt"
+        zh: "Markdown / docx / pdf / 纯文本"
+    - id: normalize
+      type: step
+      rank: 1
+      lane: 0
+      label:
+        en: "Normalize to Markdown"
+        zh: "格式归一化为 Markdown"
+    - id: theme
+      type: step
+      rank: 2
+      lane: 0
+      label:
+        en: "Recommend + pick theme"
+        zh: "推荐并选定主题"
+    - id: assemble
+      type: step
+      rank: 3
+      lane: 0
+      label:
+        en: "Assemble HTML from component library"
+        zh: "按组件库装配 HTML"
+    - id: validate
+      type: decision
+      rank: 4
+      lane: 0
+      label:
+        en: "component_lint + validate_gzh_html (0 ERROR?)"
+        zh: "component_lint + validate_gzh_html（0 ERROR？）"
+    - id: preview
+      type: step
+      rank: 5
+      lane: 0
+      label:
+        en: "wrap_preview → one-click copy page"
+        zh: "wrap_preview → 一键复制预览页"
+    - id: output
+      type: end
+      rank: 6
+      lane: 0
+      label:
+        en: "Paste-ready WeChat section"
+        zh: "可粘贴的公众号 section"
+  edges:
+    - {from: input, to: normalize}
+    - {from: normalize, to: theme}
+    - {from: theme, to: assemble}
+    - {from: assemble, to: validate}
+    - {from: validate, to: preview}
+    - {from: preview, to: output}
+
+# === Comparison ==============================================================
+similar_repos:
+  - slug: "geekjourneyx--md2wechat-skill"
+    shared_purpose:
+      en: "Convert Markdown into WeChat-editor-ready HTML."
+      zh: "把 Markdown 转成公众号编辑器可用的 HTML。"
+    this_better_at:
+      en: "Design richness (6 thick themed component libraries + a theme generator), agent-native (any agent just reads SKILL.md — no binary), and dual deterministic compliance gates. Zero third-party deps."
+      zh: "设计丰富度（6 套厚主题组件库 + 主题生成器）、agent 原生（任何 agent 直接读 SKILL.md，无需二进制）、双确定性合规关卡。零第三方依赖。"
+    other_better_at:
+      en: "A compiled Go CLI (atom) with 228 tests and 5 JSON discovery commands — more deterministic single-command conversion, higher test coverage, and it can also WRITE (humanize / write-from-idea) whereas gzh-design deliberately only formats."
+      zh: "编译型 Go CLI（atom），228 个测试 + 5 个 JSON discovery 命令——单命令转换更确定、测试覆盖更高，且能「写」（humanize / 从想法直接写），而 gzh-design 刻意只排版不写作。"

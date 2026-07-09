@@ -1,0 +1,83 @@
+run_name: static-and-live-e2e
+date: 2026-07-09
+area: core
+scenario: "Static verification of the deterministic scripts + one live molecule e2e (assemble a themed section from sample-article.md and validate the self-produced output)."
+provenance:
+  provenance_source: "auto"
+  captured: true
+  partial: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: "claude-opus-4-8"
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: "95725c6"
+  target_repo_path: "/tmp/gzh-eval (depth-1 clone, isolated)"
+  target_repo_ref: "main"
+  target_repo_commit: "ba1f417"
+  evaluated_at: "2026-07-09T02:31:57Z"
+  transcript_path: ""
+  command_log_path: ""
+  session_replay_notes: "Mark governance eval for Park; static grep + isolated script execution + one live molecule e2e (moyu-green assembly of sample-article.md fragment, self-output passed validate_gzh_html.py)"
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
+  manifest_path: "artifacts/manifest.yaml"
+fixtures:
+  - "assets/sample-article.md (from target repo)"
+  - "docs/gallery/moyu-green.html (shipped artifact, from target repo)"
+commands:
+  - "python3 scripts/component_lint.py .            # → 11 libs, 0 ERROR, exit 0 (2 WARN, exempted)"
+  - "python3 scripts/validate_gzh_html.py docs/gallery/moyu-green.html  # → 122 leaf, 完全合规, exit 0"
+  - "printf '<div class><style>…中文…' | validate_gzh_html.py --stdin   # → 4 ERROR, exit 1"
+  - "printf '<section><span leaf>…全角…' | validate_gzh_html.py --stdin # → 合规, exit 0"
+  - "printf '…你好,世界.…' | validate_gzh_html.py --stdin              # → 半角 WARNING, exit 0"
+  - "python3 scripts/wrap_preview.py <section> → preview w/ 复制到公众号 + execCommand"
+  - "ast-scan extract_docx.py → imports = {argparse,os,re,sys,xml,zipfile} (stdlib only)"
+  - "LIVE E2E: assemble moyu-green section from sample-article.md; validate self-output"
+result: pass
+results_by_claim:
+  claim-001: passed                # TEST C: 4 ERROR + exit 1 on non-compliant HTML
+  claim-002: passed                # TEST C/B: leaf-wrap enforcement; gallery 122 wraps
+  claim-003: passed                # TEST D/D2: clean exit 0; half-width → WARNING
+  claim-004: passed                # TEST A: 11 libs, 0 ERROR, exit 0
+  claim-005: passed                # TEST B: moyu-green.html 完全合规
+  claim-006: passed                # TEST F: stdlib-only imports
+  claim-007: passed                # TEST E: 复制到公众号 button + execCommand
+  claim-008: passed                # file-tree cross-check: all references resolve
+  claim-009: passed                # LICENSE = full AGPL-3.0 (34992 bytes)
+  claim-010: passed                # LIVE E2E: self-assembled section → 0 ERROR/0 WARN/13 leaf
+  claim-011: passed_with_concerns  # strong static trigger spec; no live trigger_test run
+  claim-012: untested              # theme-generator second workflow not driven
+  claim-013: untested              # docx/pdf/txt normalization not run e2e
+  claim-014: untested              # cross-model consistency not compared
+artifacts:
+  - "artifacts/live-e2e_moyu-green_section.html   # my assembled output, 13 leaf wraps"
+  - "artifacts/live-e2e_moyu-green_preview.html   # wrap_preview output"
+notes: |
+  SUPPORT layer (deterministic): all claims passed.
+    - component_lint.py: 11 component libraries, 0 ERROR, exit 0. The only 2 WARN
+      (moyu-green, olive-journal 四周虚线框) are theme-characteristic components the
+      linter itself exempts when centered — not defects.
+    - validate_gzh_html.py: correctly discriminates — 4 ERROR + exit 1 on deliberately
+      non-compliant HTML; exit 0 on compliant HTML; half-width punctuation → WARNING (not
+      ERROR), matching documented design.
+    - Shipped docs/gallery/moyu-green.html: 122 <span leaf> wraps, 完全合规 → the pipeline
+      genuinely produces compliant artifacts, not just README promises.
+    - extract_docx.py: stdlib-only (zipfile + xml), zero third-party deps.
+    - wrap_preview.py: emits a preview shell with a 复制到公众号 button + execCommand;
+      button/JS sit OUTSIDE the copied <section>.
+
+  CORE layer (molecule promise): claim-010 PASSED via live e2e.
+    - Read theme-moyu-green.md; following SKILL.md, assembled the "Skill 是能力商品" section
+      of sample-article.md into a real <section> using actual components (chapter-title 组件4,
+      paragraph 组件5, green-underline 6e, green-bold 6a, yellow-highlight 6c), every text node
+      <span leaf>-wrapped, full-width punctuation, per-paragraph keyword underline.
+    - Ran validate_gzh_html.py on MY output → 0 ERROR / 0 WARNING / 13 leaf wraps, exit 0.
+    - This exercises the user-facing molecule layer firsthand → core_layer_tested lifted to true.
+    - See artifacts/live-e2e_moyu-green_section.html.
+
+  NOT tested (breadth): theme-generator second workflow (claim-012), real docx/pdf/txt
+  normalization e2e (claim-013), cross-model consistency (claim-014), and 5 of 6 themes.
+  Evidence completeness therefore = portable (reproducible, but not exhaustive), not full.

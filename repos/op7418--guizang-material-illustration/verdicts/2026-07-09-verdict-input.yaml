@@ -1,0 +1,52 @@
+# Hand-authored verdict input for guizang-material-illustration (2026-07-09).
+# prompt-skill whose CORE output is an IMAGE from an EXTERNAL image model this
+# eval had no credentials to run. Per the anti-inflation layer rule:
+#   layer=molecule, core_layer_tested=false ("output is image-model-dependent,
+#   unverified in isolation"), evidence_completeness=partial.
+# The static SUPPORT layer (references resolve, coherent, template/protocol/QA
+# present) is fully verified; the CORE image-quality layer is not.
+repo: op7418/guizang-material-illustration
+archetype: prompt-skill
+layer: molecule
+
+# false: the real deliverable is a raster image rendered by an external image
+# model (GPT-Image / imagegen) — no credentials in this governance eval, so
+# output quality is unverified in isolation. Author docs/examples prove
+# "produces something," not that the quality contract holds.
+core_layer_tested: false
+
+# partial: static support layer is verified + reproducible, but the core
+# image-quality claims (usable/on-brand, chart data fidelity, in-image CJK
+# legibility, reference accuracy, card-size legibility) are all untested.
+evidence_completeness: partial
+
+# Maintainer / ecosystem signals (verified via gh api 2026-07-09)
+stars: 385                  # task brief said 384; live 385 — same band (<1000 → +0 eco)
+archived: false
+has_license: false          # VERIFIED: license=null + LICENSE/LICENSE.md both 404 → −penalty
+multilingual_readme: false  # zh-only README; English only in SKILL frontmatter
+release_pipeline_score: 0   # no releases/tags/CI/changelog; single push day
+eval_discipline_score: 1    # ad-hoc qa-checklist + documented cases, no harness/CI (<2 → +0)
+recently_active: true       # created + pushed 2026-07-07 (brand new, not sustained upkeep)
+
+claims:
+  # SUPPORT layer (static, verifiable)
+  - {id: claim-001, priority: critical, status: passed,                area: skill-integrity}
+  - {id: claim-002, priority: high,     status: passed,                area: skill-coherence}
+  - {id: claim-003, priority: high,     status: passed,                area: prompt-scaffold}
+  - {id: claim-004, priority: high,     status: passed,                area: chart-protocol}
+  - {id: claim-005, priority: high,     status: passed_with_concerns,  area: triggering}
+  - {id: claim-006, priority: medium,   status: passed,                area: qa}
+  - {id: claim-007, priority: medium,   status: passed,                area: scope-boundary}
+  - {id: claim-008, priority: medium,   status: failed,                area: support-license}
+  # CORE layer (image-model-dependent, UNTESTED — no credentials)
+  - {id: claim-009, priority: critical, status: untested,              area: core}
+  - {id: claim-010, priority: high,     status: untested,              area: core}
+  - {id: claim-011, priority: high,     status: untested,              area: core}
+  - {id: claim-012, priority: medium,   status: untested,              area: core}
+  - {id: claim-013, priority: medium,   status: untested,              area: core}
+
+override:
+  apply: false
+  bucket: null
+  reason: null

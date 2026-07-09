@@ -1,0 +1,251 @@
+# repo.yaml — ian-xiaohei-illustrations dossier
+# Evaluated 2026-07-09 by Mark (Claude Code / claude-opus-4-8) for Park Agent OS.
+# Feeds the new Vera（视觉/配图 Manager）role: 正文配图 lane of park-content-v1.
+
+# === Identity ================================================================
+owner: helloianneo
+repo: ian-xiaohei-illustrations
+display_name: ian-xiaohei · 小黑怪诞正文配图
+repo_url: https://github.com/helloianneo/ian-xiaohei-illustrations
+
+repo_type: skill
+archetype: prompt-skill
+
+# Fixed pipeline (digest article → shot list → per-image prompt from a shared
+# style-DNA + template → EXTERNAL image model renders → QA checklist → save PNG).
+# The LLM makes local choices (which cognitive anchor, which structure type,
+# invent a metaphor) but does NO runtime sub-agent routing / plan generation →
+# molecule, not compound. Crucially the actual renderer is an external image
+# model this skill does not own and we cannot run → the core output layer is
+# dark. Not atom: static checks validate the prompt scaffolding, never the image.
+layer: molecule
+
+complexity: simple
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-07-09"
+version_tested: "main@HEAD (2026-06-03 push), commit 91b5608"
+
+# === Maintainer / ecosystem signals (verified via gh api) ====================
+stars: 7354
+archived: false
+has_license: true          # MIT. gh api reports license.spdx_id = "MIT" cleanly
+                           # (no NOASSERTION); LICENSE file present (1060 bytes,
+                           # standard MIT, Copyright (c) 2026 Ian).
+multilingual_readme: false # README.md is Chinese-only. NOTICE.md is English but
+                           # there is no translated README (no README.en.md).
+release_pipeline_score: 1  # 1 git tag + 1 GitHub release, but NO CI (.github
+                           # absent), no CHANGELOG → manual, below the +5 CI bar.
+eval_discipline_score: 1   # ships a real qa-checklist.md (pass criteria, failure
+                           # signals, iteration methods) but it is a prompt-side
+                           # checklist the agent self-applies — no executable
+                           # validator, no eval-cases, no harness. Below the +5 bar.
+recently_active: true      # created 2026-05-27, pushed 2026-06-03 (~36 days
+                           # before eval date) — inside the 90-day window.
+
+business_category: content
+use_case_tags: ["article-illustration", "wechat-gzh", "hand-drawn-illustration", "chinese-content", "codex-skill"]
+
+notes: |
+  单一作者（helloianneo）个人 skill。7354 stars / 880 forks —— 传播极快，但仓库
+  年轻（created 2026-05-27，9 commits，单一 committer，bus-factor 1，无 CI，无自动化
+  eval）。核心价值在 references/ 下 5 份提示词资产：style-dna（风格 DNA / 颜色 / 禁忌）、
+  xiaohei-ip（小黑 IP 形象 / 动作库 / 禁忌）、composition-patterns（8 种结构类型 +
+  原创隐喻三步法 + 反复刻规则）、prompt-template（参数化单张生图模板 + 改图模板）、
+  qa-checklist（必过项 / 失败信号 / 迭代方法）。SKILL.md frontmatter 带明确触发词。
+
+  静态实测（可复现）：
+    - SKILL.md YAML frontmatter 合法（name + description 齐全，含触发词规格）
+    - SKILL.md 引用的 5 份 references/ 全部解析得到；assets/examples/ 存在（14 张）
+    - README 承诺的 4 类能力（shot list 规划 / 生成正文配图 / 单概念一张图 / 去标题改图）
+      在 SKILL 工作流 + prompt-template 改图段都有对应路径
+    - MIT LICENSE 真实；examples/images/ 8 张作者校准样例存在
+  未实测（核心层全黑）：
+    - 真正的产物是"图"，由外部图像模型（默认 Codex 内置 image_gen）生成；本次评估无
+      图像模型凭证，无法运行 → 图是否 16:9 白底手绘、on-brand、小黑真承担核心动作、
+      中文标注是否可读、是否避开 PPT/可爱/左上角标题，全部 status=untested。
+    - 作者示例图只证明"这套 prompt 能出东西"，不证明"每次都好 / 每次都合规"。
+    - Codex 原生：SKILL.md 写"用内置 image_gen"；Claude Code 无此工具 → 若 Park 跑在
+      Claude Code 上，生成步骤需另接外部图像模型执行 prompt-template。
+
+# === Product view ============================================================
+product_view:
+  one_liner:
+    en: "Turns one judgment / flow / state / metaphor inside a Chinese article into a 16:9 white-background hand-drawn body illustration starring the recurring '小黑' IP — a shared style-DNA + a parameterized per-image prompt template upgrade 'add a picture' into 'draw the one cognitive move' — but the actual render needs an external image model the skill does not ship."
+    zh: "把中文文章里的一个判断 / 流程 / 状态 / 隐喻，变成一张 16:9 白底手绘、有固定「小黑」IP 的正文配图 —— 用一套风格 DNA + 参数化单张生图模板，把「配一张图」升级成「把那个认知动作画出来」；但真正出图要一个 skill 本身不自带的外部图像模型。"
+  persona:
+    en: "A Chinese knowledge / methodology long-form writer who needs body illustrations with a personal, recognizable look and is tired of generic AI art or PPT-style infographics (for Park, that's Vera)."
+    zh: "写中文知识型 / 方法论长文、需要有个人识别度正文配图、受够了通用 AI 插画和 PPT 信息图的内容创作者（对 Park 来说就是 Vera）。"
+  scenario:
+    en: "You finished a Chinese long-read and want a few body illustrations with a consistent signature look — not a PPT infographic, and not a style that drifts article-to-article."
+    zh: "你写完一篇中文长文，想要几张风格统一、有辨识度的正文配图 —— 不要 PPT 信息图，也不要每篇气质都飘。"
+  without_this:
+    en: "Prompt a generic AI image model by hand (style drifts every run, looks like commercial illustration or cute cartoon), or hunt stock images / build PPT infographics — slow, and there is no unifying IP across articles."
+    zh: "手写通用 AI 画图 prompt（每次风格都飘、像商业插画或可爱卡通），或找图库 / 做 PPT 信息图 —— 又慢，正文配图跨文章也没有统一 IP。"
+  with_this:
+    en: "Tell your agent 'make 5 小黑 body illustrations for this article' — it first outputs a shot list (one cognitive anchor per image, structure type, what 小黑 is doing, suggested Chinese labels), then renders each image via the image model, then QA-checks white background / whitespace / 小黑 participation / non-PPT feel."
+    zh: "对 agent 说「为这篇文章生成 5 张小黑正文配图」—— 它先出 shot list（每张一个认知锚点、结构类型、小黑在做什么、建议中文标注），再逐张调图像模型出图，再按 QA checklist 检查白底 / 留白 / 小黑参与 / 非 PPT 感。"
+  cost_summary:
+    en: "Free & open-source (MIT). The skill itself is zero-dependency prompt material, but rendering REQUIRES an image-gen-capable host — Codex's built-in image_gen by default, or an external image model (nano-banana / Gemini / Flux, …) wired in. That render step costs compute / quota."
+    zh: "免费开源（MIT）。skill 本身是零依赖提示词，但出图必须有能生图的 host —— 默认 Codex 内置 image_gen，或外接图像模型（nano-banana / Gemini / Flux 等）。这一步要算力 / 额度。"
+  how:
+    en: "git clone, copy the ian-xiaohei-illustrations subdir into your Codex skills dir, then say 'Use $ian-xiaohei-illustrations to make N 小黑 body illustrations for this article'. Note: Claude Code has no built-in image_gen — on that host you must attach an external image model to execute prompt-template.md."
+    zh: "git clone，把 ian-xiaohei-illustrations 子目录复制进 Codex skills 目录，然后说「Use $ian-xiaohei-illustrations 为这篇文章生成 N 张小黑配图」。注意：Claude Code 无内置 image_gen —— 在该 host 上要另接外部图像模型来执行 prompt-template.md。"
+  watch_out:
+    en: "(1) The real deliverable is an IMAGE from an external image model — this eval had no model credentials, so image quality / on-brand-ness is UNVERIFIED; the author's gallery proves 'it renders something', not 'it's good every time'. (2) Codex-native: SKILL.md calls the built-in image_gen; Claude Code lacks it, so on Park's stack the generation step needs an external model wired to the prompt. (3) Chinese labels in the image are prone to typos / hallucinated tags / style drift — the skill itself admits this and asks for human review. (4) Single author, 9 commits, ~6 weeks old, no CI, no automated eval — longevity untested (bus-factor 1). (5) Body illustrations ONLY — not covers / KV, not PPT infographics, not editable vectors, not cute mascots."
+    zh: "(1) 真正的产物是外部图像模型出的「图」—— 本次评估无图像模型凭证，图的质量 / 是否 on-brand 未经验证；作者示例图只证明「能出东西」，不证明「每次都好」。(2) Codex 原生：SKILL.md 调用内置 image_gen；Claude Code 没有 —— Park 的栈上生成步骤要另接外部模型执行 prompt。(3) 图里中文易出错字 / 幻觉标签 / 风格漂移，skill 自己也承认，需人工检查。(4) 单一作者、9 commits、约 6 周新、无 CI、无自动化 eval —— 长期维护未验证（bus-factor 1）。(5) 只做正文配图 —— 不做封面 / KV、不做 PPT 信息图、不做可编辑矢量、不做可爱 IP。"
+  examples:
+    - context:
+        en: "You wrote a Chinese long-read on building a one-person company with AI."
+        zh: "你写完一篇讲「用 AI 做一人公司」的中文长文。"
+      you_say:
+        en: "Don't generate yet — analyze where this article needs illustrations and give me a ~5-image shot list."
+        zh: "先不要生图 —— 分析这篇文章哪里值得配图，给我一份 5 张左右的 shot list。"
+      what_happens:
+        en: "Returns a shot list: per image = which paragraph it follows, theme, core idea, structure type, what 小黑 is doing, suggested Chinese labels. No images yet."
+        zh: "返回 shot list：每张 = 放在哪段后、主题、核心意思、结构类型、小黑在做什么、建议中文标注。先不出图。"
+    - context:
+        en: "You have a single sharp claim you want to illustrate."
+        zh: "你有一句想配图的判断。"
+      you_say:
+        en: "Make one 16:9 body illustration for '信任不是喊出来的，而是一块证据一块证据铺过去'; 小黑 must carry the core action."
+        zh: "为「信任不是喊出来的，而是一块证据一块证据铺过去」生成一张 16:9 正文配图；小黑必须承担核心动作。"
+      what_happens:
+        en: "Invents a fresh low-tech metaphor, builds a prompt from prompt-template.md (pure white bg, sparse red/orange/blue Chinese labels, 小黑 as the actor), renders it, then QA-checks."
+        zh: "重新发明一个低科技隐喻，用 prompt-template.md 拼提示词（纯白底、少量红橙蓝中文标注、小黑当动作主体），出图，再 QA 检查。"
+    - context:
+        en: "A rendered image has a wrong '流程图' title in the top-left corner."
+        zh: "出的图左上角有个多余的「流程图」标题。"
+      you_say:
+        en: "Edit this image — remove only the top-left '流程图' title, keep everything else."
+        zh: "帮我编辑这张图，去掉左上角的「流程图」标题，其他保持不变。"
+      what_happens:
+        en: "Uses the edit prompt in prompt-template.md to inpaint the title area back to clean white, preserving characters / labels / composition."
+        zh: "用 prompt-template.md 的改图提示把标题区域补回干净白底，保留角色 / 标注 / 构图。"
+  next_step:
+    en: "(1) Have Vera run ONE real article through the full loop in Codex (or with an external image model wired in) — generate 4-8 images and score them against qa-checklist.md; this is the single action that lifts core_layer_tested from false and evidence from partial. (2) Pin one image model + params and spot-check cross-article style consistency. (3) Watch maintenance (commits / issue response) for a few weeks to see if the bus-factor-1 risk eases."
+    zh: "(1) 让 Vera 在 Codex（或外接图像模型）里跑完一篇真实文章的完整闭环 —— 生成 4-8 张并按 qa-checklist.md 逐项打分；这是把 core_layer_tested 从 false、evidence 从 partial 抬升的唯一动作。(2) 固定一个图像模型 + 参数，抽查跨文章风格一致性。(3) 观察维护度（commits / issue 响应）几周，看 bus-factor-1 风险是否缓解。"
+
+# === Deployment ==============================================================
+deployment:
+  installable: true
+  install_methods:
+    - method: "git clone + copy ./ian-xiaohei-illustrations into ${CODEX_HOME:-~/.codex}/skills/"
+      platform: "Codex (built-in image_gen); other agent hosts need an external image model"
+      complexity: easy
+  requires_compile: false
+  works_offline_after_install: false   # skill files are local, but every image
+                                        # render calls an external image model.
+  auto_update: false
+
+# === Third-party services ====================================================
+third_party_services:
+  - name: "外部图像模型 / external image model (Codex 内置 image_gen，或 nano-banana / Gemini / Flux 等)"
+    purpose: "实际把每条 prompt-template 渲染成 PNG 正文配图。skill 只产出提示词、shot list 与 QA 规则，不自带生成能力。"
+    required: true
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "按图计费或占用 agent host 的图像额度。默认走 Codex 内置 image_gen；Claude Code 无内置图像生成，必须自接外部模型。这是采用的硬门槛。"
+
+# === Workflow placement ======================================================
+workflow_placements:
+  - workflow_id: park-content-v1
+    stage_id: '05_production'
+    role: primary
+    reason:
+      en: "Produces the illustration assets (and their shot list) for a Chinese article — content production of a signature visual asset. Stage 05's expected artifact explicitly includes a 'shot list', which is exactly this skill's planning output."
+      zh: "为中文文章产出配图资产（及其 shot list）—— 正是内容生产阶段针对有识别度视觉资产要做的事。05 阶段的预期产物明确包含「分镜 / shot list」，正好是这个 skill 的策略输出。"
+  - workflow_id: park-content-v1
+    stage_id: '06_assembly'
+    role: support
+    reason:
+      en: "The rendered PNGs hand off downstream to the assembly step — e.g. gzh-design-skill places the image URLs into the paste-ready 公众号 HTML. Illustration production feeds creative assembly."
+      zh: "出的 PNG 向下游 assembly 交接 —— 例如由 gzh-design-skill 把图片 URL 放进可粘贴的公众号 HTML。配图生产喂给创意组装。"
+
+# === Internal architecture (Atom / Molecule / Compound) ======================
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: "Fixed sequential pipeline: digest article → shot list → per-image prompt (from a shared style-DNA + template) → external image model renders → QA checklist → save PNG. The LLM makes local choices (pick a cognitive anchor, choose a structure type, invent a metaphor) but performs no runtime sub-agent routing or plan generation → molecule, not compound. But the real generator is an EXTERNAL image model the skill neither ships nor can validate — so static evidence covers the prompt scaffolding only, and the core output layer stays untested. Not atom."
+    zh: "固定顺序 pipeline：消化正文 → shot list → 单张提示词（来自共享风格 DNA + 模板）→ 外部图像模型渲染 → QA checklist → 保存 PNG。LLM 只做局部判断（选认知锚点、选结构类型、发明隐喻），运行时不做子 agent 路由或计划生成 → molecule 而非 compound。但真正的生成器是一个 skill 既不自带也无法验证的外部图像模型 —— 所以静态证据只覆盖提示词脚手架，核心产物层始终未测。不是 atom。"
+  nodes:
+    - id: input
+      type: start
+      rank: 0
+      lane: 0
+      label:
+        en: "Chinese article / post / Notion / screenshot / topic"
+        zh: "中文文章 / 帖子 / Notion / 截图 / 主题"
+    - id: digest
+      type: step
+      rank: 1
+      lane: 0
+      label:
+        en: "Digest → pick cognitive anchors"
+        zh: "消化正文 → 选认知锚点"
+    - id: shotlist
+      type: step
+      rank: 2
+      lane: 0
+      label:
+        en: "Shot list (4-8 images)"
+        zh: "出 shot list（4-8 张）"
+    - id: prompt
+      type: step
+      rank: 3
+      lane: 0
+      label:
+        en: "Per-image prompt (style-DNA + template)"
+        zh: "单张提示词（风格 DNA + 模板）"
+    - id: render
+      type: decision
+      rank: 4
+      lane: 0
+      label:
+        en: "EXTERNAL image model renders (unverified)"
+        zh: "外部图像模型渲染（未验证）"
+    - id: qa
+      type: step
+      rank: 5
+      lane: 0
+      label:
+        en: "QA checklist → regen / edit"
+        zh: "QA checklist → 重生成 / 改图"
+    - id: output
+      type: end
+      rank: 6
+      lane: 0
+      label:
+        en: "Save PNG to assets/<slug>-illustrations/"
+        zh: "保存 PNG 到 assets/<slug>-illustrations/"
+  edges:
+    - {from: input, to: digest}
+    - {from: digest, to: shotlist}
+    - {from: shotlist, to: prompt}
+    - {from: prompt, to: render}
+    - {from: render, to: qa}
+    - {from: qa, to: output}
+
+# === Comparison ==============================================================
+similar_repos:
+  - slug: "nicobailon--visual-explainer"
+    shared_purpose:
+      en: "An agent skill that turns a concept into a visual instead of leaving it as text."
+      zh: "把一个概念变成可视化产物、而不是停留在文字的 agent skill。"
+    this_better_at:
+      en: "A distinct hand-drawn IP (小黑) and a deliberate anti-PPT / anti-slop style-DNA tuned for Chinese 公众号 body illustrations — brand-consistent aesthetic identity, not generic diagrams."
+      zh: "有独特手绘 IP（小黑）+ 专为中文公众号正文配图调过的反 PPT / 反 slop 风格 DNA —— 是有品牌识别度的美学，而非通用图表。"
+    other_better_at:
+      en: "Renders deterministic, code-generated output (Mermaid + Chart.js HTML that opens in the browser, editable, 6-host support) with NO external image model — so its core output is statically verifiable, whereas ian-xiaohei's core is an unverifiable image-model render."
+      zh: "产出确定性、代码生成的产物（Mermaid + Chart.js HTML，浏览器打开、可编辑、支持 6 个 host），且不需外部图像模型 —— 核心产物静态可验证，而 ian-xiaohei 的核心是无法静态验证的图像模型出图。"
+  - slug: "isjiamu--gzh-design-skill"
+    shared_purpose:
+      en: "Both serve the 公众号 content pipeline for Chinese creators."
+      zh: "都服务中文创作者的公众号内容管线。"
+    this_better_at:
+      en: "Produces the body ILLUSTRATIONS (an upstream visual asset) with a signature IP — the creative-content half gzh-design does not do."
+      zh: "产出正文配图（上游视觉资产）+ 有识别度的 IP —— gzh-design 不做的创意内容那半。"
+    other_better_at:
+      en: "Formats + assembles the article into paste-ready 公众号 HTML with deterministic validator scripts (a verifiable core). It CONSUMES image URLs — so the two are complementary handoff partners, not substitutes (Vera → gzh-design)."
+      zh: "把文章排版 + 组装成可粘贴公众号 HTML，带确定性校验脚本（核心可验证）。它消费图片 URL —— 所以两者是互补的交接关系而非替代（Vera → gzh-design）。"

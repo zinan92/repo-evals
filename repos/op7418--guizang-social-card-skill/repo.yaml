@@ -1,0 +1,297 @@
+# repo.yaml — guizang-social-card-skill dossier
+# Evaluated 2026-07-09 by Mark (Claude Code / claude-opus-4-8) for Park Agent OS.
+# Feeds the new Vera (视觉/配图 Manager) role: covers/cards for the 公众号 pipeline.
+
+# === Identity ================================================================
+owner: op7418
+repo: guizang-social-card-skill
+display_name: guizang-social-card · 归藏社交卡片技能
+repo_url: https://github.com/op7418/guizang-social-card-skill
+
+repo_type: skill
+archetype: hybrid-skill
+
+# Fixed pipeline: intake → page-plan → pick style+theme → copy seed template →
+# fill layout recipes → HTML→PNG render → deterministic layout validator. The
+# LLM fills copy + makes local design choices (which theme, which of 28 recipes,
+# crop/object-position) but does NO runtime sub-agent routing or plan generation
+# → molecule, not compound. The two validators are embedded deterministic atoms.
+layer: molecule
+
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-07-09"
+version_tested: "main@cf4b810 (2026-07-01 push, package v1.0.0)"
+
+# === Maintainer / ecosystem signals (verified via gh api) ====================
+stars: 4808
+archived: false
+has_license: true          # AGPL-3.0. gh api spdx_id = AGPL-3.0 (clean, unlike
+                           # some sibling skills). LICENSE = full 34524-byte AGPL.
+                           # NOTE: package.json mislabels "license":"ISC" — a
+                           # boilerplate slip; the governing license is AGPL-3.0.
+multilingual_readme: true  # README.md (zh) + README.en.md
+release_pipeline_score: 1  # no git tags / releases / CI (gh api: 0 releases,
+                           # 0 tags); version history lives in HANDOFF.md
+                           # (v0.15…) + package.json v1.0.0. Score-neutral (<2).
+eval_discipline_score: 2   # TWO real validators: check-skill-docs.mjs (verified
+                           # running, 27/27 checks, exit 0) + a 9-rule Playwright
+                           # DOM validator (validate-social-deck.mjs); package.json
+                           # test scripts; qa-checklist.md; PRODUCT.md retrospectives.
+recently_active: true      # created 2026-05-27, pushed 2026-07-01 (≈8 days pre-eval)
+
+business_category: content
+use_case_tags: ["social-card", "xiaohongshu-carousel", "wechat-cover-pair", "live-photo", "html-to-png"]
+
+notes: |
+  归藏（op7418）系列的社交卡片 skill，是 guizang-ppt-skill 的姊妹项目、Humanizer-zh
+  的同门。4808★ / 398 forks，仓库年轻但活跃（2026-05-27 建，2026-07-01 push）。
+  与纯 prompt-skill 不同：它是 hybrid-skill，核心产物由**确定性 HTML→PNG 管线**产出
+  （填充固定像素的单文件 CSS 种子模板，再用 Playwright 截图），不是图像模型——所以核心
+  比 sibling guizang-material-illustration（核心图由外部图像模型渲染）更可测。
+
+  本次评估实测（隔离 clone /tmp/veval-guizang-card，commit cf4b810）：
+    - node scripts/check-skill-docs.mjs（test:docs，零依赖，只用 node:fs）
+      → 27/27 doc-integrity 检查全 PASS，exit 0。确定性校验 SKILL/refs/PRODUCT/HANDOFF
+        含所有必需护栏与能力段落、并拦截 root-output 回归。真实生效。
+    - 静态核对 28 版式（layout-recipes.md 中 M01-M16 + S01-S12 全部为独立 recipe ID）
+      + 10 主题（theme-presets.md：Editorial 6 + Swiss 4）+ 主题真正 wire 进模板
+      （editorial 模板 6 个 data-theme、swiss 模板 4 个 data-accent）。
+    - 两个种子模板均为自包含单文件 HTML（内联 CSS/tokens；仅字体/lucide/webp 走 CDN，
+      属装饰层，几何布局离线可算）。按 SKILL 从 swiss 种子拷出一套真实公众号 21:9+1:1
+      封面对（/tmp/veval-guizang-render/index.html，结构正确）。
+    - LICENSE 首部为完整 GNU AGPL-3.0；gh api spdx = AGPL-3.0。COMMERCIAL_LICENSING.md
+      表明双授权：AGPL 公共版 + 付费商业授权（深度内置 10-30 万 / 上架 3 万 / 分成）。
+
+  【同日追加实测】`npx playwright install chromium` 补装 chromium_headless_shell-1223
+  成功后，回头把上面"未实测"清单里最关键的两项跑通了（见 runs/2026-07-09/run-static-and-live-render/）：
+    - node validate-social-deck.mjs 真跑通：第一轮对样本封面对报 1 clean/0 fail/1 WARN
+      （R6：21:9 宽板标题渲成 2 行，超单行上限——校验器真的抓到了样本里的真实缺陷，不是空跑）；
+      改窄标题后第二轮 2 clean/0 fail/0 warn，exit 0。
+    - 真实渲出 21:9（2100×900）+ 1:1（1080×1080）封面对 PNG 并肉眼验收：Swiss 排版工整、
+      IKB 蓝仅用于 2 处（分类标签+分隔线，未越界）、中文渲染清晰无乱码、字重规则视觉成立、
+      留白节奏舒适——核心讽刺点由此翻转：此 repo 刻意做得比图像模型类 skill 更可测，
+      这次真的把优势证明出来了。
+  因此 core_layer_tested 由 false 改为 **true**，evidence_completeness 由 partial 升级为
+  **portable**（见 verdicts/2026-07-09-verdict-input.yaml，同日更新）。分数由 77 → **85**
+  （🏭 production / team）。
+
+  仍未实测：多主题/多文章的批量一致性（只验了 1 个主题 IKB × 1 篇样本文）、Live Photo→.pvt、
+  网络取图封面、地图组件、跨模型一致性、真机发布到公众号编辑器的落地效果（本次只验证到
+  "产出正确的静态 PNG"，未验证"发布到公众号平台"这一步）。evidence_completeness 未到 full，
+  legacy bucket 仍被封在 reusable（见 verdict ceiling_reasons）。
+
+# === Product view ============================================================
+product_view:
+  one_liner:
+    en: "From an article, script, screenshots, or a user video, produces on-brand social image sets — Xiaohongshu 3:4 carousels and WeChat 21:9+1:1 cover PAIRS — by filling deterministic single-file HTML seed templates (28 layouts × 10 themes, Editorial × Swiss) and screenshotting them to PNG with Playwright; a shipped 9-rule DOM validator plus a doc-integrity validator keep the layout honest instead of trusting the model's eye."
+    zh: "把文章、脚本、截图或用户视频，做成成品级社交图组——小红书 3:4 组图与公众号 21:9+1:1 封面对——做法是填充确定性的单文件 HTML 种子模板（28 版式 × 10 主题，电子杂志 × 瑞士风），再用 Playwright 截成 PNG；随包一个 9 条规则的 DOM 校验器 + 一个文档完整性校验器，用脚本兜住版式底线，而不是靠模型的眼力。"
+  persona:
+    en: "Park's visual/cover manager (Vera), who needs on-brand 公众号 covers and 小红书 carousels fast and hands the resulting image URLs to the gzh-design formatting skill."
+    zh: "Park 的视觉/配图 Manager（Vera），需要快速产出符合调性的公众号封面与小红书组图，再把图片 URL 交给 gzh-design 排版技能。"
+  scenario:
+    en: "An article is drafted and ready to publish to WeChat / Xiaohongshu, but it still needs a 21:9 header + 1:1 share cover (or a 5-9 page carousel) that looks designed — not AI-filler."
+    zh: "文章已成稿要发公众号 / 小红书，但还差一套 21:9 头图 + 1:1 分享卡（或 5-9 页组图），要看着像设计过的，不是 AI 凑数。"
+  without_this:
+    en: "Hand-design covers in Figma / Canva or prompt an image model — slow, off-brand drift page-to-page, wrong ratios, and text that crops the subject or fails the mobile-legibility bar."
+    zh: "在 Figma / Canva 手搓封面，或让图像模型生成——慢、每张调性飘、比例不对、文字压住主体或在手机上糊成一团。"
+  with_this:
+    en: "Tell the agent '把这篇做成公众号封面对，Swiss IKB' — it plans the pages, copies a seed template, fills layout recipes, renders 21:9 + 1:1 PNGs at exact sizes, and (when a browser is available) auto-checks overflow / density / font-caps."
+    zh: "对 agent 说「把这篇做成公众号封面对，Swiss IKB」——它拆页、拷种子模板、套版式骨架、按精确尺寸渲出 21:9 + 1:1 PNG，并（有浏览器时）自动核查溢出 / 密度 / 字号上限。"
+  cost_summary:
+    en: "Free & open-source but AGPL-3.0 (copyleft) with a parallel paid commercial license. Needs Node + Playwright + a Chromium browser binary (~150 MB) to render / validate. Image sourcing uses free stock libraries (Unsplash / Pexels / Flickr / Wallhaven) or a user-supplied photo; no API key for the core."
+    zh: "免费开源，但是 AGPL-3.0（copyleft），另有付费商业授权。渲染 / 校验需要 Node + Playwright + 一个 Chromium 浏览器二进制（约 150 MB）。取图走免费图库（Unsplash / Pexels / Flickr / Wallhaven）或用户自带图；核心不需要 API key。"
+  how:
+    en: "`npx skills add` the repo (or git clone into your skills dir), `npm install` (pulls Playwright), `npx playwright install chromium`, then say '做一套小红书图文 / 公众号封面对'. Render with `node render.mjs`; optionally `node validate-social-deck.mjs <task-dir>`."
+    zh: "`npx skills add` 安装（或 git clone 到 skills 目录），`npm install`（装 Playwright），`npx playwright install chromium`，然后说「做一套小红书图文 / 公众号封面对」。用 `node render.mjs` 出图；需要时 `node validate-social-deck.mjs <任务目录>` 核查。"
+  watch_out:
+    en: "(1) The layout validator is DETERMINISTIC but the final PNG's TASTE is not — it guarantees no-overflow / legible-font / filled-density, not that the cover is beautiful or on-brand; aesthetics still ride the model's run. (2) Hard dependency on Node + Playwright + a downloadable Chromium binary — in this isolated eval the browser could NOT be installed, so render / validate could not be exercised. (3) AGPL-3.0 copyleft: internal cover-making does NOT trigger it, but modify-and-redistribute or building an external SaaS / product on it triggers AGPL (must open-source) OR requires the author's paid commercial license (¥100k-300k deep-embed / ¥30k listing / revenue-share). (4) package.json mislabels the license as 'ISC' — the governing LICENSE is full AGPL-3.0. (5) It only makes the IMAGE — copy compression + real photos still need a human/model; poor source photos read as filler. (6) Live Photo delivery needs an iPhone / AirDrop path; desktop can't publish .pvt."
+    zh: "(1) 版式校验是确定性的，但成品 PNG 的「审美」不是——它只保证不溢出 / 字号可读 / 密度够，不保证封面好看或符合调性，审美仍看模型那次发挥。(2) 硬依赖 Node + Playwright + 可下载的 Chromium 二进制——本次隔离评估装不上浏览器，渲染 / 校验未能实跑。(3) AGPL-3.0 copyleft：内部做封面自用不触发，但改代码再分发、或基于它做对外 SaaS / 产品会触发 AGPL（须开源）或需作者的付费商业授权（深度内置 10-30 万 / 上架 3 万 / 分成）。(4) package.json 把 license 误标成 'ISC'——真正生效的 LICENSE 是完整 AGPL-3.0。(5) 它只出图——文案压缩与真实照片仍需人 / 模型；素材图差会显得像凑数。(6) Live Photo 交付需要 iPhone / AirDrop，桌面端发不了 .pvt。"
+  examples:
+    - context:
+        en: "A 公众号 article is drafted and needs a cover pair."
+        zh: "一篇公众号文章成稿了，需要一套封面对。"
+      you_say:
+        en: "把这篇做成公众号封面对：21:9 头图 + 1:1 分享卡，Swiss IKB 蓝，视觉一致。"
+        zh: "把这篇做成公众号封面对：21:9 头图 + 1:1 分享卡，Swiss IKB 蓝，视觉一致。"
+      what_happens:
+        en: "Derives a short 1:1 title from the long 21:9 title (title-shortener), builds both in one HTML at exact ratios (2100×900 + 1080×1080) plus a pair-preview, renders 2 PNGs; hands the URLs to gzh-design's cover slot."
+        zh: "从长 21:9 标题派生 1:1 短标题（title-shortener），在同一 HTML 里按精确比例建两块（2100×900 + 1080×1080）+ 配对预览，渲出 2 张 PNG；把 URL 交给 gzh-design 的封面槽。"
+    - context:
+        en: "A product-review long-read is heading to Xiaohongshu."
+        zh: "一篇产品测评长文要发小红书。"
+      you_say:
+        en: "基于这份测评做一套 5 张小红书 3:4，Swiss，优先 KPI Tower / H-Bar。"
+        zh: "基于这份测评做一套 5 张小红书 3:4，Swiss，优先 KPI Tower / H-Bar。"
+      what_happens:
+        en: "Extracts a page plan (1 cover hook + 4 point pages), fills S09 KPI-Tower / S10 H-Bar recipes across 5 .poster.xhs boards, renders a 5-image carousel."
+        zh: "拆页（1 张封面钩子 + 4 张要点页），把 S09 KPI-Tower / S10 H-Bar 骨架填进 5 块 .poster.xhs，渲出 5 张组图。"
+    - context:
+        en: "A short coffee video should become a motion card."
+        zh: "一段短咖啡视频想做成动态卡。"
+      you_say:
+        en: "把这个咖啡视频做成小红书 5 秒 Live Photo，文字压安静区，避开杯子和手。"
+        zh: "把这个咖啡视频做成小红书 5 秒 Live Photo，文字压安静区，避开杯子和手。"
+      what_happens:
+        en: "Checks the first frame passes the static-card crop / subject rules, keeps text in a quiet zone, packages JPG + MOV into a .pvt for iPhone publishing (5s Xiaohongshu / 3s WeChat)."
+        zh: "先确认首帧过静态卡的裁切 / 主体规则、文字落安静区，把 JPG + MOV 打包成 .pvt 供 iPhone 发布（小红书 5s / 公众号 3s）。"
+  next_step:
+    en: "(1) Provision a Chromium binary and RUN `validate-social-deck.mjs` on a real render — lifts core_layer_tested→true for the deterministic-layout claim and evidence→portable. (2) Drive one real article→公众号封面对 end-to-end and eyeball the PNG for on-brand (exercises the core aesthetic claim). (3) Test one Live Photo→.pvt and one web-sourced-image cover to cover the untested branches. (4) Keep Park's usage internal-only so AGPL copyleft stays dormant, and correct the package.json ISC→AGPL mislabel upstream."
+    zh: "(1) 装上 Chromium 二进制并对一次真实渲染跑 `validate-social-deck.mjs`——把确定性版式 claim 的 core_layer_tested 提到 true、证据升到 portable。(2) 真跑一篇文章→公众号封面对端到端，肉眼确认 PNG 调性（覆盖核心审美 claim）。(3) 测一条 Live Photo→.pvt 与一张网络取图封面，补上未测分支。(4) 保持 Park 仅内部使用以让 AGPL copyleft 保持休眠，并向上游修正 package.json 的 ISC→AGPL 误标。"
+
+# === Deployment ==============================================================
+deployment:
+  installable: true
+  install_methods:
+    - method: "npx skills add https://github.com/op7418/guizang-social-card-skill --skill guizang-social-card-skill"
+      platform: "any agent with a skills dir (Claude Code / Codex / Cursor)"
+      complexity: moderate
+    - method: "git clone into ~/.claude/skills/guizang-social-card-skill (then npm install + npx playwright install chromium)"
+      platform: "any (Node 18+, Playwright, Chromium ~150MB)"
+      complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false   # needs a Chromium download to render/validate;
+                                        # image sourcing + Google Fonts hit the network
+  auto_update: false
+
+# === Third-party services ====================================================
+third_party_services:
+  - name: "Playwright + Chromium"
+    purpose: "确定性 HTML→PNG 渲染引擎 + validate-social-deck.mjs 版式校验；需下载约 150MB 浏览器二进制"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "开源免费；隔离环境本次未能下到匹配的 chromium build（render/validate 因此未跑）"
+  - name: "Google Fonts (Inter / Noto Serif&Sans SC / Playfair / IBM Plex Mono)"
+    purpose: "精确排版字体；离线时回退系统字体，几何布局仍成立"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "装饰层依赖，非必需"
+  - name: "免费图库 Unsplash / Pexels / Flickr CC / Wallhaven"
+    purpose: "用户无图时的兜底取图（用户图优先）；落本地 + 写 SOURCES.md"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "版权未核实，SKILL 要求向用户披露后由用户判断"
+  - name: "Mapbox / OSM static tiles + unpkg (lucide icons)"
+    purpose: "地图组件（旅行路线）与图标；仅对应版式用到"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "可选组件"
+
+# === Workflow placement ======================================================
+workflow_placements:
+  - workflow_id: park-content-v1
+    stage_id: '05_production'
+    role: primary
+    reason:
+      en: "Produces the cover / card VISUAL ASSET the piece needs before it can be published — the 21:9+1:1 封面对 or the 小红书 carousel. This is Vera's core 封面/社交卡片 lane, mirroring how the sibling guizang-material-illustration is placed at 05 (it produces the middle image and hands off)."
+      zh: "在内容生产阶段产出成品前需要的封面 / 卡片视觉 ASSET——21:9+1:1 封面对或小红书组图。这是 Vera 的封面 / 社交卡片主线，与 sibling guizang-material-illustration 放 05（产出中间图再交接）一致。"
+  - workflow_id: park-content-v1
+    stage_id: '06_assembly'
+    role: support
+    reason:
+      en: "The 公众号 cover PNG is placed INTO the assembly artifact by gzh-design's cover slot — guizang-social-card supplies the image URL, gzh-design assembles the article HTML. (For a standalone 小红书 deck the rendered carousel is itself near-final, so its 06 role is stronger than a pure asset-producer's.)"
+      zh: "公众号封面 PNG 被 gzh-design 的封面槽放进组装产物——guizang-social-card 供图 URL，gzh-design 组装文章 HTML。（对独立小红书组图，渲出的组图本身已接近成品，所以它的 06 角色比纯产 asset 的 skill 更强。）"
+
+# === Internal architecture (Atom / Molecule / Compound) ======================
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: "Fixed sequential pipeline. The LLM fills copy and makes LOCAL design choices (Editorial vs Swiss, which of 28 recipes, which of 10 themes, crop / object-position) but performs NO runtime sub-agent routing or plan generation — that makes it a molecule, not a compound. The HTML→PNG render + the two validators are embedded deterministic atoms; the layout gate could not be executed in isolation (no browser)."
+    zh: "固定顺序 pipeline。LLM 只填文案、做局部设计判断（选 Editorial 还是 Swiss、28 个骨架挑哪个、10 套主题选哪套、裁切 / object-position），运行时不做子 agent 路由或计划生成——所以是 molecule 而非 compound。HTML→PNG 渲染 + 两个校验器是嵌入的确定性 atom；版式关卡在隔离环境未能执行（无浏览器）。"
+  nodes:
+    - id: input
+      type: start
+      rank: 0
+      lane: 0
+      label:
+        en: "Article / script / screenshots / subtitles / photo / video"
+        zh: "文章 / 脚本 / 截图 / 字幕 / 照片 / 视频"
+    - id: intake
+      type: step
+      rank: 1
+      lane: 0
+      label:
+        en: "Intake: platform · ratio · style · images"
+        zh: "Intake：平台 · 比例 · 风格 · 图源"
+    - id: plan
+      type: step
+      rank: 2
+      lane: 0
+      label:
+        en: "Extract story → page plan (hook + pages)"
+        zh: "抽故事 → 拆页计划（钩子 + 分页）"
+    - id: style
+      type: step
+      rank: 3
+      lane: 0
+      label:
+        en: "Pick Editorial | Swiss + 1 of 10 themes"
+        zh: "选 Editorial | Swiss + 10 主题选 1"
+    - id: template
+      type: step
+      rank: 4
+      lane: 0
+      label:
+        en: "Copy seed template + fill 28 layout recipes"
+        zh: "拷种子模板 + 套 28 版式骨架"
+    - id: render
+      type: step
+      rank: 5
+      lane: 0
+      label:
+        en: "Playwright HTML → PNG (fixed-px boards)"
+        zh: "Playwright HTML → PNG（固定像素画板）"
+    - id: validate
+      type: decision
+      rank: 6
+      lane: 0
+      label:
+        en: "validate-social-deck R1-R9 (0 FAIL?)"
+        zh: "validate-social-deck R1-R9（0 FAIL？）"
+    - id: output
+      type: end
+      rank: 7
+      lane: 0
+      label:
+        en: "小红书 deck / 公众号 21:9+1:1 封面对 PNG"
+        zh: "小红书组图 / 公众号 21:9+1:1 封面对 PNG"
+  edges:
+    - {from: input, to: intake}
+    - {from: intake, to: plan}
+    - {from: plan, to: style}
+    - {from: style, to: template}
+    - {from: template, to: render}
+    - {from: render, to: validate}
+    - {from: validate, to: output}
+
+# === Comparison ==============================================================
+similar_repos:
+  - slug: "ponyodong2026--ponyo-cover-anchor-system"
+    shared_purpose:
+      en: "Generate scroll-stopping social covers / cards for Chinese content platforms."
+      zh: "为中文内容平台产出能停住滑动的社交封面 / 卡片。"
+    this_better_at:
+      en: "The 公众号 21:9+1:1 cover PAIR as an exact-ratio system, and DETERMINISM: output is a fixed-px CSS render (HTML→PNG), not a prompt formula — same template + content → same pixels, no image-model / phrasing variance. Ships a real 9-rule DOM layout validator + a doc-integrity validator, a 28-recipe × 10-theme design system, and a Live Photo branch. It renders the whole card, not just the hook line."
+      zh: "公众号 21:9+1:1 封面对作为精确比例系统，以及确定性：产物是固定像素的 CSS 渲染（HTML→PNG），不是 prompt 公式——同模板 + 同内容 → 同像素，无图像模型 / 措辞漂移。随包一个真实的 9 规则 DOM 版式校验器 + 文档完整性校验器、28 骨架 × 10 主题的设计系统、以及 Live Photo 分支。它渲整张卡，不只是钩子那行字。"
+    other_better_at:
+      en: "Ponyo's cover-anchor / hook-title formulas are a lighter, prompt-native 小红书 sub-lane — no Node / Playwright / Chromium dependency, instant on any chatbot, and focused on the title-hook 'anchor' psychology rather than full-card layout. Complementary, not competing: ponyo shapes the hook line, guizang renders the whole cover. (No repo-evals dossier exists for ponyo yet — head-to-head is directional.)"
+      zh: "Ponyo 的封面锚点 / 钩子标题公式是更轻、prompt 原生的小红书子赛道——无 Node / Playwright / Chromium 依赖，任何 chatbot 即开即用，聚焦标题钩子的「锚点」心理而非整卡版式。互补而非竞争：ponyo 打磨钩子那行，guizang 渲整张封面。（ponyo 目前无 repo-evals dossier，头对头为方向性判断。）"
+  - slug: "op7418--guizang-material-illustration"
+    shared_purpose:
+      en: "Both are op7418 Vera-lane image skills that produce a visual ASSET for a content piece and hand it to a layout skill."
+      zh: "都是 op7418 的 Vera 系图像 skill：产出内容用的视觉 ASSET，再交给排版 skill。"
+    this_better_at:
+      en: "Renders DETERMINISTICALLY via HTML→PNG (a CSS layout it fully controls), so its core is testable by a shipped layout validator — whereas material-illustration's central image comes from an EXTERNAL image model it does not control (core_layer_tested=false, model-dependent). guizang-social-card also produces platform-ready FINISHED decks / cover pairs, not a loose middle image."
+      zh: "通过 HTML→PNG 确定性渲染（它完全掌控的 CSS 版式），核心可被随包版式校验器测——而 material-illustration 的中心图由它并不掌控的外部图像模型渲染（core_layer_tested=false，依赖模型）。guizang-social-card 还直接产平台可用的成品组图 / 封面对，而非一张散图。"
+    other_better_at:
+      en: "material-illustration solves the 'middle explanatory picture' problem guizang-card does not touch — Chinese-labeled mechanism diagrams, value-faithful chart beautification, reference-informed illustration. It is lighter (no Playwright / Chromium) since it delegates rendering to the image model."
+      zh: "material-illustration 解决 guizang-card 不碰的「中间那张解释图」——带中文标签的机制图、逐值保真的图表美化、参考辅助配图。它更轻（无 Playwright / Chromium），因为把渲染交给了图像模型。"

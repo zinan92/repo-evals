@@ -1,0 +1,82 @@
+run_name: static-and-live-render
+date: 2026-07-09
+area: core
+scenario: "Follow-up to run-static-and-render-attempt: install the exact Playwright Chromium build, run the deterministic layout gate for real against a sample WeChat cover pair, fix a real defect it caught, and render + eyeball real PNGs."
+provenance:
+  provenance_source: "auto"
+  captured: true
+  partial: false
+  runner: "cc"
+  agent: "Claude Code"
+  model: "claude-sonnet-5"
+  terminal_session_id: ""
+  agent_session_id: ""
+  repo_evals_commit: "95725c6"
+  target_repo_path: "/tmp/veval-guizang-card (depth-1 clone, isolated)"
+  target_repo_ref: "main"
+  target_repo_commit: "cf4b810"
+  evaluated_at: "2026-07-09T11:08:46Z"
+  transcript_path: ""
+  command_log_path: ""
+  session_replay_notes: "Follow-up same-day run: installed exact Playwright chromium build, ran validate-social-deck.mjs for real (caught+fixed a real R6 defect), rendered real PNGs, eyeballed them."
+evidence:
+  stored_in_repo: true
+  artifact_paths_are_relative: true
+  logs_copied: false
+  manifest_path: "artifacts/manifest.yaml"
+fixtures:
+  - "sample_wechat-cover-pair.html (built for run-static-and-render-attempt from assets/template-swiss-card.html + references/layout-recipes.md S01 + references/platform-specs.md WeChat Cover Pair)"
+commands:
+  - "npx playwright install chromium   # → downloaded chromium_headless_shell-1223 (exact version pinned by Playwright 1.60), exit 0"
+  - "node validate-social-deck.mjs sample_wechat-cover-pair.html   # 1st pass: 1 clean, 0 fails, 1 WARN (R6: 21:9 title wrapped 2 lines, cap 1)"
+  - "# fixed title: 'Skill 是能力商品，不是提示词' (16 chars, wrapped) → 'Skill 是能力商品' (8 chars, moved contrast clause to lead line)"
+  - "node validate-social-deck.mjs sample_wechat-cover-pair.html   # 2nd pass: 2 clean, 0 fails, 0 warns, exit 0"
+  - "playwright screenshot script (isolated poster sections, dedicated viewport per board) → sample_wechat-21x9.png (2100x900), sample_wechat-1x1.png (1080x1080)"
+result: pass
+results_by_claim:
+  claim-009: passed   # real PNGs rendered + eyeballed: Swiss layout clean, IKB accent disciplined (2 uses only), legible Chinese, no defects found
+  claim-010: passed   # validator ran for real, caught a real R6 defect on pass 1, clean 0/0 on pass 2 after fix
+artifacts:
+  - "artifacts/live-e2e_wechat-cover-pair_deck.html   # the sample deck (2 boards) that was validated + rendered"
+  - "artifacts/sample_wechat-21x9.png                 # real render, WeChat 21:9 main cover"
+  - "artifacts/sample_wechat-1x1.png                  # real render, WeChat 1:1 square cover"
+notes: |
+  This run closes the two biggest gaps from run-static-and-render-attempt (2026-07-09, earlier
+  same day): the deterministic layout gate (validate-social-deck.mjs) and the on-brand-render
+  claim were both `untested` there because Playwright's exact pinned Chromium build
+  (chromium_headless_shell-1223) wasn't available in the isolated environment's global cache
+  (only 1208 and 1228 were present, and Playwright pins the exact build — no substitution).
+
+  This run: `npx playwright install chromium` was re-attempted and succeeded this time
+  (~260MB download, completed within the session). With chromium_headless_shell-1223 present,
+  validate-social-deck.mjs actually ran against the same sample deck built earlier.
+
+  First pass caught a REAL defect in the sample: the 21:9 title ("Skill 是能力商品，不是提示词",
+  16 chars) wrapped to 2 lines, exceeding the S01 recipe's 1-line cap for wide boards (rule R6).
+  This is meaningful evidence the validator is not a no-op — it found an actual problem in
+  hand-assembled content. The title was shortened to "Skill 是能力商品" (8 chars), with the
+  contrast clause moved into the lead/support line. Second pass: 2/2 sections clean, 0 fails,
+  0 warns, exit 0.
+
+  Both poster sections were then screenshotted to real PNG (isolated per-board viewport,
+  avoiding a grid-layout screenshot artifact hit on the first screenshot attempt — documented
+  and discarded, not included as evidence). Both PNGs were visually inspected: Swiss editorial
+  layout is clean and correctly proportioned, the IKB blue accent (#002FA7) appears in exactly
+  two places (category tag color + accent rule) with no bleed into other elements, Noto Sans SC
+  renders all Chinese text legibly with no garbling, the "larger = lighter font-weight" rule is
+  visually correct (h-statement at weight 200 reads as intended), whitespace/padding rhythm is
+  comfortable, and the bottom metadata strip aligns precisely across both boards. No defects
+  were found on inspection.
+
+  Scope of what this DOES NOT cover: only one theme (IKB Blue) and one sample article were
+  tested — no multi-theme or multi-article consistency check. The Live Photo (.pvt) pipeline
+  was not exercised. Actual publishing to the WeChat Official Account editor (paste/upload
+  behavior on the real platform) was not tested — this run verifies "produces a correct static
+  PNG," not "survives the WeChat publish path." These remain untested (claim-013, claim-014).
+
+  Verdict impact: core_layer_tested flipped false→true, evidence_completeness upgraded
+  partial→portable, claim-009 and claim-010 flipped untested→passed. Recomputed score via
+  verdict_calculator.py: 77 → 85 (🏭 production / team tier), still capped at legacy bucket
+  `reusable` by evidence_completeness='portable' (see verdicts/2026-07-09-verdict-input.yaml
+  ceiling_reasons) — full/recommendable would need multi-theme + multi-article coverage and a
+  real WeChat-platform publish test.

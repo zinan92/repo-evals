@@ -1,0 +1,56 @@
+# Hand-authored verdict input for guizang-social-card-skill (2026-07-09).
+# UPDATED same day: a follow-up run installed the exact Playwright Chromium
+# build (chromium_headless_shell-1223), ran the deterministic layout gate for
+# real, and rendered real PNGs that were eyeballed. See
+# runs/2026-07-09/run-static-and-live-render/ for the full evidence trail.
+repo: op7418/guizang-social-card-skill
+archetype: hybrid-skill
+layer: molecule
+
+# TRUE (updated): validate-social-deck.mjs actually ran against the sample deck
+# after installing chromium_headless_shell-1223. First pass caught a real defect
+# (R6: 21:9 title wrapped to 2 lines, cap is 1) — proof the gate isn't a no-op.
+# After fixing the title, second pass: 2/2 clean, 0 fails, 0 warns, exit 0.
+# Real PNGs were then rendered and eyeballed (Swiss layout, IKB accent
+# discipline, legible Chinese, no defects found) — the core deliverable a user
+# would receive was actually produced and inspected, not just structurally
+# assembled.
+core_layer_tested: true
+
+# portable (upgraded from partial): reproducible evidence for BOTH the support
+# layer (doc validator 27/27) AND one real core e2e (deterministic layout gate
+# passed on a real render + PNGs eyeballed). Not "full" — only one theme (IKB),
+# one sample article, no batch/multi-theme consistency check, no live-photo
+# pipeline, no actual publish-to-WeChat verification.
+evidence_completeness: portable
+
+# Maintainer / ecosystem signals (verified via gh api)
+stars: 4808
+archived: false
+has_license: true
+multilingual_readme: true
+release_pipeline_score: 1   # no git tags/releases/CI (gh api: 0 releases, 0 tags);
+                            # version history in HANDOFF.md + package v1.0.0. <2 → score-neutral.
+eval_discipline_score: 2    # two real validators (one verified running 27/27) + test scripts + qa-checklist
+recently_active: true
+
+claims:
+  - {id: claim-001, priority: critical, status: passed,                area: support-validation}
+  - {id: claim-002, priority: critical, status: passed,                area: support-design-system}
+  - {id: claim-003, priority: high,     status: passed,                area: support-skill-integrity}
+  - {id: claim-004, priority: high,     status: passed,                area: support-templates}
+  - {id: claim-005, priority: high,     status: passed,                area: support-validation}
+  - {id: claim-006, priority: medium,   status: passed,                area: support-license}
+  - {id: claim-007, priority: medium,   status: passed,                area: support-livephoto}
+  - {id: claim-008, priority: critical, status: passed,                area: core-determinism}
+  - {id: claim-009, priority: critical, status: passed,                area: core}
+  - {id: claim-010, priority: high,     status: passed,                area: core-validation}
+  - {id: claim-011, priority: high,     status: passed_with_concerns,  area: core-triggering}
+  - {id: claim-012, priority: high,     status: passed,                area: core-scope}
+  - {id: claim-013, priority: medium,   status: untested,              area: core-livephoto}
+  - {id: claim-014, priority: medium,   status: untested,              area: core-imagery}
+
+override:
+  apply: false
+  bucket: null
+  reason: null

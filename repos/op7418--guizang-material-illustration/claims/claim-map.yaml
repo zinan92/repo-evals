@@ -1,0 +1,307 @@
+# Claim map for guizang-material-illustration (prompt-skill).
+# SUPPORT layer = static, verifiable facts (references, coherence, templates,
+#   protocols, QA, boundary, license) — fully checkable without running a model.
+# CORE layer = the real user outcome is an IMAGE rendered by an EXTERNAL image
+#   model this eval had no credentials to run → image-model-dependent, UNTESTED.
+# Statuses reflect the 2026-07-09 static eval (Mark, for Park / Vera).
+
+claims:
+  # --- SUPPORT layer (static, verifiable) --------------------------------
+
+  - id: claim-001
+    user_icon: "🔗"
+    user_title:
+      en: "The skill is structurally sound — no broken references"
+      zh: "skill 结构完整——没有断链"
+    user_description:
+      en: "Every file SKILL.md points at (6 references + assets/prompt-template.md) exists, and the YAML frontmatter is valid. An agent following the skill never hits a missing file and falls back to guessing."
+      zh: "SKILL.md 引用的每个文件(6 个 reference + assets/prompt-template.md)都存在,frontmatter 合法。agent 按 skill 走不会撞空文件、退化成瞎猜。"
+    title: SKILL.md 引用完整性 + frontmatter 合法(结构关)
+    source: SKILL.md
+    source_ref: "Visual System / File Handling 引用的 references/*.md + assets/prompt-template.md"
+    priority: critical
+    area: skill-integrity
+    statement: |
+      SKILL.md 引用的 6 个 reference(visual-style / prompt-patterns / chart-beautify /
+      use-cases-and-routing / reference-gathering / qa-checklist)与 assets/prompt-template.md
+      全部存在;frontmatter(name / description)合法非空。
+    evidence_needed: |
+      比对 SKILL.md 引用与仓库文件树;解析 frontmatter。
+    status: passed
+    evidence: |
+      文件树核对:6 个 references/*.md + assets/prompt-template.md 全部存在,0 断链。
+      frontmatter name=guizang-material-illustration、description(含大量中英触发词)齐全合法。
+      失效场景(未发生):任一 reference 缺失 → agent 读不到风格/图表/QA 规则 → skill 崩。
+
+  - id: claim-002
+    user_icon: "🧩"
+    user_title:
+      en: "The reference docs are coherent, not contradictory"
+      zh: "参考文档彼此一致、不打架"
+    user_description:
+      en: "The 6 reference files divide the work cleanly (style / prompt structures / chart / routing / reference lookup / QA) and don't contradict each other — labels ≤5 chars, one accent per set, data-preservation, no-fake-logos rules are stated consistently across files."
+      zh: "6 个 reference 分工清晰(风格/提示结构/图表/路由/参考/QA)、互不矛盾——标签≤5 字、每组一个强调色、数据保真、不贴假 logo 等规则在各文件里说法一致。"
+    title: references 内部一致、非矛盾
+    source: references/*.md
+    source_ref: "visual-style / prompt-patterns / chart-beautify / use-cases-and-routing / reference-gathering / qa-checklist"
+    priority: high
+    area: skill-coherence
+    statement: |
+      6 个 reference 的规则(标签长度、强调色、数据保真、参考只补事实不抄风格、
+      不贴假 logo、社交卡尺寸可读)彼此一致,无自相矛盾。
+    evidence_needed: |
+      通读 6 个 reference,核对交叉规则一致性。
+    status: passed
+    evidence: |
+      通读全部 6 个 reference:标签"2-5 字/3-5 个"、"每组一个 accent"、"只抽图表语义不继承截图样式"、
+      "参考只提取事实与视觉线索"、"不贴 flat logo 除非明确要求"在多处一致复述,无冲突。
+      失效场景(未发生):某文件说标签越多越好、另一文件说越少越好 → agent 无所适从。
+
+  - id: claim-003
+    user_icon: "🧱"
+    user_title:
+      en: "Ready-to-fill, constraint-rich prompt scaffolds are provided"
+      zh: "提供可直接填空、约束齐全的提示词外壳"
+    user_description:
+      en: "assets/prompt-template.md + prompt-patterns.md give a complete image-prompt shell plus 5 diagram structures (cycle / pipeline / hub / before-after / layer) and goal/time variants — each with exact-label, aspect-ratio, safe-margin and negative-constraint slots. The agent fills brackets, it doesn't invent structure."
+      zh: "assets/prompt-template.md + prompt-patterns.md 给出完整图像提示词外壳,外加 5 种图解结构(循环/管线/hub/前后/分层)与 goal/time 变体——每种都带精确标签、比例、安全区、负向约束的槽位。agent 只需填空,不必自造结构。"
+    title: 完整约束型提示词模板 + 图解结构库
+    source: assets/prompt-template.md + references/prompt-patterns.md
+    source_ref: "Base Prompt Shell / Cycle / Pipeline / Hub / Before-After / Layer / Label Repair"
+    priority: high
+    area: prompt-scaffold
+    statement: |
+      提供可直接填空的图像提示词外壳(含精确标签文字、比例、安全区、负向约束)与至少 5 种
+      可复用图解结构模板。
+    evidence_needed: |
+      核对 prompt-template.md + prompt-patterns.md 的模板完整度。
+    status: passed
+    evidence: |
+      prompt-template.md 是一份完整 base shell(Use case / Asset type / Primary request /
+      Chinese labels / Style / Composition / Lighting / Constraints);prompt-patterns.md 另有
+      cycle/pipeline/goal-evaluator/time-check/hub/before-after 6 个结构 + label-repair 重生模板。
+      即 agent 拿到的是"填空题"而非"作文题"。
+
+  - id: claim-004
+    user_icon: "📊"
+    user_title:
+      en: "A rigorous 'never fake the data' chart protocol is written down"
+      zh: "图表'不编数据'协议写得很硬"
+    user_description:
+      en: "chart-beautify.md extracts only chart semantics (type / title / values / axis / units / order / error bars), discards screenshot styling, mandates a Required-chart-accuracy block listing every exact value, and a 'reject if numerically wrong' QA. This is the discipline that stops invented numbers — as a written protocol (not a runtime validator)."
+      zh: "chart-beautify.md 只抽图表语义(类型/标题/数值/坐标/单位/类别序/误差线),丢掉截图样式,强制 Required chart accuracy 块逐值列明,并有'数据错就拒收'的 QA。这是防编数的纪律——作为书面协议(而非运行时校验器)。"
+    title: chart-beautify 数据优先协议 + Required-accuracy 块
+    source: references/chart-beautify.md
+    source_ref: "Principle / Prompt Requirements / QA Checklist"
+    priority: high
+    area: chart-protocol
+    statement: |
+      chart-beautify.md 规定:只抽图表语义、丢弃截图样式、提示词含逐值 Required chart accuracy 块、
+      "漂亮但数据错→拒收"的 QA。
+    evidence_needed: |
+      核对 chart-beautify.md 的抽取/保真/QA 规则完整度。
+    status: passed
+    evidence: |
+      chart-beautify.md 明列 Keep/Discard 清单、Required chart accuracy 逐值示例(y 轴刻度、条高、
+      类别名、数值标签精确到具体字符串)、"Do not accept an attractive chart with wrong data"。
+      注意:这是提示词纪律 + 人工 QA,不是确定性脚本——真伪仍须人工核(见 claim-010)。
+
+  - id: claim-005
+    user_icon: "🎣"
+    user_title:
+      en: "Trigger metadata is specific (but not live-verified here)"
+      zh: "触发元数据写得具体(但本次未在线验证)"
+    user_description:
+      en: "SKILL.md's description is packed with concrete trigger phrases (配图 / 带字插图 / 解释图 / 图表美化 / process-loop-system diagrams …) and agents/openai.yaml sets allow_implicit_invocation. The design is strong; whether it actually fires (and doesn't mis-fire) needs a live trigger test we did not run."
+      zh: "SKILL.md 的 description 塞满具体触发词(配图/带字插图/解释图/图表美化/process-loop-system diagrams…),agents/openai.yaml 设 allow_implicit_invocation。设计到位;是否真触发(且不误触)需要在线 trigger 测试,本次未跑。"
+    title: 触发词/隐式调用设计到位(未在线实测)
+    source: SKILL.md + agents/openai.yaml
+    source_ref: "frontmatter description / policy.allow_implicit_invocation"
+    priority: high
+    area: triggering
+    statement: |
+      description 含丰富且具体的中英触发词,openai.yaml 允许隐式调用;设计层面触发覆盖良好。
+    evidence_needed: |
+      静态核对 description 触发词;(缺)live trigger_test 的 precision/recall。
+    status: passed_with_concerns
+    evidence: |
+      静态证据强:description 列举 10+ 具体场景词。但未装进 live config 跑 trigger_test
+      (会触碰用户配置,受本次治理约束禁止)→ 记 passed_with_concerns:设计好、在线精度未测。
+
+  - id: claim-006
+    user_icon: "✅"
+    user_title:
+      en: "A pre-delivery QA checklist covers the real failure modes"
+      zh: "交付前 QA 清单覆盖真实翻车点"
+    user_description:
+      en: "qa-checklist.md checks the things that actually break these images: cropped subject, wrong/garbled Chinese labels, wrong chart numbers, accidental logos, unreadable-at-card-size. It's the human gate that catches what the image model gets wrong."
+      zh: "qa-checklist.md 检查真正会翻车的点:主体被裁、中文标签错/乱码、图表数字错、误加 logo、缩到卡片尺寸看不清。它是抓图像模型错误的人工关卡。"
+    title: 交付前 QA 清单
+    source: references/qa-checklist.md
+    source_ref: "Universal / Labels / Charts / Reference / Education"
+    priority: medium
+    area: qa
+    statement: |
+      qa-checklist.md 覆盖裁切、图内中文准确、图表数值精确、无误加 logo、社交卡尺寸可读等检查项。
+    evidence_needed: |
+      核对 qa-checklist.md 检查项覆盖度。
+    status: passed
+    evidence: |
+      qa-checklist.md 分 Universal/Labels/Charts/Reference-Informed/Education 五组,逐条列出
+      "错就重生/拒收"的判据。是配套 core 层的人工兜底,但需人真去执行才有效。
+
+  - id: claim-007
+    user_icon: "🧭"
+    user_title:
+      en: "Its boundary with layout skills is explicit"
+      zh: "与排版 skill 的边界写得清楚"
+    user_description:
+      en: "SKILL.md / use-cases-and-routing.md state plainly that this skill makes only the central illustration and defers full card / PPT layout to the social-card / PPT skill — so it composes cleanly instead of overlapping and fighting them."
+      zh: "SKILL.md / use-cases-and-routing.md 明确:本 skill 只做中心配图,整卡/PPT 排版交给 social-card / PPT skill——所以是干净衔接,而非职责重叠打架。"
+    title: 配图层×排版层边界明确
+    source: SKILL.md + references/use-cases-and-routing.md
+    source_ref: "This skill does not replace… / Boundary"
+    priority: medium
+    area: scope-boundary
+    statement: |
+      SKILL 明确只产中心配图,把整卡/PPT 排版交给 social-card / PPT skill。
+    evidence_needed: |
+      核对 SKILL.md + use-cases-and-routing.md 的边界声明。
+    status: passed
+    evidence: |
+      SKILL.md 开头即声明"focuses on the illustration layer, not the full social-card layout";
+      use-cases-and-routing.md 有 Boundary 节列出"does not own full PPT / 3:4 layout / CAD / logo design"。
+
+  - id: claim-008
+    user_icon: "⚖️"
+    user_title:
+      en: "NO license — no legal grant to use, modify, or redistribute"
+      zh: "无许可证——法律上未授权使用/修改/再分发"
+    user_description:
+      en: "There is no LICENSE file and GitHub reports no license, so the code is all-rights-reserved by default. Adopting, modifying, or redistributing it is a legal gray zone until the author adds a license. This is an ADOPTION FLAG, not a cosmetic gap."
+      zh: "没有 LICENSE 文件,GitHub 也报无许可证,所以默认保留所有权利(all-rights-reserved)。在作者补证之前,采用/修改/再分发都处于法律灰区。这是采用阻断旗标,不是表面瑕疵。"
+    title: NO LICENSE(采用阻断旗标)
+    source: repo
+    source_ref: "gh api license=null; contents/LICENSE + LICENSE.md → 404"
+    priority: medium
+    area: support-license
+    statement: |
+      仓库应带一个可用的开源许可证,授权采用方使用/修改/再分发。
+    evidence_needed: |
+      gh api repos/... license 字段 + contents/LICENSE 存在性。
+    status: failed
+    evidence: |
+      gh api license=null;contents/LICENSE 与 contents/LICENSE.md 均 404 → 确认真的没有许可证。
+      默认 all-rights-reserved。→ has_license=false,触发 −2 罚分,并作为采用前必须解决的旗标。
+      (记 medium/failed:在账本里显红,但不与 has_license 罚分重复计分。)
+
+  # --- CORE layer (image-model-dependent — UNTESTED, no credentials) -----
+
+  - id: claim-009
+    user_icon: "🖼"
+    user_title:
+      en: "Produces a usable, on-brand labeled illustration (UNVERIFIED)"
+      zh: "产出可用、on-brand 的带标签插画(未验证)"
+    user_description:
+      en: "The whole point: the external image model, driven by these prompts, renders a clean Swiss-editorial 3D Guizang illustration that actually explains the idea with correct Chinese labels. This is the core promise — and this eval had NO image-model credentials, so it is UNVERIFIED. Author docs/examples suggest 'it produces something,' not that the quality holds."
+      zh: "核心所在:外部图像模型在这些提示词驱动下,渲染出干净的 Swiss editorial 3D 归藏插画,并用正确中文标签真正把意思讲清楚。这是核心承诺——而本次评估**无图像模型凭证**,因此**未验证**。作者文档/案例只能证明'能出东西',不能证明'质量成立'。"
+    title: 核心承诺:可用 on-brand 带标签插画
+    source: README + SKILL.md
+    source_ref: "效果 / Workflow step 6-9"
+    priority: critical
+    area: core
+    statement: |
+      按 skill 的提示词计划,外部图像模型渲染出可用、风格统一、标签正确、能解释内容的归藏材质插画。
+    evidence_needed: |
+      带真实图像模型凭证跑一组题材,按 qa-checklist 对产出打分(可用性/on-brand/标签正确)。
+    status: untested
+    evidence: |
+      未实测:本次评估无图像模型凭证,且不得触碰用户凭证/浏览器(治理约束)。产物质量 image-model-dependent,
+      静态不可验。→ core_layer_tested=false。这是把它判 molecule(而非 atom 自动 core_tested=true)的核心原因。
+
+  - id: claim-010
+    user_icon: "🔢"
+    user_title:
+      en: "Chart output keeps the exact numbers (UNVERIFIED)"
+      zh: "图表产物逐值保真(未验证)"
+    user_description:
+      en: "The chart-beautify protocol is rigorous on paper, but whether the rendered image actually shows the exact axis ticks / bar heights / value labels (rather than the model quietly rounding or inventing) can only be seen by generating and checking. Not tested here."
+      zh: "chart-beautify 协议纸面严格,但渲染出的图是否真的呈现精确刻度/条高/数值标签(而非模型悄悄取整或编造),只有出图核对才知道。本次未测。"
+    title: 图表产物数据保真
+    source: references/chart-beautify.md
+    source_ref: "Required chart accuracy / QA"
+    priority: high
+    area: core
+    statement: |
+      渲染出的材质化图表,其坐标刻度、条高、数值标签与输入数据逐值一致。
+    evidence_needed: |
+      生成图表并逐值核对渲染结果 vs 输入数据。
+    status: untested
+    evidence: |
+      未实测(无凭证)。协议(claim-004)是强证据说"要求它保真",但"实际渲染是否保真"依赖图像模型发挥,
+      且无确定性校验兜底 → 未验证。
+  - id: claim-011
+    user_icon: "🔤"
+    user_title:
+      en: "In-image Chinese labels render legibly, not garbled (UNVERIFIED)"
+      zh: "图内中文标签清晰不乱码(未验证)"
+    user_description:
+      en: "The skill's signature feature is baking short Chinese labels INTO the image. Legible in-image CJK text is a known weak spot for most image models (garbling, wrong characters). The skill has mitigations (short labels, quiet plates, label-repair regen) but the real success rate was not measured here."
+      zh: "这个 skill 的招牌是把短中文标签直接生成在图里。清晰的图内中文对多数图像模型是已知弱点(乱码、错字)。skill 有缓解手段(短标签、留白底板、label-repair 重生),但真实成功率本次未测。"
+    title: 图内中文标签可读性
+    source: SKILL.md + references/visual-style.md
+    source_ref: "Text Rules / Text Inside The Image / Label Repair"
+    priority: high
+    area: core
+    statement: |
+      外部图像模型能稳定渲染出清晰、无乱码、字形正确的短中文标签。
+    evidence_needed: |
+      跨题材生成并统计中文标签正确率;观察 label-repair 重生的收敛性。
+    status: untested
+    evidence: |
+      未实测(无凭证)。skill 的缓解设计合理(2-5 字、留白底板、错了重生而非 HTML 硬贴),但这是
+      图像模型公认的难点,真实正确率未知 → 采用前最该实测的一项。
+
+  - id: claim-012
+    user_icon: "🔎"
+    user_title:
+      en: "Reference-informed images are factually accurate (UNVERIFIED)"
+      zh: "参考辅助图事实准确(未验证)"
+    user_description:
+      en: "For niche concepts / brands / apparatus / historical artifacts, the skill says to look up facts + stable visual cues first. Whether the resulting image is actually accurate (right parts, right cues, no fabricated certainty) was not tested."
+      zh: "对冷门概念/品牌/装置/历史物件,skill 要求先查事实 + 稳定视觉线索。最终图是否真的准确(部件对、线索对、不伪造确定性)本次未测。"
+    title: 参考辅助图准确性
+    source: references/reference-gathering.md
+    source_ref: "What To Gather / Prompting With References"
+    priority: medium
+    area: core
+    statement: |
+      参考辅助生成的图,其事实与视觉线索对目标受众足够准确,不伪造历史/科学细节。
+    evidence_needed: |
+      对若干冷门题材生成并请领域核对准确性。
+    status: untested
+    evidence: |
+      未实测(无凭证)。reference-gathering 协议边界清楚(只补事实、不抄风格),但准确性最终看
+      查参考 + 出图两步,均未运行。
+
+  - id: claim-013
+    user_icon: "📐"
+    user_title:
+      en: "Output stays legible at social-card size + hands off cleanly (UNVERIFIED)"
+      zh: "产物缩到卡片尺寸仍可读 + 干净衔接排版(未验证)"
+    user_description:
+      en: "The delivered image is meant to sit inside a social card at reduced size and be handed to the layout skill. Whether labels stay readable when scaled down, and whether the handoff to social-card actually works, was not tested here."
+      zh: "交付的图要缩小放进社交卡片,并交给排版 skill。缩放后标签是否仍可读、与 social-card 的衔接是否真的顺,本次未测。"
+    title: 卡片尺寸可读性 + 排版衔接
+    source: SKILL.md + references/visual-style.md
+    source_ref: "Ratios And Safe Area / 和 Social Card Skill 怎么配合"
+    priority: medium
+    area: core
+    statement: |
+      产物在社交卡片缩放尺寸下标签仍可读,并能作为中心图交给 social-card / PPT skill 排版。
+    evidence_needed: |
+      生成图 → 缩到卡片尺寸检查可读性 → 走一次 social-card 衔接。
+    status: untested
+    evidence: |
+      未实测(无凭证 + 未联动 social-card skill)。skill 有安全区/尺寸/"别把中心图缩太小"的规则,
+      但端到端衔接效果未验。
