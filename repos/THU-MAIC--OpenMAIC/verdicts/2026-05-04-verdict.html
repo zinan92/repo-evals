@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bucket="usable" data-category="available">
+<html lang="zh" data-bucket="usable" data-category="available">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,26 +98,108 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
 
 /* --- Decision Card — top-of-dossier 5-second answer --------------- */
 .decision-card {
-  margin: 0 0 36px;
-  padding: 16px 20px 18px;
-  background: var(--surface-1);
+  margin: 0 0 32px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.86fr) minmax(320px, 1.14fr);
+  gap: 1px;
+  background: var(--border-strong);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
+  overflow: hidden;
   box-shadow: 0 0 0 1px var(--bucket-soft);
 }
-.dec-eyebrow {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--font-mono); font-size: 11px;
-  color: var(--bucket); text-transform: uppercase;
-  letter-spacing: 0.16em; font-weight: 700;
-  padding-bottom: 12px; margin-bottom: 12px;
-  border-bottom: 1px solid var(--border);
+.dec-primary,
+.dec-next-panel,
+.dec-boundaries {
+  background: var(--surface-1);
+}
+.dec-primary {
+  padding: 24px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 230px;
+  border-left: 4px solid var(--bucket);
+  grid-row: span 2;
+}
+.dec-kicker,
+.dec-panel-label {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
 }
 .dec-cat-emoji { font-size: 16px; }
-.dec-score {
-  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
-  color: var(--text-2); letter-spacing: 0.06em;
+.dec-action {
+  margin: 20px 0 14px;
+  font-size: clamp(36px, 6vw, 58px);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  color: var(--bucket);
 }
+.dec-action-copy {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  max-width: 42ch;
+}
+.dec-scoreline {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.dec-scoreline span {
+  padding: 4px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+.dec-next-panel {
+  padding: 24px 26px;
+}
+.dec-next-panel .dec-panel-label { color: var(--bucket); }
+.dec-panel-body {
+  margin-top: 10px;
+  font-size: 18px;
+  line-height: 1.52;
+  color: var(--text);
+  max-width: 62ch;
+}
+.dec-boundaries {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+}
+.dec-boundary {
+  background: var(--surface-1);
+  padding: 18px 20px 20px;
+}
+.dec-dont .dec-panel-label { color: var(--warn); }
+.dec-risk .dec-panel-label { color: var(--bad); }
+.dec-boundary-body {
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+@media (max-width: 860px) {
+  .decision-card { grid-template-columns: 1fr; }
+  .dec-primary { grid-row: auto; min-height: 0; }
+  .dec-boundaries { grid-template-columns: 1fr; }
+}
+
+/* Legacy decision-row classes may appear in old committed HTML. Keep a
+   compact fallback so older dossiers remain readable before regeneration. */
 .dec-row {
   display: grid; grid-template-columns: 24px 110px 1fr;
   gap: 10px; align-items: baseline;
@@ -182,7 +264,10 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
   overflow-x: auto;
 }
 .wp-canvas svg {
-  display: block; max-width: 100%; height: auto;
+  display: block;
+  width: max(100%, var(--wp-width));
+  min-width: var(--wp-width);
+  height: auto;
   text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
 }
 
@@ -419,7 +504,7 @@ html[lang="zh"] .wp-lang-zh { display: block; }
 }
 
 /* --- Similar repos comparison ------------------------------------- */
-.similar-section { margin-bottom: 80px; }
+.similar-section { margin-bottom: 54px; }
 .similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
 .similar-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -489,7 +574,7 @@ html[lang="zh"] .wp-lang-zh { display: block; }
 .similar-pending-row + .similar-pending-row { margin-top: 8px; }
 
 /* --- Workflow diagram (atom / molecule / compound) ----------------- */
-.workflow-diagram-section { margin-bottom: 80px; }
+.workflow-diagram-section { margin-bottom: 54px; }
 .wd-why {
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -524,7 +609,13 @@ html[lang="zh"] .wp-lang-zh { display: block; }
   padding: 14px;
   overflow-x: auto;
 }
-.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+.wd-canvas svg {
+  display: block;
+  width: max(100%, var(--wd-width));
+  min-width: var(--wd-width);
+  height: auto;
+  color: var(--text-2);
+}
 
 .wd-shape { stroke-width: 1.5; }
 .wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
@@ -564,7 +655,7 @@ html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
 }
 
 /* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
-.benefits-section { margin-bottom: 80px; }
+.benefits-section { margin-bottom: 54px; }
 .benefits-grid {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 20px;
@@ -1030,7 +1121,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
 
 .section-head {
   display: flex; align-items: baseline; gap: 16px;
-  margin-bottom: 36px; padding-bottom: 18px;
+  margin-bottom: 24px; padding-bottom: 14px;
   border-bottom: 1px solid var(--border);
 }
 .section-head h2 {
@@ -1042,7 +1133,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-section { margin-bottom: 56px; }
+section { margin-bottom: 44px; }
 
 .capabilities-grid {
   display: grid;
@@ -1518,7 +1609,7 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
   </header>
 
-  <section class="decision-card"><div class="dec-eyebrow"><span class="dec-cat-emoji">🛠</span><span class="i18n" data-en="Decision snapshot" data-zh="决策快照"></span><span class="dec-score">75 / 100</span></div><div class="dec-row dec-use"><div class="dec-icon">✅</div><div class="dec-label"><span class="i18n" data-en="Use" data-zh="用"></span></div><div class="dec-body"><span class="i18n" data-en="Yes for self-use; not yet for production-critical paths." data-zh="自用可以;还不到放进生产关键路径的程度。"></span></div></div><div class="dec-row dec-dont"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Don&#x27;t use for" data-zh="别用在"></span></div><div class="dec-body"><span class="i18n" data-en="AGPL-3.0 is strong copyleft; if you&#x27;re at a company that prohibits AGPL deployment, check first." data-zh="AGPL-3.0 是强 copyleft 协议;公司禁用 AGPL 的话先查清楚。"></span></div></div><div class="dec-row dec-next"><div class="dec-icon">🎯</div><div class="dec-label"><span class="i18n" data-en="Best next step" data-zh="最佳下一步"></span></div><div class="dec-body"><span class="i18n" data-en="Use open.maic.chat hosted demo on a real paper (one you actually need to understand)." data-zh="用 open.maic.chat 托管 demo 跑一篇真实论文(你真心要搞懂的那种)。"></span></div></div><div class="dec-row dec-risk"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Main risk" data-zh="主要风险"></span></div><div class="dec-body"><span class="i18n" data-en="Compound layer — runtime LLM decisions can&#x27;t be statically verified; needs a logged scenario." data-zh="复合物层 —— 运行时 LLM 决策无法静态验证;需要有日志的真实场景。"></span></div></div></section>
+  <section class="decision-card"><div class="dec-primary"><div class="dec-kicker"><span class="dec-cat-emoji">🛠</span><span class="i18n" data-en="Adoption verdict" data-zh="采用结论"></span></div><div class="dec-action"><span class="i18n" data-en="Use with limits" data-zh="有限采用"></span></div><p class="dec-action-copy"><span class="i18n" data-en="Good for self-use or evaluation. Do not put it on a production-critical path until the missing evidence is closed." data-zh="适合自用或试用。缺口没补上之前,不要放进生产关键路径。"></span></p><div class="dec-scoreline"><span>75 / 100</span><span>Available</span></div></div><div class="dec-next-panel"><div class="dec-panel-label"><span class="i18n" data-en="Next move" data-zh="下一步"></span></div><div class="dec-panel-body"><span class="i18n" data-en="Use open.maic.chat hosted demo on a real paper (one you actually need to understand)." data-zh="用 open.maic.chat 托管 demo 跑一篇真实论文(你真心要搞懂的那种)。"></span></div></div><div class="dec-boundaries"><div class="dec-boundary dec-dont"><div class="dec-panel-label"><span class="i18n" data-en="Do not use for" data-zh="别用在"></span></div><div class="dec-boundary-body"><span class="i18n" data-en="AGPL-3.0 is strong copyleft; if you&#x27;re at a company that prohibits AGPL deployment, check first." data-zh="AGPL-3.0 是强 copyleft 协议;公司禁用 AGPL 的话先查清楚。"></span></div></div><div class="dec-boundary dec-risk"><div class="dec-panel-label"><span class="i18n" data-en="Main risk" data-zh="主要风险"></span></div><div class="dec-boundary-body"><span class="i18n" data-en="Compound layer — runtime LLM decisions can&#x27;t be statically verified; needs a logged scenario." data-zh="复合物层 —— 运行时 LLM 决策无法静态验证;需要有日志的真实场景。"></span></div></div></div></section>
 
   <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip-biz-row"><span class="biz-cat-pill biz-content"><span>📝</span><span class="i18n" data-en="Content" data-zh="内容类"></span></span></div><div class="use-case-row"><span class="use-case-eyebrow"><span class="i18n" data-en="I want to&nbsp;…" data-zh="想干嘛?"></span></span><span class="use-case-pill use-case-educational-content"><span class="i18n" data-en="Educational content" data-zh="教育内容"></span></span></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-dim"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-active"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
 
@@ -1531,7 +1622,7 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
   
 
-  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is compound" data-zh="为什么是复合物"></span></div><div class="wd-why-body"><span class="i18n" data-en="Compound — at three diamond decision nodes, the LangGraph
+  <section class="workflow-diagram-section" id="workflow"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is compound" data-zh="为什么是复合物"></span></div><div class="wd-why-body"><span class="i18n" data-en="Compound — at three diamond decision nodes, the LangGraph
 orchestrator (running the LLM at runtime) decides which sub-agent
 fires next based on the topic + the current classroom state.
 (1) &quot;Outline strategy?&quot; — branches to depth-first vs breadth-first
@@ -1540,9 +1631,9 @@ based on topic complexity. (2) &quot;Need whiteboard or simulation?&quot;
 content type (math vs process). (3) &quot;Quiz or continue lecturing?&quot;
 — branches based on student-engagement signal. A molecule would
 follow a fixed pipeline; OpenMAIC dispatches differently per
-classroom. That&#x27;s compound." data-zh="复合物 —— 在 3 个菱形决策节点上,LangGraph 编排器(运行时跑 LLM)根据主题 + 课堂当前状态决定下一个子 agent 触发哪个。(1)&quot;大纲策略?&quot; 分深度优先 vs 广度;(2)&quot;白板 or 模拟?&quot; 分到 whiteboard-agent vs simulation-agent(数学 vs 过程内容);(3)&quot;quiz or 继续讲?&quot; 按学生参与度信号分。分子是固定流水线;OpenMAIC 每堂课不一样。这是复合物。"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 736 500" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M368.0,62 C368.0,70.0 368.0,70.0 368.0,78" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,122 C368.0,130.0 118.0,130.0 118.0,138" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="121.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="134.0" class="wd-edge-label wd-lang-en">deep</text><text x="243.0" y="134.0" class="wd-edge-label wd-lang-zh">深</text></g><path d="M368.0,122 C368.0,130.0 618.0,130.0 618.0,138" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="465.0" y="121.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="493.0" y="134.0" class="wd-edge-label wd-lang-en">broad</text><text x="493.0" y="134.0" class="wd-edge-label wd-lang-zh">广</text></g><path d="M118.0,182 C118.0,190.0 368.0,190.0 368.0,198" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M618.0,182 C618.0,190.0 368.0,190.0 368.0,198" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,242 C368.0,250.0 118.0,250.0 118.0,258" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="241.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="254.0" class="wd-edge-label wd-lang-en">math</text><text x="243.0" y="254.0" class="wd-edge-label wd-lang-zh">数学</text></g><path d="M368.0,242 C368.0,250.0 618.0,250.0 618.0,258" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="465.0" y="241.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="493.0" y="254.0" class="wd-edge-label wd-lang-en">process</text><text x="493.0" y="254.0" class="wd-edge-label wd-lang-zh">过程</text></g><path d="M118.0,302 C118.0,310.0 368.0,310.0 368.0,318" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M618.0,302 C618.0,310.0 368.0,310.0 368.0,318" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,362 C368.0,370.0 368.0,370.0 368.0,378" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,422 C368.0,430.0 118.0,430.0 118.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="421.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="434.0" class="wd-edge-label wd-lang-en">checkpoint</text><text x="243.0" y="434.0" class="wd-edge-label wd-lang-zh">检查</text></g><path d="M118.0,482 C118.0,460.0 368.0,460.0 368.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,422 C368.0,430.0 368.0,430.0 368.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="340.0" y="421.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="368.0" y="434.0" class="wd-edge-label wd-lang-en">continue</text><text x="368.0" y="434.0" class="wd-edge-label wd-lang-zh">继续</text></g><g class="wd-node wd-type-start"><rect x="268" y="18" width="200" height="44" rx="22.0" class="wd-shape wd-start"/><text x="368.0" y="37.0" class="wd-label wd-lang-en">Topic / document</text><text x="368.0" y="37.0" class="wd-label wd-lang-zh">主题 / 文档</text><text x="368.0" y="51.0" class="wd-label wd-lang-en">(paper / chapter / brief)</text><text x="368.0" y="51.0" class="wd-label wd-lang-zh">(论文 / 章节 / 简介)</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,78 468,100.0 368.0,122 268,100.0" class="wd-shape wd-decision"/><text x="368.0" y="97.0" class="wd-label wd-lang-en">Outline strategy?</text><text x="368.0" y="97.0" class="wd-label wd-lang-zh">大纲策略?</text><text x="368.0" y="111.0" class="wd-label wd-lang-en">(LLM picks depth-first / breadth)</text><text x="368.0" y="111.0" class="wd-label wd-lang-zh">(LLM 选深度优先 / 广度)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="138" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="157.0" class="wd-label wd-lang-en">Depth-first outline</text><text x="118.0" y="157.0" class="wd-label wd-lang-zh">深度优先大纲</text><text x="118.0" y="171.0" class="wd-label wd-lang-en">(1 hard concept, deep)</text><text x="118.0" y="171.0" class="wd-label wd-lang-zh">(1 个难点深挖)</text></g><g class="wd-node wd-type-atom"><rect x="518" y="138" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="618.0" y="157.0" class="wd-label wd-lang-en">Breadth-first outline</text><text x="618.0" y="157.0" class="wd-label wd-lang-zh">广度优先大纲</text><text x="618.0" y="171.0" class="wd-label wd-lang-en">(5 concepts, light)</text><text x="618.0" y="171.0" class="wd-label wd-lang-zh">(5 个概念,浅)</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,198 468,220.0 368.0,242 268,220.0" class="wd-shape wd-decision"/><text x="368.0" y="217.0" class="wd-label wd-lang-en">Whiteboard or simulation?</text><text x="368.0" y="217.0" class="wd-label wd-lang-zh">白板 或 模拟?</text><text x="368.0" y="231.0" class="wd-label wd-lang-en">(LLM decides per topic)</text><text x="368.0" y="231.0" class="wd-label wd-lang-zh">(LLM 按主题决定)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="258" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="277.0" class="wd-label wd-lang-en">whiteboard-agent</text><text x="118.0" y="277.0" class="wd-label wd-lang-zh">whiteboard-agent</text><text x="118.0" y="291.0" class="wd-label wd-lang-en">(math / diagram)</text><text x="118.0" y="291.0" class="wd-label wd-lang-zh">(数学 / 图)</text></g><g class="wd-node wd-type-atom"><rect x="518" y="258" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="618.0" y="277.0" class="wd-label wd-lang-en">simulation-agent</text><text x="618.0" y="277.0" class="wd-label wd-lang-zh">simulation-agent</text><text x="618.0" y="291.0" class="wd-label wd-lang-en">(interactive process)</text><text x="618.0" y="291.0" class="wd-label wd-lang-zh">(互动过程)</text></g><g class="wd-node wd-type-atom"><rect x="268" y="318" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="368.0" y="337.0" class="wd-label wd-lang-en">teacher-agent + peer-agent</text><text x="368.0" y="337.0" class="wd-label wd-lang-zh">teacher-agent + peer-agent</text><text x="368.0" y="351.0" class="wd-label wd-lang-en">(with TTS streaming)</text><text x="368.0" y="351.0" class="wd-label wd-lang-zh">(TTS 流式)</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,378 468,400.0 368.0,422 268,400.0" class="wd-shape wd-decision"/><text x="368.0" y="397.0" class="wd-label wd-lang-en">Quiz or continue?</text><text x="368.0" y="397.0" class="wd-label wd-lang-zh">quiz 或 继续?</text><text x="368.0" y="411.0" class="wd-label wd-lang-en">(LLM reads engagement)</text><text x="368.0" y="411.0" class="wd-label wd-lang-zh">(LLM 读参与度)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="438" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="457.0" class="wd-label wd-lang-en">quiz-agent</text><text x="118.0" y="457.0" class="wd-label wd-lang-zh">quiz-agent</text><text x="118.0" y="471.0" class="wd-label wd-lang-en">(checkpoint)</text><text x="118.0" y="471.0" class="wd-label wd-lang-zh">(检查点)</text></g><g class="wd-node wd-type-end"><rect x="268" y="438" width="200" height="44" rx="22.0" class="wd-shape wd-end"/><text x="368.0" y="457.0" class="wd-label wd-lang-en">Classroom delivered</text><text x="368.0" y="457.0" class="wd-label wd-lang-zh">课堂上完</text><text x="368.0" y="471.0" class="wd-label wd-lang-en">(you actually learned)</text><text x="368.0" y="471.0" class="wd-label wd-lang-zh">(你真学到了)</text></g></svg></div></section>
+classroom. That&#x27;s compound." data-zh="复合物 —— 在 3 个菱形决策节点上,LangGraph 编排器(运行时跑 LLM)根据主题 + 课堂当前状态决定下一个子 agent 触发哪个。(1)&quot;大纲策略?&quot; 分深度优先 vs 广度;(2)&quot;白板 or 模拟?&quot; 分到 whiteboard-agent vs simulation-agent(数学 vs 过程内容);(3)&quot;quiz or 继续讲?&quot; 按学生参与度信号分。分子是固定流水线;OpenMAIC 每堂课不一样。这是复合物。"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas" style="--wd-width:736px"><svg viewBox="0 0 736 500" xmlns="http://www.w3.org/2000/svg" width="736" height="500" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M368.0,62 C368.0,70.0 368.0,70.0 368.0,78" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,122 C368.0,130.0 118.0,130.0 118.0,138" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="121.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="134.0" class="wd-edge-label wd-lang-en">deep</text><text x="243.0" y="134.0" class="wd-edge-label wd-lang-zh">深</text></g><path d="M368.0,122 C368.0,130.0 618.0,130.0 618.0,138" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="465.0" y="121.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="493.0" y="134.0" class="wd-edge-label wd-lang-en">broad</text><text x="493.0" y="134.0" class="wd-edge-label wd-lang-zh">广</text></g><path d="M118.0,182 C118.0,190.0 368.0,190.0 368.0,198" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M618.0,182 C618.0,190.0 368.0,190.0 368.0,198" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,242 C368.0,250.0 118.0,250.0 118.0,258" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="241.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="254.0" class="wd-edge-label wd-lang-en">math</text><text x="243.0" y="254.0" class="wd-edge-label wd-lang-zh">数学</text></g><path d="M368.0,242 C368.0,250.0 618.0,250.0 618.0,258" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="465.0" y="241.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="493.0" y="254.0" class="wd-edge-label wd-lang-en">process</text><text x="493.0" y="254.0" class="wd-edge-label wd-lang-zh">过程</text></g><path d="M118.0,302 C118.0,310.0 368.0,310.0 368.0,318" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M618.0,302 C618.0,310.0 368.0,310.0 368.0,318" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,362 C368.0,370.0 368.0,370.0 368.0,378" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,422 C368.0,430.0 118.0,430.0 118.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="215.0" y="421.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="243.0" y="434.0" class="wd-edge-label wd-lang-en">checkpoint</text><text x="243.0" y="434.0" class="wd-edge-label wd-lang-zh">检查</text></g><path d="M118.0,482 C118.0,460.0 368.0,460.0 368.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M368.0,422 C368.0,430.0 368.0,430.0 368.0,438" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-edge-label-group"><rect x="340.0" y="421.0" width="56" height="18" rx="9" class="wd-edge-label-bg"/><text x="368.0" y="434.0" class="wd-edge-label wd-lang-en">continue</text><text x="368.0" y="434.0" class="wd-edge-label wd-lang-zh">继续</text></g><g class="wd-node wd-type-start"><rect x="268" y="18" width="200" height="44" rx="22.0" class="wd-shape wd-start"/><text x="368.0" y="37.0" class="wd-label wd-lang-en">Topic / document</text><text x="368.0" y="37.0" class="wd-label wd-lang-zh">主题 / 文档</text><text x="368.0" y="51.0" class="wd-label wd-lang-en">(paper / chapter / brief)</text><text x="368.0" y="51.0" class="wd-label wd-lang-zh">(论文 / 章节 / 简介)</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,78 468,100.0 368.0,122 268,100.0" class="wd-shape wd-decision"/><text x="368.0" y="97.0" class="wd-label wd-lang-en">Outline strategy?</text><text x="368.0" y="97.0" class="wd-label wd-lang-zh">大纲策略?</text><text x="368.0" y="111.0" class="wd-label wd-lang-en">(LLM picks depth-first / breadth)</text><text x="368.0" y="111.0" class="wd-label wd-lang-zh">(LLM 选深度优先 / 广度)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="138" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="157.0" class="wd-label wd-lang-en">Depth-first outline</text><text x="118.0" y="157.0" class="wd-label wd-lang-zh">深度优先大纲</text><text x="118.0" y="171.0" class="wd-label wd-lang-en">(1 hard concept, deep)</text><text x="118.0" y="171.0" class="wd-label wd-lang-zh">(1 个难点深挖)</text></g><g class="wd-node wd-type-atom"><rect x="518" y="138" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="618.0" y="157.0" class="wd-label wd-lang-en">Breadth-first outline</text><text x="618.0" y="157.0" class="wd-label wd-lang-zh">广度优先大纲</text><text x="618.0" y="171.0" class="wd-label wd-lang-en">(5 concepts, light)</text><text x="618.0" y="171.0" class="wd-label wd-lang-zh">(5 个概念,浅)</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,198 468,220.0 368.0,242 268,220.0" class="wd-shape wd-decision"/><text x="368.0" y="217.0" class="wd-label wd-lang-en">Whiteboard or simulation?</text><text x="368.0" y="217.0" class="wd-label wd-lang-zh">白板 或 模拟?</text><text x="368.0" y="231.0" class="wd-label wd-lang-en">(LLM decides per topic)</text><text x="368.0" y="231.0" class="wd-label wd-lang-zh">(LLM 按主题决定)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="258" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="277.0" class="wd-label wd-lang-en">whiteboard-agent</text><text x="118.0" y="277.0" class="wd-label wd-lang-zh">whiteboard-agent</text><text x="118.0" y="291.0" class="wd-label wd-lang-en">(math / diagram)</text><text x="118.0" y="291.0" class="wd-label wd-lang-zh">(数学 / 图)</text></g><g class="wd-node wd-type-atom"><rect x="518" y="258" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="618.0" y="277.0" class="wd-label wd-lang-en">simulation-agent</text><text x="618.0" y="277.0" class="wd-label wd-lang-zh">simulation-agent</text><text x="618.0" y="291.0" class="wd-label wd-lang-en">(interactive process)</text><text x="618.0" y="291.0" class="wd-label wd-lang-zh">(互动过程)</text></g><g class="wd-node wd-type-atom"><rect x="268" y="318" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="368.0" y="337.0" class="wd-label wd-lang-en">teacher-agent + peer-agent</text><text x="368.0" y="337.0" class="wd-label wd-lang-zh">teacher-agent + peer-agent</text><text x="368.0" y="351.0" class="wd-label wd-lang-en">(with TTS streaming)</text><text x="368.0" y="351.0" class="wd-label wd-lang-zh">(TTS 流式)</text></g><g class="wd-node wd-type-decision"><polygon points="368.0,378 468,400.0 368.0,422 268,400.0" class="wd-shape wd-decision"/><text x="368.0" y="397.0" class="wd-label wd-lang-en">Quiz or continue?</text><text x="368.0" y="397.0" class="wd-label wd-lang-zh">quiz 或 继续?</text><text x="368.0" y="411.0" class="wd-label wd-lang-en">(LLM reads engagement)</text><text x="368.0" y="411.0" class="wd-label wd-lang-zh">(LLM 读参与度)</text></g><g class="wd-node wd-type-atom"><rect x="18" y="438" width="200" height="44" rx="8" class="wd-shape wd-atom"/><text x="118.0" y="457.0" class="wd-label wd-lang-en">quiz-agent</text><text x="118.0" y="457.0" class="wd-label wd-lang-zh">quiz-agent</text><text x="118.0" y="471.0" class="wd-label wd-lang-en">(checkpoint)</text><text x="118.0" y="471.0" class="wd-label wd-lang-zh">(检查点)</text></g><g class="wd-node wd-type-end"><rect x="268" y="438" width="200" height="44" rx="22.0" class="wd-shape wd-end"/><text x="368.0" y="457.0" class="wd-label wd-lang-en">Classroom delivered</text><text x="368.0" y="457.0" class="wd-label wd-lang-zh">课堂上完</text><text x="368.0" y="471.0" class="wd-label wd-lang-en">(you actually learned)</text><text x="368.0" y="471.0" class="wd-label wd-lang-zh">(你真学到了)</text></g></svg></div></section>
 
-  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zarazhangrui--codebase-to-course/verdicts/2026-05-05-verdict.html"><strong>zarazhangrui/codebase-to-course</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 60</span><span class="similar-layer-pill layer-atom">atom</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both turn one input (topic / paper / codebase) into an educational artefact via AI multi-agent. Both bet on AI handling the structuring + presentation work the user doesn&#x27;t want to do by hand." data-zh="都把一个输入(主题 / 论文 / 代码库)通过 AI 多 agent 变成教学产物。都让 AI 处理用户不想手做的结构化 + 呈现工作。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="OpenMAIC wins at" data-zh="OpenMAIC 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Live interactive classroom — AI teacher + AI peer + whiteboard + TTS streaming. Real-time experience, not a static artefact. Multi-LLM + multi-TTS provider support so users can pick." data-zh="真正实时互动课堂 —— AI 老师 + AI 同学 + 白板 + TTS 流式。实时体验,不是静态产物。多 LLM + 多 TTS,用户可选。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="codebase-to-course wins at" data-zh="codebase-to-course 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Static markdown course generation — easier to fork, easier to version-control, easier to hand-edit. When you want documentation rather than a live classroom, codebase-to-course is the right fit." data-zh="静态 markdown 课程生成 —— 更容易 fork、版本管理、手改。当你要文档而不是实时课堂时,codebase-to-course 更合适。"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zarazhangrui--frontend-slides/verdicts/2026-04-07-verdict.html"><strong>zarazhangrui/frontend-slides</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 62</span><span class="similar-layer-pill layer-atom">atom</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both generate visual learning artefacts from a topic input. Both rely on LLM to do the layout + structure work." data-zh="都从主题输入生成视觉学习产物。都靠 LLM 做布局 + 结构工作。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="OpenMAIC wins at" data-zh="OpenMAIC 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Multi-modal experience (slides + whiteboard + TTS + quizzes + simulations) coordinated by multi-agent backend. When the goal is &quot;lecture-quality teaching&quot;, not &quot;deck for a talk&quot;, this is the right fit." data-zh="多模态体验(幻灯片 + 白板 + TTS + quiz + 模拟)由多 agent 后端协调。当目标是&quot;讲课级教学&quot;而不是&quot;做个 talk 的 deck&quot;时,这是对的。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="frontend-slides wins at" data-zh="frontend-slides 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Lighter weight — output is just static HTML slides you host on Vercel. No LangGraph, no per-classroom TTS bill, easier to fork + edit. When you only need a deck, frontend-slides wins on simplicity." data-zh="更轻 —— 输出就是静态 HTML 幻灯片放 Vercel。没有 LangGraph,没有每堂课 TTS 账单,更容易 fork + 改。当你只需要 deck 时,frontend-slides 简洁取胜。"></span></div></div></article></div></section>
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 当前 repo-evals 语料库。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zarazhangrui--codebase-to-course/verdicts/2026-05-05-verdict.html"><strong>zarazhangrui/codebase-to-course</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 60</span><span class="similar-layer-pill layer-atom">atom</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both turn one input (topic / paper / codebase) into an educational artefact via AI multi-agent. Both bet on AI handling the structuring + presentation work the user doesn&#x27;t want to do by hand." data-zh="都把一个输入(主题 / 论文 / 代码库)通过 AI 多 agent 变成教学产物。都让 AI 处理用户不想手做的结构化 + 呈现工作。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="OpenMAIC wins at" data-zh="OpenMAIC 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Live interactive classroom — AI teacher + AI peer + whiteboard + TTS streaming. Real-time experience, not a static artefact. Multi-LLM + multi-TTS provider support so users can pick." data-zh="真正实时互动课堂 —— AI 老师 + AI 同学 + 白板 + TTS 流式。实时体验,不是静态产物。多 LLM + 多 TTS,用户可选。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="codebase-to-course wins at" data-zh="codebase-to-course 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Static markdown course generation — easier to fork, easier to version-control, easier to hand-edit. When you want documentation rather than a live classroom, codebase-to-course is the right fit." data-zh="静态 markdown 课程生成 —— 更容易 fork、版本管理、手改。当你要文档而不是实时课堂时,codebase-to-course 更合适。"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zarazhangrui--frontend-slides/verdicts/2026-04-07-verdict.html"><strong>zarazhangrui/frontend-slides</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 62</span><span class="similar-layer-pill layer-atom">atom</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both generate visual learning artefacts from a topic input. Both rely on LLM to do the layout + structure work." data-zh="都从主题输入生成视觉学习产物。都靠 LLM 做布局 + 结构工作。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="OpenMAIC wins at" data-zh="OpenMAIC 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Multi-modal experience (slides + whiteboard + TTS + quizzes + simulations) coordinated by multi-agent backend. When the goal is &quot;lecture-quality teaching&quot;, not &quot;deck for a talk&quot;, this is the right fit." data-zh="多模态体验(幻灯片 + 白板 + TTS + quiz + 模拟)由多 agent 后端协调。当目标是&quot;讲课级教学&quot;而不是&quot;做个 talk 的 deck&quot;时,这是对的。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="frontend-slides wins at" data-zh="frontend-slides 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Lighter weight — output is just static HTML slides you host on Vercel. No LangGraph, no per-classroom TTS bill, easier to fork + edit. When you only need a deck, frontend-slides wins on simplicity." data-zh="更轻 —— 输出就是静态 HTML 幻灯片放 Vercel。没有 LangGraph,没有每堂课 TTS 账单,更容易 fork + 改。当你只需要 deck 时,frontend-slides 简洁取胜。"></span></div></div></article></div></section>
 
   <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>Vercel one-click deploy</code></td><td>Vercel</td><td><span class="badge complexity-easy">easy</span></td></tr><tr><td><code>docker compose up</code></td><td>any (Docker)</td><td><span class="badge complexity-moderate">moderate</span></td></tr><tr><td><code>Hosted demo at open.maic.chat</code></td><td>any browser</td><td><span class="badge complexity-easy">easy</span> <span class="badge complexity-easy"><span class="i18n" data-en="no install" data-zh="免安装"></span></span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🛠</span><span class="i18n" data-en="Requires compile / build step" data-zh="需要编译 / build 步骤"></span></li><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">OpenAI / Anthropic / Google / DeepSeek / Grok</div><div class="service-purpose">LLM for classroom generation</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-paid"><span class="i18n" data-en="💰 Paid API key" data-zh="💰 需付费 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Per-classroom token cost can be substantial — pick a model + lock spend before opening to non-tech users</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">OpenAI / Azure / GLM / Qwen / MiniMax TTS</div><div class="service-purpose">Voice synthesis for AI teachers</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-free"><span class="i18n" data-en="🆓 Free tier API key" data-zh="🆓 免费版 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Optional — disable TTS for text-only mode; self-hosted VoxCPM2 is free</div></div></div></div></section>
 
@@ -1777,7 +1868,7 @@ status: evaluated
 
 <script>
   const LANG_KEY = 'repoEvalsVerdictLang';
-  const INITIAL_LANG = "auto";
+  const INITIAL_LANG = "zh";
   function detectLang() {
     try {
       const p = new URLSearchParams(location.search).get('lang');

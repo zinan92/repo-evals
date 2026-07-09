@@ -204,8 +204,8 @@ claims:
       en: "Article in → an on-brand, usable 公众号 封面对 / 小红书 deck PNG out"
       zh: "文章进 → 符合调性、可用的公众号封面对 / 小红书组图 PNG 出"
     user_description:
-      en: "The core molecule promise: from an article the agent renders a cover pair / carousel that is actually on-brand and publish-usable — the user-facing deliverable Vera would hand off. Aesthetics are subjective and were NOT eyeballed end-to-end here."
-      zh: "核心 molecule 承诺：从文章渲出真正符合调性、可直接发布的封面对 / 组图——正是 Vera 要交付的产物。审美主观，本次未端到端肉眼验收。"
+      en: "The core user promise was tested on one real WeChat cover-pair sample: the PNGs rendered at the right sizes, looked coherent, kept Chinese text legible, and had no obvious visual defects on inspection. This proves the basic cover-pair path, not every theme or article type."
+      zh: "核心用户承诺已用一套真实公众号封面对样本验证：PNG 按正确尺寸渲出，整体调性一致，中文可读，肉眼检查没有明显视觉缺陷。这证明基础封面对路径成立，但不等于所有主题、所有文章类型都已覆盖。"
     title: 核心 molecule 承诺：文章 → 可用封面对 / 组图 PNG
     source: README
     source_ref: "使用流程 / 效果"

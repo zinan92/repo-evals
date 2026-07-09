@@ -1,0 +1,147 @@
+# Identity
+owner: cooderl
+repo: wewe-rss
+display_name: WeWe RSS
+repo_url: https://github.com/cooderl/wewe-rss
+repo_type: app
+archetype: api-service
+layer: atom
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-19"
+version_tested: "v2.6.1 (Docker latest, last image push 2024-12-15) · main archived 2026-03-20"
+
+# Maintainer / ecosystem
+stars: 9428
+archived: true
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 2   # tagged releases v2.6.1 etc. + docker hub publish, but no longer maintained
+eval_discipline_score: 0    # no test suite visible in repo
+recently_active: false      # archived; last commit 2026-03-20, last docker image 2024-12-15
+
+business_category: content
+use_case_tags: ["rss", "wechat-public-account", "self-host", "reader"]
+
+notes: |
+  自托管的微信公众号 → RSS 转换服务。基于微信读书账号扫码登录，把订阅的公众号
+  历史文章和新文章打成 .atom/.rss/.json/OPML 输出，定时 cron 更新，可选全文模式。
+  v2 完全重写（NestJS + Prisma + tRPC + React），有 Docker 镜像 (cooderl/wewe-rss
+  + cooderl/wewe-rss-sqlite)、docker-compose、Zeabur 一键部署模板。
+
+  ⚠ 重要状态：仓库已于 2026-03-20 后 archived。代码可读不可贡献。
+  Docker `latest` tag 停在 v2.6.1（2024-12-15），停止更新约 17 个月。
+  服务底层依赖一个由作者运营的转发服务 weread.111965.xyz —— 这个域名一停
+  整套服务就废，且作者已 archive 仓库，没有继任者承接转发服务的承诺。
+
+product_view:
+  one_liner:
+    en: "Self-host a NestJS service that turns WeChat Official Account subscriptions into clean .rss / .atom / .json / OPML feeds (via a WeRead account login). Docker-compose deploy in minutes — but the repo is archived and the underlying forward proxy is single-maintainer."
+    zh: "自托管的微信公众号 RSS 工具：扫码登录微信读书，把你订阅的公众号变成 .rss / .atom / .json / OPML 输出，Docker Compose 几分钟跑起来。但仓库已 archive、底层转发服务靠作者一个域名续命，建议自用而非给团队上生产。"
+  persona:
+    en: "Reader who's tired of WeChat's app and wants Official Accounts to land in their RSS reader (Feedly / Reeder / NetNewsWire / Inoreader), comfortable running docker-compose on a VPS or homelab."
+    zh: "厌倦微信 App 阅读、想把公众号塞回 RSS reader（Feedly / Reeder / NetNewsWire / Inoreader 等）的读者；会在 VPS 或家用服务器上 docker-compose 跑东西。"
+  scenario:
+    en: "You follow 30+ WeChat Official Accounts but they live in an algorithmic feed inside the WeChat app. You want them in your existing RSS reader with full-text, filtering, and the same workflow as every other source."
+    zh: "你关注了三十多个公众号，但它们都困在微信 App 的算法 feed 里。你想让它们和别的信息源一样进入你日常的 RSS reader，支持全文、标题过滤、统一工作流。"
+  without_this:
+    en: "Open WeChat → scroll Subscriptions tab → tap each account → read inside WeChat's browser. No archiving, no full-text search, no cross-source workflow. Or hack together a scraper that breaks every time WeChat changes."
+    zh: "打开微信 → 订阅号 → 一个个点 → 在微信浏览器里读。不能归档、不能全文搜索、和别的信息源割裂。或者自己写个爬虫，每次微信改接口就坏。"
+  with_this:
+    en: "Login once with a WeRead account, paste a public-account share link to subscribe, point your RSS reader at `http://your-server:4000/feeds/MP_WXS_xxx.rss`. Cron updates every 12h by default, full-text mode optional, title include/exclude filters per feed."
+    zh: "拿一个微信读书账号扫码登录，把公众号的分享链接粘进去订阅，然后用 RSS reader 拉 `http://your-server:4000/feeds/MP_WXS_xxx.rss`。默认 cron 一天两次更新，全文模式可选，每个 feed 都能按关键词过滤。"
+  cost_summary:
+    en: "Repo MIT, free. Costs: a VPS or homelab for the Docker container, a WeRead account (free WeChat account works), and the political cost of relying on the maintainer's forward proxy `weread.111965.xyz` which has no SLA."
+    zh: "Repo MIT 免费。成本：一台 VPS 或家用服务器跑 Docker，一个微信读书账号（普通微信号就行），以及『依赖作者运营的转发域名 weread.111965.xyz』这件事 —— 没有 SLA 也没有继任承诺。"
+  how:
+    en: "Three deploy paths: (1) Zeabur one-click template; (2) `docker-compose -f docker-compose.yml up -d` (MySQL) or `docker-compose.sqlite.yml` (SQLite); (3) `pnpm install && pnpm run -r build && pnpm run start:server` for bare-metal. Then visit port 4000, scan QR with WeChat to log into WeRead, add Official Accounts via share-link."
+    zh: "三种部署：(1) Zeabur 一键模板；(2) `docker-compose -f docker-compose.yml up -d`（MySQL）或 `docker-compose.sqlite.yml`（SQLite）；(3) `pnpm install && pnpm run -r build && pnpm run start:server` 裸机跑。然后浏览器开 4000 端口，微信扫码登录微信读书，把公众号分享链接粘进去订阅。"
+  watch_out:
+    en: |
+      Major risks before adopting:
+      1. Repo is ARCHIVED — issues/PRs frozen since 2026-03-20. WeChat / WeRead break it, nobody patches.
+      2. Docker `:latest` is v2.6.1 from 2024-12-15, ~17 months stale.
+      3. Service depends on maintainer-operated forwarder `weread.111965.xyz` (Cloudflare-fronted, currently up). If that domain dies the whole project dies.
+      4. WeRead account can get rate-limited ("小黑屋") or banned — use a throwaway WeChat number, not your main one.
+      5. README warns: adding accounts too fast → 24h timeout. Set `UPDATE_DELAY_TIME` conservatively.
+    zh: |
+      上手前要知道的几个坑：
+      1. 仓库已 archived —— 自 2026-03-20 起冻结 issue / PR。微信或微信读书一旦改接口、没人修。
+      2. Docker `:latest` 还是 2024-12-15 的 v2.6.1，停更约 17 个月。
+      3. 服务底层依赖作者运营的转发域名 weread.111965.xyz（目前还活着，Cloudflare 代理）。这个域名一停整套就废。
+      4. 微信读书账号会被限流("今日小黑屋")或封号 —— 一定要用一个小号，不要拿主号。
+      5. README 提醒：加公众号太频繁会被封 24h，把 `UPDATE_DELAY_TIME` 调保守点。
+  examples:
+    - context:
+        en: "Daisy follows 40+ tech / VC Official Accounts and reads them in Reeder on iPad."
+        zh: "Daisy 关注了四十多个科技 / VC 类公众号，平常在 iPad 上用 Reeder。"
+      you_say:
+        en: "Spin up `docker-compose -f docker-compose.sqlite.yml up -d`, scan login QR, paste 40 share-links over a day (not all at once), then add `http://homelab:4000/feeds/all.atom` to Reeder."
+        zh: "跑 `docker-compose -f docker-compose.sqlite.yml up -d`，扫码登录，分散一天慢慢粘 40 个分享链接（别一次性塞），然后把 `http://homelab:4000/feeds/all.atom` 加到 Reeder。"
+      what_happens:
+        en: "Cron pulls each Official Account's history + new posts twice a day. Reeder shows them next to Daisy's other sources. Optional `FEED_MODE=fulltext` makes the body readable offline."
+        zh: "Cron 每天两次拉每个公众号的历史 + 新文章。Reeder 里和其他源并列显示。可选 `FEED_MODE=fulltext` 让正文离线可读。"
+    - context:
+        en: "You want one feed for a specific topic (e.g. articles mentioning '张三' or '李四') across multiple Official Accounts."
+        zh: "你想做一个 topic 聚合源 —— 比如某几个公众号里所有提到『张三』『李四』的文章。"
+      you_say:
+        en: "Subscribe to: `http://server:4000/feeds/all.atom?title_include=张三|李四&title_exclude=张三丰`"
+        zh: "RSS reader 里订阅这个 URL：`http://server:4000/feeds/all.atom?title_include=张三|李四&title_exclude=张三丰`"
+      what_happens:
+        en: "Server filters across all subscribed Official Accounts on request, returns only matching items."
+        zh: "服务端在请求时按全部已订阅公众号做关键词过滤，只返回命中的文章。"
+  next_step:
+    en: "Treat this as a self-use tool, not infrastructure: deploy on hardware you control, pin a specific image tag (not `:latest`), keep a throwaway WeChat number for WeRead login. Have a Plan B — keep an OPML export so you can move to a successor / fork if `weread.111965.xyz` ever dies."
+    zh: "把它当个人工具用、不要当生产基建：装在自己掌控的机器上、固定一个 image tag（别用 `:latest`）、用一个小号登录微信读书。留好 Plan B —— 定期导出 OPML，万一 `weread.111965.xyz` 哪天挂了，能迁到接棒的 fork 上。"
+
+deployment:
+  installable: true
+  install_methods:
+    - method: "Zeabur 一键模板 / Railway / Hugging Face Spaces"
+      platform: "managed (browser)"
+      complexity: easy
+    - method: "docker-compose -f docker-compose.yml up -d (MySQL)"
+      platform: "any (Docker)"
+      complexity: easy
+    - method: "docker-compose -f docker-compose.sqlite.yml up -d"
+      platform: "any (Docker)"
+      complexity: easy
+    - method: "pnpm install && pnpm run -r build && pnpm run start:server"
+      platform: "Node.js 20+ host"
+      complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false   # service needs network to weread + the forward proxy
+  auto_update: false
+
+third_party_services:
+  - name: "WeRead (微信读书)"
+    purpose: "Login source — the service scrapes Official Account posts via a logged-in WeRead account"
+    required: true
+    api_key_needed: false
+    signup_needed: true
+    free_tier: true
+    cost_note: "Free WeChat account works; risk of being rate-limited or banned"
+  - name: "weread.111965.xyz (maintainer-operated forward proxy)"
+    purpose: "Routes some WeRead API calls through a Cloudflare-fronted proxy run by the repo author"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "No SLA, no successor commitment — single point of failure for the whole project"
+  - name: "MySQL or SQLite"
+    purpose: "Persistence — accounts, subscriptions, articles, cron state"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Self-hosted; SQLite path explicitly marked 'not recommended' by author"
+  - name: "Zeabur (optional)"
+    purpose: "Managed one-click hosting"
+    required: false
+    api_key_needed: false
+    signup_needed: true
+    free_tier: true
+    cost_note: "Free tier limited; paid for sustained use"
+
+similar_repos: []

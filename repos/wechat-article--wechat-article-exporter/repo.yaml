@@ -8,9 +8,9 @@ layer: molecule
 complexity: complex
 uses_areas: false
 status: evaluated
-last_evaluated: '2026-05-06'
-version_tested: main@HEAD
-stars: 8930
+last_evaluated: '2026-05-19'
+version_tested: 'main@HEAD (pushed 2026-05-07)'
+stars: 10086
 archived: false
 has_license: true
 multilingual_readme: false

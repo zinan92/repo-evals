@@ -37,6 +37,7 @@ results_by_claim:
   claim-009: passed   # real PNGs rendered + eyeballed: Swiss layout clean, IKB accent disciplined (2 uses only), legible Chinese, no defects found
   claim-010: passed   # validator ran for real, caught a real R6 defect on pass 1, clean 0/0 on pass 2 after fix
 artifacts:
+  - "artifacts/manifest.yaml                          # sample-generation manifest consumed by the verdict page"
   - "artifacts/live-e2e_wechat-cover-pair_deck.html   # the sample deck (2 boards) that was validated + rendered"
   - "artifacts/sample_wechat-21x9.png                 # real render, WeChat 21:9 main cover"
   - "artifacts/sample_wechat-1x1.png                  # real render, WeChat 1:1 square cover"

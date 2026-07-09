@@ -85,8 +85,8 @@ notes: |
 # === Product view ============================================================
 product_view:
   one_liner:
-    en: "From an article, script, screenshots, or a user video, produces on-brand social image sets — Xiaohongshu 3:4 carousels and WeChat 21:9+1:1 cover PAIRS — by filling deterministic single-file HTML seed templates (28 layouts × 10 themes, Editorial × Swiss) and screenshotting them to PNG with Playwright; a shipped 9-rule DOM validator plus a doc-integrity validator keep the layout honest instead of trusting the model's eye."
-    zh: "把文章、脚本、截图或用户视频，做成成品级社交图组——小红书 3:4 组图与公众号 21:9+1:1 封面对——做法是填充确定性的单文件 HTML 种子模板（28 版式 × 10 主题，电子杂志 × 瑞士风），再用 Playwright 截成 PNG；随包一个 9 条规则的 DOM 校验器 + 一个文档完整性校验器，用脚本兜住版式底线，而不是靠模型的眼力。"
+    en: "Turns a finished article, script, screenshot set, photo, or short video into publish-ready social visuals: WeChat 21:9 + 1:1 cover pairs, Xiaohongshu carousel cards, and optional Live Photo assets. Its main advantage is reliability: the card is rendered from fixed HTML layouts, then checked by a layout validator, so the result is closer to a controlled design system than a one-off image-model prompt."
+    zh: "把一篇已经写好的文章、脚本、截图、照片或短视频，变成可发布的社交视觉资产：公众号 21:9 + 1:1 封面对、小红书组图，以及可选 Live Photo。它的核心价值不是「会画图」，而是稳定：用固定 HTML 版式渲染，再用版式校验器检查，因此更像一套可控设计系统，而不是一次性的图像模型提示词。"
   persona:
     en: "Park's visual/cover manager (Vera), who needs on-brand 公众号 covers and 小红书 carousels fast and hands the resulting image URLs to the gzh-design formatting skill."
     zh: "Park 的视觉/配图 Manager（Vera），需要快速产出符合调性的公众号封面与小红书组图，再把图片 URL 交给 gzh-design 排版技能。"
@@ -103,11 +103,20 @@ product_view:
     en: "Free & open-source but AGPL-3.0 (copyleft) with a parallel paid commercial license. Needs Node + Playwright + a Chromium browser binary (~150 MB) to render / validate. Image sourcing uses free stock libraries (Unsplash / Pexels / Flickr / Wallhaven) or a user-supplied photo; no API key for the core."
     zh: "免费开源，但是 AGPL-3.0（copyleft），另有付费商业授权。渲染 / 校验需要 Node + Playwright + 一个 Chromium 浏览器二进制（约 150 MB）。取图走免费图库（Unsplash / Pexels / Flickr / Wallhaven）或用户自带图；核心不需要 API key。"
   how:
-    en: "`npx skills add` the repo (or git clone into your skills dir), `npm install` (pulls Playwright), `npx playwright install chromium`, then say '做一套小红书图文 / 公众号封面对'. Render with `node render.mjs`; optionally `node validate-social-deck.mjs <task-dir>`."
-    zh: "`npx skills add` 安装（或 git clone 到 skills 目录），`npm install`（装 Playwright），`npx playwright install chromium`，然后说「做一套小红书图文 / 公众号封面对」。用 `node render.mjs` 出图；需要时 `node validate-social-deck.mjs <任务目录>` 核查。"
+    en: "Use it when a content piece is already written but still lacks the visual package. Ask the agent for a WeChat cover pair or Xiaohongshu carousel, give it the article and desired style, then review the rendered PNGs and the layout check before publishing."
+    zh: "当内容已经写完、但还缺封面或组图时用它。把文章和想要的风格交给 agent，让它做公众号封面对或小红书组图；发布前看渲染出来的 PNG 和版式检查结果。"
   watch_out:
-    en: "(1) The layout validator is DETERMINISTIC but the final PNG's TASTE is not — it guarantees no-overflow / legible-font / filled-density, not that the cover is beautiful or on-brand; aesthetics still ride the model's run. (2) Hard dependency on Node + Playwright + a downloadable Chromium binary — in this isolated eval the browser could NOT be installed, so render / validate could not be exercised. (3) AGPL-3.0 copyleft: internal cover-making does NOT trigger it, but modify-and-redistribute or building an external SaaS / product on it triggers AGPL (must open-source) OR requires the author's paid commercial license (¥100k-300k deep-embed / ¥30k listing / revenue-share). (4) package.json mislabels the license as 'ISC' — the governing LICENSE is full AGPL-3.0. (5) It only makes the IMAGE — copy compression + real photos still need a human/model; poor source photos read as filler. (6) Live Photo delivery needs an iPhone / AirDrop path; desktop can't publish .pvt."
-    zh: "(1) 版式校验是确定性的，但成品 PNG 的「审美」不是——它只保证不溢出 / 字号可读 / 密度够，不保证封面好看或符合调性，审美仍看模型那次发挥。(2) 硬依赖 Node + Playwright + 可下载的 Chromium 二进制——本次隔离评估装不上浏览器，渲染 / 校验未能实跑。(3) AGPL-3.0 copyleft：内部做封面自用不触发，但改代码再分发、或基于它做对外 SaaS / 产品会触发 AGPL（须开源）或需作者的付费商业授权（深度内置 10-30 万 / 上架 3 万 / 分成）。(4) package.json 把 license 误标成 'ISC'——真正生效的 LICENSE 是完整 AGPL-3.0。(5) 它只出图——文案压缩与真实照片仍需人 / 模型；素材图差会显得像凑数。(6) Live Photo 交付需要 iPhone / AirDrop，桌面端发不了 .pvt。"
+    en: "(1) It can check layout mechanics, not guarantee taste: the validator catches overflow, density, and legibility problems, but a human still has to decide whether the cover fits the brand. (2) It needs Node, Playwright, and a Chromium download before rendering; setup friction is real. (3) AGPL-3.0 matters if you redistribute it or build an external product/SaaS around it; internal cover-making is lower risk, but commercial embedding needs a license review. (4) It outputs the visual asset, not the whole publishing workflow: article copy, photo choice, and final WeChat/Xiaohongshu upload still need review. (5) Live Photo and web-sourced-image branches are documented but not proven end-to-end in this eval."
+    zh: "(1) 它能检查版式机械问题，但不能保证审美：校验器会抓溢出、密度、字号可读性，封面是否符合品牌调性仍要人看。(2) 渲染前需要 Node、Playwright 和 Chromium 下载，安装门槛是真实存在的。(3) AGPL-3.0 需要注意：内部做封面风险较低，但如果再分发、做对外产品或 SaaS，需要先做授权判断。(4) 它交付的是视觉资产，不是完整发布流程：文章文案、照片选择、最终上传公众号 / 小红书仍要复核。(5) Live Photo 与网络取图分支有文档和脚本，但本次没有端到端证明。"
+  not_for:
+    en: "Do not treat it as a fully automatic publishing system or as proof that every article/theme will look good without human visual review."
+    zh: "不要把它当成全自动发布系统，也不要默认每篇文章、每套主题都能免人工看图就直接发布。"
+  main_risk:
+    en: "The basic cover-pair path works, but adoption still depends on setup friction, AGPL/commercial-license judgment, human taste review, and final upload checks on the target platform."
+    zh: "基础封面对路径已经跑通；真正采用时的主要风险在安装门槛、AGPL/商业授权判断、人工审美复核，以及目标平台最终上传检查。"
+  score_reason:
+    en: "85 is justified because the core promise was tested, not just inspected: a real WeChat cover pair was rendered, the validator caught a real title-layout issue, the issue was fixed, and the second run passed cleanly. The remaining uncertainty is breadth — more articles, themes, Live Photo, web-sourced images, and actual platform upload — not whether the basic cover-pair path exists."
+    zh: "85 分成立，是因为核心承诺不只是读代码确认，而是真跑过：实际渲染出一套公众号封面对，校验器抓到真实标题版式问题，修正后第二轮干净通过。剩下的不确定性是覆盖面——更多文章、更多主题、Live Photo、网络取图、真实平台上传——不是基础封面对路径是否存在。"
   examples:
     - context:
         en: "A 公众号 article is drafted and needs a cover pair."
@@ -137,8 +146,8 @@ product_view:
         en: "Checks the first frame passes the static-card crop / subject rules, keeps text in a quiet zone, packages JPG + MOV into a .pvt for iPhone publishing (5s Xiaohongshu / 3s WeChat)."
         zh: "先确认首帧过静态卡的裁切 / 主体规则、文字落安静区，把 JPG + MOV 打包成 .pvt 供 iPhone 发布（小红书 5s / 公众号 3s）。"
   next_step:
-    en: "(1) Provision a Chromium binary and RUN `validate-social-deck.mjs` on a real render — lifts core_layer_tested→true for the deterministic-layout claim and evidence→portable. (2) Drive one real article→公众号封面对 end-to-end and eyeball the PNG for on-brand (exercises the core aesthetic claim). (3) Test one Live Photo→.pvt and one web-sourced-image cover to cover the untested branches. (4) Keep Park's usage internal-only so AGPL copyleft stays dormant, and correct the package.json ISC→AGPL mislabel upstream."
-    zh: "(1) 装上 Chromium 二进制并对一次真实渲染跑 `validate-social-deck.mjs`——把确定性版式 claim 的 core_layer_tested 提到 true、证据升到 portable。(2) 真跑一篇文章→公众号封面对端到端，肉眼确认 PNG 调性（覆盖核心审美 claim）。(3) 测一条 Live Photo→.pvt 与一张网络取图封面，补上未测分支。(4) 保持 Park 仅内部使用以让 AGPL copyleft 保持休眠，并向上游修正 package.json 的 ISC→AGPL 误标。"
+    en: "Use it first on internal content where a human still reviews the final image. Before making it part of a repeatable publishing lane, test several real articles and themes, try the Live Photo and web-image branches, and confirm the final upload path on the target platform."
+    zh: "先把它用于内部内容，并保留人工看图复核。要把它放进稳定发布流程之前，再拿多篇真实文章、多套主题跑一轮，补测 Live Photo 与网络取图分支，并确认最终上传到目标平台这一步。"
 
 # === Deployment ==============================================================
 deployment:
@@ -163,7 +172,7 @@ third_party_services:
     api_key_needed: false
     signup_needed: false
     free_tier: true
-    cost_note: "开源免费；隔离环境本次未能下到匹配的 chromium build（render/validate 因此未跑）"
+    cost_note: "开源免费；需要下载匹配的 Chromium build。首次评测曾卡在下载，后续同日补装成功并跑通 render/validate。"
   - name: "Google Fonts (Inter / Noto Serif&Sans SC / Playfair / IBM Plex Mono)"
     purpose: "精确排版字体；离线时回退系统字体，几何布局仍成立"
     required: false
@@ -205,65 +214,65 @@ workflow_placements:
 workflow_diagram:
   layout: linear
   why_layer:
-    en: "Fixed sequential pipeline. The LLM fills copy and makes LOCAL design choices (Editorial vs Swiss, which of 28 recipes, which of 10 themes, crop / object-position) but performs NO runtime sub-agent routing or plan generation — that makes it a molecule, not a compound. The HTML→PNG render + the two validators are embedded deterministic atoms; the layout gate could not be executed in isolation (no browser)."
-    zh: "固定顺序 pipeline。LLM 只填文案、做局部设计判断（选 Editorial 还是 Swiss、28 个骨架挑哪个、10 套主题选哪套、裁切 / object-position），运行时不做子 agent 路由或计划生成——所以是 molecule 而非 compound。HTML→PNG 渲染 + 两个校验器是嵌入的确定性 atom；版式关卡在隔离环境未能执行（无浏览器）。"
+    en: "This is a fixed publishing pipeline, not an autonomous agent tree. The agent chooses style and fills content, but the route stays the same: read the material, choose a design recipe, render exact-size PNGs, then check the result. That is why we judge it as a molecule: multiple steps, but no runtime routing."
+    zh: "这是一条固定的发布流水线，不是会自己改路线的 agent 树。agent 会选风格、填内容，但路线不变：读材料、选版式、按精确尺寸渲染 PNG、再检查结果。所以它是 molecule：有多个步骤，但没有运行时路由。"
   nodes:
     - id: input
       type: start
       rank: 0
       lane: 0
       label:
-        en: "Article / script / screenshots / subtitles / photo / video"
-        zh: "文章 / 脚本 / 截图 / 字幕 / 照片 / 视频"
+        en: "Finished content"
+        zh: "已成稿内容"
     - id: intake
       type: step
       rank: 1
       lane: 0
       label:
-        en: "Intake: platform · ratio · style · images"
-        zh: "Intake：平台 · 比例 · 风格 · 图源"
+        en: "Pick platform\nand format"
+        zh: "选择平台\n和规格"
     - id: plan
       type: step
       rank: 2
       lane: 0
       label:
-        en: "Extract story → page plan (hook + pages)"
-        zh: "抽故事 → 拆页计划（钩子 + 分页）"
+        en: "Turn story\ninto pages"
+        zh: "把内容\n拆成页面"
     - id: style
       type: step
       rank: 3
       lane: 0
       label:
-        en: "Pick Editorial | Swiss + 1 of 10 themes"
-        zh: "选 Editorial | Swiss + 10 主题选 1"
+        en: "Choose style\nand theme"
+        zh: "选择风格\n和主题"
     - id: template
       type: step
-      rank: 4
-      lane: 0
+      rank: 3
+      lane: 1
       label:
-        en: "Copy seed template + fill 28 layout recipes"
-        zh: "拷种子模板 + 套 28 版式骨架"
+        en: "Fill a fixed\nHTML layout"
+        zh: "填入固定\nHTML 版式"
     - id: render
       type: step
-      rank: 5
-      lane: 0
+      rank: 2
+      lane: 1
       label:
-        en: "Playwright HTML → PNG (fixed-px boards)"
-        zh: "Playwright HTML → PNG（固定像素画板）"
+        en: "Render exact-size\nPNG files"
+        zh: "渲染精确尺寸\nPNG"
     - id: validate
       type: decision
-      rank: 6
-      lane: 0
+      rank: 1
+      lane: 1
       label:
-        en: "validate-social-deck R1-R9 (0 FAIL?)"
-        zh: "validate-social-deck R1-R9（0 FAIL？）"
+        en: "Layout check\npasses?"
+        zh: "版式检查\n通过？"
     - id: output
       type: end
-      rank: 7
-      lane: 0
+      rank: 0
+      lane: 1
       label:
-        en: "小红书 deck / 公众号 21:9+1:1 封面对 PNG"
-        zh: "小红书组图 / 公众号 21:9+1:1 封面对 PNG"
+        en: "Cover pair\nor carousel"
+        zh: "封面对\n或组图"
   edges:
     - {from: input, to: intake}
     - {from: intake, to: plan}

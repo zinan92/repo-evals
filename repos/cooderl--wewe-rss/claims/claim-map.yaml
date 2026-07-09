@@ -1,0 +1,162 @@
+claims:
+  - id: claim-001
+    user_icon: "📦"
+    user_title:
+      en: "Docker image you can `docker run` actually exists"
+      zh: "README 让你跑的 Docker 镜像真在 Docker Hub 上"
+    user_description:
+      en: "README's quickstart tells you to `docker run cooderl/wewe-rss:latest` / `cooderl/wewe-rss-sqlite:latest`. Both images are published on Docker Hub with sizeable pull counts — they're not phantom commands."
+      zh: "README 让你跑 `docker run cooderl/wewe-rss:latest` 或 `cooderl/wewe-rss-sqlite:latest`。两个镜像都已发布到 Docker Hub，pull 数过 10 万 —— 命令是真的能跑，不是写假的。"
+    title: cooderl/wewe-rss + wewe-rss-sqlite Docker 镜像存在且公开
+    source: README
+    source_ref: "## 🚀 部署 — Docker 命令启动"
+    priority: critical
+    area: shipped-artifacts
+    statement: |
+      Docker Hub 上 cooderl/wewe-rss 和 cooderl/wewe-rss-sqlite 两个 repo
+      均存在且公开，`latest` tag 存在。
+    evidence_needed: |
+      Docker Hub registry v2 API 元数据。
+    status: passed
+    evidence_summary: |
+      curl https://hub.docker.com/v2/repositories/cooderl/wewe-rss/ → status=1,
+      pull_count=196,500, last_updated=2024-12-15. wewe-rss-sqlite 同样存在，
+      pull_count=189,796。`latest` tag 解析到 v2.6.1。
+
+  - id: claim-002
+    user_icon: "📂"
+    user_title:
+      en: "Both docker-compose files are in the repo, not just linked"
+      zh: "两份 docker-compose 文件在仓库里，不是只贴了链接"
+    user_description:
+      en: "README links to `docker-compose.yml` (MySQL) and `docker-compose.sqlite.yml`. Both files are committed in the repo root — you can `git clone` and run them with no extra hunting."
+      zh: "README 链了 `docker-compose.yml`（MySQL）和 `docker-compose.sqlite.yml` 两个文件。它们就在仓库根目录，`git clone` 后能直接跑，不用到处找。"
+    title: docker-compose.yml + docker-compose.sqlite.yml 在仓库根
+    source: README
+    source_ref: "## 🚀 部署 — Docker Compose 部署"
+    priority: high
+    area: shipped-artifacts
+    statement: |
+      仓库根目录同时存在 docker-compose.yml 和 docker-compose.sqlite.yml。
+    evidence_needed: |
+      gh api contents/ 根目录列表。
+    status: passed
+    evidence_summary: |
+      根目录文件列表包含 docker-compose.yml, docker-compose.sqlite.yml,
+      docker-compose.dev.yml 三个 compose 文件，与 README 引用一致。
+
+  - id: claim-003
+    user_icon: "📡"
+    user_title:
+      en: "The forward proxy README depends on is currently live"
+      zh: "README 默认依赖的转发域名当前还活着"
+    user_description:
+      en: "README defaults `PLATFORM_URL=https://weread.111965.xyz` — the service needs this forwarder to reach WeRead's APIs. The domain currently resolves and returns HTTP 200 (Cloudflare-fronted) — adopters today can actually run the service."
+      zh: "README 把 `PLATFORM_URL` 默认设成 `https://weread.111965.xyz` —— 整个服务靠这个转发去访问微信读书 API。这个域名当前可解析、返回 HTTP 200（Cloudflare 代理）—— 现在装还能用。"
+    title: weread.111965.xyz 当前可达 (HTTP 200, Cloudflare)
+    source: README
+    source_ref: "## ⚙️ 环境变量 PLATFORM_URL · ## ⚠️ 风险声明"
+    priority: critical
+    area: dependency-liveness
+    statement: |
+      curl -I https://weread.111965.xyz 返回 2xx，且 server 头为 cloudflare。
+    evidence_needed: |
+      HEAD 请求结果。
+    status: passed
+    evidence_summary: |
+      curl -sI https://weread.111965.xyz → HTTP/2 200, server: cloudflare,
+      date: 2026-05-18. 服务当前在线。⚠ 单点依赖，作者已 archive 仓库，
+      没有继任承诺。
+
+  - id: claim-004
+    user_icon: "🗂"
+    user_title:
+      en: "Multi-format RSS endpoints documented per spec"
+      zh: "多种 RSS 格式接口都按 README 文档化了"
+    user_description:
+      en: "README promises `.atom`, `.rss`, `.json` outputs plus title include/exclude filters and manual `update=true` trigger. Endpoints are spec'd in the README with concrete URL examples for `/feeds/all.*` and `/feeds/:feed`."
+      zh: "README 承诺 `.atom`、`.rss`、`.json` 三种输出 + 标题 include/exclude 过滤 + `update=true` 手动触发更新。`/feeds/all.*` 和 `/feeds/:feed` 都给了具体 URL 示例。"
+    title: README 列出的 RSS endpoint 三格式 + 过滤 + 手动刷新参数
+    source: README
+    source_ref: "### 高级功能"
+    priority: high
+    area: api-surface
+    statement: |
+      README 文档化了三种格式输出端点和 title_include/title_exclude/update
+      query 参数。
+    evidence_needed: |
+      README 文本中的接口示例片段。
+    status: passed
+    evidence_summary: |
+      README "高级功能" 章节明确列出：
+        /feeds/all.atom?title_include=...
+        /feeds/MP_WXS_123.json?limit=30&title_include=...&title_exclude=...
+        /feeds/MP_WXS_123.rss?update=true
+      三个 URL 样例 + 三种文件后缀（.atom/.rss/.json）+ OPML 导出全部覆盖。
+
+  - id: claim-005
+    user_icon: "📜"
+    user_title:
+      en: "Real MIT LICENSE file in repo root"
+      zh: "MIT LICENSE 文件真的在 repo 根"
+    user_description:
+      en: "Repo claims MIT in README footer. LICENSE file actually exists at the root and GitHub API confirms `Apache-2.0`-style key `mit`. Anyone forking the (archived) repo can do so cleanly."
+      zh: "README 末尾说 MIT。LICENSE 文件确实在根目录，GitHub API 也确认 license key 是 mit。想 fork 这个（已 archive 的）项目继任，法律上很干净。"
+    title: LICENSE 文件存在 + GitHub API license=mit
+    source: README
+    source_ref: "## 📄 License"
+    priority: medium
+    area: maintainer
+    statement: |
+      仓库根目录 LICENSE 文件存在，gh api license.spdx_id="MIT"。
+    evidence_needed: |
+      gh api repos/<owner>/<repo> + contents/ 根目录。
+    status: passed
+    evidence_summary: |
+      gh api license = {key: mit, spdx_id: MIT}。根目录 contents 列表包含
+      LICENSE 文件。fork / 继任 LGTM。
+
+  - id: claim-006
+    user_icon: "🪦"
+    user_title:
+      en: "Repo is archived — frozen, no upstream patches incoming"
+      zh: "仓库已 archive —— 冻结状态，上游不再修 bug"
+    user_description:
+      en: "GitHub API returns `archived: true`. Issues / PRs cannot be filed or merged on the original repo. Any WeChat / WeRead API break has to be patched by you or a fork — there's no upstream maintainer to wait on."
+      zh: "GitHub API 返回 `archived: true`。原仓库不能再开 issue / PR。微信或微信读书的接口一变，你只能自己改或者用 fork —— 没有上游可以等。"
+    title: GitHub API 报告 archived=true
+    source: framework
+    source_ref: "archived flag"
+    priority: high
+    area: maintainer
+    statement: |
+      gh api repos/cooderl/wewe-rss → archived=true。
+    evidence_needed: |
+      gh api repos/<owner>/<repo>。
+    status: passed
+    evidence_summary: |
+      gh api archived=true, pushed_at=2026-03-20。仓库进入只读冻结状态。
+      用户决策上要把这条放到一切之前。
+
+  - id: claim-007
+    user_icon: "🧊"
+    user_title:
+      en: "Docker `:latest` is ~17 months stale relative to last commit"
+      zh: "Docker `:latest` 镜像比最后一次提交老约 17 个月"
+    user_description:
+      en: "Docker Hub `latest` tag is v2.6.1 from 2024-12-15. The repo had commits up to 2026-03-20 — those final commits never got an image build. If you `docker pull cooderl/wewe-rss:latest` today, you get a build that's missing the last 3 months of pre-archive code."
+      zh: "Docker Hub `latest` 是 v2.6.1，2024-12-15 推的。仓库一直提交到 2026-03-20，最后几个月的改动从来没构建过镜像。今天 `docker pull cooderl/wewe-rss:latest`，拿到的镜像比 archive 前的最终代码差几个月。"
+    title: Docker `:latest` (v2.6.1, 2024-12-15) 比最后一次提交 (2026-03-20) 落后 ~15 个月
+    source: framework
+    source_ref: "release_pipeline"
+    priority: high
+    area: maintainer
+    statement: |
+      Docker Hub latest tag last_updated < repo pushed_at by > 12 months.
+    evidence_needed: |
+      Docker Hub registry tags API + gh api repos pushed_at。
+    status: passed
+    evidence_summary: |
+      hub.docker.com tags: latest = 2024-12-15, v2.6.1 = 2024-12-15。
+      gh api pushed_at = 2026-03-20。差距约 15 个月。
+      用户应该 (a) 用源码自构 (b) 或接受镜像落后的现实。

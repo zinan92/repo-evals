@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bucket="usable" data-category="available">
+<html lang="zh" data-bucket="usable" data-category="available">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -98,26 +98,108 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
 
 /* --- Decision Card — top-of-dossier 5-second answer --------------- */
 .decision-card {
-  margin: 0 0 36px;
-  padding: 16px 20px 18px;
-  background: var(--surface-1);
+  margin: 0 0 32px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.86fr) minmax(320px, 1.14fr);
+  gap: 1px;
+  background: var(--border-strong);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
+  overflow: hidden;
   box-shadow: 0 0 0 1px var(--bucket-soft);
 }
-.dec-eyebrow {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--font-mono); font-size: 11px;
-  color: var(--bucket); text-transform: uppercase;
-  letter-spacing: 0.16em; font-weight: 700;
-  padding-bottom: 12px; margin-bottom: 12px;
-  border-bottom: 1px solid var(--border);
+.dec-primary,
+.dec-next-panel,
+.dec-boundaries {
+  background: var(--surface-1);
+}
+.dec-primary {
+  padding: 24px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 230px;
+  border-left: 4px solid var(--bucket);
+  grid-row: span 2;
+}
+.dec-kicker,
+.dec-panel-label {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
 }
 .dec-cat-emoji { font-size: 16px; }
-.dec-score {
-  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
-  color: var(--text-2); letter-spacing: 0.06em;
+.dec-action {
+  margin: 20px 0 14px;
+  font-size: clamp(36px, 6vw, 58px);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  color: var(--bucket);
 }
+.dec-action-copy {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  max-width: 42ch;
+}
+.dec-scoreline {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.dec-scoreline span {
+  padding: 4px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+.dec-next-panel {
+  padding: 24px 26px;
+}
+.dec-next-panel .dec-panel-label { color: var(--bucket); }
+.dec-panel-body {
+  margin-top: 10px;
+  font-size: 18px;
+  line-height: 1.52;
+  color: var(--text);
+  max-width: 62ch;
+}
+.dec-boundaries {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+}
+.dec-boundary {
+  background: var(--surface-1);
+  padding: 18px 20px 20px;
+}
+.dec-dont .dec-panel-label { color: var(--warn); }
+.dec-risk .dec-panel-label { color: var(--bad); }
+.dec-boundary-body {
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+@media (max-width: 860px) {
+  .decision-card { grid-template-columns: 1fr; }
+  .dec-primary { grid-row: auto; min-height: 0; }
+  .dec-boundaries { grid-template-columns: 1fr; }
+}
+
+/* Legacy decision-row classes may appear in old committed HTML. Keep a
+   compact fallback so older dossiers remain readable before regeneration. */
 .dec-row {
   display: grid; grid-template-columns: 24px 110px 1fr;
   gap: 10px; align-items: baseline;
@@ -182,7 +264,10 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
   overflow-x: auto;
 }
 .wp-canvas svg {
-  display: block; max-width: 100%; height: auto;
+  display: block;
+  width: max(100%, var(--wp-width));
+  min-width: var(--wp-width);
+  height: auto;
   text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
 }
 
@@ -419,7 +504,7 @@ html[lang="zh"] .wp-lang-zh { display: block; }
 }
 
 /* --- Similar repos comparison ------------------------------------- */
-.similar-section { margin-bottom: 80px; }
+.similar-section { margin-bottom: 54px; }
 .similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
 .similar-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -489,7 +574,7 @@ html[lang="zh"] .wp-lang-zh { display: block; }
 .similar-pending-row + .similar-pending-row { margin-top: 8px; }
 
 /* --- Workflow diagram (atom / molecule / compound) ----------------- */
-.workflow-diagram-section { margin-bottom: 80px; }
+.workflow-diagram-section { margin-bottom: 54px; }
 .wd-why {
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -524,7 +609,13 @@ html[lang="zh"] .wp-lang-zh { display: block; }
   padding: 14px;
   overflow-x: auto;
 }
-.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+.wd-canvas svg {
+  display: block;
+  width: max(100%, var(--wd-width));
+  min-width: var(--wd-width);
+  height: auto;
+  color: var(--text-2);
+}
 
 .wd-shape { stroke-width: 1.5; }
 .wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
@@ -564,7 +655,7 @@ html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
 }
 
 /* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
-.benefits-section { margin-bottom: 80px; }
+.benefits-section { margin-bottom: 54px; }
 .benefits-grid {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 20px;
@@ -1030,7 +1121,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
 
 .section-head {
   display: flex; align-items: baseline; gap: 16px;
-  margin-bottom: 36px; padding-bottom: 18px;
+  margin-bottom: 24px; padding-bottom: 14px;
   border-bottom: 1px solid var(--border);
 }
 .section-head h2 {
@@ -1042,7 +1133,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-section { margin-bottom: 56px; }
+section { margin-bottom: 44px; }
 
 .capabilities-grid {
   display: grid;
@@ -1518,7 +1609,7 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
   </header>
 
-  <section class="decision-card"><div class="dec-eyebrow"><span class="dec-cat-emoji">🛠</span><span class="i18n" data-en="Decision snapshot" data-zh="决策快照"></span><span class="dec-score">69 / 100</span></div><div class="dec-row dec-use"><div class="dec-icon">✅</div><div class="dec-label"><span class="i18n" data-en="Use" data-zh="用"></span></div><div class="dec-body"><span class="i18n" data-en="Yes for self-use; not yet for production-critical paths." data-zh="自用可以;还不到放进生产关键路径的程度。"></span></div></div><div class="dec-row dec-dont"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Don&#x27;t use for" data-zh="别用在"></span></div><div class="dec-body"><span class="i18n" data-en="Same anti-bot risk as MediaCrawler — XianYu runs anti-automation, too-aggressive scheduling gets the account limited." data-zh="跟 MediaCrawler 一样的反爬风险 —— 闲鱼有反自动化,跑太凶账号会被限。"></span></div></div><div class="dec-row dec-next"><div class="dec-icon">🎯</div><div class="dec-label"><span class="i18n" data-en="Best next step" data-zh="最佳下一步"></span></div><div class="dec-body"><span class="i18n" data-en="Run docker compose up on your own host, configure with a real XianYu cookie + one realistic criterion (e.g., Sony A7R III &lt; ¥8000)." data-zh="在自己机器上 docker compose up,配真实闲鱼 cookie + 一个真实条件(比如 Sony A7R III &lt; 8000)。"></span></div></div><div class="dec-row dec-risk"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Main risk" data-zh="主要风险"></span></div><div class="dec-body"><span class="i18n" data-en="1 critical claim(s) untested — likely needs a logged live run." data-zh="1 条关键 claim 未验证 —— 通常需要一次有日志的真实跑通。"></span></div></div></section>
+  <section class="decision-card"><div class="dec-primary"><div class="dec-kicker"><span class="dec-cat-emoji">🛠</span><span class="i18n" data-en="Adoption verdict" data-zh="采用结论"></span></div><div class="dec-action"><span class="i18n" data-en="Use with limits" data-zh="有限采用"></span></div><p class="dec-action-copy"><span class="i18n" data-en="Good for self-use or evaluation. Do not put it on a production-critical path until the missing evidence is closed." data-zh="适合自用或试用。缺口没补上之前,不要放进生产关键路径。"></span></p><div class="dec-scoreline"><span>69 / 100</span><span>Available</span></div></div><div class="dec-next-panel"><div class="dec-panel-label"><span class="i18n" data-en="Next move" data-zh="下一步"></span></div><div class="dec-panel-body"><span class="i18n" data-en="Run docker compose up on your own host, configure with a real XianYu cookie + one realistic criterion (e.g., Sony A7R III &lt; ¥8000)." data-zh="在自己机器上 docker compose up,配真实闲鱼 cookie + 一个真实条件(比如 Sony A7R III &lt; 8000)。"></span></div></div><div class="dec-boundaries"><div class="dec-boundary dec-dont"><div class="dec-panel-label"><span class="i18n" data-en="Do not use for" data-zh="别用在"></span></div><div class="dec-boundary-body"><span class="i18n" data-en="Same anti-bot risk as MediaCrawler — XianYu runs anti-automation, too-aggressive scheduling gets the account limited." data-zh="跟 MediaCrawler 一样的反爬风险 —— 闲鱼有反自动化,跑太凶账号会被限。"></span></div></div><div class="dec-boundary dec-risk"><div class="dec-panel-label"><span class="i18n" data-en="Main risk" data-zh="主要风险"></span></div><div class="dec-boundary-body"><span class="i18n" data-en="1 critical claim(s) untested — likely needs a logged live run." data-zh="1 条关键 claim 未验证 —— 通常需要一次有日志的真实跑通。"></span></div></div></div></section>
 
   <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip-biz-row"><span class="biz-cat-pill biz-content"><span>📝</span><span class="i18n" data-en="Content" data-zh="内容类"></span></span></div><div class="use-case-row"><span class="use-case-eyebrow"><span class="i18n" data-en="I want to&nbsp;…" data-zh="想干嘛?"></span></span><span class="use-case-pill use-case-marketplace-monitoring"><span class="i18n" data-en="Marketplace monitoring" data-zh="市场监控"></span></span><span class="use-case-pill use-case-content-scraping"><span class="i18n" data-en="Content scraping" data-zh="内容抓取"></span></span></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
 
@@ -1531,13 +1622,13 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
   
 
-  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is molecule" data-zh="为什么是分子"></span></div><div class="wd-why-body"><span class="i18n" data-en="Molecule — fixed pipeline (criteria → scheduler → Playwright →
+  <section class="workflow-diagram-section" id="workflow"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is molecule" data-zh="为什么是分子"></span></div><div class="wd-why-body"><span class="i18n" data-en="Molecule — fixed pipeline (criteria → scheduler → Playwright →
 LLM filter → notification). LLM is invoked at criteria-generation
 + product-analysis stages but not for runtime routing — the
 pipeline is the same for every listing seen. User picks tasks
-+ criteria; the engine runs them deterministically." data-zh="分子 —— 固定流水线(条件 → 调度 → Playwright → LLM 过滤 → 推送)。LLM 在条件生成 + 商品分析阶段被调用,但运行时不路由 —— 每条挂牌走的流水线一样。用户加任务 + 写条件;引擎确定性地跑。"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 1528 104" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M204,52.0 C244.0,52.0 244.0,52.0 284,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M464,52.0 C504.0,52.0 504.0,52.0 544,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M724,52.0 C764.0,52.0 764.0,52.0 804,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M984,52.0 C1024.0,52.0 1024.0,52.0 1064,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M1244,52.0 C1284.0,52.0 1284.0,52.0 1324,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="24" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-start"/><text x="114.0" y="49.0" class="wd-label wd-lang-en">Natural-language criteria</text><text x="114.0" y="49.0" class="wd-label wd-lang-zh">自然语言条件</text><text x="114.0" y="63.0" class="wd-label wd-lang-en">(via Vue dashboard)</text><text x="114.0" y="63.0" class="wd-label wd-lang-zh">(Vue dashboard 输入)</text></g><g class="wd-node wd-type-atom"><rect x="284" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="374.0" y="49.0" class="wd-label wd-lang-en">APScheduler</text><text x="374.0" y="49.0" class="wd-label wd-lang-zh">APScheduler</text><text x="374.0" y="63.0" class="wd-label wd-lang-en">(multi-task runs)</text><text x="374.0" y="63.0" class="wd-label wd-lang-zh">(多任务调度)</text></g><g class="wd-node wd-type-atom"><rect x="544" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="634.0" y="49.0" class="wd-label wd-lang-en">Playwright crawler</text><text x="634.0" y="49.0" class="wd-label wd-lang-zh">Playwright 爬虫</text><text x="634.0" y="63.0" class="wd-label wd-lang-en">(cookie login → search)</text><text x="634.0" y="63.0" class="wd-label wd-lang-zh">(cookie 登录 → 搜索)</text></g><g class="wd-node wd-type-atom"><rect x="804" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="894.0" y="49.0" class="wd-label wd-lang-en">Multi-modal LLM</text><text x="894.0" y="49.0" class="wd-label wd-lang-zh">多模态 LLM</text><text x="894.0" y="63.0" class="wd-label wd-lang-en">(photos + text vs criteria)</text><text x="894.0" y="63.0" class="wd-label wd-lang-zh">(照片 + 文字 比对条件)</text></g><g class="wd-node wd-type-atom"><rect x="1064" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="1154.0" y="49.0" class="wd-label wd-lang-en">Notification dispatch</text><text x="1154.0" y="49.0" class="wd-label wd-lang-zh">推送分发</text><text x="1154.0" y="63.0" class="wd-label wd-lang-en">(ntfy / Bark / WeChat / TG / ...)</text><text x="1154.0" y="63.0" class="wd-label wd-lang-zh">(ntfy / Bark / 企微 / TG / ...)</text></g><g class="wd-node wd-type-end"><rect x="1324" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-end"/><text x="1414.0" y="49.0" class="wd-label wd-lang-en">Push to your phone</text><text x="1414.0" y="49.0" class="wd-label wd-lang-zh">推到你手机</text><text x="1414.0" y="63.0" class="wd-label wd-lang-en">(only true matches)</text><text x="1414.0" y="63.0" class="wd-label wd-lang-zh">(只有真命中)</text></g></svg></div></section>
++ criteria; the engine runs them deterministically." data-zh="分子 —— 固定流水线(条件 → 调度 → Playwright → LLM 过滤 → 推送)。LLM 在条件生成 + 商品分析阶段被调用,但运行时不路由 —— 每条挂牌走的流水线一样。用户加任务 + 写条件;引擎确定性地跑。"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas" style="--wd-width:1528px"><svg viewBox="0 0 1528 104" xmlns="http://www.w3.org/2000/svg" width="1528" height="104" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M204,52.0 C244.0,52.0 244.0,52.0 284,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M464,52.0 C504.0,52.0 504.0,52.0 544,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M724,52.0 C764.0,52.0 764.0,52.0 804,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M984,52.0 C1024.0,52.0 1024.0,52.0 1064,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M1244,52.0 C1284.0,52.0 1284.0,52.0 1324,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="24" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-start"/><text x="114.0" y="49.0" class="wd-label wd-lang-en">Natural-language criteria</text><text x="114.0" y="49.0" class="wd-label wd-lang-zh">自然语言条件</text><text x="114.0" y="63.0" class="wd-label wd-lang-en">(via Vue dashboard)</text><text x="114.0" y="63.0" class="wd-label wd-lang-zh">(Vue dashboard 输入)</text></g><g class="wd-node wd-type-atom"><rect x="284" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="374.0" y="49.0" class="wd-label wd-lang-en">APScheduler</text><text x="374.0" y="49.0" class="wd-label wd-lang-zh">APScheduler</text><text x="374.0" y="63.0" class="wd-label wd-lang-en">(multi-task runs)</text><text x="374.0" y="63.0" class="wd-label wd-lang-zh">(多任务调度)</text></g><g class="wd-node wd-type-atom"><rect x="544" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="634.0" y="49.0" class="wd-label wd-lang-en">Playwright crawler</text><text x="634.0" y="49.0" class="wd-label wd-lang-zh">Playwright 爬虫</text><text x="634.0" y="63.0" class="wd-label wd-lang-en">(cookie login → search)</text><text x="634.0" y="63.0" class="wd-label wd-lang-zh">(cookie 登录 → 搜索)</text></g><g class="wd-node wd-type-atom"><rect x="804" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="894.0" y="49.0" class="wd-label wd-lang-en">Multi-modal LLM</text><text x="894.0" y="49.0" class="wd-label wd-lang-zh">多模态 LLM</text><text x="894.0" y="63.0" class="wd-label wd-lang-en">(photos + text vs criteria)</text><text x="894.0" y="63.0" class="wd-label wd-lang-zh">(照片 + 文字 比对条件)</text></g><g class="wd-node wd-type-atom"><rect x="1064" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="1154.0" y="49.0" class="wd-label wd-lang-en">Notification dispatch</text><text x="1154.0" y="49.0" class="wd-label wd-lang-zh">推送分发</text><text x="1154.0" y="63.0" class="wd-label wd-lang-en">(ntfy / Bark / WeChat / TG / ...)</text><text x="1154.0" y="63.0" class="wd-label wd-lang-zh">(ntfy / Bark / 企微 / TG / ...)</text></g><g class="wd-node wd-type-end"><rect x="1324" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-end"/><text x="1414.0" y="49.0" class="wd-label wd-lang-en">Push to your phone</text><text x="1414.0" y="49.0" class="wd-label wd-lang-zh">推到你手机</text><text x="1414.0" y="63.0" class="wd-label wd-lang-en">(only true matches)</text><text x="1414.0" y="63.0" class="wd-label wd-lang-zh">(只有真命中)</text></g></svg></div></section>
 
-  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/NanmiCoder--MediaCrawler/verdicts/2026-05-04-verdict.html"><strong>NanmiCoder/MediaCrawler</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 75</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both are Python crawlers for Chinese platforms with single-platform deep-watch use case. Both ask for real account login (cookie / QR), both Playwright-driven, both vulnerable to anti-bot when scheduled aggressively." data-zh="都是中国平台的 Python 爬虫,做单平台深度监控。都要真实账号(cookie / 扫码),都用 Playwright,频次高都会被反爬限。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="ai-goofish-monitor wins at" data-zh="ai-goofish-monitor 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Single-platform deep-monitor with multi-modal LLM filtering + 6-channel notifications. The LLM analysis on listing photos is the differentiator — it filters out &quot;looks new but actually beaten up&quot; cases MediaCrawler can&#x27;t." data-zh="单平台深度监控 + 多模态 LLM 过滤 + 6 渠道通知。LLM 看照片是差异点 —— 能过滤&quot;卖家说九成新但照片磕痕明显&quot;的 case,MediaCrawler 做不到。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="MediaCrawler wins at" data-zh="MediaCrawler 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Breadth — 7 platforms × multiple crawl modes × 8 storage backends. When you need cross-platform data analysis (not just watching one), MediaCrawler is the right tool. Larger ecosystem (48K vs 11K stars)." data-zh="覆盖广 —— 7 平台 × 多种抓取模式 × 8 存储后端。需要跨平台数据分析(不是只盯一个)时,MediaCrawler 更合适。生态更大(48K 对 11K stars)。"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zinan92--content-downloader/verdicts/2026-04-09-verdict.html"><strong>zinan92/content-downloader</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-dont_use">🛑 <span class="i18n" data-en="Don&#x27;t use" data-zh="不可使用"></span> · 29</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both target single-platform watching/downloading with Playwright + Python. Both are personal-toolkit scope rather than full SaaS." data-zh="都是 Playwright + Python 单平台监控/下载。都是个人工具箱定位,不是 SaaS。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="ai-goofish-monitor wins at" data-zh="ai-goofish-monitor 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Production-grade implementation: Docker bundle + multi-task scheduler + multi-modal LLM + 6 notification channels + battle-tested. 11K stars validates the approach." data-zh="生产级实现: Docker 镜像 + 多任务调度 + 多模态 LLM + 6 渠道通知 + 久经实战。11K stars 验证可行性。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="content-downloader wins at" data-zh="content-downloader 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Different platform (Douyin) and different mode (downloading clips, not monitoring listings). Currently broken on Douyin signing. ai-goofish takes the same Playwright pattern and applies it correctly to XianYu." data-zh="不同平台(抖音)不同模式(下载视频,不是监控挂牌)。抖音签名当前坏了。ai-goofish 用同样 Playwright 模式但落到闲鱼,而且能跑通。"></span></div></div></article></div></section>
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 当前 repo-evals 语料库。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/NanmiCoder--MediaCrawler/verdicts/2026-05-04-verdict.html"><strong>NanmiCoder/MediaCrawler</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 75</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both are Python crawlers for Chinese platforms with single-platform deep-watch use case. Both ask for real account login (cookie / QR), both Playwright-driven, both vulnerable to anti-bot when scheduled aggressively." data-zh="都是中国平台的 Python 爬虫,做单平台深度监控。都要真实账号(cookie / 扫码),都用 Playwright,频次高都会被反爬限。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="ai-goofish-monitor wins at" data-zh="ai-goofish-monitor 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Single-platform deep-monitor with multi-modal LLM filtering + 6-channel notifications. The LLM analysis on listing photos is the differentiator — it filters out &quot;looks new but actually beaten up&quot; cases MediaCrawler can&#x27;t." data-zh="单平台深度监控 + 多模态 LLM 过滤 + 6 渠道通知。LLM 看照片是差异点 —— 能过滤&quot;卖家说九成新但照片磕痕明显&quot;的 case,MediaCrawler 做不到。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="MediaCrawler wins at" data-zh="MediaCrawler 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Breadth — 7 platforms × multiple crawl modes × 8 storage backends. When you need cross-platform data analysis (not just watching one), MediaCrawler is the right tool. Larger ecosystem (48K vs 11K stars)." data-zh="覆盖广 —— 7 平台 × 多种抓取模式 × 8 存储后端。需要跨平台数据分析(不是只盯一个)时,MediaCrawler 更合适。生态更大(48K 对 11K stars)。"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/zinan92--content-downloader/verdicts/2026-04-09-verdict.html"><strong>zinan92/content-downloader</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-dont_use">🛑 <span class="i18n" data-en="Don&#x27;t use" data-zh="不可使用"></span> · 44</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both target single-platform watching/downloading with Playwright + Python. Both are personal-toolkit scope rather than full SaaS." data-zh="都是 Playwright + Python 单平台监控/下载。都是个人工具箱定位,不是 SaaS。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="ai-goofish-monitor wins at" data-zh="ai-goofish-monitor 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Production-grade implementation: Docker bundle + multi-task scheduler + multi-modal LLM + 6 notification channels + battle-tested. 11K stars validates the approach." data-zh="生产级实现: Docker 镜像 + 多任务调度 + 多模态 LLM + 6 渠道通知 + 久经实战。11K stars 验证可行性。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="content-downloader wins at" data-zh="content-downloader 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Different platform (Douyin) and different mode (downloading clips, not monitoring listings). Currently broken on Douyin signing. ai-goofish takes the same Playwright pattern and applies it correctly to XianYu." data-zh="不同平台(抖音)不同模式(下载视频,不是监控挂牌)。抖音签名当前坏了。ai-goofish 用同样 Playwright 模式但落到闲鱼,而且能跑通。"></span></div></div></article></div></section>
 
   <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>docker compose up -d</code></td><td>any (Docker)</td><td><span class="badge complexity-easy">easy</span></td></tr><tr><td><code>Pre-built ghcr image</code></td><td>any (Docker)</td><td><span class="badge complexity-easy">easy</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li><li><span class="flag-icon">🚨</span>WEB_PASSWORD=admin123 + 0.0.0.0:8000 default — change before public exposure</li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">Xianyu / 闲鱼 (real account)</div><div class="service-purpose">Cookie-based session for crawling listings</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-signup"><span class="i18n" data-en="📝 Signup needed" data-zh="📝 需要注册账号"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Use companion Chrome extension to export login cookie</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">OpenAI-compatible LLM (default: modelscope.cn)</div><div class="service-purpose">Multi-modal product analysis</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-free"><span class="i18n" data-en="🆓 Free tier API key" data-zh="🆓 免费版 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Defaults to modelscope.cn (CN-friendly); change OPENAI_BASE_URL for own gateway</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">ntfy / Bark / 企业微信 / Telegram / Gotify / Webhook</div><div class="service-purpose">Notification delivery</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-free"><span class="i18n" data-en="🆓 Free tier API key" data-zh="🆓 免费版 API key"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>Pick at least one channel; ntfy.sh is fully free</div></div></div></div></section>
 
@@ -1777,7 +1868,7 @@ status: evaluated
 
 <script>
   const LANG_KEY = 'repoEvalsVerdictLang';
-  const INITIAL_LANG = "auto";
+  const INITIAL_LANG = "zh";
   function detectLang() {
     try {
       const p = new URLSearchParams(location.search).get('lang');

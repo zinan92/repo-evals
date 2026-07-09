@@ -1,0 +1,273 @@
+# Claim map — cheat-on-content
+# Evaluated 2026-07-05 by Mark (repo-evals). Method: static source inspection
+# of a clean clone + GitHub API. NO live end-to-end run (compound skill needs
+# a real channel + platform credentials + a multi-day retro window).
+#
+# Deliberate split (the whole point of this eval):
+#   - MECHANISM claims  -> verifiable by reading the code   -> passed
+#   - EFFICACY claims    -> "1M followers", "10x sharper"    -> untested / unfalsifiable
+#   - CREDENTIAL claims  -> platform data-pull adapters      -> untested (no login)
+#
+# Evidence refs are repo-relative paths in the evaluated repo, re-checkable by
+# anyone who clones XBuilderLAB/cheat-on-content.
+
+claims:
+  # ========================= CRITICAL: mechanism (PASS) =====================
+  - id: claim-001
+    user_icon: "🔒"
+    user_title:
+      en: "You literally can't rewrite a prediction after seeing the results"
+      zh: "看到结果后，你真的没法回头改预测"
+    user_description:
+      en: "Principle #1 (blind prediction) is enforced by a real harness hook, not a promise. A PreToolUse hook blocks any Edit/Write that touches the '## 预测' section of a file under predictions/ — you can only append to '## 复盘'. This is what stops after-the-fact self-flattery."
+      zh: "原则 #1（盲预测）是靠一个真实的 harness hook 强制的，不是口头承诺。PreToolUse hook 会拦截任何触碰 predictions/ 下文件 '## 预测' 段的 Edit/Write —— 你只能往 '## 复盘' 段追加。这就是防止「事后自我安慰」的机制。"
+    title: 预测不可改由 harness hook 在代码层强制
+    source: README + code
+    source_ref: "hooks/prediction-immutability.sh (awk finds '## 预测' bounds; grep -F old_string; exit 1 to block)"
+    priority: critical
+    area: integrity
+    statement: |
+      predictions/ 下文件的 '## 预测' 段一旦写入即不可编辑；只能往 '## 复盘' 追加。
+      由 PreToolUse(Edit|Write) hook 强制，而非仅靠 prompt 约束。
+    evidence_needed: |
+      读 hooks/prediction-immutability.sh：确认它解析 JSON 载荷、定位预测段、
+      对命中预测段的编辑 exit 1 阻塞，并提供 _redo.md 出口。
+    verification: |
+      CONFIRMED (static). hooks/prediction-immutability.sh is a functional bash hook:
+      parses stdin JSON (tool_name, file_path), gates on */predictions/*.md, uses awk to
+      isolate the '## 预测'/'## Prediction' section, grep -F to test whether old_string
+      lands inside it, and exits 1 with a remediation message if so. Write-over-existing
+      is also blocked. Documented single-shot bypass CHEAT_BYPASS_IMMUTABILITY=1 logs to
+      stderr. Real enforcement, not vaporware.
+    status: passed
+
+  - id: claim-002
+    user_icon: "🕶"
+    user_title:
+      en: "The blind scorer can't peek at how the post actually did"
+      zh: "盲打分的那个 agent 看不到内容实际表现"
+    user_description:
+      en: "Scoring runs in an isolated sub-agent (channel B) that receives ONLY the script + the rubric, and hard-refuses to read state, predictions, retros, the persona file, or the bump memo. It even greps the rubric for leaked performance numbers and flags contamination. So the 'unbiased anchor score' really is unbiased by outcomes."
+      zh: "打分跑在一个隔离子 agent（channel B）里，只收到「稿子 + rubric」，硬拒读状态、predictions、复盘、受众画像、升级 memo。它甚至会 grep rubric 里有没有泄漏的实绩数字并标记污染。所以「无偏锚点分」是真的不受结果影响。"
+    title: 盲打分子 agent 上下文隔离 + 硬拒读实绩
+    source: README + code
+    source_ref: "skills/cheat-score-blind/SKILL.md (hard-refusal table w/ refusal_codes blocked_audience / blocked_rubric_memo; whitelist grep self-check)"
+    priority: critical
+    area: integrity
+    statement: |
+      打分动作由 Task tool spawn 的隔离子 agent 执行，仅可读 script + rubric_notes.md；
+      对 state / predictions / videos / audience.md / rubric-memo.md 等含实绩信号的路径硬拒读。
+    evidence_needed: |
+      读 skills/cheat-score-blind/SKILL.md：确认 hard-refusal list + refusal_code +
+      读完 rubric 后跑 grep 检测污染信号的白名单自检。
+    verification: |
+      CONFIRMED (static). cheat-score-blind/SKILL.md defines a 3-channel model
+      (A=main, B=blind sub, C=cross-model), a hard-refusal table mapping leak paths to
+      refusal_codes (blocked_audience, blocked_rubric_memo, blocked_contaminated_input),
+      and a mandatory post-read grep on rubric_notes.md for 播放/实绩/万 numbers ->
+      sets non_blind_warning + drops confidence. It also honestly documents its OWN limits
+      (shared RLHF prior; non-deterministic; doesn't fix rubric-design bias).
+    status: passed
+
+  # ========================= CRITICAL: efficacy (UNTESTED) ==================
+  - id: claim-003
+    user_icon: "🚀"
+    user_title:
+      en: "'Zero to 1M followers in a month'"
+      zh: "「一个月从 0 到 100 万粉」"
+    user_description:
+      en: "The headline growth claim. It is a single unverifiable anecdote about the author's own channel, with no dataset, no methodology, and no way to attribute growth to the tool vs. the person/topic/luck. Structurally unfalsifiable marketing — treat as vibe, not evidence."
+      zh: "标题党式增长承诺。这是作者对自己账号的单一、无法核实的轶事，没有数据集、没有方法、也无法把增长归因到工具（而非人/选题/运气）。结构上不可证伪的营销 —— 当氛围看，别当证据。"
+    title: “一个月百万粉”增长承诺
+    source: README
+    source_ref: "README.md hero ('zero to 1M followers in a month. It said I'd write this.')"
+    priority: critical
+    area: efficacy
+    statement: |
+      使用本工具能带来「一个月 0 → 100 万粉」级别的增长结果。
+    evidence_needed: |
+      需要：多账号对照 / 归因隔离 / 可复现的纵向数据。单一作者轶事不构成证据。
+    verification: |
+      UNTESTED — and structurally unfalsifiable. n=1 self-report, no attribution isolation,
+      no dataset. Cannot be confirmed OR refuted by any static or single live run. Marked
+      untested (not failed): no evidence it is false, but zero evidence it is true. The repo
+      itself quarantines this hype to the README (see claim-008).
+    skip_reason: "Structurally unfalsifiable n=1 self-report; no dataset / attribution isolation exists to test. Deliberate skip."
+    status: untested
+
+  - id: claim-004
+    user_icon: "📈"
+    user_title:
+      en: "Your judgment gets '10x sharper by month 3' as predictions compound"
+      zh: "判断力「三个月后 ×10」，预测随时间复利变准"
+    user_description:
+      en: "The core efficacy promise: running the loop makes your prediction accuracy converge / compound. This is plausible in principle (calibration training is a real thing) but requires a months-long logged run on a real channel to demonstrate. A well-built loop is NOT proof the loop improves outcomes."
+      zh: "核心效果承诺：跑这个循环会让你的预测准确度收敛/复利。原理上说得通（校准训练是真实存在的），但要在真实账号上跑几个月并记录才能证明。一个「造得好的循环」不等于「循环真的让判断变准」。"
+    title: 预测准确度随循环复利收敛（判断力 ×10）
+    source: README
+    source_ref: "README.md ('by month three, judgment accuracy is 10x sharper than day one')"
+    priority: critical
+    area: efficacy
+    statement: |
+      持续跑「打分→盲预测→复盘→bump」循环，用户的预测准确度会显著、可测地提升。
+    evidence_needed: |
+      需要：真实账号上数周至数月的 predictions/ + 复盘实绩序列，展示预测误差随时间下降
+      （例如 tools/score-curve.py 的收敛曲线）。当前无 live run。
+    verification: |
+      UNTESTED. Needs a longitudinal live run (the compound-layer ceiling). Note the
+      convergence-curve tool (tools/score-curve.py) is marked ⬜ not-built in SKILL.md,
+      so even the repo's own instrument for this claim is roadmap, not shipped.
+    skip_reason: "Needs a months-long logged live run on a real channel to demonstrate convergence; out of scope for a static eval. Deliberate skip."
+    status: untested
+
+  # ========================= HIGH: mechanism (PASS) ========================
+  - id: claim-005
+    user_icon: "🚏"
+    user_title:
+      en: "15 sub-skills exist and route by natural-language trigger"
+      zh: "15 个子 skill 真实存在，并按自然语言触发词路由"
+    user_description:
+      en: "The '一个 skill' is actually a router SKILL.md + 15 sub-skill SKILL.md files, each mapped to trigger words (初始化 / 打分 / 启动预测 / 复盘 / 升级 rubric …). install.sh symlinks all 15. Not a stub — 4,431 lines of sub-skill content total."
+      zh: "所谓「一个 skill」其实是「总路由 SKILL.md + 15 个子 skill SKILL.md」，每个映射到触发词（初始化/打分/启动预测/复盘/升级 rubric…）。install.sh 把 15 个全 symlink 进去。不是空壳 —— 子 skill 合计 4,431 行。"
+    title: 15 子 skill + 路由表真实存在且成规模
+    source: SKILL.md
+    source_ref: "SKILL.md 路由表; install.sh SUB_SKILLS[] (15 entries); skills/cheat-*/SKILL.md (wc -l = 4431 total)"
+    priority: high
+    area: structure
+    statement: |
+      README/SKILL.md 声称的 15 个子 skill 均以 skills/cheat-*/SKILL.md 存在，
+      并由主 SKILL.md 路由表按触发词派发；install.sh 全部 symlink。
+    evidence_needed: |
+      git tree + wc -l 子 skill + 读主 SKILL.md 路由表 + install.sh SUB_SKILLS 数组。
+    verification: |
+      CONFIRMED (static). 15 sub-skills present (cheat-init … cheat-migrate + cheat-score-blind),
+      totalling 4,431 lines; SKILL.md router table maps triggers -> sub-skill w/ preconditions;
+      install.sh SUB_SKILLS[] lists exactly 15. Substantial, not a stub.
+    status: passed
+
+  - id: claim-006
+    user_icon: "🧱"
+    user_title:
+      en: "You can't sneak a rubric upgrade past yourself"
+      zh: "你没法把一次 rubric 升级「糊弄」过自己"
+    user_description:
+      en: "Principle #2 (bump = full re-score). Upgrading the scoring formula forces: write the full equation, re-score the whole calibration pool, require rank-consistency vs actuals on >=4/5 samples with pairwise no-regression, AND pass an independent cross-model audit. A rejecting audit blocks the upgrade — 'I feel the signal is strong' can't override it."
+      zh: "原则 #2（升级 = 全量重打）。升级打分公式会强制：写出完整方程、对整个校准池全量重打、要求新排序 vs 实绩在 ≥4/5 样本一致且成对不回退、还要过跨模型独立审核。审核 REJECT 就挡下升级 ——「我觉得信号强」无法绕过。"
+    title: rubric 升级 = 全量重打 + 排序一致 + 跨模型审核
+    source: SKILL.md
+    source_ref: "shared-references/bump-validation-protocol.md (5-step: full equation, re-score pool, Spearman + pairwise no-regression @THRESHOLD 4/5, cross-model audit)"
+    priority: high
+    area: integrity
+    statement: |
+      任何结构性 rubric 变更必须走 5 步验证：写全公式 → 校准池全量重打 → 排序一致性
+      (默认 4/5 + pairwise no-regression) → 跨模型审核；审核 REJECT 即拒绝升级。
+    evidence_needed: |
+      读 shared-references/bump-validation-protocol.md：确认 5 步、THRESHOLD、
+      Spearman/pairwise、跨模型 audit 的硬约束。
+    verification: |
+      CONFIRMED (static, spec-level). Protocol specifies the full 5-step gate incl.
+      Spearman rank correlation, pairwise no-regression, THRESHOLD 4/5, and mandatory
+      cross-model audit with hard 'REJECT => blocked' language. Note: this is a documented
+      contract enforced by the LLM at runtime (not a hook), so runtime adherence is the
+      part a live run would still need to confirm — but the discipline is fully specified.
+    status: passed
+
+  - id: claim-007
+    user_icon: "🧬"
+    user_title:
+      en: "Old versions upgrade cleanly via a real migration chain"
+      zh: "老版本能通过真实的迁移链平滑升级"
+    user_description:
+      en: "State schema evolves 1.0 -> 1.4 with a single-source migration registry, a per-step migration file (WHAT/WHY/HOW + manual fallback), breaking flags, and a /cheat-migrate skill that reads the registry. This is real versioning discipline, not a README claim."
+      zh: "状态 schema 从 1.0 → 1.4 演进，有单一来源的迁移登记表、每步一个迁移文件（WHAT/WHY/HOW + 手动兜底）、breaking 标记，以及读这张表的 /cheat-migrate skill。这是真实的版本纪律，不是 README 吹的。"
+    title: 1.0→1.4 schema 迁移链 + /cheat-migrate 真实存在
+    source: repo
+    source_ref: "migrations/registry.md (LATEST_SCHEMA=1.4, version chain table); migrations/1.x-to-1.y.md files; skills/cheat-migrate/SKILL.md"
+    priority: high
+    area: maintainability
+    statement: |
+      schema 版本演进有单一来源 registry + 每步迁移文件 + breaking 标记 + cheat-migrate skill。
+    evidence_needed: |
+      读 migrations/registry.md 版本链 + 抽查 1.3-to-1.4.md + 确认 cheat-migrate 引用。
+    verification: |
+      CONFIRMED (static). registry.md pins LATEST_SCHEMA=1.4 and lists the 1.0->1.1->1.2->
+      1.3->1.4 chain with breaking flags and per-step files; CHANGELOG is detailed and honest
+      (Keep-a-Changelog + SemVer + integration credits). Real release/migration discipline.
+    status: passed
+
+  - id: claim-008
+    user_icon: "🎭"
+    user_title:
+      en: "The hype stays in the README and out of your working files"
+      zh: "营销话术留在 README，不进你的实际工作文件"
+    user_description:
+      en: "Unusually honest for a viral-marketed repo: SKILL.md explicitly orders that the 'Cluely-style rebellion hook' appears ONLY in README and must NOT be written into rubric_notes.md or prediction logs, and the working voice is 'reflective-irreverent / say the failure plainly'. The tool quarantines its own marketing from the calibration data. It also marks unbuilt pieces ⬜ vs ✅ honestly."
+      zh: "对一个靠病毒营销出圈的仓库来说异常诚实：SKILL.md 明确要求「Cluely 风格反叛 hook 只在 README 出现」，不得写进 rubric_notes.md 或预测日志，工作语气是「直白克制、把失败直接说出来」。工具把自己的营销和校准数据隔离开。还用 ⬜/✅ 诚实标注了哪些没做完。"
+    title: 营销话术被隔离在 README，工作文件保持克制
+    source: SKILL.md
+    source_ref: "SKILL.md 'Tone & voice' ('Cluely 风格的反叛 hook 只在 README 出现——不要写进 rubric_notes.md 或预测日志'); ✅/⬜ done-vs-roadmap markers"
+    priority: high
+    area: honesty
+    statement: |
+      仓库把不可证伪的营销话术限制在 README，禁止渗入实际工作文件；
+      并用 ✅/⬜ 明确区分已完成与路线图。
+    evidence_needed: |
+      读 SKILL.md 'Tone & voice' 段 + 文件清单里的 ✅/⬜ 标记。
+    verification: |
+      CONFIRMED (static). SKILL.md 'Tone & voice' explicitly confines the rebellion hook to
+      README and forbids it in rubric_notes.md / prediction logs; the file manifest marks
+      tools/*.py and long/short-form rubrics as ⬜ (not built). Good-faith separation of
+      marketing theater from the actual working artifacts.
+    status: passed
+
+  # ========================= HIGH: install (PASS w/ concerns) ===============
+  - id: claim-009
+    user_icon: "📦"
+    user_title:
+      en: "The installer is clean and reversible (but touches your live skill dir)"
+      zh: "安装脚本干净可逆（但会动你真实的 skill 目录）"
+    user_description:
+      en: "install.sh is well-formed (set -euo pipefail, conflict detection, y/N confirm before overwrite, --copy frozen mode, matching uninstall.sh that doesn't touch content data). Concern: it symlinks 15 skills straight into your live ~/.claude/skills, and was NOT executed in a clean environment during this eval (per no-live-mutation rule)."
+      zh: "install.sh 写得规范（set -euo pipefail、冲突检测、覆盖前 y/N 确认、--copy 冻结模式、配套 uninstall.sh 不碰内容数据）。顾虑：它把 15 个 skill 直接 symlink 进你真实的 ~/.claude/skills，且本次评估未在干净环境执行（遵守不在 live 系统改动的规则）。"
+    title: install.sh 规范可逆，但会写入 live skill 目录且未实跑
+    source: repo
+    source_ref: "install.sh (set -euo pipefail; detect_conflicts; read -p overwrite; --copy; --reinstall-hooks preserves user data); uninstall.sh"
+    priority: high
+    area: install
+    statement: |
+      安装脚本可安全重跑、覆盖前确认、可卸载、不动用户内容数据；
+      但会 symlink 15 skill 进 ~/.claude/skills（live 目录）。
+    evidence_needed: |
+      静态读 install.sh + uninstall.sh；干净环境实跑 exit code（本次未做）。
+    verification: |
+      PLAUSIBLE (static read only, NOT executed). Script is correct bash: strict mode,
+      conflict detection, explicit y/N overwrite prompt, symlink vs --copy modes,
+      --reinstall-hooks path that explicitly preserves .cheat-state.json / user work.
+      Concern: mutates the live agent skill dir; not run in a clean sandbox here.
+    status: passed_with_concerns
+
+  # ========================= HIGH: adapters (UNTESTED) ======================
+  - id: claim-010
+    user_icon: "🔌"
+    user_title:
+      en: "Auto data-pull from Douyin / Xiaohongshu / LinkedIn / Bilibili"
+      zh: "自动从抖音 / 小红书 / 领英 / B站 抓复盘数据"
+    user_description:
+      en: "cheat-retro claims automatic performance data-pull via perf-data adapters. Each adapter needs Playwright + Chromium + a logged-in platform session (QR scan, cookies in your project's .auth/) and is 'copied from a private reference project, validated on the author's account'. Not verifiable without real credentials — untested, and anti-scraping means it may rot."
+      zh: "cheat-retro 声称通过 perf-data adapter 自动抓实绩数据。每个 adapter 需要 Playwright + Chromium + 平台登录态（扫码，cookie 存项目 .auth/），且是「照搬自私有参考项目、在作者账号上验证过」。没有真实凭证无法核实 —— 未验证，且反爬意味着它可能失效。"
+    title: 平台复盘抓数 adapter（需登录态，未验证）
+    source: adapters
+    source_ref: "adapters/perf-data/{douyin-session,xhs-explore,linkedin-session,bilibili-stat}/README.md + crawler.py (Playwright persistent context, .auth/ cookies)"
+    priority: high
+    area: data-pull
+    statement: |
+      复盘阶段可通过 adapter 自动抓取各平台播放/完播/评论数据。
+    evidence_needed: |
+      需要真实平台登录态 + Playwright 实跑抓一次数据。按 repo-evals 规则不用真实凭证。
+    verification: |
+      UNTESTED (credential-gated). Source present (crawler.py/review.py/renderer.py per platform,
+      XHR-intercept approach), README documents Playwright + QR login + .auth/ cookie reuse.
+      Cannot verify data actually returns without a real logged-in account; anti-scraping makes
+      it inherently fragile over time. Skipped per no-credentials rule -> layer ceiling stands.
+    skip_reason: "Requires real platform login sessions (douyin/xhs/linkedin/bilibili); no-credentials rule forbids running it on live accounts. Deliberate skip."
+    status: untested

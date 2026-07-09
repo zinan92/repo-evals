@@ -1,0 +1,190 @@
+claims:
+  - id: claim-001
+    user_icon: "📦"
+    user_title:
+      en: "Docker images on both GHCR and Docker Hub, recently published"
+      zh: "GHCR 和 Docker Hub 上都有镜像，最近还在更新"
+    user_description:
+      en: "README's quickstart tells you to `docker run … ghcr.io/rachelos/we-mp-rss:latest` or `rachelos/we-mp-rss:latest`. Docker Hub confirms the image exists, ~100k pulls, last pushed 2026-05-11 — actively republished, not abandoned."
+      zh: "README 让你跑 `docker run … ghcr.io/rachelos/we-mp-rss:latest` 或 `rachelos/we-mp-rss:latest`。Docker Hub 显示镜像存在、约 10 万 pull、最近一次推送 2026-05-11 —— 一周前刚推过，没有废弃。"
+    title: rachelos/we-mp-rss Docker 镜像存在且 1 周内有推送
+    source: README
+    source_ref: "## Quick Start / Official Image / Proxy Mirror"
+    priority: critical
+    area: shipped-artifacts
+    statement: |
+      Docker Hub rachelos/we-mp-rss 公开镜像，latest tag 在过去 14 天内 push 过。
+    evidence_needed: |
+      Docker Hub registry v2 API。
+    status: passed
+    evidence_summary: |
+      curl https://hub.docker.com/v2/repositories/rachelos/we-mp-rss/ →
+      status=1, pull_count=99,525, last_updated=2026-05-11.
+      tags: latest (2026-05-11), beta (2026-04-03), main (2025-06-05).
+      GHCR 同名镜像存在 (ghcr.io 返回 401 + token 引导，是匿名公开镜像的标准行为)。
+
+  - id: claim-002
+    user_icon: "🌐"
+    user_title:
+      en: "Project homepage werss.csol.store is live"
+      zh: "项目主页 werss.csol.store 当前可访问"
+    user_description:
+      en: "GitHub repo declares homepage `https://werss.csol.store`. The site currently returns HTTP 200 — adopters have a place to land outside GitHub."
+      zh: "GitHub 仓库声明的主页 `https://werss.csol.store` 当前返回 HTTP 200，作者有一个 GitHub 之外的落地页。"
+    title: 项目主页 werss.csol.store 当前可达
+    source: framework
+    source_ref: "GitHub homepage field"
+    priority: medium
+    area: dependency-liveness
+    statement: |
+      curl -I https://werss.csol.store 返回 2xx。
+    evidence_needed: |
+      HEAD 请求结果。
+    status: passed
+    evidence_summary: |
+      curl -sI https://werss.csol.store → HTTP/2 200, content-type text/html。
+
+  - id: claim-003
+    user_icon: "📜"
+    user_title:
+      en: "License file is real MIT (but GitHub's parser says NOASSERTION)"
+      zh: "LICENSE 文件实质是 MIT（但 GitHub 解析成 NOASSERTION）"
+    user_description:
+      en: "Repo claims MIT in the badge. The actual LICENSE file is verbatim MIT text — only with an added 'Mail:rachelos@qq.com' line that prevents GitHub's classifier from recognising it (returns `Other / NOASSERTION`). Effectively MIT for fork / reuse."
+      zh: "README 徽章写的 MIT。LICENSE 文件确实是 MIT 原文，只是开头多了一行 'Mail:rachelos@qq.com'，让 GitHub 自动分类器识别不出来（返回 'Other / NOASSERTION'）。fork / 复用按 MIT 来理解就行。"
+    title: LICENSE 实质 MIT，自动分类器误判 NOASSERTION
+    source: framework
+    source_ref: "GitHub license API"
+    priority: high
+    area: maintainer
+    statement: |
+      gh api repos/<owner>/<repo> license.spdx_id = NOASSERTION 但 LICENSE 文件
+      内容是 MIT 原文。
+    evidence_needed: |
+      gh api repos + raw LICENSE 内容。
+    status: passed
+    evidence_summary: |
+      gh api license.key=other, spdx_id=NOASSERTION。
+      LICENSE 原文：第一段 "MIT License ... Copyright (c) 2025 RACHEL ...
+      Mail:rachelos@qq.com" 后接标准 MIT 八段 + warranty 文本。判定为真 MIT。
+
+  - id: claim-004
+    user_icon: "🏷"
+    user_title:
+      en: "README borrows badges from RSSNext/Folo — not this project's numbers"
+      zh: "README 顶部徽章是借的 RSSNext/Folo —— 不是本项目的数据"
+    user_description:
+      en: "The README's top badge row includes GitHub stars / contributors / uptime / downloads / Discord badges that all link to `RSSNext/Folo` and `DIYgod/sponsors` — different projects. A new adopter could be misled into thinking we-mp-rss has Folo-level community signals. These badges should be removed or relabeled."
+      zh: "README 顶部那一排 stars / contributors / uptime / downloads / Discord 徽章，链接全部指向 `RSSNext/Folo` 和 `DIYgod/sponsors` —— 那是另外两个项目。新用户容易误以为 we-mp-rss 有 Folo 级别的社区指标。应该删掉或换成自己项目的链接。"
+    title: README 徽章引用 RSSNext/Folo 而非本项目
+    source: README
+    source_ref: "ReadMe.md 顶部 badge row"
+    priority: high
+    area: marketing-vs-reality
+    statement: |
+      ReadMe.md 包含 img.shields.io 徽章 URL 直接指向 RSSNext/Folo 仓库
+      （stars / contributors / downloads / Discord followapp）。
+    evidence_needed: |
+      ReadMe.md 原文片段。
+    status: failed
+    evidence_summary: |
+      ReadMe.md 中找到的 4 个外链徽章：
+        - img.shields.io/github/stars/RSSNext/Follow
+        - img.shields.io/github/contributors/RSSNext/Folo
+        - status.follow.is/api/badge/18/uptime
+        - img.shields.io/github/downloads/RSSNext/Folo/total
+        - discord.gg/followapp
+      均指向 Folo 项目而非 rachelos/we-mp-rss。属于误导性 chrome。
+
+  - id: claim-005
+    user_icon: "🧹"
+    user_title:
+      en: "Repo root littered with ad-hoc fix / debug / diagnose scripts"
+      zh: "仓库根目录散落大量 fix / debug / diagnose 脚本"
+    user_description:
+      en: "Beyond the normal `main.py` / `web.py` / `job.py` entry points, the root contains 10+ ad-hoc Python scripts: `atack.py`, `fix_db_now.py`, `fix_user_id.py`, `debug_template_parser.py`, `diagnose_config.py`, `check_cascade_creds.py`, `verify_cascade_creds.py`, `quick_check_parent.py`, plus `TROUBLESHOOTING_CASCADE.md` and `FIX_CASCADE_CONFIG.md`. Indicates fix-on-incident dev style, no test suite as a quality gate."
+      zh: "正常入口 (`main.py`, `web.py`, `job.py`) 之外，根目录还有十几个临时 Python 脚本：`atack.py`、`fix_db_now.py`、`fix_user_id.py`、`debug_template_parser.py`、`diagnose_config.py`、`check_cascade_creds.py`、`verify_cascade_creds.py`、`quick_check_parent.py`，加上 `TROUBLESHOOTING_CASCADE.md` 和 `FIX_CASCADE_CONFIG.md` 两个修复文档。说明开发节奏是『出问题→加 fix 脚本』，没有测试套件做质量门。"
+    title: 根目录有 10+ ad-hoc 修复 / 调试脚本而无测试套件
+    source: framework
+    source_ref: "eval_discipline_score"
+    priority: medium
+    area: maintainer
+    statement: |
+      根目录存在多个 fix_*.py / debug_*.py / diagnose_*.py / check_*.py 脚本，
+      且没有 tests/ 目录或 pytest 配置。
+    evidence_needed: |
+      gh api contents/ 根目录列表 + 是否有 tests/。
+    status: passed
+    evidence_summary: |
+      根目录列表确认存在: atack.py, fix_db_now.py, fix_user_id.py,
+      debug_template_parser.py, diagnose_config.py, check_cascade_creds.py,
+      verify_cascade_creds.py, verify_imports.py, quick_check_parent.py,
+      test_article.py（单一脚本，不是套件）, FIX_CASCADE_CONFIG.md,
+      TROUBLESHOOTING_CASCADE.md. 无 tests/ 目录或 pyproject 测试配置。
+
+  - id: claim-006
+    user_icon: "🏃"
+    user_title:
+      en: "Actively maintained — commit yesterday, no archive flag"
+      zh: "正在维护中 —— 昨天还在 commit，未 archive"
+    user_description:
+      en: "GitHub API confirms `archived: false`, `pushed_at: 2026-05-18` (yesterday). Single-maintainer (RACHEL) but the heartbeat is current. Materially different from cooderl/wewe-rss which is frozen."
+      zh: "GitHub API 确认 `archived: false`，`pushed_at: 2026-05-18`（昨天）。虽然是单人维护（RACHEL），但心跳还在。和 cooderl/wewe-rss 已冻结状态有本质区别。"
+    title: archived=false 且 pushed_at 在 48 小时内
+    source: framework
+    source_ref: "recently_active flag"
+    priority: critical
+    area: maintainer
+    statement: |
+      gh api archived=false, pushed_at 在评估前 48 小时内。
+    evidence_needed: |
+      gh api repos。
+    status: passed
+    evidence_summary: |
+      gh api: archived=false, pushed_at=2026-05-18T03:50:26Z, default_branch=main,
+      open_issues=10. 项目处于活跃状态。
+
+  - id: claim-007
+    user_icon: "🔤"
+    user_title:
+      en: "Bilingual README (EN + zh-CN)"
+      zh: "中英双语 README"
+    user_description:
+      en: "Repo ships both ReadMe.md (English) and README.zh-CN.md (Chinese). Cross-links between them. Adopters in either language community can read the docs natively."
+      zh: "仓库同时有 ReadMe.md（英文）和 README.zh-CN.md（中文），互相链接。中英文用户都能直接读文档。"
+    title: 仓库根目录同时存在英文和中文 README
+    source: framework
+    source_ref: "multilingual_readme"
+    priority: low
+    area: ecosystem
+    statement: |
+      仓库根目录同时存在 ReadMe.md 和 README.zh-CN.md。
+    evidence_needed: |
+      gh api contents/。
+    status: passed
+    evidence_summary: |
+      根目录 contents 列表确认两个文件并列：ReadMe.md, README.zh-CN.md。
+
+  - id: claim-008
+    user_icon: "🔍"
+    user_title:
+      en: "SEO-stuffed description / topics — not deceptive, but unprofessional"
+      zh: "Description / topics SEO 堆砌 —— 不算造假，但显得不专业"
+    user_description:
+      en: "GitHub description is one long Chinese run-on of keyword variants ('订阅微信公众号 微信公众号订阅 微信公众号助手 微信公众号读书…' repeated). Topics list mixes legitimate tags (`rss`, `mysql`) with brand-name spam (`folo`, `wexinrss`, `wxsprider`). Features work; presentation telegraphs amateur SEO."
+      zh: "GitHub description 是一长串中文关键词变体堆砌（『订阅微信公众号 微信公众号订阅 微信公众号助手 微信公众号读书……』反复）。topics 列表也混了合法标签（`rss`、`mysql`）和品牌词蹭流量（`folo`、`wexinrss`、`wxsprider`）。功能本身是真的，但呈现方式很业余。"
+    title: 仓库 description / topics 呈现关键词堆砌
+    source: framework
+    source_ref: "GitHub repo description / topics fields"
+    priority: low
+    area: marketing-vs-reality
+    statement: |
+      Description 长度 > 200 字且重复出现同一关键词；topics 包含蹭流量品牌词。
+    evidence_needed: |
+      gh api repos description / topics。
+    status: passed
+    evidence_summary: |
+      Description 单字符串包含 "微信公众号" 出现 20+ 次（"订阅微信公众号、
+      微信公众号订阅、微信公众号助手、微信公众号读书……"）。
+      Topics: ['folo','mysql','rss-feed','rss-hub','rsshub','we-mp-rss',
+      'weichat','weixin','weread','werss','wexinrss','wx','wxsprider']。

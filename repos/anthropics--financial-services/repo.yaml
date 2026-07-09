@@ -1,0 +1,164 @@
+# Identity
+owner: anthropics
+repo: financial-services
+display_name: Claude for Financial Services
+repo_url: https://github.com/anthropics/financial-services
+repo_type: framework
+archetype: orchestrator
+layer: compound
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-19"
+version_tested: "main@HEAD (pushed 2026-05-15)"
+
+# Maintainer / ecosystem signals
+stars: 25065
+archived: false
+has_license: true
+multilingual_readme: false
+release_pipeline_score: 2
+eval_discipline_score: 2
+recently_active: true
+
+business_category: finance
+use_case_tags: ["investment-banking", "equity-research", "private-equity", "wealth-management", "fund-admin", "kyc"]
+
+notes: |
+  Anthropic 官方发布的金融服务参考实现 — 一个 plugin marketplace 仓库，
+  包含 10 个端到端 agent、7 个垂直行业 skill 包、2 个合作方 (LSEG / S&P) 包、
+  10 个 Managed Agent cookbooks，以及 11 个 MCP 数据源连接器配置。
+  所有内容为 markdown + JSON，无构建步骤。代码本身不"跑业务"，
+  它是给金融机构往自己的 Cowork / Managed Agents API 上装 Claude 工作流的
+  起点模板。
+
+product_view:
+  one_liner:
+    en: "Anthropic's reference plugin pack for financial workflows — 10 named agents (Pitch, Earnings, GL Recon, KYC…) install as Claude Cowork plugins or deploy headless via Managed Agents API, wired to 11 financial-data MCP connectors (Daloopa, Morningstar, S&P, FactSet…)."
+    zh: "Anthropic 官方出品的金融工作流模板包 — 10 个具名 agent（投行 pitch、财报评审、GL 对账、KYC……）可作为 Claude Cowork 插件一键安装，或通过 Managed Agents API 无头部署，开箱连通 11 个金融数据 MCP（Daloopa、Morningstar、S&P、FactSet 等）。"
+  persona:
+    en: "FSI engineering lead or analyst-tech team evaluating whether to build their own Claude analyst stack or fork an official template."
+    zh: "金融机构里的工程负责人或分析师技术团队 —— 在考虑要不要自己造 Claude 分析师栈，还是 fork 官方模板改改用。"
+  scenario:
+    en: "Mid-sized IB. Analysts burn hours on pitch books, comps, deck refreshes. You want Claude to do the first draft of each, but every agent / skill / MCP wiring from scratch is months. This gives you a working skeleton on day 1."
+    zh: "中型投行。分析师每天花几小时拼 pitch book、跑 comps、刷 deck。想让 Claude 出初稿，但每个 agent / skill / MCP 自己写要几个月。这个 repo 让你第一天就有完整骨架。"
+  without_this:
+    en: "Piece together prompts from blog posts, hand-roll each agent's system prompt, manually configure MCPs for Daloopa / FactSet / etc., write your own managed-agent cookbook spec, test in isolation. 3-6 months for one workflow."
+    zh: "到处翻 blog 攒 prompt，每个 agent 的 system prompt 自己手写，挨个查 Daloopa / FactSet MCP 怎么配，managed-agent cookbook 自己照 API 文档凑。3-6 个月才能跑通一条工作流。"
+  with_this:
+    en: "`claude plugin install pitch-agent@claude-for-financial-services` and you have a working Pitch Agent in your session — comps / DCF / LBO skills, slash commands, connectors. Tune the prompts and skill files to how your firm actually works."
+    zh: "一行 `claude plugin install pitch-agent@claude-for-financial-services` 装好，session 里直接出现 Pitch Agent，自带 comps / DCF / LBO skill、slash 命令、数据连接器。再按你们公司打法改 prompt 和 skill。"
+  cost_summary:
+    en: "Repo is Apache-2.0, free. MCP data connectors (Daloopa, Morningstar, FactSet, S&P, PitchBook …) almost all require paid enterprise subscriptions from those vendors. Claude API billed by Anthropic. M365 install tooling assumes you already license Claude inside M365."
+    zh: "Repo Apache-2.0 免费。MCP 数据连接器（Daloopa、Morningstar、FactSet、S&P、PitchBook 等）几乎都要这些厂商的企业付费订阅。Claude API 调用按 Anthropic 计费。M365 安装工具假设你已经买了 M365 里的 Claude。"
+  how:
+    en: "Three paths: (1) Cowork — Settings → Plugins → paste repo URL → pick agents; (2) Claude Code CLI — `claude plugin marketplace add anthropics/financial-services` then install agents / verticals individually; (3) Managed Agents — `scripts/deploy-managed-agent.sh <agent-slug>` for headless deploy."
+    zh: "三条路：(1) Cowork：设置 → 插件 → 粘 repo URL → 挑 agent；(2) Claude Code CLI：先 `claude plugin marketplace add anthropics/financial-services`，再装具体 agent / vertical；(3) Managed Agents：`scripts/deploy-managed-agent.sh <agent-slug>` 跑无头部署。"
+  watch_out:
+    en: "Templates, not finished products. Anthropic explicitly states outputs are 'analyst draft work product for human review' — NOT investment advice, execution, or risk-binding. Most MCP connectors paywalled. Subagent delegation (`callable_agents`) is research preview. Tune system prompts to your firm's conventions before analysts trust output."
+    zh: "这是模板不是成品。Anthropic 在 README 顶部明确说：输出是『分析师初稿待人工审阅』，不是投资建议 / 不能下单 / 不能绑风险。多数 MCP 要付费。Subagent 委托（`callable_agents`）还是 Research Preview。用前一定要按公司术语和流程改 system prompt。"
+  examples:
+    - context:
+        en: "Coverage banker has a 9am pitch with a TMT corporate next week — needs comps + precedents + a draft deck."
+        zh: "Coverage 银行家下周一早 9 点要和一家 TMT 公司开 pitch，需要 comps + precedents + 一份初稿 deck。"
+      you_say:
+        en: "Install pitch-agent. Ask: 'Build a pitch deck for [target] in TMT software, peer set of 8, last 3 years comps, include 5 precedent transactions.'"
+        zh: "装上 pitch-agent，对它说：『给 TMT 软件赛道的 [target] 做一份 pitch deck，8 家可比公司、近 3 年 comps、加 5 个先例交易。』"
+      what_happens:
+        en: "Agent runs comps-analysis → precedents → pitch-deck skills, pulls market data via MCP, drops a populated branded .pptx for analyst polish."
+        zh: "Agent 依次调 comps-analysis → precedents → pitch-deck，通过 MCP 拉市场数据，输出填好数据的品牌化 .pptx，分析师润色即可。"
+    - context:
+        en: "Fund admin finds a $40k break between sub-ledger and GL at month-end."
+        zh: "基金运营月末发现子账与 GL 差了 4 万美元 break。"
+      you_say:
+        en: "Deploy gl-reconciler via `scripts/deploy-managed-agent.sh gl-reconciler` and hand it the trial balance + GL feed."
+        zh: "用 `scripts/deploy-managed-agent.sh gl-reconciler` 部署，扔给它 trial balance + GL feed。"
+      what_happens:
+        en: "Agent traces the break, classifies it (timing / categorization / missing entry), proposes a journal correction, routes to the right approver — all logged to the cookbook's audit trail."
+        zh: "Agent 追溯 break、分类（时滞/科目错/漏记），给出 journal 修正建议，按 cookbook 设的审批流路由到对应审批人，全程留底。"
+  next_step:
+    en: "Read 'how' + 'watch_out' first. Then `git clone` and skim `plugins/agent-plugins/pitch-agent/` to see what a self-contained agent plugin looks like before installing in your real Claude environment."
+    zh: "先看 dossier 里的 how + watch_out。然后 `git clone` 下来翻一下 `plugins/agent-plugins/pitch-agent/`，看一个自包含 agent plugin 长什么样，再决定要不要装到你真实的 Claude 环境里。"
+
+deployment:
+  installable: true
+  install_methods:
+    - method: "claude plugin marketplace add anthropics/financial-services"
+      platform: "Claude Code CLI (any OS)"
+      complexity: easy
+    - method: "Cowork Settings → Plugins → paste repo URL"
+      platform: "Claude Cowork (browser)"
+      complexity: easy
+    - method: "scripts/deploy-managed-agent.sh <agent-slug>"
+      platform: "Anthropic Managed Agents API"
+      complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+  auto_update: false
+
+third_party_services:
+  - name: Daloopa
+    purpose: "Fundamentals data MCP"
+    required: false
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "Enterprise subscription required"
+  - name: Morningstar
+    purpose: "Investment research data MCP"
+    required: false
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "Subscription required"
+  - name: S&P Global (Kensho)
+    purpose: "Capital IQ data MCP"
+    required: false
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "S&P Capital IQ subscription"
+  - name: FactSet
+    purpose: "Market data MCP"
+    required: false
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "FactSet subscription"
+  - name: Moody's
+    purpose: "Credit & ratings data MCP"
+    required: false
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "Moody's subscription"
+  - name: PitchBook
+    purpose: "Private market deal data MCP"
+    required: false
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "Premium PitchBook subscription"
+  - name: LSEG
+    purpose: "Bond / rates / FX / vol analytics MCP"
+    required: false
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "LSEG subscription"
+  - name: Anthropic API
+    purpose: "Underlying model + Managed Agents API"
+    required: true
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "Per-token billing + Managed Agents preview access"
+  - name: Microsoft 365 (optional)
+    purpose: "Run Claude inside Excel / PowerPoint / Word / Outlook"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: false
+    cost_note: "M365 tenant + Azure admin consent"
+
+similar_repos: []

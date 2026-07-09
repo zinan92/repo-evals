@@ -1,0 +1,210 @@
+# repo.yaml — cheat-on-content dossier
+# Evaluated 2026-07-05 by Mark (repo-evals), static + source-inspection only.
+# No live end-to-end run (compound skill; needs a real content channel +
+# platform credentials + a multi-day retro window). Score is ceiling-capped.
+
+# === Identity ================================================================
+owner: XBuilderLAB
+repo: cheat-on-content
+display_name: Cheat on Content（网红作弊器）
+repo_url: https://github.com/XBuilderLAB/cheat-on-content
+
+repo_type: skill
+archetype: orchestrator
+layer: compound
+
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-07-05"
+version_tested: "main@HEAD (tag v0.1.0)"
+
+# === Maintainer / ecosystem signals (all API-verified, not eyeballed) ========
+stars: 5287
+archived: false
+has_license: true          # gh api: MIT (spdx MIT) + LICENSE file 1086 bytes — verified
+multilingual_readme: true  # README.md (EN) + docs/README_CN.md (简体中文)
+release_pipeline_score: 3  # tag v0.1.0 + detailed CHANGELOG.md + migrations/registry.md (1.0→1.4). No CI.
+eval_discipline_score: 1   # ad-hoc: only one self-test (linkedin-session/test_extract.py), no CI, no root test runner
+recently_active: true      # pushed 2026-06-27 (< 90d before 2026-07-05)
+
+business_category: content
+use_case_tags: ["content-calibration", "creator-analytics", "blind-prediction", "rubric-evolution", "video-ops"]
+
+notes: |
+  一个给内容创作者的「校准循环」skill 集：打分 → 盲预测 → 发布 → T+3d 复盘 → 进化 rubric。
+  由 15 个子 skill（cheat-init / cheat-predict / cheat-retro / cheat-bump …）+ 一个总路由
+  SKILL.md 组成，靠触发词把输入派到对应子 skill。
+
+  评估的核心张力是「营销 vs 实现」的落差：
+    - README 门面：「一个月 0 → 100 万粉」「它预测了你会读到这一行」「量子/宿命」话术 —— 不可证伪的营销。
+    - 实际实现：一套认真、工程化的校准方法论 —— 盲预测由 harness hook 强制 immutable；
+      盲打分子 agent（channel B）硬拒读实绩数据；rubric 升级要全量重打 + 跨模型审核。
+  难得的是：仓库自己把营销话术**隔离在 README**，SKILL.md 明确要求「Cluely 风格 hook 不要写进
+  rubric_notes.md / 预测日志」。方法论是真的；「一个月百万粉 / 三个月判断力 ×10」是未验证的效果承诺。
+
+  为什么没有跑正式 live run：这是 compound skill，真跑一遍需要
+  (1) 一个真实内容账号 + 平台登录态（抖音/小红书/领英/B站 adapter 都要 Playwright + 扫码），
+  (2) 真发内容 + 等 T+3d 复盘窗口，
+  (3) 数周的纵向数据才能验证「判断力会收敛」。这些都触碰真实凭证 / 需要长期时间，按 repo-evals
+  规则不在 live 系统上做 —— 因此效果类 claim 记为 untested，分数受 compound 天花板限制。
+
+# === Product view ============================================================
+product_view:
+  one_liner:
+    en: "For content creators — turns every post into a logged, blind-predicted, retro'd experiment so your gut becomes a measurable, self-sharpening rubric (not a growth guarantee)."
+    zh: "给内容创作者的「校准循环」skill：把每条内容变成一次「先盲打分+写死预测 → 发布 → T+3d 复盘 → 进化打分公式」的实验，让你的直觉变成可量化、会自我进化的 rubric —— 卖的是「判断更准」的方法，不是「涨粉」的保证。"
+  persona:
+    en: "A solo creator (opinion video / essay / thread) who ships regularly but 'learns nothing' between posts, and wants to turn hunches into a calibrated, personal scoring system."
+    zh: "持续更新但「发一条学不到一条」的个人创作者（观点视频 / 公众号长文 / thread），想把「我觉得这条会火」变成一套属于自己账号的、可校准的打分系统。"
+  scenario:
+    en: "Before publishing, you score a draft on a 7-dim rubric and write a blind prediction (locked, immutable). Three days after publishing, you pull real numbers and settle the books: where were you sharp, where off. After enough misses in one direction, the tool makes you upgrade the rubric — and won't let the upgrade pass unless it re-ranks history better AND survives a cross-model audit."
+    zh: "发布前：给草稿按 7 维 rubric 打分 + 写一条盲预测（写完即锁死、不可改）。发布 3 天后：抓真实数据结账，看哪维打准了、哪维偏了。连续同向偏差后，工具逼你升级打分公式 —— 而且升级必须在历史样本上排序更准、还要过跨模型独立审核才放行。"
+  without_this:
+    en: "Publish -> numbers come in -> vibe-based 'I guess that one didn't land' -> repeat. 200 posts in, barely sharper than post #1 because nothing was ever booked."
+    zh: "发布 → 数据来了 → 凭感觉「这条大概没成」→ 再来一次。发了 200 条还是跟第 1 条差不多准，因为从没「结过账」。"
+  with_this:
+    en: "Every judgment is logged before publish and settled against data after. You can't rewrite a prediction after seeing results (harness-enforced), and you can't cheat a rubric upgrade past yourself (full re-score + cross-model audit). What compounds is calibration, if you actually run the loop for months."
+    zh: "每次判断都在发布前写死、发布后用数据结账。看到结果后不能回头改预测（hook 强制），也不能把 rubric 升级「糊弄」过自己（全量重打 + 跨模型审核）。真正会复利的是「校准能力」—— 前提是你真的连续跑几个月。"
+  cost_summary:
+    en: "Free (MIT). Runtime cost = LLM tokens (Claude Code / Codex) + your time. Perf-data adapters need Python venv + Playwright/Chromium + a logged-in platform session (QR scan). Cross-model audit needs a second model via mcp__llm-chat__chat."
+    zh: "免费（MIT）。运行成本 = LLM token（Claude Code / Codex）+ 你的时间。复盘抓数 adapter 需要 Python venv + Playwright/Chromium + 平台登录态（扫码）。跨模型审核需要通过 mcp__llm-chat__chat 接第二个模型。"
+  how:
+    en: "git clone + bash install.sh symlinks 15 sub-skills into your agent's skill dir. Then in a content project: say '初始化' (cheat-init), import a benchmark account (cheat-learn-from), and drive the daily loop with natural-language triggers (score / start prediction / shot / shipped / retro / bump)."
+    zh: "git clone + bash install.sh 把 15 个子 skill symlink 进 agent 的 skill 目录。之后在内容项目里：说「初始化」(cheat-init)，导入对标账号 (cheat-learn-from)，用自然语言触发词跑日常循环（打分 / 启动预测 / 拍了 / 已发布 / 复盘 / 升级 rubric）。"
+  watch_out:
+    en: "(1) README growth claims ('1M followers in a month', quantum-fate) are unfalsifiable marketing — ignore them, adopt the method. (2) install.sh symlinks into your live ~/.claude/skills — run it in a sandbox first if you're cautious. (3) Built-in rubric is calibrated on ONE Chinese opinion-video creator; other formats need you to write your own rubric. (4) Real payoff needs months of disciplined use + platform credentials for auto data-pull. (5) It's a mirror, not a growth engine — it sharpens judgment, it does not write or distribute for you."
+    zh: "(1) README 涨粉话术（「一个月百万粉」、量子宿命）是不可证伪的营销 —— 忽略它，采用方法。(2) install.sh 会 symlink 进你真实的 ~/.claude/skills，谨慎的话先在沙箱跑。(3) 内置 rubric 只基于一个中文观点视频博主拟合，其他形态要自己写 rubric。(4) 真正见效需要数周至数月的纪律性使用 + 平台凭证做自动抓数。(5) 它是镜子不是涨粉引擎 —— 只让判断更准，不替你写、不替你分发。"
+  examples:
+    - context:
+        en: "You have a finished video script and a hunch it'll do well."
+        zh: "你写完一条视频稿，感觉这条会不错。"
+      you_say:
+        en: "start prediction scripts/2026-07-05_ai-agents.md"
+        zh: "启动预测 scripts/2026-07-05_ai-agents.md"
+      what_happens:
+        en: "A blind sub-agent (never sees your channel history) scores it on 7 dims; you write a probability bet; the whole prediction is written to predictions/ and locked immutable by a harness hook."
+        zh: "一个盲打分子 agent（看不到你的账号历史）按 7 维打分；你写一条概率 bet；整条预测写进 predictions/ 并被 hook 锁成不可改。"
+    - context:
+        en: "Three days after publishing, the data is in."
+        zh: "发布 3 天后，数据来了。"
+      you_say:
+        en: "retro videos/2026-07-05_ai-agents/"
+        zh: "复盘 videos/2026-07-05_ai-agents/"
+      what_happens:
+        en: "The adapter pulls plays/completion/comments, appends a retrospective to the (still-locked prediction) '## 复盘' section, and after repeated same-direction misses prompts you to bump the rubric."
+        zh: "adapter 抓播放/完播/评论，把复盘追加到（仍锁死的预测）'## 复盘' 段；连续同向偏差后提示你升级 rubric。"
+  next_step:
+    en: "To lift this above 'Available': run one real end-to-end cycle on a throwaway channel (init -> predict -> publish -> retro) in a sandboxed agent skill dir, and log the trigger-fire + blind-isolation behaviour. That single live run is what the compound-layer ceiling is waiting for."
+    zh: "要把它抬过「可使用」：在沙箱化的 agent skill 目录里，用一个测试账号跑一次完整闭环（init → 预测 → 发布 → 复盘），记录触发命中 + 盲隔离行为。compound 层天花板就等这一次 live run。"
+
+# === Deployment ==============================================================
+deployment:
+  installable: true
+  install_methods:
+    - method: "git clone + bash install.sh (symlinks 15 sub-skills into ~/.claude/skills or ~/.codex/skills)"
+      platform: "macOS / Linux (bash, jq, diff; Claude Code or Codex)"
+      complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false   # core loop needs an LLM; data-pull needs platform sessions
+  auto_update: false                   # symlink mode reflects source edits, but no self-update on launch
+
+# === Third-party services ====================================================
+third_party_services:
+  - name: "Claude Code / Codex (LLM agent host)"
+    purpose: "Runs the sub-skills; provides the blind sub-agent (Task tool) + hooks"
+    required: true
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "LLM token cost; blind scoring + cross-model audit multiply calls per prediction."
+  - name: "Playwright + Chromium (perf-data adapters)"
+    purpose: "抖音/小红书/领英/B站 复盘抓数（强 JS 渲染 + 反爬，requests/WebFetch 拿不到）"
+    required: false
+    api_key_needed: false
+    signup_needed: true
+    free_tier: true
+    cost_note: "首次扫码登录，cookie 存内容项目 .auth/；几百 MB Chromium。属未验证 claim（需真实凭证）。"
+  - name: "Second LLM via mcp__llm-chat__chat (cross-model audit / channel C)"
+    purpose: "rubric 升级时的跨模型独立审核，防止自我验证"
+    required: false
+    api_key_needed: true
+    signup_needed: true
+    free_tier: false
+    cost_note: "仅在 cheat-bump 升级流程触发。"
+
+# === Workflow placement ======================================================
+workflow_placements:
+  - workflow_id: "park-content-v1"
+    stage_id: "08_learning"
+    role: primary
+    reason:
+      en: "The retro -> rubric-evolution loop IS the learning stage: it converts published-content outcomes into a sharper personal scoring model."
+      zh: "复盘 → rubric 进化的循环就是「学习」阶段：把已发布内容的实绩变成更准的个人打分模型。"
+  - workflow_id: "park-content-v1"
+    stage_id: "01_signal_scan"
+    role: support
+    reason:
+      en: "cheat-trends / cheat-seed feed the candidate pool from hot-topic sources (weibo / zhihu / aihot)."
+      zh: "cheat-trends / cheat-seed 从热点源（微博/知乎/aihot）补充候选选题池。"
+  - workflow_id: "park-content-v1"
+    stage_id: "05_production"
+    role: support
+    reason:
+      en: "cheat-score / cheat-predict grade a draft and lock a blind bet before it ships."
+      zh: "cheat-score / cheat-predict 在发布前给草稿打分并写死盲预测。"
+
+# === Internal architecture ===================================================
+workflow_diagram:
+  layout: linear
+  why_layer:
+    en: "Compound: a router SKILL.md dispatches natural-language triggers to 15 sub-skills at LLM runtime, with mode detection (cold-start vs calibration), hook-enforced state, and a spawned blind sub-agent. Static inspection validates the wiring and the enforcement code, but the user-facing value (do predictions actually calibrate over time?) needs a logged live run."
+    zh: "Compound：总路由 SKILL.md 在 LLM 运行时把自然语言触发词派给 15 个子 skill，带模式检测（cold-start / calibration）、hook 强制的状态、以及 spawn 出来的盲打分子 agent。静态检查能验证接线和强制代码，但用户真正在意的价值（预测是否会随时间校准）需要一次 live run 才能证实。"
+  nodes:
+    - {id: input, type: start, rank: 0, lane: 0, label: {en: "draft / trigger word", zh: "草稿 / 触发词"}}
+    - {id: router, type: process, rank: 1, lane: 0, label: {en: "SKILL.md router + mode detect", zh: "SKILL.md 路由 + 模式检测"}}
+    - {id: blind, type: process, rank: 2, lane: 0, label: {en: "blind score (channel B, isolated)", zh: "盲打分（channel B 隔离）"}}
+    - {id: predict, type: process, rank: 3, lane: 0, label: {en: "immutable prediction (hook-locked)", zh: "不可改预测（hook 锁定）"}}
+    - {id: retro, type: process, rank: 4, lane: 0, label: {en: "T+3d retro (adapter data)", zh: "T+3d 复盘（adapter 抓数）"}}
+    - {id: bump, type: process, rank: 5, lane: 0, label: {en: "rubric bump (re-score + cross-model audit)", zh: "rubric 升级（全量重打 + 跨模型审）"}}
+    - {id: output, type: end, rank: 6, lane: 0, label: {en: "sharper personal rubric", zh: "更准的个人 rubric"}}
+  edges:
+    - {from: input, to: router}
+    - {from: router, to: blind}
+    - {from: blind, to: predict}
+    - {from: predict, to: retro}
+    - {from: retro, to: bump}
+    - {from: bump, to: output}
+
+# === Comparison ==============================================================
+similar_repos:
+  - slug: "alchaincyf--x-mentor-skill"
+    shared_purpose:
+      en: "Both help a creator get better at content strategy via a skill, not a static tool."
+      zh: "都是用 skill 帮创作者提升内容策略，而不是给一个静态工具。"
+    this_better_at:
+      en: "Closed measurement loop: blind prediction + retro + auto-evolving rubric with anti-self-deception guards. It scores YOUR history, not global best-practice."
+      zh: "闭环测量：盲预测 + 复盘 + 自进化 rubric，带防自欺护栏。它拟合你自己的历史，而不是通用最佳实践。"
+    other_better_at:
+      en: "x-mentor gives ready-to-use platform-specific growth playbooks + writing guidance out of the box; cheat-on-content gives you a measurement discipline, not the words."
+      zh: "x-mentor 开箱即给平台专属的增长打法 + 写作指导；cheat-on-content 给的是测量纪律，不给文案。"
+  - slug: "zinan92--content-toolkit"
+    shared_purpose:
+      en: "Both are orchestrator/compound content skills that route across multiple sub-capabilities."
+      zh: "都是 orchestrator/compound 型内容 skill，在多个子能力间路由。"
+    this_better_at:
+      en: "Focuses on JUDGMENT calibration (will this land?) with harness-enforced integrity; a discipline layer, not a production pipeline."
+      zh: "专注判断力校准（这条会不会成？）并有 harness 强制的完整性；是纪律层，不是生产流水线。"
+    other_better_at:
+      en: "content-toolkit covers the produce/download/rewrite pipeline (getting content made); cheat-on-content assumes you already make content and only sharpens the pre/post judgment."
+      zh: "content-toolkit 覆盖生产/下载/改写流水线（把内容做出来）；cheat-on-content 假设你已经在做内容，只锐化发布前后的判断。"
+  - slug: "op7418--Humanizer-zh"
+    shared_purpose:
+      en: "Both are content-domain skills that improve a creator's output quality."
+      zh: "都是提升创作者产出质量的内容域 skill。"
+    this_better_at:
+      en: "System-level: a whole score->predict->retro->evolve loop with state and hooks."
+      zh: "系统级：完整的 打分→预测→复盘→进化 循环，带状态和 hook。"
+    other_better_at:
+      en: "Humanizer-zh is a focused atom (de-AI-ify text) that works in one shot with zero setup; cheat-on-content is heavy and only pays off over months."
+      zh: "Humanizer-zh 是聚焦的 atom（去 AI 味），一次成、零配置；cheat-on-content 很重，且要数月才见效。"

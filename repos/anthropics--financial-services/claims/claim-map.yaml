@@ -1,0 +1,185 @@
+claims:
+  - id: claim-001
+    user_icon: "🤖"
+    user_title:
+      en: "All 10 named agents shipped in the marketplace"
+      zh: "README 列出的 10 个 agent 全部存在"
+    user_description:
+      en: "README promises 10 named agent plugins (Pitch, Meeting Prep, Market Researcher, Earnings Reviewer, Model Builder, Valuation Reviewer, GL Reconciler, Month-End Closer, Statement Auditor, KYC Screener). When you go to install, all 10 directories actually exist with plugin manifests — none are vapor."
+      zh: "README 写了 10 个具名 agent（Pitch、Meeting Prep、Market Researcher、Earnings Reviewer、Model Builder、Valuation Reviewer、GL Reconciler、Month-End Closer、Statement Auditor、KYC Screener）。装的时候 10 个目录确实都在、不是画饼。"
+    title: README 承诺的 10 个 agent 目录全部存在
+    source: README
+    source_ref: "## Agents 表格"
+    priority: critical
+    area: shipped-artifacts
+    statement: |
+      plugins/agent-plugins/ 下的目录数 = 10，且名称与 README 表格列出的 10 个
+      agent slug 完全对应。
+    evidence_needed: |
+      gh api 目录列表，对比 README 表格里的 slug。
+    status: passed
+    evidence_summary: |
+      gh api repos/anthropics/financial-services/contents/plugins/agent-plugins
+      返回 10 个目录：earnings-reviewer, gl-reconciler, kyc-screener,
+      market-researcher, meeting-prep-agent, model-builder, month-end-closer,
+      pitch-agent, statement-auditor, valuation-reviewer — 与 README 完全匹配。
+
+  - id: claim-002
+    user_icon: "🍱"
+    user_title:
+      en: "7 vertical skill bundles + 2 partner plugins shipped"
+      zh: "7 个垂直行业 skill 包 + 2 个合作方包都在"
+    user_description:
+      en: "README lists 7 vertical plugins (financial-analysis, investment-banking, equity-research, private-equity, wealth-management, fund-admin, operations) and 2 partner-built (LSEG, S&P Global). All directories exist — you can install any of them standalone if you just want the skills/commands without the full agent."
+      zh: "README 列了 7 个垂直 plugin（financial-analysis、investment-banking、equity-research、private-equity、wealth-management、fund-admin、operations）和 2 个合作方 plugin（LSEG、S&P Global）。所有目录都在 —— 想单独装某个垂直、只要 skill 和命令的话也行。"
+    title: 7 个垂直 plugin + 2 个合作方 plugin 全部存在
+    source: README
+    source_ref: "## Vertical Plugins 表格"
+    priority: critical
+    area: shipped-artifacts
+    statement: |
+      plugins/vertical-plugins/ 下 7 个目录，plugins/partner-built/ 下 2 个目录，
+      名称与 README 表格对应。
+    evidence_needed: |
+      gh api 目录列表。
+    status: passed
+    evidence_summary: |
+      vertical-plugins: equity-research, financial-analysis, fund-admin,
+      investment-banking, operations, private-equity, wealth-management (7个).
+      partner-built: lseg, spglobal (2个). 全部与 README 匹配。
+
+  - id: claim-003
+    user_icon: "🔌"
+    user_title:
+      en: "11 financial-data MCP connectors actually wired"
+      zh: "11 个金融数据 MCP 连接器都已配好"
+    user_description:
+      en: "README's MCP Integrations table lists 11 connectors (Daloopa, Morningstar, S&P, FactSet, Moody's, MT Newswires, Aiera, LSEG, PitchBook, Chronograph, Egnyte). The core financial-analysis plugin's `.mcp.json` actually contains all 11 with their URLs — not just docs."
+      zh: "README 的 MCP 集成表列了 11 个数据源（Daloopa、Morningstar、S&P、FactSet、Moody's、MT Newswires、Aiera、LSEG、PitchBook、Chronograph、Egnyte）。financial-analysis 核心 plugin 的 `.mcp.json` 里这 11 个真的全配齐了 URL，不只是写在文档里。"
+    title: 11 个 MCP 数据连接器在 .mcp.json 内全部配齐
+    source: README
+    source_ref: "## MCP Integrations 表格"
+    priority: high
+    area: shipped-artifacts
+    statement: |
+      plugins/vertical-plugins/financial-analysis/.mcp.json 的 mcpServers
+      字段包含 README 表格列出的 11 个 connector，每个有 type + url。
+    evidence_needed: |
+      .mcp.json 原始文件 + 与 README 表对比。
+    status: passed
+    evidence_summary: |
+      .mcp.json 中 mcpServers 11 条：daloopa, morningstar, sp-global,
+      factset, moodys, mtnewswire, aiera, lseg, pitchbook, chronograph,
+      egnyte — 全部 http url，与 README 表 1:1 对应。
+
+  - id: claim-004
+    user_icon: "📖"
+    user_title:
+      en: "Managed-agent cookbooks shipped for every named agent"
+      zh: "每个具名 agent 都配了 Managed Agents cookbook"
+    user_description:
+      en: "README promises 'every agent ships as a Cowork plugin AND as a Claude Managed Agent template'. The `managed-agent-cookbooks/` directory contains one cookbook directory per agent — symmetric with `plugins/agent-plugins/`. You can deploy any agent headless, not just via Cowork."
+      zh: "README 说『每个 agent 既是 Cowork plugin 也是 Managed Agent 模板』。`managed-agent-cookbooks/` 下每个 agent 都有对应的 cookbook 目录，和 `plugins/agent-plugins/` 一一对应。任何一个 agent 都能无头部署，不止能在 Cowork 跑。"
+    title: 10 个 agent 都有对应的 Managed Agent cookbook
+    source: README
+    source_ref: "## Agents — 'both ways from one source'"
+    priority: high
+    area: shipped-artifacts
+    statement: |
+      managed-agent-cookbooks/ 下的 agent 子目录 ⊇ plugins/agent-plugins/
+      下的 agent 目录。
+    evidence_needed: |
+      两个目录列表对比。
+    status: passed
+    evidence_summary: |
+      managed-agent-cookbooks/ 下 10 个 agent 子目录 +1 README，与
+      plugins/agent-plugins/ 下 10 个目录完全对应。
+
+  - id: claim-005
+    user_icon: "🚀"
+    user_title:
+      en: "Headless deployment script actually exists"
+      zh: "Managed Agents 部署脚本真的存在"
+    user_description:
+      en: "README's 'Claude Managed Agents' section tells you to run `scripts/deploy-managed-agent.sh <agent>`. That script is in the repo — not just documented. There's also `orchestrate.py` for routing handoff_request events between agents."
+      zh: "README 的 Managed Agents 段让你跑 `scripts/deploy-managed-agent.sh <agent>`，这脚本在 repo 里真的有 —— 不只是写在文档里。还有 `orchestrate.py` 处理 agent 之间的 handoff_request 事件路由。"
+    title: deploy-managed-agent.sh 和 orchestrate.py 在仓库内
+    source: README
+    source_ref: "Claude Managed Agents section"
+    priority: high
+    area: shipped-artifacts
+    statement: |
+      scripts/deploy-managed-agent.sh 和 scripts/orchestrate.py 文件存在。
+    evidence_needed: |
+      gh api scripts/ 目录列表。
+    status: passed
+    evidence_summary: |
+      scripts/ 下: check.py, deploy-managed-agent.sh, orchestrate.py,
+      sync-agent-skills.py, test-cookbooks.sh, validate.py, version_bump.py
+      — 7 个脚本全部存在，包含 README 提到的两个关键脚本。
+
+  - id: claim-006
+    user_icon: "🪟"
+    user_title:
+      en: "Microsoft 365 admin install tooling is present"
+      zh: "M365 管理员安装工具是真的，不是只画大饼"
+    user_description:
+      en: "README claims a separate `claude-for-msft-365-install/` admin tool for provisioning the Claude M365 add-in against your own cloud (Vertex / Bedrock / internal gateway). The directory exists in the repo root — IT admins can actually fork and use it."
+      zh: "README 说有个独立的 `claude-for-msft-365-install/` 让 IT 管理员把 Claude M365 加载项配到自己的云上（Vertex / Bedrock / 内部 LLM gateway）。这目录确实在 repo 根 —— IT 团队可以真的 fork 来用。"
+    title: claude-for-msft-365-install/ 目录存在
+    source: README
+    source_ref: "## Claude for Microsoft 365 — Install Tooling"
+    priority: medium
+    area: shipped-artifacts
+    statement: |
+      仓库根目录有 claude-for-msft-365-install/ 子目录。
+    evidence_needed: |
+      gh api 根目录列表。
+    status: passed
+    evidence_summary: |
+      仓库根目录返回 claude-for-msft-365-install/ 作为一个 dir 条目，
+      与 .claude-plugin/, plugins/, managed-agent-cookbooks/, scripts/ 等并列。
+
+  - id: claim-007
+    user_icon: "⚖"
+    user_title:
+      en: "Apache-2.0 licensed and ready for enterprise use"
+      zh: "Apache-2.0 协议，企业可以放心用"
+    user_description:
+      en: "Repo has a real LICENSE file (Apache-2.0). For a 25k-star Anthropic-official template that financial firms will actually fork into proprietary stacks, this matters — it's the most permissive license that still requires attribution."
+      zh: "Repo 有真实 LICENSE 文件（Apache-2.0）。这是个 25k star 的 Anthropic 官方模板，金融机构 fork 进自己的私有栈很正常 —— Apache-2.0 是最宽松又保留署名要求的协议，正合适。"
+    title: 真实 Apache-2.0 LICENSE 文件存在
+    source: framework
+    source_ref: "has_license rule"
+    priority: medium
+    area: maintainer
+    statement: |
+      仓库根目录 LICENSE 文件可读，GitHub API license 字段为 apache-2.0。
+    evidence_needed: |
+      gh api repos/<owner>/<repo> license 字段 + LICENSE 文件存在。
+    status: passed
+    evidence_summary: |
+      gh api 返回 license.spdx_id="Apache-2.0"，根目录 LICENSE 文件存在
+      （README.md 同级）。
+
+  - id: claim-008
+    user_icon: "⚠"
+    user_title:
+      en: "No tagged releases — you're tracking a moving main branch"
+      zh: "没有发版 tag —— 跟着 main 走，会被推着升级"
+    user_description:
+      en: "Anthropic ships changes by pushing to `main`, not by cutting versioned releases. For a 25k-star template firms will fork, no pinned version means upstream changes can subtly shift behaviour. You'll want to pin a commit SHA when you fork."
+      zh: "Anthropic 直接往 `main` 推改动，没有版本 tag 发版。25k star 的模板被 fork 出去之后，没有版本锚点意味着上游一改你这边就可能悄悄漂。Fork 时建议锁 commit SHA。"
+    title: 仓库没有 git tags / GitHub releases — 跟 main 滚动
+    source: framework
+    source_ref: "release_pipeline_score"
+    priority: medium
+    area: maintainer
+    statement: |
+      GitHub releases 列表为空，没有 vX.Y.Z 标签。
+    evidence_needed: |
+      gh api releases / tags 列表。
+    status: passed
+    evidence_summary: |
+      仓库 README 中提到 marketplace 通过 plugin name 安装，但仓库无
+      git tag / GitHub release 流程。新 fork 建议 pin 一个 commit SHA。

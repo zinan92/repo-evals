@@ -57,7 +57,7 @@ html[data-bucket="unusable"]      { --bucket:#f87171; --bucket-bg:rgba(248,113,1
    so the page color tracks the top-level category, not the fine
    tier inside it. */
 html[data-category="production"] { --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }
-html[data-category="available"]  { --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }
+html[data-category="available"]  { --bucket:#22c55e; --bucket-bg:rgba(34,197,94,.10); --bucket-soft:rgba(34,197,94,.18); }
 html[data-category="risky"]      { --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }
 html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }
 
@@ -98,26 +98,108 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
 
 /* --- Decision Card — top-of-dossier 5-second answer --------------- */
 .decision-card {
-  margin: 0 0 36px;
-  padding: 16px 20px 18px;
-  background: var(--surface-1);
+  margin: 0 0 32px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.86fr) minmax(320px, 1.14fr);
+  gap: 1px;
+  background: var(--border-strong);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
+  overflow: hidden;
   box-shadow: 0 0 0 1px var(--bucket-soft);
 }
-.dec-eyebrow {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--font-mono); font-size: 11px;
-  color: var(--bucket); text-transform: uppercase;
-  letter-spacing: 0.16em; font-weight: 700;
-  padding-bottom: 12px; margin-bottom: 12px;
-  border-bottom: 1px solid var(--border);
+.dec-primary,
+.dec-next-panel,
+.dec-boundaries {
+  background: var(--surface-1);
+}
+.dec-primary {
+  padding: 24px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 230px;
+  border-left: 4px solid var(--bucket);
+  grid-row: span 2;
+}
+.dec-kicker,
+.dec-panel-label {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
 }
 .dec-cat-emoji { font-size: 16px; }
-.dec-score {
-  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
-  color: var(--text-2); letter-spacing: 0.06em;
+.dec-action {
+  margin: 20px 0 14px;
+  font-size: clamp(36px, 6vw, 58px);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  color: var(--bucket);
 }
+.dec-action-copy {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  max-width: 42ch;
+}
+.dec-scoreline {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.dec-scoreline span {
+  padding: 4px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+.dec-next-panel {
+  padding: 24px 26px;
+}
+.dec-next-panel .dec-panel-label { color: var(--bucket); }
+.dec-panel-body {
+  margin-top: 10px;
+  font-size: 18px;
+  line-height: 1.52;
+  color: var(--text);
+  max-width: 62ch;
+}
+.dec-boundaries {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+}
+.dec-boundary {
+  background: var(--surface-1);
+  padding: 18px 20px 20px;
+}
+.dec-dont .dec-panel-label { color: var(--warn); }
+.dec-risk .dec-panel-label { color: var(--bad); }
+.dec-boundary-body {
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+@media (max-width: 860px) {
+  .decision-card { grid-template-columns: 1fr; }
+  .dec-primary { grid-row: auto; min-height: 0; }
+  .dec-boundaries { grid-template-columns: 1fr; }
+}
+
+/* Legacy decision-row classes may appear in old committed HTML. Keep a
+   compact fallback so older dossiers remain readable before regeneration. */
 .dec-row {
   display: grid; grid-template-columns: 24px 110px 1fr;
   gap: 10px; align-items: baseline;
@@ -182,7 +264,10 @@ html[data-category="dont_use"]   { --bucket:#f87171; --bucket-bg:rgba(248,113,11
   overflow-x: auto;
 }
 .wp-canvas svg {
-  display: block; max-width: 100%; height: auto;
+  display: block;
+  width: max(100%, var(--wp-width));
+  min-width: var(--wp-width);
+  height: auto;
   text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
 }
 
@@ -312,7 +397,7 @@ html[lang="zh"] .wp-lang-zh { display: block; }
 .cat-zone-range { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }
 .cat-zone-dont_use.is-active   { background: rgba(248, 113, 113, 0.18); }
 .cat-zone-risky.is-active      { background: rgba(245, 158, 11, 0.18); }
-.cat-zone-available.is-active  { background: rgba(96, 165, 250, 0.18); }
+.cat-zone-available.is-active  { background: rgba(34, 197, 94, 0.18); }
 .cat-zone-production.is-active { background: rgba(74, 222, 128, 0.18); }
 
 .cat-pointer-lane {
@@ -341,9 +426,83 @@ html[lang="zh"] .wp-lang-zh { display: block; }
 .cat-summary-score { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
 .cat-summary-blurb { font-size: 14px; color: var(--text-2); }
 .cat-summary-production { --bucket: #4ade80; }
-.cat-summary-available  { --bucket: #60a5fa; }
+.cat-summary-available  { --bucket: #22c55e; }
 .cat-summary-risky      { --bucket: #f59e0b; }
 .cat-summary-dont_use   { --bucket: #f87171; }
+
+.score-proof {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--bucket-soft);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.score-proof-number,
+.score-proof-copy {
+  background: var(--surface-1);
+}
+.score-proof-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 160px;
+  color: var(--bucket);
+}
+.score-proof-number strong {
+  font-size: 64px;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+}
+.score-proof-number span {
+  font-family: var(--font-mono);
+  color: var(--text-3);
+}
+.score-proof-copy {
+  padding: 22px 24px;
+}
+.score-proof-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bucket);
+  font-weight: 700;
+}
+.score-proof-copy p {
+  margin: 8px 0 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+  max-width: 76ch;
+}
+.score-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.score-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 12px;
+  color: var(--text-2);
+}
+.score-chip b {
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+@media (max-width: 680px) {
+  .score-proof { grid-template-columns: 1fr; }
+  .score-proof-number { min-height: 110px; }
+}
 
 /* "Why not at the next tier yet" — auto-derived one-liner under category strip */
 .why-not-next {
@@ -360,21 +519,6 @@ html[lang="zh"] .wp-lang-zh { display: block; }
   letter-spacing: 0.14em; margin-bottom: 4px;
 }
 .why-not-body { font-size: 14px; line-height: 1.55; color: var(--text); }
-
-/* "Next step to upgrade the score" — manually authored per repo */
-.next-step {
-  margin-top: 10px;
-  padding: 12px 18px;
-  background: var(--bucket-bg);
-  border: 1px solid var(--bucket-soft);
-  border-radius: var(--radius-md);
-}
-.next-step-eyebrow {
-  font-family: var(--font-mono); font-size: 10px;
-  color: var(--bucket); text-transform: uppercase;
-  letter-spacing: 0.14em; margin-bottom: 4px; font-weight: 700;
-}
-.next-step-body { font-size: 14px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }
 
 /* Trust strip — what we did vs didn't check */
 .trust-strip {
@@ -419,7 +563,7 @@ html[lang="zh"] .wp-lang-zh { display: block; }
 }
 
 /* --- Similar repos comparison ------------------------------------- */
-.similar-section { margin-bottom: 80px; }
+.similar-section { margin-bottom: 54px; }
 .similar-lead { font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }
 .similar-grid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -444,7 +588,7 @@ html[lang="zh"] .wp-lang-zh { display: block; }
   letter-spacing: 0.06em; white-space: nowrap;
 }
 .similar-cat-pill.cat-production { color: #4ade80; }
-.similar-cat-pill.cat-available  { color: #60a5fa; }
+.similar-cat-pill.cat-available  { color: #22c55e; }
 .similar-cat-pill.cat-risky      { color: #f59e0b; }
 .similar-cat-pill.cat-dont_use   { color: #f87171; }
 .similar-layer-pill {
@@ -489,7 +633,7 @@ html[lang="zh"] .wp-lang-zh { display: block; }
 .similar-pending-row + .similar-pending-row { margin-top: 8px; }
 
 /* --- Workflow diagram (atom / molecule / compound) ----------------- */
-.workflow-diagram-section { margin-bottom: 80px; }
+.workflow-diagram-section { margin-bottom: 54px; }
 .wd-why {
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -522,9 +666,17 @@ html[lang="zh"] .wp-lang-zh { display: block; }
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 14px;
-  overflow-x: auto;
+  overflow-x: hidden;
 }
-.wd-canvas svg { display: block; max-width: 100%; height: auto; color: var(--text-2); }
+.wd-canvas svg {
+  display: block;
+  width: 100%;
+  max-width: var(--wd-width);
+  min-width: 0;
+  height: auto;
+  margin: 0 auto;
+  color: var(--text-2);
+}
 
 .wd-shape { stroke-width: 1.5; }
 .wd-atom     { fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }
@@ -563,8 +715,221 @@ html[lang="zh"] .wd-label { font-size: 11.5px; letter-spacing: 0; }
   letter-spacing: 0.04em;
 }
 
+/* --- Output samples: high-position proof gallery -------------------- */
+.sample-proof-section {
+  margin: -18px 0 34px;
+}
+.sample-proof-head {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.sample-proof-kicker,
+.sample-mini-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+}
+.sample-proof-head h2 {
+  margin: 8px 0 6px;
+  font-size: clamp(26px, 3.5vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.sample-proof-head p {
+  margin: 0;
+  max-width: 72ch;
+  color: var(--text-2);
+  font-size: 14px;
+}
+.sample-proof-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.76fr) minmax(420px, 1.24fr);
+  gap: 1px;
+  background: var(--border-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.sample-input-panel,
+.sample-output-panel {
+  position: relative;
+  background: var(--surface-1);
+  padding: 24px 26px;
+}
+.sample-input-panel {
+  border-left: 4px solid var(--bucket);
+}
+.sample-step {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  font-family: var(--font-mono);
+  font-size: 42px;
+  line-height: 1;
+  color: var(--text-3);
+  opacity: 0.18;
+  font-weight: 800;
+}
+.sample-input-panel h3 {
+  margin: 10px 48px 10px 0;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.sample-input-panel p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 14.5px;
+  line-height: 1.62;
+}
+.sample-prompt,
+.sample-validation {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}
+.sample-prompt blockquote {
+  margin: 8px 0 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--bucket);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--bucket-bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.sample-validation p {
+  margin: 8px 0 0;
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.sample-checks {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sample-checks li {
+  color: var(--text-2);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.sample-checks li::before {
+  content: "✓";
+  color: var(--ok);
+  margin-right: 8px;
+  font-family: var(--font-mono);
+}
+.sample-output-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.52fr);
+  gap: 14px;
+  margin-top: 12px;
+  align-items: start;
+}
+.sample-output {
+  margin: 0;
+}
+.sample-output a {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: #ffffff;
+}
+.sample-output img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.sample-output.sample-wide {
+  grid-column: 1 / -1;
+}
+.sample-output.sample-square {
+  max-width: 340px;
+}
+.sample-output figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.sample-output figcaption small {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+.sample-file,
+.sample-text-output {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+.sample-file {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sample-file a,
+.sample-text-output a,
+.sample-source-line a {
+  color: var(--bucket);
+  text-decoration: none;
+  border-bottom: 1px solid var(--bucket-soft);
+}
+.sample-file-kind {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.12em;
+}
+.sample-file small {
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.sample-text-output pre {
+  margin: 8px 0 10px;
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.sample-source-line {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+@media (max-width: 860px) {
+  .sample-proof-grid { grid-template-columns: 1fr; }
+  .sample-output-grid { grid-template-columns: 1fr; }
+  .sample-output.sample-wide { grid-column: auto; }
+}
+
 /* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
-.benefits-section { margin-bottom: 80px; }
+.benefits-section { margin-bottom: 54px; }
 .benefits-grid {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 20px;
@@ -837,7 +1202,7 @@ h1.repo-title {
 
 /* tier-driven accent — overrides --bucket */
 .score-hero.tier-recommend  .score-num { color: #4ade80; }
-.score-hero.tier-team       .score-num { color: #60a5fa; }
+.score-hero.tier-team       .score-num { color: #22c55e; }
 .score-hero.tier-self       .score-num { color: #c084fc; }
 .score-hero.tier-try        .score-num { color: #f59e0b; }
 .score-hero.tier-risky      .score-num { color: #f87171; }
@@ -1030,7 +1395,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
 
 .section-head {
   display: flex; align-items: baseline; gap: 16px;
-  margin-bottom: 36px; padding-bottom: 18px;
+  margin-bottom: 24px; padding-bottom: 14px;
   border-bottom: 1px solid var(--border);
 }
 .section-head h2 {
@@ -1042,7 +1407,7 @@ details.score-breakdown[open] > summary::after { content: "−"; }
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-section { margin-bottom: 56px; }
+section { margin-bottom: 44px; }
 
 .capabilities-grid {
   display: grid;
@@ -1113,6 +1478,105 @@ section { margin-bottom: 56px; }
   white-space: pre-wrap;
 }
 
+.claim-summary-section {
+  margin-top: 6px;
+}
+.claim-summary-lead {
+  margin: -8px 0 18px;
+  max-width: 74ch;
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.claim-list {
+  list-style: none;
+  padding: 0;
+  margin: 22px 0 0;
+  border-top: 1px solid var(--border);
+}
+.claim-item {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+.claim-marker {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  font-size: 18px;
+}
+.claim-topline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.claim-id {
+  color: var(--text-2);
+}
+.claim-priority {
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.claim-status {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+.claim-status-pass { background: var(--ok-bg); color: var(--ok); }
+.claim-status-partial { background: var(--warn-bg); color: var(--warn); }
+.claim-status-fail { background: var(--bad-bg); color: var(--bad); }
+.claim-status-skip { background: var(--skip-bg); color: var(--skip); }
+.claim-title {
+  margin: 0;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.claim-description {
+  margin: 6px 0 0;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 86ch;
+}
+.claim-evidence {
+  display: flex;
+  gap: 10px;
+  margin-top: 9px;
+  color: var(--text-3);
+  font-size: 12.5px;
+  line-height: 1.55;
+  max-width: 92ch;
+}
+.claim-evidence > span:first-child {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--bucket);
+  font-size: 10px;
+  padding-top: 2px;
+}
+@media (max-width: 640px) {
+  .claim-item { grid-template-columns: 1fr; gap: 10px; }
+}
+
 details.section-fold {
   background: var(--surface-0);
   border: 1px solid var(--border);
@@ -1143,7 +1607,7 @@ details.section-fold[open] > summary::after { transform: rotate(45deg); color: v
 details.section-fold > summary:hover { color: var(--text); background: var(--surface-1); }
 details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var(--border); }
 
-.subsection { margin: 28px 0; }
+.subsection { margin: 28px 0; overflow-x: auto; }
 .subsection h3 {
   font-family: var(--font-mono); font-size: 11px;
   text-transform: uppercase; letter-spacing: 0.14em;
@@ -1220,11 +1684,14 @@ details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 20px 24px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .layer-card-head {
   display: flex; align-items: baseline;
   justify-content: space-between; gap: 12px; flex-wrap: wrap;
   margin-bottom: 6px;
+  min-width: 0;
 }
 .layer-card-head h3 {
   margin: 0;
@@ -1236,6 +1703,8 @@ details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var
   text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--text-3); padding: 2px 8px;
   border: 1px solid var(--border); border-radius: 4px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .layer-card-summary { color: var(--text-2); margin: 4px 0 14px; line-height: 1.55; }
 
@@ -1345,6 +1814,33 @@ details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var
 
 .metric-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
 @media (max-width: 640px) { .metric-tiles { grid-template-columns: 1fr; } }
+.metric-empty {
+  grid-column: 1 / -1;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-3);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+}
+.metric-empty strong {
+  display: block;
+  color: var(--text);
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.metric-empty p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.55;
+  max-width: 78ch;
+}
+.metric-empty-foot {
+  margin-top: 10px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
 .metric-tile {
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -1417,6 +1913,9 @@ details.section-fold > .body { padding: 8px 28px 32px; border-top: 1px solid var
   font-family: var(--font-mono); font-size: 12px;
   background: var(--surface-2); padding: 6px 12px;
   border-radius: var(--radius-sm); color: var(--text-2);
+}
+.run-metric-note {
+  border-left: 2px solid var(--text-3);
 }
 .run-metric b { color: var(--text-3); font-weight: 500; margin-right: 6px; }
 .run-metric .v { color: var(--text); font-weight: 600; }
@@ -1505,7 +2004,7 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 
   <header class="hero">
     <div class="eyebrow">
-      <span class="i18n" data-en="Verdict report" data-zh="评测结论"></span>
+      <span class="i18n" data-en="Adoption report" data-zh="采用建议"></span>
       <span class="sep">·</span>
       <span>2026-07-09</span>
       <span class="sep">·</span><span>main@cf4b810 (2026-07-01 push, package v1.0.0)</span>
@@ -1514,63 +2013,67 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
     <h1 class="repo-title">guizang-social-card · 归藏社交卡片技能</h1>
     <div class="repo-slug">op7418/guizang-social-card-skill</div>
 
-    <p class="tagline"><span class="i18n" data-en="From an article, script, screenshots, or a user video, produces on-brand social image sets — Xiaohongshu 3:4 carousels and WeChat 21:9+1:1 cover PAIRS — by filling deterministic single-file HTML seed templates (28 layouts × 10 themes, Editorial × Swiss) and screenshotting them to PNG with Playwright; a shipped 9-rule DOM validator plus a doc-integrity validator keep the layout honest instead of trusting the model&#x27;s eye." data-zh="把文章、脚本、截图或用户视频，做成成品级社交图组——小红书 3:4 组图与公众号 21:9+1:1 封面对——做法是填充确定性的单文件 HTML 种子模板（28 版式 × 10 主题，电子杂志 × 瑞士风），再用 Playwright 截成 PNG；随包一个 9 条规则的 DOM 校验器 + 一个文档完整性校验器，用脚本兜住版式底线，而不是靠模型的眼力。"></span></p>
+    <p class="tagline"><span class="i18n" data-en="Turns a finished article, script, screenshot set, photo, or short video into publish-ready social visuals: WeChat 21:9 + 1:1 cover pairs, Xiaohongshu carousel cards, and optional Live Photo assets. Its main advantage is reliability: the card is rendered from fixed HTML layouts, then checked by a layout validator, so the result is closer to a controlled design system than a one-off image-model prompt." data-zh="把一篇已经写好的文章、脚本、截图、照片或短视频，变成可发布的社交视觉资产：公众号 21:9 + 1:1 封面对、小红书组图，以及可选 Live Photo。它的核心价值不是「会画图」，而是稳定：用固定 HTML 版式渲染，再用版式校验器检查，因此更像一套可控设计系统，而不是一次性的图像模型提示词。"></span></p>
 
   </header>
 
-  <section class="decision-card"><div class="dec-eyebrow"><span class="dec-cat-emoji">🏭</span><span class="i18n" data-en="Decision snapshot" data-zh="决策快照"></span><span class="dec-score">85 / 100</span></div><div class="dec-row dec-use"><div class="dec-icon">✅</div><div class="dec-label"><span class="i18n" data-en="Use" data-zh="用"></span></div><div class="dec-body"><span class="i18n" data-en="Yes, including team / production-critical paths." data-zh="可以,包括团队 / 生产关键路径。"></span></div></div><div class="dec-row dec-dont"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Don&#x27;t use for" data-zh="别用在"></span></div><div class="dec-body"><span class="i18n" data-en="(1) The layout validator is DETERMINISTIC but the final PNG&#x27;s TASTE is not — it guarantees no-overflow / legible-font / filled-density, not that the cover is beautiful or on-brand; aesthetics still ride the model&#x27;s run." data-zh="(1) 版式校验是确定性的，但成品 PNG 的「审美」不是——它只保证不溢出 / 字号可读 / 密度够，不保证封面好看或符合调性，审美仍看模型那次发挥。"></span></div></div><div class="dec-row dec-next"><div class="dec-icon">🎯</div><div class="dec-label"><span class="i18n" data-en="Best next step" data-zh="最佳下一步"></span></div><div class="dec-body"><span class="i18n" data-en="(1) Provision a Chromium binary and RUN `validate-social-deck.mjs` on a real render — lifts core_layer_tested→true for the deterministic-layout claim and evidence→portable." data-zh="(1) 装上 Chromium 二进制并对一次真实渲染跑 `validate-social-deck.mjs`——把确定性版式 claim 的 core_layer_tested 提到 true、证据升到 portable。"></span></div></div><div class="dec-row dec-risk"><div class="dec-icon">⚠</div><div class="dec-label"><span class="i18n" data-en="Main risk" data-zh="主要风险"></span></div><div class="dec-body"><span class="i18n" data-en="Static-only eval; live end-to-end behaviour unverified." data-zh="纯静态评测;实际端到端行为未验证。"></span></div></div></section>
+  <section class="sample-proof-section" id="samples"><div class="sample-proof-head"><div class="sample-proof-kicker"><span class="i18n" data-en="02 · input summary → 03 · actual sample" data-zh="02 · 输入摘要 → 03 · 实际样品"></span></div><h2><span class="i18n" data-en="Finished article in, WeChat cover pair out" data-zh="一篇成稿文章进去，一套公众号封面对出来"></span></h2><p><span class="i18n" data-en="This is not a mockup added to the report. It is an artifact generated during the eval run." data-zh="这不是报告里临时画的示意图，而是评测 run 里实际生成出来的产物。"></span></p></div><div class="sample-proof-grid"><article class="sample-input-panel"><div class="sample-step">02</div><div class="sample-mini-label"><span class="i18n" data-en="Finished article we gave it" data-zh="喂给它的一篇成稿"></span></div><h3><span class="i18n" data-en="Skill is a capability product" data-zh="Skill 是能力商品"></span></h3><p><span class="i18n" data-en="A finished short essay arguing that a Skill should package experience, workflow, and taste into a reusable capability unit, not remain a loose prompt. The sample asks the repo to turn that article into a WeChat 21:9 header plus 1:1 share card in a Swiss / IKB-blue visual language." data-zh="这次输入是一篇已经写好的短文，核心观点是：Skill 不是提示词，而是把经验、工作流和品味封装成可复用、可分发、可迭代的能力单元。评测要求它把这篇文章做成公众号 21:9 头图 + 1:1 分享卡，并使用 Swiss / IKB 蓝视觉语言。"></span></p><div class="sample-prompt"><span class="sample-mini-label"><span class="i18n" data-en="Prompt used" data-zh="这次怎么要求它"></span></span><blockquote><span class="i18n" data-en="Turn this article into a WeChat cover pair: 21:9 main cover + 1:1 share card, Swiss IKB blue, visually consistent." data-zh="把这篇文章做成公众号封面对：21:9 头图 + 1:1 分享卡，Swiss IKB 蓝，视觉一致。"></span></blockquote></div><div class="sample-validation"><span class="sample-mini-label"><span class="i18n" data-en="Checked result" data-zh="验收结果"></span></span><p><span class="i18n" data-en="The layout validator first caught a real title-wrap issue. After shortening the title, the second pass returned 2 clean sections, 0 fails, 0 warnings; both PNGs were visually inspected." data-zh="版式校验器第一轮抓到了真实标题换行问题；缩短标题后第二轮 2 个 section 全 clean，0 fail，0 warning；两张 PNG 也做了肉眼检查。"></span></p><ul class="sample-checks"><li><span class="i18n" data-en="21:9 and 1:1 outputs rendered at exact target sizes." data-zh="21:9 和 1:1 输出均按目标尺寸渲染。"></span></li><li><span class="i18n" data-en="Chinese text stayed legible; no glyph garbling was observed." data-zh="中文可读，没有发现字体乱码。"></span></li><li><span class="i18n" data-en="IKB blue accent stayed disciplined and did not bleed across the layout." data-zh="IKB 蓝只作为克制强调色，没有在版面里失控扩散。"></span></li><li><span class="i18n" data-en="The final validator pass reported 0 fail / 0 warning." data-zh="最终版式校验为 0 fail / 0 warning。"></span></li></ul></div></article><article class="sample-output-panel"><div class="sample-step">03</div><div class="sample-mini-label"><span class="i18n" data-en="Generated output" data-zh="生成出来的样品"></span></div><div class="sample-output-grid"><figure class="sample-output sample-image sample-wide"><a href="../runs/2026-07-09/run-static-and-live-render/artifacts/sample_wechat-21x9.png" target="_blank" rel="noopener"><img src="../runs/2026-07-09/run-static-and-live-render/artifacts/sample_wechat-21x9.png" alt="WeChat 21:9 main cover" loading="lazy"></a><figcaption><span><span class="i18n" data-en="WeChat 21:9 main cover" data-zh="公众号 21:9 头图"></span></span><small><span class="i18n" data-en="Rendered PNG from the eval run" data-zh="评测 run 实际渲染出的 PNG"></span></small></figcaption></figure><figure class="sample-output sample-image sample-square"><a href="../runs/2026-07-09/run-static-and-live-render/artifacts/sample_wechat-1x1.png" target="_blank" rel="noopener"><img src="../runs/2026-07-09/run-static-and-live-render/artifacts/sample_wechat-1x1.png" alt="WeChat 1:1 share card" loading="lazy"></a><figcaption><span><span class="i18n" data-en="WeChat 1:1 share card" data-zh="公众号 1:1 分享卡"></span></span><small><span class="i18n" data-en="Rendered PNG from the eval run" data-zh="评测 run 实际渲染出的 PNG"></span></small></figcaption></figure><div class="sample-file"><span class="sample-file-kind">HTML</span><a href="../runs/2026-07-09/run-static-and-live-render/artifacts/live-e2e_wechat-cover-pair_deck.html" target="_blank" rel="noopener"><span class="i18n" data-en="Source deck HTML" data-zh="样品源 HTML"></span></a><small><span class="i18n" data-en="Validated before PNG capture" data-zh="截图前已跑版式校验"></span></small></div></div><div class="sample-source-line"><span>2026-07-09 · run-static-and-live-render</span><a href="../runs/2026-07-09/run-static-and-live-render/artifacts/manifest.yaml" target="_blank" rel="noopener">manifest</a></div></article></div></section>
 
-  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip-biz-row"><span class="biz-cat-pill biz-content"><span>📝</span><span class="i18n" data-en="Content" data-zh="内容类"></span></span></div><div class="wp-section"><div class="wp-block"><div class="wp-eyebrow"><span class="wp-pin-emoji">🗺</span><span class="i18n" data-en="In this workflow:" data-zh="在这条工作流里:"></span><span class="wp-name"><span class="i18n" data-en="Content / Self-media 8-step pipeline" data-zh="内容 / 自媒体八步管线"></span></span></div><div class="wp-canvas"><svg viewBox="0 0 766 110" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wp-arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wp-arrowhead-path"/></marker></defs><path d="M94,44.0 L108,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M188,44.0 L202,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M282,44.0 L296,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M376,44.0 L390,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M470,44.0 L484,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M564,44.0 L578,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M658,44.0 L672,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><rect x="14" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="54.0" y="40" class="wp-stage-num">01</text><text x="54.0" y="60" class="wp-stage-name wp-lang-en">Signal scanning</text><text x="54.0" y="60" class="wp-stage-name wp-lang-zh">信号发现</text><rect x="108" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="148.0" y="40" class="wp-stage-num">02</text><text x="148.0" y="60" class="wp-stage-name wp-lang-en">Content acquisition</text><text x="148.0" y="60" class="wp-stage-name wp-lang-zh">内容获取</text><rect x="202" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="242.0" y="40" class="wp-stage-num">03</text><text x="242.0" y="60" class="wp-stage-name wp-lang-en">Content understanding</text><text x="242.0" y="60" class="wp-stage-name wp-lang-zh">内容理解</text><rect x="296" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="336.0" y="40" class="wp-stage-num">04</text><text x="336.0" y="60" class="wp-stage-name wp-lang-en">Topic curation</text><text x="336.0" y="60" class="wp-stage-name wp-lang-zh">选题决策</text><rect x="390" y="14" width="80" height="60" rx="10" class="wp-stage wp-stage-active wp-primary"/><text x="430.0" y="40" class="wp-stage-num">05</text><text x="430.0" y="60" class="wp-stage-name wp-lang-en">Content production</text><text x="430.0" y="60" class="wp-stage-name wp-lang-zh">内容生产</text><rect x="484" y="14" width="80" height="60" rx="10" class="wp-stage wp-stage-active wp-support"/><text x="524.0" y="40" class="wp-stage-num">06</text><text x="524.0" y="60" class="wp-stage-name wp-lang-en">Creative assembly</text><text x="524.0" y="60" class="wp-stage-name wp-lang-zh">创意组装</text><rect x="578" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="618.0" y="40" class="wp-stage-num">07</text><text x="618.0" y="60" class="wp-stage-name wp-lang-en">Distribution &amp; feedback</text><text x="618.0" y="60" class="wp-stage-name wp-lang-zh">分发反馈</text><rect x="672" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="712.0" y="40" class="wp-stage-num">08</text><text x="712.0" y="60" class="wp-stage-name wp-lang-en">Learning</text><text x="712.0" y="60" class="wp-stage-name wp-lang-zh">学习</text></svg></div><div class="wp-callouts"><div class="wp-callout wp-primary"><div class="wp-callout-head"><span class="wp-callout-pin">📍</span><span class="wp-callout-stage"><span class="i18n" data-en="Content production" data-zh="内容生产"></span></span><span class="wp-callout-role"><span class="i18n" data-en="Primary" data-zh="主要"></span></span></div><div class="wp-callout-reason"><span class="i18n" data-en="Produces the cover / card VISUAL ASSET the piece needs before it can be published — the 21:9+1:1 封面对 or the 小红书 carousel. This is Vera&#x27;s core 封面/社交卡片 lane, mirroring how the sibling guizang-material-illustration is placed at 05 (it produces the middle image and hands off)." data-zh="在内容生产阶段产出成品前需要的封面 / 卡片视觉 ASSET——21:9+1:1 封面对或小红书组图。这是 Vera 的封面 / 社交卡片主线，与 sibling guizang-material-illustration 放 05（产出中间图再交接）一致。"></span></div></div><div class="wp-callout wp-support"><div class="wp-callout-head"><span class="wp-callout-pin">📍</span><span class="wp-callout-stage"><span class="i18n" data-en="Creative assembly" data-zh="创意组装"></span></span><span class="wp-callout-role"><span class="i18n" data-en="Support" data-zh="辅助"></span></span></div><div class="wp-callout-reason"><span class="i18n" data-en="The 公众号 cover PNG is placed INTO the assembly artifact by gzh-design&#x27;s cover slot — guizang-social-card supplies the image URL, gzh-design assembles the article HTML. (For a standalone 小红书 deck the rendered carousel is itself near-final, so its 06 role is stronger than a pure asset-producer&#x27;s.)" data-zh="公众号封面 PNG 被 gzh-design 的封面槽放进组装产物——guizang-social-card 供图 URL，gzh-design 组装文章 HTML。（对独立小红书组图，渲出的组图本身已接近成品，所以它的 06 角色比纯产 asset 的 skill 更强。）"></span></div></div></div></div></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
+  <section class="decision-card"><div class="dec-primary"><div class="dec-kicker"><span class="dec-cat-emoji">🏭</span><span class="i18n" data-en="Adoption verdict" data-zh="采用结论"></span></div><div class="dec-action"><span class="i18n" data-en="Use" data-zh="可以用"></span></div><p class="dec-action-copy"><span class="i18n" data-en="Suitable for team or production-critical adoption, subject to your normal integration review." data-zh="可以进入团队或生产关键路径采用,仍然按你的正常集成审查走。"></span></p><div class="dec-scoreline"><span>85 / 100</span><span>Production-ready</span></div></div><div class="dec-next-panel"><div class="dec-panel-label"><span class="i18n" data-en="Next move" data-zh="下一步"></span></div><div class="dec-panel-body"><span class="i18n" data-en="Use it first on internal content where a human still reviews the final image." data-zh="先把它用于内部内容，并保留人工看图复核。"></span></div></div><div class="dec-boundaries"><div class="dec-boundary dec-dont"><div class="dec-panel-label"><span class="i18n" data-en="Do not use for" data-zh="别用在"></span></div><div class="dec-boundary-body"><span class="i18n" data-en="Do not treat it as a fully automatic publishing system or as proof that every article/theme will look good without human visual review." data-zh="不要把它当成全自动发布系统，也不要默认每篇文章、每套主题都能免人工看图就直接发布。"></span></div></div><div class="dec-boundary dec-risk"><div class="dec-panel-label"><span class="i18n" data-en="Main risk" data-zh="主要风险"></span></div><div class="dec-boundary-body"><span class="i18n" data-en="The basic cover-pair path works, but adoption still depends on setup friction, AGPL/commercial-license judgment, human taste review, and final upload checks on the target platform." data-zh="基础封面对路径已经跑通；真正采用时的主要风险在安装门槛、AGPL/商业授权判断、人工审美复核，以及目标平台最终上传检查。"></span></div></div></div></section>
 
-  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="How usable is it?" data-zh="它可用性如何?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production is-active" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:85%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">85</div></div></div></div><div class="cat-summary cat-summary-production"><div class="cat-summary-headline"><span class="cat-summary-emoji">🏭</span><span class="cat-summary-name"><span class="i18n" data-en="Production-ready" data-zh="可用于生产"></span></span><span class="cat-summary-score">· 85 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Safe to depend on in team or production pipelines." data-zh="团队 / 生产 pipeline 可以依赖。"></span></div></div><div class="next-step"><div class="next-step-eyebrow"><span class="i18n" data-en="Next step to upgrade the score" data-zh="提升评分的下一步"></span></div><div class="next-step-body"><span class="i18n" data-en="(1) Provision a Chromium binary and RUN `validate-social-deck.mjs` on a real render — lifts core_layer_tested→true for the deterministic-layout claim and evidence→portable. (2) Drive one real article→公众号封面对 end-to-end and eyeball the PNG for on-brand (exercises the core aesthetic claim). (3) Test one Live Photo→.pvt and one web-sourced-image cover to cover the untested branches. (4) Keep Park&#x27;s usage internal-only so AGPL copyleft stays dormant, and correct the package.json ISC→AGPL mislabel upstream." data-zh="(1) 装上 Chromium 二进制并对一次真实渲染跑 `validate-social-deck.mjs`——把确定性版式 claim 的 core_layer_tested 提到 true、证据升到 portable。(2) 真跑一篇文章→公众号封面对端到端，肉眼确认 PNG 调性（覆盖核心审美 claim）。(3) 测一条 Live Photo→.pvt 与一张网络取图封面，补上未测分支。(4) 保持 Park 仅内部使用以让 AGPL copyleft 保持休眠，并向上游修正 package.json 的 ISC→AGPL 误标。"></span></div></div><div class="trust-strip"><div class="trust-eyebrow"><span class="i18n" data-en="What we checked vs still missing" data-zh="检查过的 vs 还差哪些"></span></div><ul class="trust-list"><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="Static structure verified" data-zh="结构静态验证通过"></span></span><span class="trust-detail">12 claims passed, no critical failures</span></li><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="License present + install path documented" data-zh="License 存在 + 安装路径已文档化"></span></span><span class="trust-detail">MIT / Apache / etc., installable per deployment.install_methods</span></li><li class="trust-row tr-half"><span class="trust-mark">◐</span><span class="trust-label"><span class="i18n" data-en="Maintainer signals partial" data-zh="维护信号有一半"></span></span><span class="trust-detail">release_pipeline=1, recently_active=True</span></li><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="Docs available in EN + ZH" data-zh="文档支持中英双语"></span></span><span class="trust-detail">multilingual_readme=true</span></li><li class="trust-row tr-half"><span class="trust-mark">◐</span><span class="trust-label"><span class="i18n" data-en="Partial live evidence (portable, not full)" data-zh="实际证据部分(可迁移,不完整)"></span></span><span class="trust-detail">evidence_completeness=portable</span></li></ul></div></section>
+  <section class="layer-strip-section"><div class="section-head"><h2><span class="i18n" data-en="What kind of skill is this?" data-zh="它是哪一类?"></span></h2></div><div class="layer-strip-biz-row"><span class="biz-cat-pill biz-content"><span>📝</span><span class="i18n" data-en="Content" data-zh="内容类"></span></span></div><div class="wp-section"><div class="wp-block"><div class="wp-eyebrow"><span class="wp-pin-emoji">🗺</span><span class="i18n" data-en="In this workflow:" data-zh="在这条工作流里:"></span><span class="wp-name"><span class="i18n" data-en="Content / Self-media 8-step pipeline" data-zh="内容 / 自媒体八步管线"></span></span></div><div class="wp-canvas" style="--wp-width:766px"><svg viewBox="0 0 766 110" xmlns="http://www.w3.org/2000/svg" width="766" height="110" preserveAspectRatio="xMidYMid meet"><defs><marker id="wp-arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wp-arrowhead-path"/></marker></defs><path d="M94,44.0 L108,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M188,44.0 L202,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M282,44.0 L296,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M376,44.0 L390,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M470,44.0 L484,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M564,44.0 L578,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><path d="M658,44.0 L672,44.0" class="wp-arrow" marker-end="url(#wp-arrowhead)"/><rect x="14" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="54.0" y="40" class="wp-stage-num">01</text><text x="54.0" y="60" class="wp-stage-name wp-lang-en">Signal scanning</text><text x="54.0" y="60" class="wp-stage-name wp-lang-zh">信号发现</text><rect x="108" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="148.0" y="40" class="wp-stage-num">02</text><text x="148.0" y="60" class="wp-stage-name wp-lang-en">Content acquisition</text><text x="148.0" y="60" class="wp-stage-name wp-lang-zh">内容获取</text><rect x="202" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="242.0" y="40" class="wp-stage-num">03</text><text x="242.0" y="60" class="wp-stage-name wp-lang-en">Content understanding</text><text x="242.0" y="60" class="wp-stage-name wp-lang-zh">内容理解</text><rect x="296" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="336.0" y="40" class="wp-stage-num">04</text><text x="336.0" y="60" class="wp-stage-name wp-lang-en">Topic curation</text><text x="336.0" y="60" class="wp-stage-name wp-lang-zh">选题决策</text><rect x="390" y="14" width="80" height="60" rx="10" class="wp-stage wp-stage-active wp-primary"/><text x="430.0" y="40" class="wp-stage-num">05</text><text x="430.0" y="60" class="wp-stage-name wp-lang-en">Content production</text><text x="430.0" y="60" class="wp-stage-name wp-lang-zh">内容生产</text><rect x="484" y="14" width="80" height="60" rx="10" class="wp-stage wp-stage-active wp-support"/><text x="524.0" y="40" class="wp-stage-num">06</text><text x="524.0" y="60" class="wp-stage-name wp-lang-en">Creative assembly</text><text x="524.0" y="60" class="wp-stage-name wp-lang-zh">创意组装</text><rect x="578" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="618.0" y="40" class="wp-stage-num">07</text><text x="618.0" y="60" class="wp-stage-name wp-lang-en">Distribution &amp; feedback</text><text x="618.0" y="60" class="wp-stage-name wp-lang-zh">分发反馈</text><rect x="672" y="14" width="80" height="60" rx="10" class="wp-stage"/><text x="712.0" y="40" class="wp-stage-num">08</text><text x="712.0" y="60" class="wp-stage-name wp-lang-en">Learning</text><text x="712.0" y="60" class="wp-stage-name wp-lang-zh">学习</text></svg></div><div class="wp-callouts"><div class="wp-callout wp-primary"><div class="wp-callout-head"><span class="wp-callout-pin">📍</span><span class="wp-callout-stage"><span class="i18n" data-en="Content production" data-zh="内容生产"></span></span><span class="wp-callout-role"><span class="i18n" data-en="Primary" data-zh="主要"></span></span></div><div class="wp-callout-reason"><span class="i18n" data-en="Produces the cover / card VISUAL ASSET the piece needs before it can be published — the 21:9+1:1 封面对 or the 小红书 carousel. This is Vera&#x27;s core 封面/社交卡片 lane, mirroring how the sibling guizang-material-illustration is placed at 05 (it produces the middle image and hands off)." data-zh="在内容生产阶段产出成品前需要的封面 / 卡片视觉 ASSET——21:9+1:1 封面对或小红书组图。这是 Vera 的封面 / 社交卡片主线，与 sibling guizang-material-illustration 放 05（产出中间图再交接）一致。"></span></div></div><div class="wp-callout wp-support"><div class="wp-callout-head"><span class="wp-callout-pin">📍</span><span class="wp-callout-stage"><span class="i18n" data-en="Creative assembly" data-zh="创意组装"></span></span><span class="wp-callout-role"><span class="i18n" data-en="Support" data-zh="辅助"></span></span></div><div class="wp-callout-reason"><span class="i18n" data-en="The 公众号 cover PNG is placed INTO the assembly artifact by gzh-design&#x27;s cover slot — guizang-social-card supplies the image URL, gzh-design assembles the article HTML. (For a standalone 小红书 deck the rendered carousel is itself near-final, so its 06 role is stronger than a pure asset-producer&#x27;s.)" data-zh="公众号封面 PNG 被 gzh-design 的封面槽放进组装产物——guizang-social-card 供图 URL，gzh-design 组装文章 HTML。（对独立小红书组图，渲出的组图本身已接近成品，所以它的 06 角色比纯产 asset 的 skill 更强。）"></span></div></div></div></div></div><div class="layer-strip"><div class="layer-strip-card layer-atom is-dim"><div class="layer-strip-emoji">⚛</div><div class="layer-strip-name"><span class="i18n" data-en="Atom" data-zh="原子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="single user-facing capability with deterministic internal phases" data-zh="单个用户可调用能力,内部确定性"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-molecule is-active"><div class="layer-strip-emoji">⚗</div><div class="layer-strip-name"><span class="i18n" data-en="Molecule" data-zh="分子"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="fixed pipeline of atoms — no LLM decides next step at runtime" data-zh="原子的固定流水线 —— LLM 不在运行时决定下一步"></span></div></div><div class="layer-strip-arrow">→</div><div class="layer-strip-card layer-compound is-dim"><div class="layer-strip-emoji">🧬</div><div class="layer-strip-name"><span class="i18n" data-en="Compound" data-zh="复合物"></span></div><div class="layer-strip-desc"><span class="i18n" data-en="LLM decides at runtime which atom/molecule fires next" data-zh="LLM 运行时决定下一步触发哪个原子/分子"></span></div></div></div></section>
 
-  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What this skill actually buys you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-num">#1</span><span class="benefit-icon">👤</span><span class="i18n" data-en="Who" data-zh="谁用"></span></div><div class="benefit-body"><span class="i18n" data-en="Park&#x27;s visual/cover manager (Vera), who needs on-brand 公众号 covers and 小红书 carousels fast and hands the resulting image URLs to the gzh-design formatting skill." data-zh="Park 的视觉/配图 Manager（Vera），需要快速产出符合调性的公众号封面与小红书组图，再把图片 URL 交给 gzh-design 排版技能。"></span></div></article>
+  <section class="category-strip-section"><div class="section-head"><h2><span class="i18n" data-en="Can you use it?" data-zh="能不能用?"></span></h2></div><div class="cat-strip-wrap"><div class="cat-strip"><div class="cat-zone cat-zone-dont_use" style="flex:30"><div class="cat-zone-emoji">🛑</div><div class="cat-zone-name"><span class="i18n" data-en="Don't use" data-zh="不可使用"></span></div><div class="cat-zone-range">0–29</div></div><div class="cat-zone cat-zone-risky" style="flex:20"><div class="cat-zone-emoji">⚠️</div><div class="cat-zone-name"><span class="i18n" data-en="Risky" data-zh="有风险"></span></div><div class="cat-zone-range">30–49</div></div><div class="cat-zone cat-zone-available" style="flex:30"><div class="cat-zone-emoji">🛠</div><div class="cat-zone-name"><span class="i18n" data-en="Available" data-zh="可使用"></span></div><div class="cat-zone-range">50–79</div></div><div class="cat-zone cat-zone-production is-active" style="flex:20"><div class="cat-zone-emoji">🏭</div><div class="cat-zone-name"><span class="i18n" data-en="Production" data-zh="可用于生产"></span></div><div class="cat-zone-range">80–100</div></div></div><div class="cat-pointer-lane"><div class="cat-pointer" style="left:85%"><div class="cat-pointer-arrow">▼</div><div class="cat-pointer-score">85</div></div></div></div><div class="cat-summary cat-summary-production"><div class="cat-summary-headline"><span class="cat-summary-emoji">🏭</span><span class="cat-summary-name"><span class="i18n" data-en="Production-ready" data-zh="可用于生产"></span></span><span class="cat-summary-score">· 85 / 100</span></div><div class="cat-summary-blurb"><span class="i18n" data-en="Safe to depend on in team or production pipelines." data-zh="团队 / 生产 pipeline 可以依赖。"></span></div></div><div class="score-proof"><div class="score-proof-number"><strong>85</strong><span>/100</span></div><div class="score-proof-copy"><div class="score-proof-label"><span class="i18n" data-en="Why this score is credible" data-zh="为什么这个分数站得住"></span></div><p><span class="i18n" data-en="85 is justified because the core promise was tested, not just inspected: a real WeChat cover pair was rendered, the validator caught a real title-layout issue, the issue was fixed, and the second run passed cleanly. The remaining uncertainty is breadth — more articles, themes, Live Photo, web-sourced images, and actual platform upload — not whether the basic cover-pair path exists." data-zh="85 分成立，是因为核心承诺不只是读代码确认，而是真跑过：实际渲染出一套公众号封面对，校验器抓到真实标题版式问题，修正后第二轮干净通过。剩下的不确定性是覆盖面——更多文章、更多主题、Live Photo、网络取图、真实平台上传——不是基础封面对路径是否存在。"></span></p><div class="score-chip-row"><span class="score-chip"><span class="i18n" data-en="Base" data-zh="基础"></span><b>+40</b></span><span class="score-chip"><span class="i18n" data-en="Claim evidence" data-zh="Claim 证据"></span><b>+30</b></span><span class="score-chip"><span class="i18n" data-en="Maintainer proof" data-zh="维护证据"></span><b>+12</b></span><span class="score-chip"><span class="i18n" data-en="Peer signal" data-zh="社区信号"></span><b>+3</b></span><span class="score-chip"><span class="i18n" data-en="Layer fit" data-zh="层级匹配"></span><b>0</b></span><span class="score-chip"><span class="i18n" data-en="Deductions" data-zh="扣分"></span><b>0</b></span></div></div></div><div class="trust-strip"><div class="trust-eyebrow"><span class="i18n" data-en="What we checked vs still missing" data-zh="检查过的 vs 还差哪些"></span></div><ul class="trust-list"><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="Static structure verified" data-zh="结构静态验证通过"></span></span><span class="trust-detail">12 claims passed, no critical failures</span></li><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="License present + install path documented" data-zh="License 存在 + 安装路径已文档化"></span></span><span class="trust-detail">license exists; install path recorded in deployment.install_methods</span></li><li class="trust-row tr-half"><span class="trust-mark">◐</span><span class="trust-label"><span class="i18n" data-en="Maintainer signals partial" data-zh="维护信号有一半"></span></span><span class="trust-detail">release_pipeline=1, recently_active=True</span></li><li class="trust-row tr-yes"><span class="trust-mark">✓</span><span class="trust-label"><span class="i18n" data-en="Docs available in EN + ZH" data-zh="文档支持中英双语"></span></span><span class="trust-detail">multilingual_readme=true</span></li><li class="trust-row tr-half"><span class="trust-mark">◐</span><span class="trust-label"><span class="i18n" data-en="Partial live evidence (portable, not full)" data-zh="实际证据部分(可迁移,不完整)"></span></span><span class="trust-detail">evidence_completeness=portable</span></li></ul></div></section>
+
+  <section class="benefits-section"><div class="section-head"><h2><span class="i18n" data-en="What problem this solves for you" data-zh="它到底能帮你解决什么"></span></h2></div><div class="benefits-grid"><article class="benefit-card benefit-persona"><div class="benefit-eyebrow"><span class="benefit-num">#1</span><span class="benefit-icon">👤</span><span class="i18n" data-en="Who" data-zh="谁用"></span></div><div class="benefit-body"><span class="i18n" data-en="Park&#x27;s visual/cover manager (Vera), who needs on-brand 公众号 covers and 小红书 carousels fast and hands the resulting image URLs to the gzh-design formatting skill." data-zh="Park 的视觉/配图 Manager（Vera），需要快速产出符合调性的公众号封面与小红书组图，再把图片 URL 交给 gzh-design 排版技能。"></span></div></article>
 <article class="benefit-card benefit-scenario"><div class="benefit-eyebrow"><span class="benefit-num">#2</span><span class="benefit-icon">🎯</span><span class="i18n" data-en="When" data-zh="什么时候用"></span></div><div class="benefit-body"><span class="i18n" data-en="An article is drafted and ready to publish to WeChat / Xiaohongshu, but it still needs a 21:9 header + 1:1 share cover (or a 5-9 page carousel) that looks designed — not AI-filler." data-zh="文章已成稿要发公众号 / 小红书，但还差一套 21:9 头图 + 1:1 分享卡（或 5-9 页组图），要看着像设计过的，不是 AI 凑数。"></span></div></article>
-<article class="benefit-card benefit-how"><div class="benefit-eyebrow"><span class="benefit-num">#3</span><span class="benefit-icon">🧭</span><span class="i18n" data-en="How" data-zh="怎么用"></span></div><div class="benefit-body"><span class="i18n" data-en="`npx skills add` the repo (or git clone into your skills dir), `npm install` (pulls Playwright), `npx playwright install chromium`, then say &#x27;做一套小红书图文 / 公众号封面对&#x27;. Render with `node render.mjs`; optionally `node validate-social-deck.mjs &lt;task-dir&gt;`." data-zh="`npx skills add` 安装（或 git clone 到 skills 目录），`npm install`（装 Playwright），`npx playwright install chromium`，然后说「做一套小红书图文 / 公众号封面对」。用 `node render.mjs` 出图；需要时 `node validate-social-deck.mjs &lt;任务目录&gt;` 核查。"></span></div></article>
+<article class="benefit-card benefit-how"><div class="benefit-eyebrow"><span class="benefit-num">#3</span><span class="benefit-icon">🧭</span><span class="i18n" data-en="How" data-zh="怎么用"></span></div><div class="benefit-body"><span class="i18n" data-en="Use it when a content piece is already written but still lacks the visual package. Ask the agent for a WeChat cover pair or Xiaohongshu carousel, give it the article and desired style, then review the rendered PNGs and the layout check before publishing." data-zh="当内容已经写完、但还缺封面或组图时用它。把文章和想要的风格交给 agent，让它做公众号封面对或小红书组图；发布前看渲染出来的 PNG 和版式检查结果。"></span></div></article>
 <article class="benefit-card benefit-ba"><div class="benefit-eyebrow"><span class="benefit-num">#4</span><span class="benefit-icon">⇄</span><span class="i18n" data-en="Before &amp; After" data-zh="前后对比"></span></div><div class="ba-grid"><div class="ba-side ba-before"><div class="ba-side-label"><span class="i18n" data-en="Before — without it" data-zh="之前 —— 没它的时候"></span></div><div class="ba-side-body"><span class="i18n" data-en="Hand-design covers in Figma / Canva or prompt an image model — slow, off-brand drift page-to-page, wrong ratios, and text that crops the subject or fails the mobile-legibility bar." data-zh="在 Figma / Canva 手搓封面，或让图像模型生成——慢、每张调性飘、比例不对、文字压住主体或在手机上糊成一团。"></span></div></div><div class="ba-side ba-after"><div class="ba-side-label"><span class="i18n" data-en="After — with it" data-zh="之后 —— 有了它之后"></span></div><div class="ba-side-body"><span class="i18n" data-en="Tell the agent &#x27;把这篇做成公众号封面对，Swiss IKB&#x27; — it plans the pages, copies a seed template, fills layout recipes, renders 21:9 + 1:1 PNGs at exact sizes, and (when a browser is available) auto-checks overflow / density / font-caps." data-zh="对 agent 说「把这篇做成公众号封面对，Swiss IKB」——它拆页、拷种子模板、套版式骨架、按精确尺寸渲出 21:9 + 1:1 PNG，并（有浏览器时）自动核查溢出 / 密度 / 字号上限。"></span></div></div></div></article></div><div class="usex-block"><div class="usex-eyebrow"><span class="i18n" data-en="↳ Three concrete moments where you would invoke it" data-zh="↳ 三个真实场景里你会怎么唤醒它"></span></div><div class="usex-grid"><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A 公众号 article is drafted and needs a cover pair." data-zh="一篇公众号文章成稿了，需要一套封面对。"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="把这篇做成公众号封面对：21:9 头图 + 1:1 分享卡，Swiss IKB 蓝，视觉一致。" data-zh="把这篇做成公众号封面对：21:9 头图 + 1:1 分享卡，Swiss IKB 蓝，视觉一致。"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Derives a short 1:1 title from the long 21:9 title (title-shortener), builds both in one HTML at exact ratios (2100×900 + 1080×1080) plus a pair-preview, renders 2 PNGs; hands the URLs to gzh-design&#x27;s cover slot." data-zh="从长 21:9 标题派生 1:1 短标题（title-shortener），在同一 HTML 里按精确比例建两块（2100×900 + 1080×1080）+ 配对预览，渲出 2 张 PNG；把 URL 交给 gzh-design 的封面槽。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A product-review long-read is heading to Xiaohongshu." data-zh="一篇产品测评长文要发小红书。"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="基于这份测评做一套 5 张小红书 3:4，Swiss，优先 KPI Tower / H-Bar。" data-zh="基于这份测评做一套 5 张小红书 3:4，Swiss，优先 KPI Tower / H-Bar。"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Extracts a page plan (1 cover hook + 4 point pages), fills S09 KPI-Tower / S10 H-Bar recipes across 5 .poster.xhs boards, renders a 5-image carousel." data-zh="拆页（1 张封面钩子 + 4 张要点页），把 S09 KPI-Tower / S10 H-Bar 骨架填进 5 块 .poster.xhs，渲出 5 张组图。"></span></span></div></article><article class="usex-card"><div class="usex-row usex-context"><span class="usex-label"><span class="i18n" data-en="You are" data-zh="你是"></span></span><span class="usex-body"><span class="i18n" data-en="A short coffee video should become a motion card." data-zh="一段短咖啡视频想做成动态卡。"></span></span></div><div class="usex-row usex-quote"><span class="usex-label"><span class="i18n" data-en="You say" data-zh="你会说"></span></span><blockquote class="usex-body"><span class="i18n" data-en="把这个咖啡视频做成小红书 5 秒 Live Photo，文字压安静区，避开杯子和手。" data-zh="把这个咖啡视频做成小红书 5 秒 Live Photo，文字压安静区，避开杯子和手。"></span></blockquote></div><div class="usex-row usex-what"><span class="usex-label"><span class="i18n" data-en="What happens" data-zh="然后会发生什么"></span></span><span class="usex-body"><span class="i18n" data-en="Checks the first frame passes the static-card crop / subject rules, keeps text in a quiet zone, packages JPG + MOV into a .pvt for iPhone publishing (5s Xiaohongshu / 3s WeChat)." data-zh="先确认首帧过静态卡的裁切 / 主体规则、文字落安静区，把 JPG + MOV 打包成 .pvt 供 iPhone 发布（小红书 5s / 公众号 3s）。"></span></span></div></article></div></div></section>
 
   
 
-  <section class="workflow-diagram-section"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is molecule" data-zh="为什么是分子"></span></div><div class="wd-why-body"><span class="i18n" data-en="Fixed sequential pipeline. The LLM fills copy and makes LOCAL design choices (Editorial vs Swiss, which of 28 recipes, which of 10 themes, crop / object-position) but performs NO runtime sub-agent routing or plan generation — that makes it a molecule, not a compound. The HTML→PNG render + the two validators are embedded deterministic atoms; the layout gate could not be executed in isolation (no browser)." data-zh="固定顺序 pipeline。LLM 只填文案、做局部设计判断（选 Editorial 还是 Swiss、28 个骨架挑哪个、10 套主题选哪套、裁切 / object-position），运行时不做子 agent 路由或计划生成——所以是 molecule 而非 compound。HTML→PNG 渲染 + 两个校验器是嵌入的确定性 atom；版式关卡在隔离环境未能执行（无浏览器）。"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas"><svg viewBox="0 0 2048 104" xmlns="http://www.w3.org/2000/svg" width="100%" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M204,52.0 C244.0,52.0 244.0,52.0 284,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M464,52.0 C504.0,52.0 504.0,52.0 544,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M724,52.0 C764.0,52.0 764.0,52.0 804,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M984,52.0 C1024.0,52.0 1024.0,52.0 1064,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M1244,52.0 C1284.0,52.0 1284.0,52.0 1324,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M1504,52.0 C1544.0,52.0 1544.0,52.0 1584,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M1764,52.0 C1804.0,52.0 1804.0,52.0 1844,52.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="24" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-start"/><text x="114.0" y="56.0" class="wd-label wd-lang-en">Article / script / screenshots / subtitles / photo / video</text><text x="114.0" y="56.0" class="wd-label wd-lang-zh">文章 / 脚本 / 截图 / 字幕 / 照片 / 视频</text></g><g class="wd-node wd-type-step"><rect x="284" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="374.0" y="56.0" class="wd-label wd-lang-en">Intake: platform · ratio · style · images</text><text x="374.0" y="56.0" class="wd-label wd-lang-zh">Intake：平台 · 比例 · 风格 · 图源</text></g><g class="wd-node wd-type-step"><rect x="544" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="634.0" y="56.0" class="wd-label wd-lang-en">Extract story → page plan (hook + pages)</text><text x="634.0" y="56.0" class="wd-label wd-lang-zh">抽故事 → 拆页计划（钩子 + 分页）</text></g><g class="wd-node wd-type-step"><rect x="804" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="894.0" y="56.0" class="wd-label wd-lang-en">Pick Editorial | Swiss + 1 of 10 themes</text><text x="894.0" y="56.0" class="wd-label wd-lang-zh">选 Editorial | Swiss + 10 主题选 1</text></g><g class="wd-node wd-type-step"><rect x="1064" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="1154.0" y="56.0" class="wd-label wd-lang-en">Copy seed template + fill 28 layout recipes</text><text x="1154.0" y="56.0" class="wd-label wd-lang-zh">拷种子模板 + 套 28 版式骨架</text></g><g class="wd-node wd-type-step"><rect x="1324" y="24" width="180" height="56" rx="8" class="wd-shape wd-atom"/><text x="1414.0" y="56.0" class="wd-label wd-lang-en">Playwright HTML → PNG (fixed-px boards)</text><text x="1414.0" y="56.0" class="wd-label wd-lang-zh">Playwright HTML → PNG（固定像素画板）</text></g><g class="wd-node wd-type-decision"><polygon points="1674.0,24 1764,52.0 1674.0,80 1584,52.0" class="wd-shape wd-decision"/><text x="1674.0" y="56.0" class="wd-label wd-lang-en">validate-social-deck R1-R9 (0 FAIL?)</text><text x="1674.0" y="56.0" class="wd-label wd-lang-zh">validate-social-deck R1-R9（0 FAIL？）</text></g><g class="wd-node wd-type-end"><rect x="1844" y="24" width="180" height="56" rx="28.0" class="wd-shape wd-end"/><text x="1934.0" y="56.0" class="wd-label wd-lang-en">小红书 deck / 公众号 21:9+1:1 封面对 PNG</text><text x="1934.0" y="56.0" class="wd-label wd-lang-zh">小红书组图 / 公众号 21:9+1:1 封面对 PNG</text></g></svg></div></section>
+  <section class="workflow-diagram-section" id="workflow"><div class="section-head"><h2><span class="i18n" data-en="How it actually works" data-zh="它的工作流"></span></h2></div><div class="wd-why"><div class="wd-why-eyebrow"><span class="i18n" data-en="Why this is molecule" data-zh="为什么是分子"></span></div><div class="wd-why-body"><span class="i18n" data-en="This is a fixed publishing pipeline, not an autonomous agent tree. The agent chooses style and fills content, but the route stays the same: read the material, choose a design recipe, render exact-size PNGs, then check the result. That is why we judge it as a molecule: multiple steps, but no runtime routing." data-zh="这是一条固定的发布流水线，不是会自己改路线的 agent 树。agent 会选风格、填内容，但路线不变：读材料、选版式、按精确尺寸渲染 PNG、再检查结果。所以它是 molecule：有多个步骤，但没有运行时路由。"></span></div></div><ul class="wd-legend"><li><span class="wd-legend-dot wd-legend-atom"></span><span class="i18n" data-en="atom (deterministic step)" data-zh="原子（确定性步骤）"></span></li><li><span class="wd-legend-dot wd-legend-decision"></span><span class="i18n" data-en="LLM decides at runtime" data-zh="LLM 运行时决策"></span></li><li><span class="wd-legend-dot wd-legend-start"></span><span class="i18n" data-en="input / output" data-zh="输入 / 输出"></span></li></ul><div class="wd-canvas" style="--wd-width:834px"><svg viewBox="0 0 834 172" xmlns="http://www.w3.org/2000/svg" width="834" height="172" preserveAspectRatio="xMidYMid meet"><defs><marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="wd-arrowhead"/></marker></defs><path d="M186,46.0 C207.0,46.0 207.0,46.0 228,46.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M396,46.0 C417.0,46.0 417.0,46.0 438,46.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M606,46.0 C627.0,46.0 627.0,46.0 648,46.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M732.0,74 C732.0,86.0 732.0,86.0 732.0,98" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M648,126.0 C627.0,126.0 627.0,126.0 606,126.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M438,126.0 C417.0,126.0 417.0,126.0 396,126.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><path d="M228,126.0 C207.0,126.0 207.0,126.0 186,126.0" class="wd-edge wd-edge-solid" marker-end="url(#wd-arrow)"/><g class="wd-node wd-type-start"><rect x="18" y="18" width="168" height="56" rx="28.0" class="wd-shape wd-start"/><text x="102.0" y="50.0" class="wd-label wd-lang-en">Finished content</text><text x="102.0" y="50.0" class="wd-label wd-lang-zh">已成稿内容</text></g><g class="wd-node wd-type-step"><rect x="228" y="18" width="168" height="56" rx="8" class="wd-shape wd-atom"/><text x="312.0" y="43.0" class="wd-label wd-lang-en">Pick platform</text><text x="312.0" y="43.0" class="wd-label wd-lang-zh">选择平台</text><text x="312.0" y="57.0" class="wd-label wd-lang-en">and format</text><text x="312.0" y="57.0" class="wd-label wd-lang-zh">和规格</text></g><g class="wd-node wd-type-step"><rect x="438" y="18" width="168" height="56" rx="8" class="wd-shape wd-atom"/><text x="522.0" y="43.0" class="wd-label wd-lang-en">Turn story</text><text x="522.0" y="43.0" class="wd-label wd-lang-zh">把内容</text><text x="522.0" y="57.0" class="wd-label wd-lang-en">into pages</text><text x="522.0" y="57.0" class="wd-label wd-lang-zh">拆成页面</text></g><g class="wd-node wd-type-step"><rect x="648" y="18" width="168" height="56" rx="8" class="wd-shape wd-atom"/><text x="732.0" y="43.0" class="wd-label wd-lang-en">Choose style</text><text x="732.0" y="43.0" class="wd-label wd-lang-zh">选择风格</text><text x="732.0" y="57.0" class="wd-label wd-lang-en">and theme</text><text x="732.0" y="57.0" class="wd-label wd-lang-zh">和主题</text></g><g class="wd-node wd-type-step"><rect x="648" y="98" width="168" height="56" rx="8" class="wd-shape wd-atom"/><text x="732.0" y="123.0" class="wd-label wd-lang-en">Fill a fixed</text><text x="732.0" y="123.0" class="wd-label wd-lang-zh">填入固定</text><text x="732.0" y="137.0" class="wd-label wd-lang-en">HTML layout</text><text x="732.0" y="137.0" class="wd-label wd-lang-zh">HTML 版式</text></g><g class="wd-node wd-type-step"><rect x="438" y="98" width="168" height="56" rx="8" class="wd-shape wd-atom"/><text x="522.0" y="123.0" class="wd-label wd-lang-en">Render exact-size</text><text x="522.0" y="123.0" class="wd-label wd-lang-zh">渲染精确尺寸</text><text x="522.0" y="137.0" class="wd-label wd-lang-en">PNG files</text><text x="522.0" y="137.0" class="wd-label wd-lang-zh">PNG</text></g><g class="wd-node wd-type-decision"><polygon points="312.0,98 396,126.0 312.0,154 228,126.0" class="wd-shape wd-decision"/><text x="312.0" y="123.0" class="wd-label wd-lang-en">Layout check</text><text x="312.0" y="123.0" class="wd-label wd-lang-zh">版式检查</text><text x="312.0" y="137.0" class="wd-label wd-lang-en">passes?</text><text x="312.0" y="137.0" class="wd-label wd-lang-zh">通过？</text></g><g class="wd-node wd-type-end"><rect x="18" y="98" width="168" height="56" rx="28.0" class="wd-shape wd-end"/><text x="102.0" y="123.0" class="wd-label wd-lang-en">Cover pair</text><text x="102.0" y="123.0" class="wd-label wd-lang-zh">封面对</text><text x="102.0" y="137.0" class="wd-label wd-lang-en">or carousel</text><text x="102.0" y="137.0" class="wd-label wd-lang-zh">或组图</text></g></svg></div></section>
 
-  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/ponyodong2026--ponyo-cover-anchor-system/verdicts/2026-07-09-verdict.html"><strong>ponyodong2026/ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 55</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Generate scroll-stopping social covers / cards for Chinese content platforms." data-zh="为中文内容平台产出能停住滑动的社交封面 / 卡片。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="guizang-social-card · 归藏社交卡片技能 wins at" data-zh="guizang-social-card · 归藏社交卡片技能 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="The 公众号 21:9+1:1 cover PAIR as an exact-ratio system, and DETERMINISM: output is a fixed-px CSS render (HTML→PNG), not a prompt formula — same template + content → same pixels, no image-model / phrasing variance. Ships a real 9-rule DOM layout validator + a doc-integrity validator, a 28-recipe × 10-theme design system, and a Live Photo branch. It renders the whole card, not just the hook line." data-zh="公众号 21:9+1:1 封面对作为精确比例系统，以及确定性：产物是固定像素的 CSS 渲染（HTML→PNG），不是 prompt 公式——同模板 + 同内容 → 同像素，无图像模型 / 措辞漂移。随包一个真实的 9 规则 DOM 版式校验器 + 文档完整性校验器、28 骨架 × 10 主题的设计系统、以及 Live Photo 分支。它渲整张卡，不只是钩子那行字。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面 wins at" data-zh="ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Ponyo&#x27;s cover-anchor / hook-title formulas are a lighter, prompt-native 小红书 sub-lane — no Node / Playwright / Chromium dependency, instant on any chatbot, and focused on the title-hook &#x27;anchor&#x27; psychology rather than full-card layout. Complementary, not competing: ponyo shapes the hook line, guizang renders the whole cover. (No repo-evals dossier exists for ponyo yet — head-to-head is directional.)" data-zh="Ponyo 的封面锚点 / 钩子标题公式是更轻、prompt 原生的小红书子赛道——无 Node / Playwright / Chromium 依赖，任何 chatbot 即开即用，聚焦标题钩子的「锚点」心理而非整卡版式。互补而非竞争：ponyo 打磨钩子那行，guizang 渲整张封面。（ponyo 目前无 repo-evals dossier，头对头为方向性判断。）"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/op7418--guizang-material-illustration/verdicts/2026-07-09-verdict.html"><strong>op7418/归藏的材质插画 skill</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 53</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both are op7418 Vera-lane image skills that produce a visual ASSET for a content piece and hand it to a layout skill." data-zh="都是 op7418 的 Vera 系图像 skill：产出内容用的视觉 ASSET，再交给排版 skill。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="guizang-social-card · 归藏社交卡片技能 wins at" data-zh="guizang-social-card · 归藏社交卡片技能 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Renders DETERMINISTICALLY via HTML→PNG (a CSS layout it fully controls), so its core is testable by a shipped layout validator — whereas material-illustration&#x27;s central image comes from an EXTERNAL image model it does not control (core_layer_tested=false, model-dependent). guizang-social-card also produces platform-ready FINISHED decks / cover pairs, not a loose middle image." data-zh="通过 HTML→PNG 确定性渲染（它完全掌控的 CSS 版式），核心可被随包版式校验器测——而 material-illustration 的中心图由它并不掌控的外部图像模型渲染（core_layer_tested=false，依赖模型）。guizang-social-card 还直接产平台可用的成品组图 / 封面对，而非一张散图。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="归藏的材质插画 skill wins at" data-zh="归藏的材质插画 skill 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="material-illustration solves the &#x27;middle explanatory picture&#x27; problem guizang-card does not touch — Chinese-labeled mechanism diagrams, value-faithful chart beautification, reference-informed illustration. It is lighter (no Playwright / Chromium) since it delegates rendering to the image model." data-zh="material-illustration 解决 guizang-card 不碰的「中间那张解释图」——带中文标签的机制图、逐值保真的图表美化、参考辅助配图。它更轻（无 Playwright / Chromium），因为把渲染交给了图像模型。"></span></div></div></article></div></section>
+  <section class="similar-section"><div class="section-head"><h2><span class="i18n" data-en="How does it compare to ones we already evaluated?" data-zh="对比我们已经评测过的"></span></h2></div><p class="similar-lead"><span class="i18n" data-en="Comparison universe = this repo-evals corpus. We do not web-search; this is &quot;given what you already have access to, what are your alternatives.&quot;" data-zh="对比范围 = 当前 repo-evals 语料库。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。"></span></p><div class="similar-grid"><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/ponyodong2026--ponyo-cover-anchor-system/verdicts/2026-07-09-verdict.html"><strong>ponyodong2026/ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 55</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Generate scroll-stopping social covers / cards for Chinese content platforms." data-zh="为中文内容平台产出能停住滑动的社交封面 / 卡片。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="guizang-social-card · 归藏社交卡片技能 wins at" data-zh="guizang-social-card · 归藏社交卡片技能 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="The 公众号 21:9+1:1 cover PAIR as an exact-ratio system, and DETERMINISM: output is a fixed-px CSS render (HTML→PNG), not a prompt formula — same template + content → same pixels, no image-model / phrasing variance. Ships a real 9-rule DOM layout validator + a doc-integrity validator, a 28-recipe × 10-theme design system, and a Live Photo branch. It renders the whole card, not just the hook line." data-zh="公众号 21:9+1:1 封面对作为精确比例系统，以及确定性：产物是固定像素的 CSS 渲染（HTML→PNG），不是 prompt 公式——同模板 + 同内容 → 同像素，无图像模型 / 措辞漂移。随包一个真实的 9 规则 DOM 版式校验器 + 文档完整性校验器、28 骨架 × 10 主题的设计系统、以及 Live Photo 分支。它渲整张卡，不只是钩子那行字。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面 wins at" data-zh="ponyo-cover-anchor-system · 波妞小红书强钩子爆款封面 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Ponyo&#x27;s cover-anchor / hook-title formulas are a lighter, prompt-native 小红书 sub-lane — no Node / Playwright / Chromium dependency, instant on any chatbot, and focused on the title-hook &#x27;anchor&#x27; psychology rather than full-card layout. Complementary, not competing: ponyo shapes the hook line, guizang renders the whole cover. (No repo-evals dossier exists for ponyo yet — head-to-head is directional.)" data-zh="Ponyo 的封面锚点 / 钩子标题公式是更轻、prompt 原生的小红书子赛道——无 Node / Playwright / Chromium 依赖，任何 chatbot 即开即用，聚焦标题钩子的「锚点」心理而非整卡版式。互补而非竞争：ponyo 打磨钩子那行，guizang 渲整张封面。（ponyo 目前无 repo-evals dossier，头对头为方向性判断。）"></span></div></div></article><article class="similar-card"><div class="similar-card-head"><a class="similar-card-name" href="../repos/op7418--guizang-material-illustration/verdicts/2026-07-09-verdict.html"><strong>op7418/归藏的材质插画 skill</strong></a><div class="similar-card-meta"><span class="similar-cat-pill cat-available">🛠 <span class="i18n" data-en="Available" data-zh="可使用"></span> · 53</span><span class="similar-layer-pill layer-molecule">molecule</span></div></div><div class="similar-row"><div class="similar-row-label"><span class="i18n" data-en="Same purpose" data-zh="相同目的"></span></div><div class="similar-row-body"><span class="i18n" data-en="Both are op7418 Vera-lane image skills that produce a visual ASSET for a content piece and hand it to a layout skill." data-zh="都是 op7418 的 Vera 系图像 skill：产出内容用的视觉 ASSET，再交给排版 skill。"></span></div></div><div class="similar-row similar-row-this"><div class="similar-row-label"><span class="i18n" data-en="guizang-social-card · 归藏社交卡片技能 wins at" data-zh="guizang-social-card · 归藏社交卡片技能 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="Renders DETERMINISTICALLY via HTML→PNG (a CSS layout it fully controls), so its core is testable by a shipped layout validator — whereas material-illustration&#x27;s central image comes from an EXTERNAL image model it does not control (core_layer_tested=false, model-dependent). guizang-social-card also produces platform-ready FINISHED decks / cover pairs, not a loose middle image." data-zh="通过 HTML→PNG 确定性渲染（它完全掌控的 CSS 版式），核心可被随包版式校验器测——而 material-illustration 的中心图由它并不掌控的外部图像模型渲染（core_layer_tested=false，依赖模型）。guizang-social-card 还直接产平台可用的成品组图 / 封面对，而非一张散图。"></span></div></div><div class="similar-row similar-row-other"><div class="similar-row-label"><span class="i18n" data-en="归藏的材质插画 skill wins at" data-zh="归藏的材质插画 skill 强在"></span></div><div class="similar-row-body"><span class="i18n" data-en="material-illustration solves the &#x27;middle explanatory picture&#x27; problem guizang-card does not touch — Chinese-labeled mechanism diagrams, value-faithful chart beautification, reference-informed illustration. It is lighter (no Playwright / Chromium) since it delegates rendering to the image model." data-zh="material-illustration 解决 guizang-card 不碰的「中间那张解释图」——带中文标签的机制图、逐值保真的图表美化、参考辅助配图。它更轻（无 Playwright / Chromium），因为把渲染交给了图像模型。"></span></div></div></article></div></section>
 
-  <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>npx skills add https://github.com/op7418/guizang-social-card-skill --skill guizang-social-card-skill</code></td><td>any agent with a skills dir (Claude Code / Codex / Cursor)</td><td><span class="badge complexity-moderate">moderate</span></td></tr><tr><td><code>git clone into ~/.claude/skills/guizang-social-card-skill (then npm install + npx playwright install chromium)</code></td><td>any (Node 18+, Playwright, Chromium ~150MB)</td><td><span class="badge complexity-moderate">moderate</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">Playwright + Chromium</div><div class="service-purpose">确定性 HTML→PNG 渲染引擎 + validate-social-deck.mjs 版式校验；需下载约 150MB 浏览器二进制</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>开源免费；隔离环境本次未能下到匹配的 chromium build（render/validate 因此未跑）</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Google Fonts (Inter / Noto Serif&amp;Sans SC / Playfair / IBM Plex Mono)</div><div class="service-purpose">精确排版字体；离线时回退系统字体，几何布局仍成立</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>装饰层依赖，非必需</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">免费图库 Unsplash / Pexels / Flickr CC / Wallhaven</div><div class="service-purpose">用户无图时的兜底取图（用户图优先）；落本地 + 写 SOURCES.md</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>版权未核实，SKILL 要求向用户披露后由用户判断</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Mapbox / OSM static tiles + unpkg (lucide icons)</div><div class="service-purpose">地图组件（旅行路线）与图标；仅对应版式用到</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>可选组件</div></div></div></div></section>
+  <section class="deployment-section"><div class="section-head"><h2><span class="i18n" data-en="Deploy &amp; cost" data-zh="部署与成本"></span></h2></div><div class="deploy-grid"><div class="deploy-card"><div class="card-eyebrow"><span class="i18n" data-en="Can I deploy this?" data-zh="能不能装上跑？"></span></div><div class="card-headline"><span class="deploy-status status-good"><span class="i18n" data-en="✅ Installable now" data-zh="✅ 现在就能装"></span></span></div><table class="install-table"><thead><tr><th><span class="i18n" data-en="Install method" data-zh="安装方式"></span></th><th><span class="i18n" data-en="Platform" data-zh="平台"></span></th><th><span class="i18n" data-en="Difficulty" data-zh="复杂度"></span></th></tr></thead><tbody><tr><td><code>npx skills add https://github.com/op7418/guizang-social-card-skill --skill guizang-social-card-skill</code></td><td>any agent with a skills dir (Claude Code / Codex / Cursor)</td><td><span class="badge complexity-moderate">moderate</span></td></tr><tr><td><code>git clone into ~/.claude/skills/guizang-social-card-skill (then npm install + npx playwright install chromium)</code></td><td>any (Node 18+, Playwright, Chromium ~150MB)</td><td><span class="badge complexity-moderate">moderate</span></td></tr></tbody></table><ul class="deploy-flags"><li><span class="flag-icon">🌐</span><span class="i18n" data-en="Needs network at runtime" data-zh="运行时需要网络"></span></li></ul></div><div class="services-card"><div class="card-eyebrow"><span class="i18n" data-en="Third-party services it touches" data-zh="会用到哪些第三方服务"></span></div><div class="service-card"><div class="service-head"><div><div class="service-name">Playwright + Chromium</div><div class="service-purpose">确定性 HTML→PNG 渲染引擎 + validate-social-deck.mjs 版式校验；需下载约 150MB 浏览器二进制</div></div><div class="service-pills"><span class="service-pill status-must"><span class="i18n" data-en="Required" data-zh="必需"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>开源免费；需要下载匹配的 Chromium build。首次评测曾卡在下载，后续同日补装成功并跑通 render/validate。</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Google Fonts (Inter / Noto Serif&amp;Sans SC / Playfair / IBM Plex Mono)</div><div class="service-purpose">精确排版字体；离线时回退系统字体，几何布局仍成立</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>装饰层依赖，非必需</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">免费图库 Unsplash / Pexels / Flickr CC / Wallhaven</div><div class="service-purpose">用户无图时的兜底取图（用户图优先）；落本地 + 写 SOURCES.md</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>版权未核实，SKILL 要求向用户披露后由用户判断</div></div><div class="service-card"><div class="service-head"><div><div class="service-name">Mapbox / OSM static tiles + unpkg (lucide icons)</div><div class="service-purpose">地图组件（旅行路线）与图标；仅对应版式用到</div></div><div class="service-pills"><span class="service-pill status-opt"><span class="i18n" data-en="Optional" data-zh="可选"></span></span><span class="service-pill status-easy"><span class="i18n" data-en="🟢 Just install" data-zh="🟢 装上就能用"></span></span></div></div><div class="service-cost"><span class="i18n" data-en="Cost note: " data-zh="成本说明："></span>可选组件</div></div></div></div></section>
 
   <div class="pull-quotes">
     
-    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="(1) The layout validator is DETERMINISTIC but the final PNG&#x27;s TASTE is not — it guarantees no-overflow / legible-font / filled-density, not that the cover is beautiful or on-brand; aesthetics still ride the model&#x27;s run. (2) Hard dependency on Node + Playwright + a downloadable Chromium binary — in this isolated eval the browser could NOT be installed, so render / validate could not be exercised. (3) AGPL-3.0 copyleft: internal cover-making does NOT trigger it, but modify-and-redistribute or building an external SaaS / product on it triggers AGPL (must open-source) OR requires the author&#x27;s paid commercial license (¥100k-300k deep-embed / ¥30k listing / revenue-share). (4) package.json mislabels the license as &#x27;ISC&#x27; — the governing LICENSE is full AGPL-3.0. (5) It only makes the IMAGE — copy compression + real photos still need a human/model; poor source photos read as filler. (6) Live Photo delivery needs an iPhone / AirDrop path; desktop can&#x27;t publish .pvt." data-zh="(1) 版式校验是确定性的，但成品 PNG 的「审美」不是——它只保证不溢出 / 字号可读 / 密度够，不保证封面好看或符合调性，审美仍看模型那次发挥。(2) 硬依赖 Node + Playwright + 可下载的 Chromium 二进制——本次隔离评估装不上浏览器，渲染 / 校验未能实跑。(3) AGPL-3.0 copyleft：内部做封面自用不触发，但改代码再分发、或基于它做对外 SaaS / 产品会触发 AGPL（须开源）或需作者的付费商业授权（深度内置 10-30 万 / 上架 3 万 / 分成）。(4) package.json 把 license 误标成 &#x27;ISC&#x27;——真正生效的 LICENSE 是完整 AGPL-3.0。(5) 它只出图——文案压缩与真实照片仍需人 / 模型；素材图差会显得像凑数。(6) Live Photo 交付需要 iPhone / AirDrop，桌面端发不了 .pvt。"></span></div></section>
+    <section class="watch-out"><div class="watch-out-label"><span class="i18n" data-en="Watch out" data-zh="注意事项"></span></div><div class="watch-out-body"><span class="i18n" data-en="(1) It can check layout mechanics, not guarantee taste: the validator catches overflow, density, and legibility problems, but a human still has to decide whether the cover fits the brand. (2) It needs Node, Playwright, and a Chromium download before rendering; setup friction is real. (3) AGPL-3.0 matters if you redistribute it or build an external product/SaaS around it; internal cover-making is lower risk, but commercial embedding needs a license review. (4) It outputs the visual asset, not the whole publishing workflow: article copy, photo choice, and final WeChat/Xiaohongshu upload still need review. (5) Live Photo and web-sourced-image branches are documented but not proven end-to-end in this eval." data-zh="(1) 它能检查版式机械问题，但不能保证审美：校验器会抓溢出、密度、字号可读性，封面是否符合品牌调性仍要人看。(2) 渲染前需要 Node、Playwright 和 Chromium 下载，安装门槛是真实存在的。(3) AGPL-3.0 需要注意：内部做封面风险较低，但如果再分发、做对外产品或 SaaS，需要先做授权判断。(4) 它交付的是视觉资产，不是完整发布流程：文章文案、照片选择、最终上传公众号 / 小红书仍要复核。(5) Live Photo 与网络取图分支有文档和脚本，但本次没有端到端证明。"></span></div></section>
   </div>
 
-  <details class="section-fold">
-    <summary><span class="i18n" data-en="Score breakdown · how the 85 was computed" data-zh="分数明细 · 85 是怎么算的"></span></summary>
-    <div class="body">
-      <div class="claim-stats-row">
-        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 14 <span class="i18n" data-en="total" data-zh="共"></span></div>
-        <div class="stats-bar"><span class="s-pass" style="flex: 9"></span><span class="s-warn" style="flex: 1"></span><span class="s-skip" style="flex: 4"></span></div>
-        <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">9</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">4</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
-      </div>
-      <details class="score-breakdown"><summary><span class="i18n" data-en="How the score was computed" data-zh="分数是怎么算的"></span></summary><table class="breakdown-table"><tbody><tr><th><span class="i18n" data-en="Base" data-zh="基础分"></span></th><td class="num">+40</td></tr><tr><th><span class="i18n" data-en="Static eval (claims)" data-zh="静态评测（claim）"></span></th><td class="num">+30</td></tr><tr><th><span class="i18n" data-en="Maintainer evidence" data-zh="维护者证据"></span></th><td class="num">+12</td></tr><tr><th><span class="i18n" data-en="Ecosystem (stars)" data-zh="生态（stars）"></span></th><td class="num">+3</td></tr><tr><th><span class="i18n" data-en="Layer bonus" data-zh="分层加分"></span></th><td class="num">0</td></tr><tr><th><span class="i18n" data-en="Penalties" data-zh="罚分"></span></th><td class="num">0</td></tr></tbody></table></details>
-    </div>
-  </details>
-
-  <section>
+  <section class="claim-summary-section">
     <div class="section-head">
-      <h2><span class="i18n" data-en="What we verified" data-zh="我们验证了什么"></span></h2>
-      <span class="count">10 / 14</span>
+      <h2><span class="i18n" data-en="Why the score is high" data-zh="为什么分数高"></span></h2>
+      <span class="count">12 / 14</span>
     </div>
-    <div class="capabilities-grid">
-      <article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-001</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="A zero-dep validator enforces the skill&#x27;s own doc contract" data-zh="一个零依赖校验器守住技能自己的文档契约"></span></h3>  <p class="cap-description"><span class="i18n" data-en="check-skill-docs.mjs (node:fs only, no browser) asserts SKILL.md / references / PRODUCT.md / HANDOFF.md still contain every required guardrail + capability section and no root-output regression — a script, not the model&#x27;s memory." data-zh="check-skill-docs.mjs（仅用 node:fs、无浏览器）断言 SKILL.md / references / PRODUCT.md / HANDOFF.md 仍含每一条必需护栏 + 能力段落、且无 root-output 回归——靠脚本，不靠模型记性。"></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-002</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="28 layouts × 10 themes are real and wired into the templates" data-zh="28 版式 × 10 主题真实存在且已接进模板"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The design-system substance the README promises — 16 Editorial (M01-M16) + 12 Swiss (S01-S12) recipes and 10 themes — actually exists in references and is wired into the two seed templates as data-theme / data-accent tokens." data-zh="README 承诺的设计系统实体——16 个 Editorial（M01-M16）+ 12 个 Swiss（S01-S12）骨架、10 套主题——在 references 里真实存在，并作为 data-theme / data-accent tokens 接进两个种子模板。"></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-003</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="SKILL.md references all resolve" data-zh="SKILL.md 引用全部解析得到"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Every path SKILL.md points at (16 references/*.md, 2 templates, the validator, the Live Photo scripts) exists — the agent won&#x27;t hit a missing file mid-task." data-zh="SKILL.md 引用的每个路径（16 个 references/*.md、2 个模板、校验器、Live Photo 脚本）都真实存在——agent 任务中途不会撞空文件。"></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-004</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Seed templates are single-file &amp; self-contained" data-zh="种子模板是单文件、自包含"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The LLM copies a working, self-contained HTML seed — all CSS/theme tokens/board sizes inlined; only fonts/lucide/webp are CDN cosmetics — so layout geometry is offline-renderable and the model isn&#x27;t assembling CSS from scratch." data-zh="LLM 拷的是一份能跑的自包含 HTML 种子——CSS/主题 tokens/画板尺寸全内联；仅字体/lucide/webp 走 CDN 属装饰——几何布局离线可算，模型不用从零拼 CSS。"></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-005</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Ships a real 9-rule DOM layout validator (not a stub)" data-zh="随包真实的 9 规则 DOM 版式校验器（不是空壳）"></span></h3>  <p class="cap-description"><span class="i18n" data-en="validate-social-deck.mjs measures the RENDERED DOM (overflow, footer collision, Swiss bold, min font, 4-band density, h-xl caps, figure-margin drift, visual bounds, title gap) and exits 1 on any FAIL — real deterministic gate code, verified by full source read." data-zh="validate-social-deck.mjs 对渲染后的 DOM 做测量（溢出、footer 碰撞、Swiss 粗体、最小字号、4 横带密度、h-xl 上限、figure margin 漂移、视觉边界、标题间距），任何 FAIL 退出 1——真实确定性关卡代码，已通读源码确认。"></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-008</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Output is deterministic by construction (not an image model)" data-zh="产物在构造上确定（不是图像模型）"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The card&#x27;s layout is a fixed-pixel CSS render (1080×1440 / 2100×900 / 1080×1080), no RNG, no image model — so the same template + content yields the same pixels. This is the headline differentiator vs prompt-formula and image-model cover skills." data-zh="卡片版式是固定像素的 CSS 渲染（1080×1440 / 2100×900 / 1080×1080），无 RNG、无图像模型——同模板 + 同内容 → 同像素。这是相对 prompt 公式与图像模型类封面 skill 的头号差异点。"></span></p>  </article>
-<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-009</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Article in → an on-brand, usable 公众号 封面对 / 小红书 deck PNG out" data-zh="文章进 → 符合调性、可用的公众号封面对 / 小红书组图 PNG 出"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The core molecule promise: from an article the agent renders a cover pair / carousel that is actually on-brand and publish-usable — the user-facing deliverable Vera would hand off. Aesthetics are subjective and were NOT eyeballed end-to-end here." data-zh="核心 molecule 承诺：从文章渲出真正符合调性、可直接发布的封面对 / 组图——正是 Vera 要交付的产物。审美主观，本次未端到端肉眼验收。"></span></p>  </article>
-<article class="capability-card status-untested">  <div class="cap-header">    <span class="cap-badge">untested</span>    <span class="cap-id">claim-010</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="The deterministic layout gate passes on a real render (0 FAIL)" data-zh="确定性版式关卡对真实渲染放行（0 FAIL）"></span></h3>  <p class="cap-description"><span class="i18n" data-en="Running validate-social-deck.mjs on a rendered deck returns 0 FAIL (R1-R9) — the deterministic guarantee that the card doesn&#x27;t overflow, isn&#x27;t illegibly small, and isn&#x27;t under-filled. This is the testable heart the skill is engineered for." data-zh="对渲染后的组图跑 validate-social-deck.mjs 得 0 FAIL（R1-R9）——确定性保证卡片不溢出、不小到看不清、不欠填。这正是该技能刻意做出来的可测核心。"></span></p>  </article>
-<article class="capability-card status-passed_with_concerns">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-011</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Fires on social-card intent, self-scopes 11 Rednote categories" data-zh="社交卡片意图才触发，并对 11 个小红书品类自划能力圈"></span></h3>  <p class="cap-description"><span class="i18n" data-en="SKILL.md&#x27;s description keyword set + an 11-category capability circle (3 buckets: strong / text-only / out-of-scope) define when to fire and when to push back — designed trigger precision, not luck." data-zh="SKILL.md 的 description 关键词集 + 11 品类能力圈（三档：端到端强 / 文结构强 / 圈外）定义何时触发、何时回绝——触发精度是设计出来的，不是碰运气。"></span></p>  </article>
-<article class="capability-card status-passed">  <div class="cap-header">    <span class="cap-badge">passed</span>    <span class="cap-id">claim-012</span>  </div>  <h3 class="cap-title"><span class="i18n" data-en="Honestly declines out-of-scope work instead of faking it" data-zh="圈外活儿老实回绝，不硬凹"></span></h3>  <p class="cap-description"><span class="i18n" data-en="The skill names what it cannot do (OOTD body shots, food-photography plating, dreamcore, PPT, long-video editing) at intake and refuses to silently retrofit a layout — an anti-slop honesty guardrail baked into Non-Negotiables." data-zh="技能在 intake 就点名做不了的（OOTD 实拍、菜品大片摆盘、梦核、PPT、长视频剪辑）并拒绝默默套个版式凑数——反 slop 的诚实护栏写进 Non-Negotiables。"></span></p>  </article>
+    <p class="claim-summary-lead">
+      <span class="i18n"
+        data-en="These are the user-facing promises we checked. The list separates what was actually verified from what remains only documented or untested."
+        data-zh="下面是我们核过的用户承诺。它把真正验证过的东西，和仍停留在文档或未测试的东西分开。"></span>
+    </p>
+    <div class="claim-stats-row">
+      <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · 14 <span class="i18n" data-en="total" data-zh="共"></span></div>
+      <div class="stats-bar"><span class="s-pass" style="flex: 11"></span><span class="s-warn" style="flex: 1"></span><span class="s-skip" style="flex: 2"></span></div>
+      <div class="stats-legend"><span class="item"><span class="dot" style="background:var(--ok)"></span><span class="num">11</span> <span class="i18n" data-en="passed" data-zh="通过"></span></span><span class="item"><span class="dot" style="background:var(--warn)"></span><span class="num">1</span> <span class="i18n" data-en="partial" data-zh="部分"></span></span><span class="item"><span class="dot" style="background:var(--skip)"></span><span class="num">2</span> <span class="i18n" data-en="untested" data-zh="未测"></span></span></div>
     </div>
+    <ol class="claim-list">
+      <li class="claim-item claim-pass">  <div class="claim-marker">🧾</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-001</span>      <span class="claim-priority">critical</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="A zero-dep validator enforces the skill&#x27;s own doc contract" data-zh="一个零依赖校验器守住技能自己的文档契约"></span></h3>    <p class="claim-description"><span class="i18n" data-en="check-skill-docs.mjs (node:fs only, no browser) asserts SKILL.md / references / PRODUCT.md / HANDOFF.md still contain every required guardrail + capability section and no root-output regression — a script, not the model&#x27;s memory." data-zh="check-skill-docs.mjs（仅用 node:fs、无浏览器）断言 SKILL.md / references / PRODUCT.md / HANDOFF.md 仍含每一条必需护栏 + 能力段落、且无 root-output 回归——靠脚本，不靠模型记性。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>实测：node scripts/check-skill-docs.mjs → 27/27 检查全 PASS，&quot;27 skill doc checks passed.&quot;，EXIT_CODE=0。</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">📐</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-002</span>      <span class="claim-priority">critical</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="28 layouts × 10 themes are real and wired into the templates" data-zh="28 版式 × 10 主题真实存在且已接进模板"></span></h3>    <p class="claim-description"><span class="i18n" data-en="The design-system substance the README promises — 16 Editorial (M01-M16) + 12 Swiss (S01-S12) recipes and 10 themes — actually exists in references and is wired into the two seed templates as data-theme / data-accent tokens." data-zh="README 承诺的设计系统实体——16 个 Editorial（M01-M16）+ 12 个 Swiss（S01-S12）骨架、10 套主题——在 references 里真实存在，并作为 data-theme / data-accent tokens 接进两个种子模板。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>实测：grep M01-M16 → 16 个、S01-S12 → 12 个（共 28）distinct recipe ID；</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">🎯</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-008</span>      <span class="claim-priority">critical</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="Output is deterministic by construction (not an image model)" data-zh="产物在构造上确定（不是图像模型）"></span></h3>    <p class="claim-description"><span class="i18n" data-en="The card&#x27;s layout is a fixed-pixel CSS render (1080×1440 / 2100×900 / 1080×1080), no RNG, no image model — so the same template + content yields the same pixels. This is the headline differentiator vs prompt-formula and image-model cover skills." data-zh="卡片版式是固定像素的 CSS 渲染（1080×1440 / 2100×900 / 1080×1080），无 RNG、无图像模型——同模板 + 同内容 → 同像素。这是相对 prompt 公式与图像模型类封面 skill 的头号差异点。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>源码确认：两模板画板为写死像素（.poster.xhs/.square/.wide 固定 w/h），排版全走 CSS Grid + var() tokens，无 Math.random / 无图像模型调用；</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">🖼</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-009</span>      <span class="claim-priority">critical</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="Article in → an on-brand, usable 公众号 封面对 / 小红书 deck PNG out" data-zh="文章进 → 符合调性、可用的公众号封面对 / 小红书组图 PNG 出"></span></h3>    <p class="claim-description"><span class="i18n" data-en="The core user promise was tested on one real WeChat cover-pair sample: the PNGs rendered at the right sizes, looked coherent, kept Chinese text legible, and had no obvious visual defects on inspection. This proves the basic cover-pair path, not every theme or article type." data-zh="核心用户承诺已用一套真实公众号封面对样本验证：PNG 按正确尺寸渲出，整体调性一致，中文可读，肉眼检查没有明显视觉缺陷。这证明基础封面对路径成立，但不等于所有主题、所有文章类型都已覆盖。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>追加实测（2026-07-09 同日）：Chromium 精确版本补装后，实际渲染出公众号 21:9（2100×900）+ 1:1 （1080×1080）封面对 PNG（sample_wechat-21x9.png / sample_wechat-1x1.png），逐张肉眼验收： Swiss 排版...</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">🔗</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-003</span>      <span class="claim-priority">high</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="SKILL.md references all resolve" data-zh="SKILL.md 引用全部解析得到"></span></h3>    <p class="claim-description"><span class="i18n" data-en="Every path SKILL.md points at (16 references/*.md, 2 templates, the validator, the Live Photo scripts) exists — the agent won&#x27;t hit a missing file mid-task." data-zh="SKILL.md 引用的每个路径（16 个 references/*.md、2 个模板、校验器、Live Photo 脚本）都真实存在——agent 任务中途不会撞空文件。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>文件树核对：16 个 references/*.md（platform-specs…qa-checklist）、template-editorial-card.html + template-swiss-card.html、validate-social-deck.mjs、scripts/（che...</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">🧱</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-004</span>      <span class="claim-priority">high</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="Seed templates are single-file &amp; self-contained" data-zh="种子模板是单文件、自包含"></span></h3>    <p class="claim-description"><span class="i18n" data-en="The LLM copies a working, self-contained HTML seed — all CSS/theme tokens/board sizes inlined; only fonts/lucide/webp are CDN cosmetics — so layout geometry is offline-renderable and the model isn&#x27;t assembling CSS from scratch." data-zh="LLM 拷的是一份能跑的自包含 HTML 种子——CSS/主题 tokens/画板尺寸全内联；仅字体/lucide/webp 走 CDN 属装饰——几何布局离线可算，模型不用从零拼 CSS。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>读取确认：swiss 943 行 / editorial 838 行，各 1 个内联 &lt;style&gt;；</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">📏</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-005</span>      <span class="claim-priority">high</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="Ships a real 9-rule DOM layout validator (not a stub)" data-zh="随包真实的 9 规则 DOM 版式校验器（不是空壳）"></span></h3>    <p class="claim-description"><span class="i18n" data-en="validate-social-deck.mjs measures the RENDERED DOM (overflow, footer collision, Swiss bold, min font, 4-band density, h-xl caps, figure-margin drift, visual bounds, title gap) and exits 1 on any FAIL — real deterministic gate code, verified by full source read." data-zh="validate-social-deck.mjs 对渲染后的 DOM 做测量（溢出、footer 碰撞、Swiss 粗体、最小字号、4 横带密度、h-xl 上限、figure margin 漂移、视觉边界、标题间距），任何 FAIL 退出 1——真实确定性关卡代码，已通读源码确认。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>通读 547 行源码：R1 overflow / R2 footer collision / R3 swiss bold / R4 min font / R5 4-band density / R6 h-xl cap / R7 figure margin / R8 visual bounds /...</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">✅</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-010</span>      <span class="claim-priority">high</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="The deterministic layout gate passes on a real render (0 FAIL)" data-zh="确定性版式关卡对真实渲染放行（0 FAIL）"></span></h3>    <p class="claim-description"><span class="i18n" data-en="Running validate-social-deck.mjs on a rendered deck returns 0 FAIL (R1-R9) — the deterministic guarantee that the card doesn&#x27;t overflow, isn&#x27;t illegibly small, and isn&#x27;t under-filled. This is the testable heart the skill is engineered for." data-zh="对渲染后的组图跑 validate-social-deck.mjs 得 0 FAIL（R1-R9）——确定性保证卡片不溢出、不小到看不清、不欠填。这正是该技能刻意做出来的可测核心。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>追加实测（2026-07-09 同日）：`npx playwright install chromium` 补装 chromium_headless_shell-1223 成功后，对样本 deck 实跑 validate-social-deck.mjs。</span></div>  </div></li>
+<li class="claim-item claim-partial">  <div class="claim-marker">🎣</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-011</span>      <span class="claim-priority">high</span>      <span class="claim-status claim-status-partial">        <span class="i18n" data-en="verified with caveat" data-zh="已验证，有保留"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="Fires on social-card intent, self-scopes 11 Rednote categories" data-zh="社交卡片意图才触发，并对 11 个小红书品类自划能力圈"></span></h3>    <p class="claim-description"><span class="i18n" data-en="SKILL.md&#x27;s description keyword set + an 11-category capability circle (3 buckets: strong / text-only / out-of-scope) define when to fire and when to push back — designed trigger precision, not luck." data-zh="SKILL.md 的 description 关键词集 + 11 品类能力圈（三档：端到端强 / 文结构强 / 圈外）定义何时触发、何时回绝——触发精度是设计出来的，不是碰运气。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>静态证据强：description 列全 小红书/Rednote/social card/封面/Live Photo/Swiss/magazine 等触发词 + 明确「不适用」（PPT / 长视频 / 纯修图）；</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">🛑</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-012</span>      <span class="claim-priority">high</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="Honestly declines out-of-scope work instead of faking it" data-zh="圈外活儿老实回绝，不硬凹"></span></h3>    <p class="claim-description"><span class="i18n" data-en="The skill names what it cannot do (OOTD body shots, food-photography plating, dreamcore, PPT, long-video editing) at intake and refuses to silently retrofit a layout — an anti-slop honesty guardrail baked into Non-Negotiables." data-zh="技能在 intake 就点名做不了的（OOTD 实拍、菜品大片摆盘、梦核、PPT、长视频剪辑）并拒绝默默套个版式凑数——反 slop 的诚实护栏写进 Non-Negotiables。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>静态确认：SKILL「Do not use this skill for…」+「Outside scope — push back honestly」+ Non-Negotiables （不 fake data / 不裁掉人脸关键 UI / 不发明装饰）+ check-skill-docs 断言的...</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">⚖️</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-006</span>      <span class="claim-priority">medium</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="Carries a genuine AGPL-3.0 license (with a dual-license note)" data-zh="带真实 AGPL-3.0 许可证（含双授权说明）"></span></h3>    <p class="claim-description"><span class="i18n" data-en="The full AGPL-3.0 LICENSE is present and gh api confirms spdx=AGPL-3.0. A parallel COMMERCIAL_LICENSING.md offers paid commercial terms. Caveat: package.json wrongly says &#x27;ISC&#x27;." data-zh="完整 AGPL-3.0 LICENSE 存在，gh api 确认 spdx=AGPL-3.0。另有 COMMERCIAL_LICENSING.md 提供付费商业授权。注意：package.json 误写 &#x27;ISC&#x27;。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>LICENSE 34524 bytes，首部 &quot;GNU AFFERO GENERAL PUBLIC LICENSE&quot;；</span></div>  </div></li>
+<li class="claim-item claim-pass">  <div class="claim-marker">🎬</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-007</span>      <span class="claim-priority">medium</span>      <span class="claim-status claim-status-pass">        <span class="i18n" data-en="verified" data-zh="已验证"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="A documented Live Photo packaging pipeline ships with helper scripts" data-zh="随包 Live Photo 打包管线 + 辅助脚本"></span></h3>    <p class="claim-description"><span class="i18n" data-en="Beyond static cards, the skill documents a Live Photo branch (single / 2-4 grid / triple / long-video intake) and ships helper scripts (package-live-photo.py, add-livephoto-*.swift, contact-sheet) to build the iPhone .pvt package." data-zh="除静态卡外，技能记录了 Live Photo 分支（单 / 二至四宫格 / 三连 / 长视频诊断），并随包辅助脚本（package-live-photo.py、add-livephoto-*.swift、contact-sheet）来打 iPhone 的 .pvt 包。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>check-skill-docs.mjs 已断言 live-photo-production.md 的 Information Budget / Triple Collage / Material-First / Long Video Intake / four-grid / visible-co...</span></div>  </div></li>
+<li class="claim-item claim-skip">  <div class="claim-marker">📱</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-013</span>      <span class="claim-priority">medium</span>      <span class="claim-status claim-status-skip">        <span class="i18n" data-en="not tested" data-zh="未测试"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="Live Photo render → a valid iPhone .pvt package" data-zh="Live Photo 渲染 → 有效的 iPhone .pvt 包"></span></h3>    <p class="claim-description"><span class="i18n" data-en="A user video becomes a card-shaped Live Photo: first-frame passes static checks, JPG+MOV packaged into a .pvt that actually plays as a Live Photo on iPhone at 5s/3s." data-zh="用户视频变成卡片形态的 Live Photo：首帧过静态检查，JPG+MOV 打成 .pvt，在 iPhone 上按 5s/3s 真能作为 Live Photo 播放。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>未实测。</span></div>  </div></li>
+<li class="claim-item claim-skip">  <div class="claim-marker">🌐</div>  <div class="claim-copy">    <div class="claim-topline">      <span class="claim-id">claim-014</span>      <span class="claim-priority">medium</span>      <span class="claim-status claim-status-skip">        <span class="i18n" data-en="not tested" data-zh="未测试"></span>      </span>    </div>    <h3 class="claim-title"><span class="i18n" data-en="Web-sourced imagery + subject avoidance yield usable photo covers" data-zh="网络取图 + 主体避让能产出可用的照片封面"></span></h3>    <p class="claim-description"><span class="i18n" data-en="When the user has no photo, the skill fetches from free libraries, records provenance in SOURCES.md, maps the subject, and places text in quiet zones so faces/products aren&#x27;t crossed — producing a real-photo cover that doesn&#x27;t look AI." data-zh="用户无图时，技能从免费图库取图、在 SOURCES.md 记来源、映射主体、把文字放安静区避开人脸 / 产品——产出不像 AI 的真实照片封面。"></span></p>    <div class="claim-evidence"><span class="i18n" data-en="Evidence" data-zh="证据"></span><span>未实测。</span></div>  </div></li>
+    </ol>
   </section>
 
   <section><div class='section-head'><h2><span class='i18n' data-en='How we evaluated this · by layer' data-zh='我们如何按层级评测'></span></h2></div>
@@ -1631,8 +2134,8 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
 <tr class="prio-medium"><td class="c-id">claim-006</td><td class="c-title">真实 AGPL-3.0 + 双授权（package.json 误标 ISC）</td><td><span class="prio-pill medium">medium</span></td><td>support-license</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
 <tr class="prio-medium"><td class="c-id">claim-007</td><td class="c-title">Live Photo 管线文档 + 脚本齐备</td><td><span class="prio-pill medium">medium</span></td><td>support-livephoto</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
 <tr class="prio-critical"><td class="c-id">claim-008</td><td class="c-title">确定性 by construction（固定像素 CSS，无图像模型）</td><td><span class="prio-pill critical">critical</span></td><td>core-determinism</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
-<tr class="prio-critical"><td class="c-id">claim-009</td><td class="c-title">核心 molecule 承诺：文章 → 可用封面对 / 组图 PNG</td><td><span class="prio-pill critical">critical</span></td><td>core</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
-<tr class="prio-high"><td class="c-id">claim-010</td><td class="c-title">版式关卡对真实渲染放行</td><td><span class="prio-pill high">high</span></td><td>core-validation</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
+<tr class="prio-critical"><td class="c-id">claim-009</td><td class="c-title">核心 molecule 承诺：文章 → 可用封面对 / 组图 PNG</td><td><span class="prio-pill critical">critical</span></td><td>core</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
+<tr class="prio-high"><td class="c-id">claim-010</td><td class="c-title">版式关卡对真实渲染放行</td><td><span class="prio-pill high">high</span></td><td>core-validation</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
 <tr class="prio-high"><td class="c-id">claim-011</td><td class="c-title">触发 / 能力圈精度设计</td><td><span class="prio-pill high">high</span></td><td>core-triggering</td><td class="c-status" style="color:var(--warn)">◐ partial</td><td class="c-skip"></td></tr>
 <tr class="prio-high"><td class="c-id">claim-012</td><td class="c-title">诚实自限（圈外主动说清）</td><td><span class="prio-pill high">high</span></td><td>core-scope</td><td class="c-status" style="color:var(--ok)">● passed</td><td class="c-skip"></td></tr>
 <tr class="prio-medium"><td class="c-id">claim-013</td><td class="c-title">Live Photo → 有效 .pvt（真机）</td><td><span class="prio-pill medium">medium</span></td><td>core-livephoto</td><td class="c-status" style="color:var(--skip)">○ untested</td><td class="c-skip"></td></tr>
@@ -1644,10 +2147,10 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
       <div class="subsection">
         <h3><span class="i18n" data-en="Runs &amp; metrics" data-zh="Runs 与指标"></span></h3>
         <div class="metric-tiles">
-          <div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="pass rate" data-zh="通过率"></span></div>  <div class="mt-value">0<span class="mt-unit">%</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="elapsed" data-zh="耗时"></span></div>  <div class="mt-value">0.00<span class="mt-unit">s</span></div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="baseline · none" data-zh="baseline · 无"></span></div></div><div class="metric-tile">  <div class="mt-label"><span class="i18n" data-en="token output" data-zh="token 输出"></span></div>  <div class="mt-value">0</div>  <div class="mt-bar"><div class="mt-bar-fill" style="width:0%"></div></div>  <div class="mt-compare"><span class="i18n" data-en="in · 0 / out · 0" data-zh="输入 · 0 / 输出 · 0"></span></div></div>
+          <div class="metric-empty"><strong><span class="i18n" data-en="No timed benchmark metrics were recorded" data-zh="没有记录计时型 benchmark 指标"></span></strong><p><span class="i18n" data-en="These runs recorded commands, artifacts, notes, and claim outcomes, but not pass_rate / elapsed_time_sec / token_usage fields. Showing 0 would be misleading." data-zh="这些 run 记录了命令、产物、备注和 claim 结果，但没有记录 pass_rate / elapsed_time_sec / token_usage 字段。显示 0 会误导。"></span></p><div class="metric-empty-foot">16 <span class="i18n" data-en="claim outcome entries are logged below." data-zh="条 claim 结果记录在下方。"></span></div></div>
         </div>
-        <div class="run-card">  <h3>run-static-and-live-render</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-07-09</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-009 · passed</li><li class="pass">claim-010 · passed</li></ul></div>
-<div class="run-card">  <h3>run-static-and-render-attempt</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-07-09</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-001 · passed</li><li class="pass">claim-002 · passed</li><li class="pass">claim-003 · passed</li><li class="pass">claim-004 · passed</li><li class="pass">claim-005 · passed</li><li class="pass">claim-006 · passed</li><li class="pass">claim-007 · passed</li><li class="pass">claim-008 · passed</li><li class="skip">claim-009 · untested</li><li class="skip">claim-010 · untested</li><li class="partial">claim-011 · passed_with_concerns</li><li class="pass">claim-012 · passed</li><li class="skip">claim-013 · untested</li><li class="skip">claim-014 · untested</li></ul></div>
+        <div class="run-card">  <h3>run-static-and-live-render</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-07-09</div>  <div class="run-metrics"><span class="run-metric run-metric-note"><b><span class="i18n" data-en="metrics" data-zh="指标"></span></b><span class="v"><span class="i18n" data-en="not recorded; this was an evidence run" data-zh="未记录；这是证据型 run"></span></span></span><span class="run-metric"><b><span class="i18n" data-en="claim outcomes" data-zh="claim 结果"></span></b> <span class="v">2 / 2</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-009 · passed</li><li class="pass">claim-010 · passed</li></ul></div>
+<div class="run-card">  <h3>run-static-and-render-attempt</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-07-09</div>  <div class="run-metrics"><span class="run-metric run-metric-note"><b><span class="i18n" data-en="metrics" data-zh="指标"></span></b><span class="v"><span class="i18n" data-en="not recorded; this was an evidence run" data-zh="未记录；这是证据型 run"></span></span></span><span class="run-metric"><b><span class="i18n" data-en="claim outcomes" data-zh="claim 结果"></span></b> <span class="v">10 / 14</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-001 · passed</li><li class="pass">claim-002 · passed</li><li class="pass">claim-003 · passed</li><li class="pass">claim-004 · passed</li><li class="pass">claim-005 · passed</li><li class="pass">claim-006 · passed</li><li class="pass">claim-007 · passed</li><li class="pass">claim-008 · passed</li><li class="skip">claim-009 · untested</li><li class="skip">claim-010 · untested</li><li class="partial">claim-011 · passed_with_concerns</li><li class="pass">claim-012 · passed</li><li class="skip">claim-013 · untested</li><li class="skip">claim-014 · untested</li></ul></div>
       </div>
 
     </div>
@@ -1656,8 +2159,8 @@ html[lang="zh"] .i18n::before { content: attr(data-zh); }
   <details class="section-fold">
     <summary><span class="i18n" data-en="Test log — all probes we ran" data-zh="测试日志 — 我们跑过的所有探针"></span></summary>
     <div class="body">
-      <div class="run-card">  <h3>run-static-and-live-render</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-07-09</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-009 · passed</li><li class="pass">claim-010 · passed</li></ul></div>
-<div class="run-card">  <h3>run-static-and-render-attempt</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-07-09</div>  <div class="run-metrics">    <span class="run-metric"><b><span class="i18n" data-en="pass" data-zh="通过率"></span></b> <span class="v">0%</span></span>    <span class="run-metric"><b><span class="i18n" data-en="time" data-zh="耗时"></span></b> <span class="v">—</span></span>    <span class="run-metric"><b>tokens</b> <span class="v">in ? / out ?</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-001 · passed</li><li class="pass">claim-002 · passed</li><li class="pass">claim-003 · passed</li><li class="pass">claim-004 · passed</li><li class="pass">claim-005 · passed</li><li class="pass">claim-006 · passed</li><li class="pass">claim-007 · passed</li><li class="pass">claim-008 · passed</li><li class="skip">claim-009 · untested</li><li class="skip">claim-010 · untested</li><li class="partial">claim-011 · passed_with_concerns</li><li class="pass">claim-012 · passed</li><li class="skip">claim-013 · untested</li><li class="skip">claim-014 · untested</li></ul></div>
+      <div class="run-card">  <h3>run-static-and-live-render</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-07-09</div>  <div class="run-metrics"><span class="run-metric run-metric-note"><b><span class="i18n" data-en="metrics" data-zh="指标"></span></b><span class="v"><span class="i18n" data-en="not recorded; this was an evidence run" data-zh="未记录；这是证据型 run"></span></span></span><span class="run-metric"><b><span class="i18n" data-en="claim outcomes" data-zh="claim 结果"></span></b> <span class="v">2 / 2</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-009 · passed</li><li class="pass">claim-010 · passed</li></ul></div>
+<div class="run-card">  <h3>run-static-and-render-attempt</h3>  <div class="run-date"><span class="i18n" data-en="executed on" data-zh="执行于"></span> 2026-07-09</div>  <div class="run-metrics"><span class="run-metric run-metric-note"><b><span class="i18n" data-en="metrics" data-zh="指标"></span></b><span class="v"><span class="i18n" data-en="not recorded; this was an evidence run" data-zh="未记录；这是证据型 run"></span></span></span><span class="run-metric"><b><span class="i18n" data-en="claim outcomes" data-zh="claim 结果"></span></b> <span class="v">10 / 14</span></span>  </div>  <ul class="run-rbc"><li class="pass">claim-001 · passed</li><li class="pass">claim-002 · passed</li><li class="pass">claim-003 · passed</li><li class="pass">claim-004 · passed</li><li class="pass">claim-005 · passed</li><li class="pass">claim-006 · passed</li><li class="pass">claim-007 · passed</li><li class="pass">claim-008 · passed</li><li class="skip">claim-009 · untested</li><li class="skip">claim-010 · untested</li><li class="partial">claim-011 · passed_with_concerns</li><li class="pass">claim-012 · passed</li><li class="skip">claim-013 · untested</li><li class="skip">claim-014 · untested</li></ul></div>
     </div>
   </details>
 

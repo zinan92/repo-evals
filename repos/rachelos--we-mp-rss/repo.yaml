@@ -1,0 +1,166 @@
+owner: rachelos
+repo: we-mp-rss
+display_name: WeRSS (we-mp-rss)
+repo_url: https://github.com/rachelos/we-mp-rss
+repo_type: app
+archetype: api-service
+layer: atom
+complexity: medium
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-05-19"
+version_tested: "main@HEAD (pushed 2026-05-18) · docker latest 2026-05-11"
+
+stars: 3170
+archived: false
+has_license: true            # MIT (file present); GitHub classifier returns NOASSERTION because file has an extra contact-email header
+multilingual_readme: true    # ReadMe.md (EN) + README.zh-CN.md
+release_pipeline_score: 2    # docker latest/beta tags, no semver git releases
+eval_discipline_score: 0     # ad-hoc fix_*.py / debug_*.py scripts at root, no test suite
+recently_active: true        # commit yesterday, docker push last week
+
+business_category: content
+use_case_tags: ["rss", "wechat-public-account", "self-host", "reader", "folo-source"]
+
+notes: |
+  Python/FastAPI + Vue 3 自托管服务，把订阅的微信公众号变成 RSS / Markdown / PDF / DOCX，
+  能定时刷新、支持 Webhook、有内置 web UI 管理。作为已 archive 的 cooderl/wewe-rss
+  的实际"继任者"出现 —— 主力维护者 RACHEL (rachelos@qq.com)，2025-05 起步，
+  到今天还在推 commit。
+
+  评估时几个值得当面说出来的事实：
+  1. README 在主页 README 区域 *直接搬用* 了别人项目（RSSNext/Folo、DIYgod/sponsors）
+     的 stars/contributors/uptime/downloads 徽章 —— 这些数字不是 we-mp-rss 自己的。
+     新手看到容易误以为这个项目有 Discord、有公开 status page、有 Folo 那么活跃。
+  2. GitHub topics + 仓库 description 是 SEO 关键词堆砌（"订阅微信公众号 微信公众号
+     订阅 微信公众号助手 微信公众号读书 …"反复出现）。功能描述本身没问题，但呈现方式
+     不太职业。
+  3. 根目录散落大量调试 / fix Python 脚本：atack.py, fix_db_now.py, fix_user_id.py,
+     debug_template_parser.py, diagnose_config.py, check_cascade_creds.py 等。
+     说明开发节奏是"出 bug → 加 fix 脚本" 而非 test driven。
+  4. LICENSE 是真 MIT（带 RACHEL 个人邮箱头），但 GitHub 解析为 NOASSERTION。
+     法律上可用，自动化工具看不出来。
+
+product_view:
+  one_liner:
+    en: "Self-host a FastAPI + Vue service that turns WeChat Official Accounts into RSS / Markdown / PDF / DOCX feeds, with a built-in web admin and Webhook/API hooks for downstream readers like Folo. Successor to the archived wewe-rss — actively maintained by one author, but the README borrows badges from unrelated projects."
+    zh: "自托管的 FastAPI + Vue 服务，把订阅的微信公众号变成 RSS / Markdown / PDF / DOCX，自带 web 管理界面、有 Webhook / API 给 Folo 等 reader 用。是已 archive 的 wewe-rss 的实际继任者 —— 单人作者持续维护，但 README 借用了别人项目的 stars / Discord 徽章，需要分清楚。"
+  persona:
+    en: "RSS reader who wants WeChat Official Accounts in Folo / Reeder / Inoreader, comfortable running Docker, willing to live with single-maintainer risk and a slightly rough repo aesthetic."
+    zh: "想把公众号塞进 Folo / Reeder / Inoreader 的 RSS 老用户；会跑 Docker；接受单人维护 + 仓库不够整洁的事实。"
+  scenario:
+    en: "wewe-rss got archived. You still want Official Accounts in your reader and you want a tool that's still receiving commits when WeChat or WeRead change behaviour. This is the closest candidate that's actively shipping."
+    zh: "wewe-rss 被 archive 了，你还是想在 reader 里看公众号，希望选一个微信 / 微信读书改接口时还有人在修的工具。这个目前是最活跃的候选。"
+  without_this:
+    en: "Pick wewe-rss and accept it's frozen, or stitch together RSSHub routes (intermittent for WeChat), or just keep reading inside WeChat."
+    zh: "继续用已 archive 的 wewe-rss、接受不再更新；或者拼 RSSHub 路由（公众号路由时灵时不灵）；或者干脆回 WeChat App 里看。"
+  with_this:
+    en: "`docker run -d --name we-mp-rss -p 8001:8001 -v ./data:/app/data ghcr.io/rachelos/we-mp-rss:latest` and visit http://host:8001/, log in, add Official Accounts, point your reader at the RSS endpoints. Built-in admin handles scheduled refresh + filter rules + multiple output formats."
+    zh: "一行 `docker run -d --name we-mp-rss -p 8001:8001 -v ./data:/app/data ghcr.io/rachelos/we-mp-rss:latest`，浏览器进 8001 端口，登录后加公众号、把 RSS 链接喂给 reader。后台自带定时刷新、过滤规则、多格式导出。"
+  cost_summary:
+    en: "Repo MIT, free. Costs: one always-on machine (VPS / homelab / NAS) for the Docker container, a WeChat / WeRead login, and the single-maintainer risk premium."
+    zh: "Repo MIT 免费。成本：一台常开机器（VPS / 家用服务器 / NAS）跑 Docker、一个微信 / 微信读书登录、以及『单人维护』这件事带来的风险溢价。"
+  how:
+    en: "Three Docker registries published: `ghcr.io/rachelos/we-mp-rss:latest` (recommended), `rachelos/we-mp-rss:latest` (Docker Hub), and `docker.1ms.run/rachelos/we-mp-rss:latest` (China mirror). Pull, run, mount a data volume, hit port 8001."
+    zh: "三个 Docker 镜像源：`ghcr.io/rachelos/we-mp-rss:latest`（推荐）、`rachelos/we-mp-rss:latest`（Docker Hub）、`docker.1ms.run/rachelos/we-mp-rss:latest`（国内加速）。拉、跑、挂数据卷、访问 8001 端口即可。"
+  watch_out:
+    en: |
+      Before adopting:
+      1. README borrows badges (stars / Discord / uptime / contributors) from RSSNext/Folo — those numbers and the Discord link are NOT this project. Read the actual `Features` list, not the chrome.
+      2. License file says MIT but has a contact-email header that confuses GitHub's classifier (shown as 'Other / NOASSERTION'). Effectively MIT for forking purposes.
+      3. Root directory has many ad-hoc `fix_*.py`, `debug_*.py`, `diagnose_*.py`, `verify_cascade_creds.py` scripts. No test suite visible — fix-on-incident development style.
+      4. Requires Python 3.13.1+. Pin a specific image tag and an offline-readable changelog when you adopt.
+      5. Single maintainer (RACHEL, rachelos@qq.com). Risk profile = "self-use, not team infra".
+    zh: |
+      上手前要知道：
+      1. README 顶部那一排 stars / Discord / uptime / contributors 徽章 *不是* 这个项目的，
+         是从 RSSNext/Folo 那边搬来的。看 `Features` 章节，不要看徽章。
+      2. LICENSE 文件实质是 MIT，但因为加了作者邮箱头，GitHub 解析成 "Other / NOASSERTION"。
+         fork 实际安全，自动化工具会误报。
+      3. 根目录散落大量 `fix_*.py`、`debug_*.py`、`diagnose_*.py`、`verify_cascade_creds.py`
+         一类的调试脚本，看不到测试套件。开发节奏是"出 bug → 加 fix 脚本"。
+      4. 要求 Python 3.13.1+。装的时候固定 image tag，留好可离线读的 changelog。
+      5. 单人维护（RACHEL，rachelos@qq.com）。风险定位 ="自用工具"，别给团队当基建。
+  examples:
+    - context:
+        en: "You moved from Reeder to Folo and want WeChat Official Accounts as a Folo source."
+        zh: "你从 Reeder 切到了 Folo，想把公众号当成 Folo 的一个 RSS 源。"
+      you_say:
+        en: "`docker run -d ghcr.io/rachelos/we-mp-rss:latest`, log into the web UI, add accounts, copy the per-feed RSS URL into Folo."
+        zh: "`docker run -d ghcr.io/rachelos/we-mp-rss:latest` 跑起来，进 web UI 登录、加公众号，把每个公众号的 RSS URL 复制到 Folo。"
+      what_happens:
+        en: "Folo treats each Official Account as a normal feed. WeRSS refreshes on its schedule; filter rules and content cleanup happen server-side."
+        zh: "Folo 把每个公众号当普通 feed 处理。WeRSS 按设定的频率刷新，过滤规则和正文清理在服务端完成。"
+    - context:
+        en: "You want a few Official Accounts exported to PDF for offline reading on a flight."
+        zh: "你想把几个公众号导出 PDF，飞机上离线看。"
+      you_say:
+        en: "Use the export-to-pdf feature (Features list — md/docx/pdf/json output) from the admin UI."
+        zh: "在管理界面里用 Features 列出的 md/docx/pdf/json 导出（管理 UI 支持）。"
+      what_happens:
+        en: "WeRSS renders the article HTML through its content-filter rules and produces a PDF you can save off."
+        zh: "WeRSS 用 content-filter 规则跑一遍正文 HTML，渲染成 PDF 让你下载。"
+  next_step:
+    en: "Treat this as self-use, not infrastructure. Pin a specific `ghcr.io/rachelos/we-mp-rss:<tag>` (not :latest). Read the actual Features list — ignore the borrowed badges. Have a Plan B (regular OPML export) in case the single maintainer steps back."
+    zh: "把它当个人工具用，不要当生产基建。固定一个 `ghcr.io/rachelos/we-mp-rss:<tag>` 镜像版本（别用 :latest）。看 Features 不看徽章。留 Plan B —— 定期导出 OPML，万一作者哪天不维护了能搬走。"
+
+deployment:
+  installable: true
+  install_methods:
+    - method: "docker run … ghcr.io/rachelos/we-mp-rss:latest"
+      platform: "any (Docker)"
+      complexity: easy
+    - method: "docker run … rachelos/we-mp-rss:latest (Docker Hub)"
+      platform: "any (Docker)"
+      complexity: easy
+    - method: "docker run … docker.1ms.run/rachelos/we-mp-rss:latest (China mirror)"
+      platform: "any (Docker, CN)"
+      complexity: easy
+    - method: "python main.py (from source)"
+      platform: "Python 3.13.1+"
+      complexity: moderate
+  requires_compile: false
+  works_offline_after_install: false
+  auto_update: false
+
+third_party_services:
+  - name: "WeChat / WeRead login"
+    purpose: "Auth source — service scrapes content via a logged-in WeChat / WeRead account (QR-code login flow)"
+    required: true
+    api_key_needed: false
+    signup_needed: true
+    free_tier: true
+    cost_note: "Free WeChat account works; recommend a throwaway, not main account"
+  - name: "SQLite or MySQL"
+    purpose: "Persistence — accounts, subscriptions, articles, schedule state"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Self-hosted; SQLite is default"
+  - name: "Redis / Memcached (optional)"
+    purpose: "Config cache for read perf — fallback to in-memory"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Optional"
+  - name: "ghcr.io / Docker Hub"
+    purpose: "Image registry"
+    required: true
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Public pulls, rate-limited on Docker Hub for anonymous"
+
+similar_repos:
+  - slug: "cooderl--wewe-rss"
+    shared_purpose:
+      en: "Both turn WeChat Official Accounts into RSS feeds via a self-hosted Docker service."
+      zh: "都是自托管 Docker 服务，把微信公众号转成 RSS。"
+    this_better_at:
+      en: "Actively maintained (last commit yesterday, docker image 1 week old); built-in PDF/Markdown export; richer content-filter rules; multi-theme web UI."
+      zh: "还在更新（昨天 commit、镜像上周推）；自带 PDF/Markdown 导出；正文过滤规则更细；web UI 有多主题。"
+    other_better_at:
+      en: "Bigger ecosystem (9.4k vs 3.2k stars), cleaner repo aesthetic, no SEO-stuffed description, more battle-tested codebase (TypeScript / NestJS / Prisma)."
+      zh: "生态更大（9.4k 对 3.2k stars）、仓库结构更干净、描述不堆 SEO、代码栈更成熟（TS / NestJS / Prisma）。"

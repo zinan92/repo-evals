@@ -58,8 +58,8 @@ notes: 'A claim-first evaluation framework for skill / repo quality. Inputs:
   '
 product_view:
   one_liner:
-    en: A claim-first evaluation framework that turns "is this skill / repo any good?" into a 0-100 score with a bilingual dossier — auditable point-by-point, comparable to the 30 other repos already evaluated under the same model.
-    zh: 一个 claim-first 的评测框架,把"这个 skill / repo 到底能不能用?"变成一份带 0-100 分的双语 dossier —— 每一分可以追到证据,可以跟我们已经评测过的 30 个 repo 横向对比。
+    en: A claim-first evaluation framework that turns "is this skill / repo any good?" into a 0-100 score with a bilingual dossier — auditable point-by-point, comparable across this committed corpus.
+    zh: 一个 claim-first 的评测框架,把"这个 skill / repo 到底能不能用?"变成一份带 0-100 分的双语 dossier —— 每一分可以追到证据,可以在当前已提交语料库里横向对比。
   persona:
     en: 'Someone with a backlog of "should I depend on this?" decisions and not enough time to read every repo deeply. Typically: a developer / lead picking between skill bundles for their team, a content creator picking between AI-generation tools, an indie hacker auditing their own work before publishing.'
     zh: '手里堆着一堆"我该不该依赖它?"决策、却没时间逐个读完仓库的人。典型: 给团队挑 skill 合集的开发者 / leader、在 AI 生成工具之间纠结的内容创作者、要发布前先审自己作品的独立开发者。'

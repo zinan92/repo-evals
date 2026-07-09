@@ -1,0 +1,172 @@
+# repo.yaml — impeccable dossier
+
+# === Identity ================================================================
+owner: pbakaus
+repo: impeccable
+display_name: impeccable
+repo_url: https://github.com/pbakaus/impeccable
+
+repo_type: skill
+archetype: hybrid-skill
+
+# Compound at the skill level: the agent routes across 23 commands and
+# dispatches sub-agents (impeccable-asset-producer, manual-edit-applier).
+# It ships a deterministic ATOM core (the 44-rule detector CLI) which IS
+# fully testable statically — and was tested live in this eval.
+layer: compound
+
+complexity: complex
+uses_areas: false
+status: evaluated
+last_evaluated: "2026-06-30"
+version_tested: "main@HEAD (package v3.1.0, skill-v3.8.0)"
+
+# === Maintainer / ecosystem signals =========================================
+stars: 42293
+archived: false
+has_license: true          # Apache-2.0 — verified via gh api repos + contents/LICENSE
+multilingual_readme: false # README + README.npm.md are English only
+release_pipeline_score: 3  # 27 GitHub releases, tagged (skill-v/cli-v/ext-v), CI workflows
+eval_discipline_score: 3   # 62 test files, ci.yml, detector benchmarks, live e2e suite
+recently_active: true      # pushed 2026-06-29 (day before eval)
+
+business_category: "dev-tooling"
+use_case_tags: ["frontend-design", "ai-coding-agent", "design-linting", "design-system"]
+
+notes: |
+  Impeccable 是一套面向 AI 编程 agent 的"设计语言"。它的目标是消灭 AI 生成前端
+  的那批一眼假的 tells（Inter 字体、紫蓝渐变、卡片套卡片、bounce easing、彩底灰字）。
+
+  评估方式与边界：
+  - 确定性层（detector CLI + 44 条规则）在隔离 clone 中实跑成功，无需 API key，
+    在故意写的 slop HTML 上正确抓出 5 类反模式。这是本次评估最硬的一手证据。
+  - LLM 核心层（"让 AI 产出真的更好看"）需要在真实多 harness agent 会话里跑一次
+    才能验证。本次未做 live design-generation run，因此 compound 层的天花板没有解锁。
+  - 该 skill 已存在于本机 ~/.claude/skills/impeccable，安装路径可信。
+
+# === Product view ===========================================================
+product_view:
+  one_liner:
+    en: "A shared design vocabulary for your AI coding agent — 1 skill, 23 commands, and a 44-rule deterministic linter that strips the 'AI slop' tells out of generated frontends, with no API key needed for the checks."
+    zh: "给 AI 编程 agent 用的一套设计语言 —— 1 个 skill、23 条命令，外加一个 44 条规则的确定性检查器，专门把 AI 生成前端那股'一眼假'的味道（Inter 字体、紫蓝渐变、卡片套卡片、bounce 动效）洗掉；确定性检查不需要任何 API key。"
+  persona:
+    en: "Anyone who ships UI with an AI coding agent (Claude Code, Cursor, Codex, Gemini CLI, …) and is tired of every project looking like the same SaaS template."
+    zh: "用 AI 编程 agent（Claude Code / Cursor / Codex / Gemini CLI 等）写界面、又受够了每个项目都长成同一套 SaaS 模板的人。"
+  scenario:
+    en: "You ask your agent to build a landing page. Without guidance it reaches for Inter, a purple-to-blue gradient, and cards nested in cards. With Impeccable installed, `/impeccable init` writes your design context once, then commands like `polish`, `critique`, `audit`, and `bolder` give you and the agent a shared vocabulary — and a hook/CLI catches the slop tells deterministically on every edit."
+    zh: "你让 agent 做一个落地页。没有指导时它默认掏出 Inter 字体、紫蓝渐变、卡片套卡片。装上 Impeccable 后，`/impeccable init` 一次性写好你的设计上下文，之后 `polish`、`critique`、`audit`、`bolder` 这些命令给你和 agent 一套共同语言；同时 hook/CLI 在每次编辑时确定性地抓出那些假味道。"
+  without_this:
+    en: "Every AI-generated screen converges on the same handful of tells; you eyeball-review design quality by hand with no shared language with the agent."
+    zh: "每个 AI 生成的页面都收敛到同一批 tells；你只能靠肉眼审设计，和 agent 之间没有共同的设计语言。"
+  with_this:
+    en: "A deterministic linter (44 rules, no LLM) flags the tells on edit, and 23 vocabulary commands let you steer the agent's design decisions precisely."
+    zh: "一个确定性检查器（44 条规则、不用 LLM）在编辑时标出 tells，23 条词汇命令让你精确地操纵 agent 的设计决策。"
+  cost_summary:
+    en: "Free / open source (Apache-2.0). The deterministic detector + CLI + browser extension need no API key. The LLM-driven commands (critique/polish/craft) consume your existing agent's tokens."
+    zh: "免费开源（Apache-2.0）。确定性 detector + CLI + 浏览器扩展不需要 API key。LLM 驱动的命令（critique/polish/craft）消耗你自己 agent 的 token。"
+  how:
+    en: "From your project root: `npx impeccable install`, then `/impeccable init` inside your AI tool. Run `npx impeccable detect <file|dir|url>` for the no-LLM linter."
+    zh: "在项目根目录：`npx impeccable install`，然后在 AI 工具里跑 `/impeccable init`。确定性检查器用 `npx impeccable detect <文件|目录|URL>`。"
+  watch_out:
+    en: "The headline promise ('makes your AI better at design') is an LLM-quality claim that depends on your model + prompts — not independently verified live in this eval. The deterministic detector is verified; the subjective quality lift is not. The installer self-detects and writes into multiple harness folders (~/.claude, ~/.codex, .cursor, …) — review scope before global install."
+    zh: "头部承诺（'让你的 AI 更会设计'）是一个依赖你模型 + prompt 的 LLM 质量类 claim，本次评估没有做 live 验证。确定性 detector 已验证；主观质量提升未验证。安装器会自动探测并写入多个 harness 目录（~/.claude、~/.codex、.cursor 等）—— 全局安装前先确认范围。"
+  examples:
+    - context:
+        en: "An AI-generated page with Inter font, a purple gradient, and a bounce transition."
+        zh: "一个用了 Inter 字体、紫色渐变、bounce 过渡的 AI 生成页面。"
+      you_say:
+        en: "npx impeccable detect page.html"
+        zh: "npx impeccable detect page.html"
+      what_happens:
+        en: "Deterministically flags overused-font, ai-color-palette drift, and bounce-easing with line numbers and a fix rationale — no API key, no LLM."
+        zh: "确定性地标出 overused-font、配色漂移、bounce-easing，附带行号和修改理由 —— 不用 API key、不用 LLM。"
+    - context:
+        en: "Starting a new project with the agent."
+        zh: "用 agent 起一个新项目。"
+      you_say:
+        en: "/impeccable init"
+        zh: "/impeccable init"
+      what_happens:
+        en: "Asks whether the surface is brand or product, then writes PRODUCT.md + DESIGN.md so every later command shares your audience, voice, palette, and type system."
+        zh: "先问你做的是品牌页还是产品界面，然后写出 PRODUCT.md + DESIGN.md，让后续每条命令都共享你的受众、语气、配色和字体系统。"
+  next_step:
+    en: "Run one live design-generation session (e.g. `/impeccable craft` then `/impeccable critique`) inside Claude Code and grade the output against SKILL.md's quality contract — this is the single missing piece that would lift the compound ceiling toward production."
+    zh: "在 Claude Code 里跑一次真实的设计生成会话（如 `/impeccable craft` 再 `/impeccable critique`），把产出对照 SKILL.md 的质量契约逐项打分 —— 这是唯一缺的一块，补上就能把 compound 天花板推向 production。"
+
+# === Deployment =============================================================
+deployment:
+  installable: true
+  install_methods:
+    - method: "npx impeccable install"
+      platform: "Node.js (Claude Code, Cursor, Codex, Gemini CLI, +10 harnesses)"
+      complexity: easy
+    - method: "git submodule + linked provider build"
+      platform: "teams wanting vendored installs"
+      complexity: moderate
+  requires_compile: false
+  works_offline_after_install: true
+  auto_update: false
+
+# === Third-party services ===================================================
+third_party_services:
+  - name: "Your existing AI agent (Claude/GPT/Gemini)"
+    purpose: "Runs the LLM-driven commands (critique, polish, craft, etc.)"
+    required: false
+    api_key_needed: false
+    signup_needed: false
+    free_tier: true
+    cost_note: "Uses your agent's own model/quota. Deterministic detector + CLI need no model at all."
+
+# === Internal architecture ==================================================
+workflow_diagram:
+  layout: tree
+  why_layer:
+    en: "Compound: the agent routes among 23 commands at runtime and dispatches sub-agents. But it embeds a deterministic atom — the 44-rule detector — which runs with no LLM and was verified live here."
+    zh: "Compound：agent 在运行时于 23 条命令间路由并派发子 agent。但它内嵌一个确定性 atom —— 44 条规则的 detector —— 不用 LLM，本次已实跑验证。"
+  nodes:
+    - id: input
+      type: start
+      rank: 0
+      lane: 0
+      label:
+        en: "Your UI code / URL"
+        zh: "你的 UI 代码 / URL"
+    - id: skill
+      type: process
+      rank: 1
+      lane: 0
+      label:
+        en: "/impeccable router (23 commands)"
+        zh: "/impeccable 路由（23 命令）"
+    - id: detector
+      type: process
+      rank: 1
+      lane: 1
+      label:
+        en: "Deterministic detector (44 rules, no LLM)"
+        zh: "确定性 detector（44 规则，无 LLM）"
+    - id: output
+      type: end
+      rank: 2
+      lane: 0
+      label:
+        en: "Polished UI + findings"
+        zh: "更好的 UI + 问题清单"
+  edges:
+    - {from: input, to: skill}
+    - {from: input, to: detector}
+    - {from: skill, to: output}
+    - {from: detector, to: output}
+
+# === Comparison =============================================================
+similar_repos:
+  - slug: ""
+    shared_purpose:
+      en: "anthropics/frontend-design — the original Claude design skill Impeccable started from."
+      zh: "anthropics/frontend-design —— Impeccable 的起点，最早被广泛使用的 Claude 设计 skill。"
+    this_better_at:
+      en: "23-command vocabulary, a deterministic no-LLM linter, cross-harness install, and an editor hook."
+      zh: "23 条命令词汇、确定性无 LLM 检查器、跨 harness 安装、编辑器 hook。"
+    other_better_at:
+      en: "First-party, minimal surface area, maintained by Anthropic."
+      zh: "官方出品、表面更精简、由 Anthropic 维护。"

@@ -470,13 +470,23 @@ def load_verdict(slug: str, date: str | None) -> VerdictData:
                     )
                 )
 
+    def _run_sort_key(run: RunData) -> tuple[str, str, str]:
+        provenance = run.summary.get("provenance") or {}
+        evaluated_at = str(provenance.get("evaluated_at") or "")
+        return (run.date, evaluated_at, run.name)
+
+    # Newest runs first for display. When merging claim outcomes below,
+    # iterate oldest → newest so follow-up evidence can supersede an earlier
+    # blocked/partial run from the same date.
+    runs.sort(key=_run_sort_key, reverse=True)
+
     # --- Merge eval results into claim statuses -------------------------
     # If any run has results_by_claim filled in (either by hand or by
     # run_evals.py), those override the claim-map's initial status. This
     # is why "I said it was passed but the run said failed" → we trust
     # the run.
     claim_status_override: dict[str, str] = {}
-    for r in runs:
+    for r in reversed(runs):
         rbc = r.summary.get("results_by_claim") or {}
         for cid, status in rbc.items():
             if cid and status:
@@ -599,25 +609,60 @@ def product_one_liner(vd: VerdictData) -> str:
     return dual_lang(f"An {vd.archetype} repo.")
 
 
+def _status_label(status: str) -> tuple[str, str, str]:
+    return {
+        "passed": ("verified", "已验证", "pass"),
+        "passed_with_concerns": ("verified with caveat", "已验证，有保留", "partial"),
+        "partial": ("partly verified", "部分验证", "partial"),
+        "failed": ("failed", "失败", "fail"),
+        "failed_partial": ("failed", "失败", "fail"),
+        "untested": ("not tested", "未测试", "skip"),
+    }.get(status, (status, status, "skip"))
+
+
+def _short_plain(value: Any, max_chars: int = 150) -> str:
+    text = dual_lang_plain(value).strip()
+    if not text:
+        return ""
+    text = " ".join(text.split())
+    cut_at = len(text)
+    for sep in ("。", "；", ";"):
+        pos = text.find(sep)
+        if 0 <= pos < cut_at:
+            cut_at = pos + len(sep)
+    for idx, char in enumerate(text):
+        if char == "." and (idx + 1 == len(text) or text[idx + 1].isspace()):
+            cut_at = min(cut_at, idx + 1)
+            break
+    text = text[:cut_at]
+    if len(text) > max_chars:
+        text = text[: max_chars - 1].rstrip() + "..."
+    return text
+
+
 def render_capability_cards(vd: VerdictData) -> str:
-    """One visual card per critical/high claim — product-facing.
+    """Evidence list for the main claim area.
 
-    Uses claim.user_title / user_description / user_icon if present
-    (these are typically bilingual {en, zh} dicts). Falls back to the
-    technical claim.title / business_expectation when user fields are
-    missing, which keeps old claim-maps rendering, just less beautifully.
+    This is deliberately a list, not cards: readers should scan why the
+    score is credible claim-by-claim, with the user-facing promise first
+    and the technical source pushed into a short evidence note.
     """
-    VISIBLE_PRIORITIES = {"critical", "high"}
-    visible = [c for c in vd.claims if str(c.get("priority", "")) in VISIBLE_PRIORITIES]
-    if not visible:
-        visible = vd.claims  # tiny scaffolds — show them all
 
-    def _card(c: dict[str, Any]) -> str:
+    priority_order = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+    visible = sorted(
+        vd.claims,
+        key=lambda c: (
+            priority_order.get(str(c.get("priority", "medium")), 9),
+            str(c.get("id", "")),
+        ),
+    )
+
+    def _item(c: dict[str, Any]) -> str:
         status = str(c.get("status", "unknown"))
-        status_emoji = STATUS_EMOJI.get(status, "·")
+        status_en, status_zh, status_class = _status_label(status)
         cid = _esc(c.get("id", ""))
-
-        icon = str(c.get("user_icon") or "").strip() or status_emoji
+        prio = _esc(c.get("priority", "medium"))
+        icon = str(c.get("user_icon") or "").strip() or STATUS_EMOJI.get(status, "·")
 
         user_title_val = c.get("user_title") or c.get("title") or c.get("id", "")
         user_desc_val = (
@@ -628,51 +673,34 @@ def render_capability_cards(vd: VerdictData) -> str:
 
         title_span = dual_lang(user_title_val)
         desc_span = dual_lang(user_desc_val)
-
-        status_label_key = {
-            "passed": "verified",
-            "passed_with_concerns": "verified",
-            "partial": "verified",
-            "failed": "failed_verification",
-            "failed_partial": "failed_verification",
-            "untested": "untested_label",
-        }.get(status, "untested_label")
-
-        # Skip reason — surface only when untested (it's the reason we didn't
-        # verify). For passed claims this field is usually absent anyway.
-        skip_html = ""
-        if status == "untested":
-            skip_val = c.get("skip_reason")
-            if skip_val:
-                skip_html = (
-                    f'<p class="cap-skip">{dual_lang(skip_val)}</p>'
-                )
-
-        desc_html = f'<p class="cap-description">{desc_span}</p>' if desc_span else ""
-
-        # Editorial card — status-labeled badge maps to the raw status word.
-        status_badge_text = {
-            "passed": "passed",
-            "passed_with_concerns": "passed",
-            "partial": "partial",
-            "failed": "failed",
-            "failed_partial": "failed",
-            "untested": "untested",
-        }.get(status, status)
-
-        return (
-            f'<article class="capability-card status-{status}">'
-            f'  <div class="cap-header">'
-            f'    <span class="cap-badge">{_esc(status_badge_text)}</span>'
-            f'    <span class="cap-id">{cid}</span>'
-            f'  </div>'
-            f'  <h3 class="cap-title">{title_span}</h3>'
-            f'  {desc_html}'
-            f'  {skip_html}'
-            f'</article>'
+        evidence_note = _short_plain(c.get("evidence") or c.get("skip_reason") or "")
+        evidence_html = (
+            '<div class="claim-evidence">'
+            '<span class="i18n" data-en="Evidence" data-zh="证据"></span>'
+            f'<span>{_esc(evidence_note)}</span>'
+            '</div>'
+            if evidence_note else ""
         )
 
-    return "\n".join(_card(c) for c in visible)
+        return (
+            f'<li class="claim-item claim-{status_class}">'
+            f'  <div class="claim-marker">{_esc(icon)}</div>'
+            f'  <div class="claim-copy">'
+            f'    <div class="claim-topline">'
+            f'      <span class="claim-id">{cid}</span>'
+            f'      <span class="claim-priority">{prio}</span>'
+            f'      <span class="claim-status claim-status-{status_class}">'
+            f'        <span class="i18n" data-en="{_esc(status_en)}" data-zh="{_esc(status_zh)}"></span>'
+            f'      </span>'
+            f'    </div>'
+            f'    <h3 class="claim-title">{title_span}</h3>'
+            f'    <p class="claim-description">{desc_span}</p>'
+            f'    {evidence_html}'
+            f'  </div>'
+            f'</li>'
+        )
+
+    return "\n".join(_item(c) for c in visible)
 
 
 def render_best_for(vd: VerdictData) -> str:
@@ -853,10 +881,28 @@ def render_derivation_flow(vd: VerdictData) -> str:
 
 
 def render_metric_tiles(vd: VerdictData) -> str:
-    """Three big editorial tiles. Pull from the first run's metrics."""
-    run = vd.runs[0] if vd.runs else None
+    """Three big editorial tiles. Pull from the first run with metrics."""
+    run = next((r for r in vd.runs if r.summary.get("metrics")), None)
     metrics = (run.summary.get("metrics") if run else {}) or {}
     baseline = (run.summary.get("metrics_baseline") if run else {}) or {}
+
+    if not metrics:
+        claim_events = sum(
+            len((r.summary.get("results_by_claim") or {}))
+            for r in vd.runs
+        )
+        return (
+            '<div class="metric-empty">'
+            '<strong><span class="i18n" data-en="No timed benchmark metrics were recorded" '
+            'data-zh="没有记录计时型 benchmark 指标"></span></strong>'
+            '<p><span class="i18n" '
+            'data-en="These runs recorded commands, artifacts, notes, and claim outcomes, but not pass_rate / elapsed_time_sec / token_usage fields. Showing 0 would be misleading." '
+            'data-zh="这些 run 记录了命令、产物、备注和 claim 结果，但没有记录 pass_rate / elapsed_time_sec / token_usage 字段。显示 0 会误导。"></span></p>'
+            f'<div class="metric-empty-foot">{claim_events} '
+            '<span class="i18n" data-en="claim outcome entries are logged below." '
+            'data-zh="条 claim 结果记录在下方。"></span></div>'
+            '</div>'
+        )
 
     pr = metrics.get("pass_rate")
     el = metrics.get("elapsed_time_sec")
@@ -947,11 +993,45 @@ def render_run_cards_editorial(vd: VerdictData) -> str:
         metrics = summary.get("metrics") or {}
         rbc = summary.get("results_by_claim") or {}
         pr = metrics.get("pass_rate")
-        pr_pct = int(pr * 100) if isinstance(pr, (int, float)) else 0
         el = metrics.get("elapsed_time_sec")
-        el_s = f"{el:.1f}s" if isinstance(el, (int, float)) else "—"
         tok = metrics.get("token_usage") or {}
-        tok_s = f"in {tok.get('input','?')} / out {tok.get('output','?')}"
+
+        if metrics:
+            pr_s = f"{int(pr * 100)}%" if isinstance(pr, (int, float)) else "not recorded"
+            pr_zh = f"{int(pr * 100)}%" if isinstance(pr, (int, float)) else "未记录"
+            el_s = f"{el:.1f}s" if isinstance(el, (int, float)) else "not recorded"
+            el_zh = f"{el:.1f}s" if isinstance(el, (int, float)) else "未记录"
+            tok_s = f"in {tok.get('input','?')} / out {tok.get('output','?')}"
+            tok_zh = f"输入 {tok.get('input','?')} / 输出 {tok.get('output','?')}"
+            metrics_html = (
+                f'    <span class="run-metric"><b><span class="i18n" data-en="pass" '
+                f'data-zh="通过率"></span></b> <span class="v">'
+                f'<span class="i18n" data-en="{_esc(pr_s)}" data-zh="{_esc(pr_zh)}"></span>'
+                f'</span></span>'
+                f'    <span class="run-metric"><b><span class="i18n" data-en="time" '
+                f'data-zh="耗时"></span></b> <span class="v">'
+                f'<span class="i18n" data-en="{_esc(el_s)}" data-zh="{_esc(el_zh)}"></span>'
+                f'</span></span>'
+                f'    <span class="run-metric"><b>tokens</b> <span class="v">'
+                f'<span class="i18n" data-en="{_esc(tok_s)}" data-zh="{_esc(tok_zh)}"></span>'
+                f'</span></span>'
+            )
+        else:
+            passed_like = sum(
+                1 for v in rbc.values()
+                if str(v) in {"passed", "passed_with_concerns", "partial"}
+            )
+            total = len(rbc)
+            metrics_html = (
+                '<span class="run-metric run-metric-note">'
+                '<b><span class="i18n" data-en="metrics" data-zh="指标"></span></b>'
+                '<span class="v"><span class="i18n" '
+                'data-en="not recorded; this was an evidence run" '
+                'data-zh="未记录；这是证据型 run"></span></span>'
+                '</span>'
+                f'<span class="run-metric"><b><span class="i18n" data-en="claim outcomes" '
+                f'data-zh="claim 结果"></span></b> <span class="v">{passed_like} / {total}</span></span>'
+            )
 
         # Classify each rbc result for the colored left-border.
         rbc_items = []
@@ -974,11 +1054,7 @@ def render_run_cards_editorial(vd: VerdictData) -> str:
             f'  <div class="run-date"><span class="i18n" data-en="executed on" '
             f'data-zh="执行于"></span> {_esc(run.date)}</div>'
             f'  <div class="run-metrics">'
-            f'    <span class="run-metric"><b><span class="i18n" data-en="pass" '
-            f'data-zh="通过率"></span></b> <span class="v">{pr_pct}%</span></span>'
-            f'    <span class="run-metric"><b><span class="i18n" data-en="time" '
-            f'data-zh="耗时"></span></b> <span class="v">{el_s}</span></span>'
-            f'    <span class="run-metric"><b>tokens</b> <span class="v">{tok_s}</span></span>'
+            f'{metrics_html}'
             f'  </div>'
             f'  {rbc_html}'
             f'</div>'
@@ -1244,6 +1320,71 @@ def render_score_breakdown(vd: VerdictData) -> str:
     )
 
 
+def render_score_highlight(vd: VerdictData) -> str:
+    """Open score proof block shown in the usability section."""
+
+    score = vd.verdict_input.get("score")
+    bd = vd.verdict_input.get("score_breakdown") or {}
+    if score is None or not bd:
+        return ""
+
+    pv = vd.repo.get("product_view") or {}
+    reason = pv.get("score_reason")
+    if not reason:
+        status_counts = count_claim_statuses(vd)
+        verified = (
+            status_counts.get("passed", 0)
+            + status_counts.get("passed_with_concerns", 0)
+            + status_counts.get("partial", 0)
+        )
+        total = sum(status_counts.values())
+        reason = {
+            "en": (
+                f"The score is high because {verified} of {total} claims have "
+                "supporting evidence and no failed critical claim is blocking adoption."
+            ),
+            "zh": (
+                f"这个分数高，是因为 {total} 条 claim 里有 {verified} 条已有证据支撑，"
+                "且没有失败的关键 claim 阻塞采用。"
+            ),
+        }
+
+    labels = {
+        "base": ("Base", "基础"),
+        "static_eval": ("Claim evidence", "Claim 证据"),
+        "maintainer_evidence": ("Maintainer proof", "维护证据"),
+        "ecosystem": ("Peer signal", "社区信号"),
+        "layer_bonus": ("Layer fit", "层级匹配"),
+        "penalties": ("Deductions", "扣分"),
+    }
+    chips: list[str] = []
+    for key, value in bd.items():
+        en, zh = labels.get(key, (key, key))
+        sign = "+" if value > 0 else ""
+        chips.append(
+            '<span class="score-chip">'
+            f'<span class="i18n" data-en="{_esc(en)}" data-zh="{_esc(zh)}"></span>'
+            f'<b>{sign}{int(value)}</b>'
+            '</span>'
+        )
+
+    return (
+        '<div class="score-proof">'
+        '<div class="score-proof-number">'
+        f'<strong>{int(score)}</strong><span>/100</span>'
+        '</div>'
+        '<div class="score-proof-copy">'
+        '<div class="score-proof-label">'
+        '<span class="i18n" data-en="Why this score is credible" '
+        'data-zh="为什么这个分数站得住"></span>'
+        '</div>'
+        f'<p>{dual_lang(reason)}</p>'
+        f'<div class="score-chip-row">{"".join(chips)}</div>'
+        '</div>'
+        '</div>'
+    )
+
+
 def render_scenarios(vd: VerdictData) -> str:
     """Legacy: ✅ use_for / ❌ dont_use_for lists. Kept as fallback for
     repo.yaml files that haven't been rewritten to the new
@@ -1364,7 +1505,7 @@ def render_benefits_section(vd: VerdictData) -> str:
     return (
         '<section class="benefits-section">'
         '<div class="section-head">'
-        '<h2><span class="i18n" data-en="What this skill actually buys you" '
+        '<h2><span class="i18n" data-en="What problem this solves for you" '
         'data-zh="它到底能帮你解决什么"></span></h2></div>'
         f'<div class="benefits-grid">{cards_html}</div>'
         f'{examples_html}'
@@ -1438,6 +1579,219 @@ def render_usage_examples(vd: VerdictData) -> str:
         '</div>'
         f'<div class="usex-grid">{"".join(cards)}</div>'
         '</div>'
+    )
+
+
+IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
+TEXT_SUFFIXES = {".txt", ".md", ".json", ".yaml", ".yml", ".csv"}
+
+
+def _repo_dir_for_verdict(vd: VerdictData) -> Path:
+    return REPO_EVALS_ROOT / "repos" / (
+        f"{vd.repo.get('owner', '')}--{vd.repo.get('repo', '')}"
+    )
+
+
+def _artifact_href(vd: VerdictData, artifact_path: Path) -> str:
+    """Return a link from verdicts/*.html to an artifact under the repo dir."""
+
+    repo_dir = _repo_dir_for_verdict(vd)
+    try:
+        rel = artifact_path.relative_to(repo_dir).as_posix()
+    except ValueError:
+        return artifact_path.as_posix()
+    return "../" + rel
+
+
+def _text_excerpt(path: Path, max_chars: int = 900) -> str:
+    try:
+        text = path.read_text(errors="replace")
+    except Exception:
+        return ""
+    text = text.strip()
+    if len(text) > max_chars:
+        return text[:max_chars].rstrip() + "\n..."
+    return text
+
+
+def _sample_manifests(vd: VerdictData) -> list[tuple[RunData, Path, dict[str, Any]]]:
+    """Load sample-output manifests from eval runs, newest first.
+
+    A run can point at the manifest via evidence.manifest_path, or simply
+    place artifacts/manifest.yaml next to generated outputs. The manifest is
+    optional so old evals keep rendering normally.
+    """
+
+    loaded: list[tuple[RunData, Path, dict[str, Any]]] = []
+    seen: set[Path] = set()
+    for run in vd.runs:
+        evidence = run.summary.get("evidence") or {}
+        candidates: list[Path] = []
+        manifest_path = evidence.get("manifest_path")
+        if manifest_path:
+            candidates.append(run.path / str(manifest_path))
+        candidates.append(run.path / "artifacts" / "manifest.yaml")
+        candidates.append(run.path / "artifacts" / "manifest.yml")
+        for path in candidates:
+            if path in seen or not path.exists():
+                continue
+            seen.add(path)
+            data = _read_yaml(path)
+            if data and (data.get("outputs") or data.get("sample")):
+                loaded.append((run, path, data))
+    return loaded
+
+
+def render_output_samples(vd: VerdictData) -> str:
+    """High-position sample gallery.
+
+    The page should quickly answer: what did we feed the repo, and what did
+    it actually produce? For image/text-generation repos this is stronger
+    proof than prose alone.
+    """
+
+    manifests = _sample_manifests(vd)
+    if not manifests:
+        return ""
+
+    run, manifest_path, manifest = manifests[0]
+    sample = manifest.get("sample") or manifest
+    title = sample.get("title") or {
+        "en": "One real input, one generated output",
+        "zh": "一个真实输入，一组实际产物",
+    }
+    input_data = sample.get("input") or {}
+    input_title = input_data.get("title")
+    input_summary = input_data.get("summary")
+    input_prompt = input_data.get("prompt")
+    validation = sample.get("validation") or {}
+    validation_summary = validation.get("summary")
+    checks = validation.get("checks") or []
+    outputs = sample.get("outputs") or []
+
+    output_items: list[str] = []
+    for out in outputs:
+        rel_path = str(out.get("path") or "").strip()
+        if not rel_path:
+            continue
+        artifact_path = (run.path / rel_path).resolve()
+        suffix = artifact_path.suffix.lower()
+        label = out.get("label") or artifact_path.name
+        caption = out.get("caption") or out.get("dimensions") or ""
+        href = _artifact_href(vd, artifact_path)
+        layout = str(out.get("layout") or "").lower()
+        kind = str(out.get("type") or "").lower()
+        if not kind:
+            kind = "image" if suffix in IMAGE_SUFFIXES else (
+                "text" if suffix in TEXT_SUFFIXES else "file"
+            )
+
+        if kind == "image" or suffix in IMAGE_SUFFIXES:
+            klass = "sample-output sample-image"
+            if layout:
+                klass += f" sample-{_esc(layout)}"
+            output_items.append(
+                f'<figure class="{klass}">'
+                f'<a href="{_esc(href)}" target="_blank" rel="noopener">'
+                f'<img src="{_esc(href)}" alt="{_esc(dual_lang_plain(label))}" loading="lazy">'
+                '</a>'
+                '<figcaption>'
+                f'<span>{dual_lang(label)}</span>'
+                f'<small>{dual_lang(caption)}</small>'
+                '</figcaption>'
+                '</figure>'
+            )
+        elif kind in {"html", "file"} and suffix == ".html":
+            output_items.append(
+                '<div class="sample-file">'
+                '<span class="sample-file-kind">HTML</span>'
+                f'<a href="{_esc(href)}" target="_blank" rel="noopener">{dual_lang(label)}</a>'
+                f'<small>{dual_lang(caption)}</small>'
+                '</div>'
+            )
+        else:
+            excerpt = _text_excerpt(artifact_path)
+            output_items.append(
+                '<div class="sample-text-output">'
+                f'<div class="sample-file-title">{dual_lang(label)}</div>'
+                f'<pre>{_esc(excerpt)}</pre>'
+                f'<a href="{_esc(href)}" target="_blank" rel="noopener">'
+                '<span class="i18n" data-en="Open full output" data-zh="打开完整输出"></span>'
+                '</a>'
+                '</div>'
+            )
+
+    if not output_items:
+        return ""
+
+    checks_html = ""
+    if checks:
+        checks_html = (
+            '<ul class="sample-checks">'
+            + "".join(f"<li>{dual_lang(c)}</li>" for c in checks[:4])
+            + "</ul>"
+        )
+
+    prompt_html = (
+        '<div class="sample-prompt">'
+        '<span class="sample-mini-label">'
+        '<span class="i18n" data-en="Prompt used" data-zh="这次怎么要求它"></span>'
+        '</span>'
+        f'<blockquote>{dual_lang(input_prompt)}</blockquote>'
+        '</div>'
+        if input_prompt else ""
+    )
+
+    validation_html = (
+        '<div class="sample-validation">'
+        '<span class="sample-mini-label">'
+        '<span class="i18n" data-en="Checked result" data-zh="验收结果"></span>'
+        '</span>'
+        f'<p>{dual_lang(validation_summary)}</p>'
+        f'{checks_html}'
+        '</div>'
+        if validation_summary or checks_html else ""
+    )
+
+    manifest_rel = _artifact_href(vd, manifest_path)
+
+    return (
+        '<section class="sample-proof-section" id="samples">'
+        '<div class="sample-proof-head">'
+        '<div class="sample-proof-kicker">'
+        '<span class="i18n" data-en="02 · input summary → 03 · actual sample" '
+        'data-zh="02 · 输入摘要 → 03 · 实际样品"></span>'
+        '</div>'
+        f'<h2>{dual_lang(title)}</h2>'
+        '<p><span class="i18n" '
+        'data-en="This is not a mockup added to the report. It is an artifact generated during the eval run." '
+        'data-zh="这不是报告里临时画的示意图，而是评测 run 里实际生成出来的产物。"></span></p>'
+        '</div>'
+        '<div class="sample-proof-grid">'
+        '<article class="sample-input-panel">'
+        '<div class="sample-step">02</div>'
+        '<div class="sample-mini-label">'
+        '<span class="i18n" data-en="Finished article we gave it" '
+        'data-zh="喂给它的一篇成稿"></span>'
+        '</div>'
+        f'<h3>{dual_lang(input_title)}</h3>'
+        f'<p>{dual_lang(input_summary)}</p>'
+        f'{prompt_html}'
+        f'{validation_html}'
+        '</article>'
+        '<article class="sample-output-panel">'
+        '<div class="sample-step">03</div>'
+        '<div class="sample-mini-label">'
+        '<span class="i18n" data-en="Generated output" data-zh="生成出来的样品"></span>'
+        '</div>'
+        f'<div class="sample-output-grid">{"".join(output_items)}</div>'
+        '<div class="sample-source-line">'
+        f'<span>{_esc(run.date)} · {_esc(run.name)}</span>'
+        f'<a href="{_esc(manifest_rel)}" target="_blank" rel="noopener">manifest</a>'
+        '</div>'
+        '</article>'
+        '</div>'
+        '</section>'
     )
 
 
@@ -1671,9 +2025,9 @@ def render_workflow_placement_strip(vd: VerdictData) -> str:
             f'<span class="i18n" data-en="In this workflow:" data-zh="在这条工作流里:"></span>'
             f'<span class="wp-name">{wf_name_html}</span>'
             f'</div>'
-            f'<div class="wp-canvas">'
+            f'<div class="wp-canvas" style="--wp-width:{svg_w}px">'
             f'<svg viewBox="0 0 {svg_w} {svg_h}" xmlns="http://www.w3.org/2000/svg" '
-            f'width="100%" preserveAspectRatio="xMidYMid meet">'
+            f'width="{svg_w}" height="{svg_h}" preserveAspectRatio="xMidYMid meet">'
             f'<defs>'
             f'<marker id="wp-arrowhead" viewBox="0 0 10 10" refX="9" refY="5" '
             f'markerWidth="6" markerHeight="6" orient="auto">'
@@ -1693,6 +2047,49 @@ def render_workflow_placement_strip(vd: VerdictData) -> str:
     return f'<div class="wp-section">{"".join(blocks)}</div>'
 
 
+def normalise_business_category(raw: Any, use_case_tags: list[Any]) -> str:
+    """Return the coarse domain key used by verdict/dashboard filters.
+
+    The corpus has two historical shapes:
+      - current: business_category: content | finance | development
+      - legacy: business_category: {en, zh} prose label
+    The renderer should not drop the pill just because the old shape is
+    present, so we infer from the label + use_case_tags when needed.
+    """
+
+    if isinstance(raw, str):
+        value = raw.strip().lower()
+    elif isinstance(raw, dict):
+        value = " ".join(str(raw.get(k, "")) for k in ("en", "zh")).lower()
+    else:
+        value = ""
+
+    if value in {"content", "finance", "development"}:
+        return value
+
+    tags = [str(t).strip().lower() for t in (use_case_tags or []) if t]
+    haystack = " ".join([value, *tags]).lower()
+    finance_needles = (
+        "finance", "financial", "quant", "trading", "stock", "market",
+        "sentiment-analysis", "transmission-chain",
+    )
+    content_needles = (
+        "content", "xiaohongshu", "x-twitter", "tweet", "podcast", "video",
+        "wechat", "publishing", "scraping", "creator", "growth",
+    )
+    development_needles = (
+        "agent", "skill", "coding", "codebase", "html", "diagram",
+        "llm", "repo-evaluation", "reasoning", "workflow", "browser",
+    )
+    if any(n in haystack for n in finance_needles):
+        return "finance"
+    if any(n in haystack for n in content_needles):
+        return "content"
+    if any(n in haystack for n in development_needles):
+        return "development"
+    return ""
+
+
 def render_business_category(vd: VerdictData) -> str:
     """Pill showing the business domain (content / finance / development).
 
@@ -1701,7 +2098,9 @@ def render_business_category(vd: VerdictData) -> str:
     repo addresses, separate from the technical layer (atom / molecule
     / compound)."""
 
-    cat = str(vd.repo.get("business_category", "") or "").strip().lower()
+    cat = normalise_business_category(
+        vd.repo.get("business_category", ""), vd.repo.get("use_case_tags") or []
+    )
     if cat not in {"content", "finance", "development"}:
         return ""
     labels = {
@@ -1811,17 +2210,11 @@ def _first_sentence(field: Any, lang: str = "en", max_chars: int = 220) -> str:
 
 
 def render_decision_card(vd: VerdictData) -> str:
-    """Top-of-dossier synthesis card answering "should I use this?"
+    """Top-of-dossier synthesis answering "should I use this?"
 
-    4 rows, all auto-derived from existing fields. Placed before the
-    layer strip so a 5-second skim gets the headline answer; everything
-    below the card is the audit trail.
-
-    Rows:
-      ✅ Use         — by category (production/available/risky/dont_use)
-      ⚠ Don't use   — first-sentence of watch_out
-      🎯 Next step   — first-sentence of next_step
-      ⚠ Main risk   — derived from biggest unsolved gap
+    The old snapshot used four equal rows, which made "Use / Don't use /
+    Next step / Risk" feel equally important. This layout promotes the
+    adoption answer and next action, then keeps boundaries compact.
     """
 
     score = int(vd.verdict_input.get("score", 0) or 0)
@@ -1830,7 +2223,9 @@ def render_decision_card(vd: VerdictData) -> str:
 
     pv = vd.repo.get("product_view") or {}
     watch_out = pv.get("watch_out")
+    not_for = pv.get("not_for") or watch_out
     next_step = pv.get("next_step")
+    main_risk = pv.get("main_risk")
 
     inputs = vd.verdict_input.get("inputs_summary") or {}
     layer = str(vd.repo.get("layer", "") or "").lower()
@@ -1840,22 +2235,40 @@ def render_decision_card(vd: VerdictData) -> str:
     crit_covered = int(inputs.get("critical_covered", 0) or 0)
     crit_untested = max(0, crit_total - crit_covered - crit_failed)
 
-    # Row 1 — Use? (category-driven)
-    use_lines = {
-        "production": ("Yes, including team / production-critical paths.",
-                       "可以,包括团队 / 生产关键路径。"),
-        "available":  ("Yes for self-use; not yet for production-critical paths.",
-                       "自用可以;还不到放进生产关键路径的程度。"),
-        "risky":      ("Maybe — only after fixing the flagged defects.",
-                       "也许 —— 但要先修掉被标记的问题。"),
-        "dont_use":   ("Skip. Known broken or unmaintained core feature.",
-                       "跳过。核心功能已知坏掉或未维护。"),
+    # Primary adoption action (category-driven).
+    action_lines = {
+        "production": (
+            "Use",
+            "可以用",
+            "Suitable for team or production-critical adoption, subject to your normal integration review.",
+            "可以进入团队或生产关键路径采用,仍然按你的正常集成审查走。",
+        ),
+        "available": (
+            "Use with limits",
+            "有限采用",
+            "Good for self-use or evaluation. Do not put it on a production-critical path until the missing evidence is closed.",
+            "适合自用或试用。缺口没补上之前,不要放进生产关键路径。",
+        ),
+        "risky": (
+            "Hold",
+            "先暂停",
+            "There is probably value here, but the flagged defects should be fixed before relying on it.",
+            "可能有价值,但先修掉标记出来的问题再依赖它。",
+        ),
+        "dont_use": (
+            "Skip",
+            "跳过",
+            "Known broken, unmaintained, or blocked by a core adoption issue.",
+            "核心功能已知坏掉、缺维护,或有阻碍采用的关键问题。",
+        ),
     }
-    use_en, use_zh = use_lines.get(cat_key, ("", ""))
+    action_en, action_zh, use_en, use_zh = action_lines.get(
+        cat_key, ("Review", "需要复核", "", "")
+    )
 
-    # Row 2 — Don't use for (from watch_out)
-    dont_en = _first_sentence(watch_out, "en")
-    dont_zh = _first_sentence(watch_out, "zh")
+    # Row 2 — Don't use for (from product_view.not_for / watch_out)
+    dont_en = _first_sentence(not_for, "en")
+    dont_zh = _first_sentence(not_for, "zh")
     if not dont_en and not dont_zh:
         dont_en = "(no specific watch-out documented)"
         dont_zh = "(没有特别注意事项)"
@@ -1868,8 +2281,13 @@ def render_decision_card(vd: VerdictData) -> str:
         next_en = "Run one logged live end-to-end scenario before depending on it."
         next_zh = "依赖之前先跑一次有日志记录的真实端到端场景。"
 
-    # Row 4 — Main risk (derived)
-    if crit_failed > 0 and not has_license:
+    # Row 4 — Main risk (repo-authored if available, otherwise derived)
+    risk_en = _first_sentence(main_risk, "en") if main_risk else ""
+    risk_zh = _first_sentence(main_risk, "zh") if main_risk else ""
+    if risk_en or risk_zh:
+        risk_en = risk_en or risk_zh
+        risk_zh = risk_zh or risk_en
+    elif crit_failed > 0 and not has_license:
         risk_en = f"Missing LICENSE plus {crit_failed} other failed critical claim(s)."
         risk_zh = f"缺 LICENSE,加上 {crit_failed} 条其他关键 claim 失败。"
     elif not has_license:
@@ -1885,39 +2303,53 @@ def render_decision_card(vd: VerdictData) -> str:
         risk_en = f"{crit_untested} critical claim(s) untested — likely needs a logged live run."
         risk_zh = f"{crit_untested} 条关键 claim 未验证 —— 通常需要一次有日志的真实跑通。"
     else:
-        risk_en = "Static-only eval; live end-to-end behaviour unverified."
-        risk_zh = "纯静态评测;实际端到端行为未验证。"
-
-    rows = [
-        ("✅", "dec-use",  "Use",            "用",         use_en,  use_zh),
-        ("⚠",  "dec-dont", "Don't use for",  "别用在",     dont_en, dont_zh),
-        ("🎯", "dec-next", "Best next step", "最佳下一步", next_en, next_zh),
-        ("⚠",  "dec-risk", "Main risk",      "主要风险",   risk_en, risk_zh),
-    ]
-
-    rendered_rows: list[str] = []
-    for icon, klass, label_en, label_zh, body_en, body_zh in rows:
-        rendered_rows.append(
-            f'<div class="dec-row {klass}">'
-            f'<div class="dec-icon">{icon}</div>'
-            f'<div class="dec-label">'
-            f'<span class="i18n" data-en="{_esc(label_en)}" data-zh="{_esc(label_zh)}"></span>'
-            f'</div>'
-            f'<div class="dec-body">'
-            f'<span class="i18n" data-en="{_esc(body_en)}" data-zh="{_esc(body_zh)}"></span>'
-            f'</div>'
-            f'</div>'
-        )
+        risk_en = "No critical blocker surfaced; remaining risk is whether it behaves well in your own setup and workflow."
+        risk_zh = "没有看到关键阻碍；剩余风险是它在你的安装环境和实际工作流里是否稳定。"
 
     return (
         '<section class="decision-card">'
-        '<div class="dec-eyebrow">'
+        '<div class="dec-primary">'
+        '<div class="dec-kicker">'
         f'<span class="dec-cat-emoji">{cat_emoji}</span>'
-        '<span class="i18n" data-en="Decision snapshot" '
-        'data-zh="决策快照"></span>'
-        f'<span class="dec-score">{score} / 100</span>'
+        '<span class="i18n" data-en="Adoption verdict" data-zh="采用结论"></span>'
         '</div>'
-        f'{"".join(rendered_rows)}'
+        '<div class="dec-action">'
+        f'<span class="i18n" data-en="{_esc(action_en)}" data-zh="{_esc(action_zh)}"></span>'
+        '</div>'
+        '<p class="dec-action-copy">'
+        f'<span class="i18n" data-en="{_esc(use_en)}" data-zh="{_esc(use_zh)}"></span>'
+        '</p>'
+        '<div class="dec-scoreline">'
+        f'<span>{score} / 100</span>'
+        f'<span>{_esc(str(vd.verdict_input.get("category_en", "")))}</span>'
+        '</div>'
+        '</div>'
+        '<div class="dec-next-panel">'
+        '<div class="dec-panel-label">'
+        '<span class="i18n" data-en="Next move" data-zh="下一步"></span>'
+        '</div>'
+        '<div class="dec-panel-body">'
+        f'<span class="i18n" data-en="{_esc(next_en)}" data-zh="{_esc(next_zh)}"></span>'
+        '</div>'
+        '</div>'
+        '<div class="dec-boundaries">'
+        '<div class="dec-boundary dec-dont">'
+        '<div class="dec-panel-label">'
+        '<span class="i18n" data-en="Do not use for" data-zh="别用在"></span>'
+        '</div>'
+        '<div class="dec-boundary-body">'
+        f'<span class="i18n" data-en="{_esc(dont_en)}" data-zh="{_esc(dont_zh)}"></span>'
+        '</div>'
+        '</div>'
+        '<div class="dec-boundary dec-risk">'
+        '<div class="dec-panel-label">'
+        '<span class="i18n" data-en="Main risk" data-zh="主要风险"></span>'
+        '</div>'
+        '<div class="dec-boundary-body">'
+        f'<span class="i18n" data-en="{_esc(risk_en)}" data-zh="{_esc(risk_zh)}"></span>'
+        '</div>'
+        '</div>'
+        '</div>'
         '</section>'
     )
 
@@ -1989,7 +2421,7 @@ def render_trust_strip(vd: VerdictData) -> str:
             "✓",
             "License present + install path documented",
             "License 存在 + 安装路径已文档化",
-            "MIT / Apache / etc., installable per deployment.install_methods"
+            "license exists; install path recorded in deployment.install_methods"
         ))
     elif has_license:
         rows.append((
@@ -2109,31 +2541,6 @@ def render_trust_strip(vd: VerdictData) -> str:
     )
 
 
-def render_next_step(vd: VerdictData) -> str:
-    """Concrete next action — manually authored per repo.
-
-    Reads ``product_view.next_step`` (en/zh dict) and renders a small
-    callout right after the auto-derived why-not block. Where why-not
-    explains *why* the score is where it is, next_step says *what
-    specifically to do next* — the kind of sentence the maintainer or
-    evaluator could act on this week.
-    """
-
-    pv = vd.repo.get("product_view") or {}
-    ns = pv.get("next_step")
-    if not ns:
-        return ""
-    return (
-        '<div class="next-step">'
-        '<div class="next-step-eyebrow">'
-        '<span class="i18n" data-en="Next step to upgrade the score" '
-        'data-zh="提升评分的下一步"></span>'
-        '</div>'
-        f'<div class="next-step-body">{dual_lang(ns)}</div>'
-        '</div>'
-    )
-
-
 def render_why_not_next_tier(vd: VerdictData) -> str:
     """One-sentence "why not Production" — auto-derived.
 
@@ -2240,14 +2647,14 @@ def render_category_strip(vd: VerdictData) -> str:
     score_pct = max(0, min(100, int(score)))
 
     trust_html = render_trust_strip(vd)
+    score_highlight_html = render_score_highlight(vd)
     why_not_html = render_why_not_next_tier(vd)
-    next_step_html = render_next_step(vd)
 
     return (
         '<section class="category-strip-section">'
         '<div class="section-head">'
-        '<h2><span class="i18n" data-en="How usable is it?" '
-        'data-zh="它可用性如何?"></span></h2></div>'
+        '<h2><span class="i18n" data-en="Can you use it?" '
+        'data-zh="能不能用?"></span></h2></div>'
         '<div class="cat-strip-wrap">'
         f'<div class="cat-strip">{"".join(zone_html)}</div>'
         f'<div class="cat-pointer-lane">'
@@ -2269,8 +2676,8 @@ def render_category_strip(vd: VerdictData) -> str:
         f'<span class="i18n" data-en="{blurb_en}" data-zh="{blurb_zh}"></span>'
         f'</div>'
         f'</div>'
+        f'{score_highlight_html}'
         f'{why_not_html}'
-        f'{next_step_html}'
         f'{trust_html}'
         '</section>'
     )
@@ -2322,11 +2729,11 @@ def render_workflow_diagram(vd: VerdictData) -> str:
     # Node + grid metrics. Tree layout is denser than linear because
     # compound trees can stack 8-12 ranks vertically — wide gaps make
     # the diagram unreadably tall.
-    NODE_W = 200 if layout == "tree" else 180
+    NODE_W = 200 if layout == "tree" else 168
     NODE_H = 44 if layout == "tree" else 56
-    COL_GAP = 50 if layout == "tree" else 80
-    ROW_GAP = 16 if layout == "tree" else 28
-    PAD = 18 if layout == "tree" else 24
+    COL_GAP = 50 if layout == "tree" else 42
+    ROW_GAP = 16 if layout == "tree" else 24
+    PAD = 18
 
     def _xy(rank: int, lane: int) -> tuple[float, float]:
         """Map (rank, lane) → (x, y) in SVG coordinate space.
@@ -2451,13 +2858,32 @@ def render_workflow_diagram(vd: VerdictData) -> str:
             cy_mid = (y1 + y2) / 2
             d = f"M{x1},{y1} C{x1},{cy_mid} {x2},{cy_mid} {x2},{y2}"
         else:
-            # Left-right: right-center of source to left-center of dest
-            x1 = sx + NODE_W
-            y1 = sy + NODE_H / 2
-            x2 = ex
-            y2 = ey + NODE_H / 2
-            cx_mid = (x1 + x2) / 2
-            d = f"M{x1},{y1} C{cx_mid},{y1} {cx_mid},{y2} {x2},{y2}"
+            # Linear diagrams may fold back onto a second row. Pick the
+            # nearest sensible side instead of always drawing left-to-right.
+            dx = ex - sx
+            dy = ey - sy
+            if abs(dx) >= abs(dy):
+                if dx >= 0:
+                    x1 = sx + NODE_W
+                    x2 = ex
+                else:
+                    x1 = sx
+                    x2 = ex + NODE_W
+                y1 = sy + NODE_H / 2
+                y2 = ey + NODE_H / 2
+                cx_mid = (x1 + x2) / 2
+                d = f"M{x1},{y1} C{cx_mid},{y1} {cx_mid},{y2} {x2},{y2}"
+            else:
+                x1 = sx + NODE_W / 2
+                x2 = ex + NODE_W / 2
+                if dy >= 0:
+                    y1 = sy + NODE_H
+                    y2 = ey
+                else:
+                    y1 = sy
+                    y2 = ey + NODE_H
+                cy_mid = (y1 + y2) / 2
+                d = f"M{x1},{y1} C{x1},{cy_mid} {x2},{cy_mid} {x2},{y2}"
 
         style = e.get("style", "solid")
         klass = f"wd-edge wd-edge-{style}"
@@ -2513,15 +2939,15 @@ def render_workflow_diagram(vd: VerdictData) -> str:
     )
 
     return (
-        '<section class="workflow-diagram-section">'
+        '<section class="workflow-diagram-section" id="workflow">'
         '<div class="section-head">'
         '<h2><span class="i18n" data-en="How it actually works" '
         'data-zh="它的工作流"></span></h2></div>'
         f'{why_html}'
         f'{legend_html}'
-        '<div class="wd-canvas">'
+        f'<div class="wd-canvas" style="--wd-width:{svg_w}px">'
         f'<svg viewBox="0 0 {svg_w} {svg_h}" xmlns="http://www.w3.org/2000/svg" '
-        f'width="100%" preserveAspectRatio="xMidYMid meet">'
+        f'width="{svg_w}" height="{svg_h}" preserveAspectRatio="xMidYMid meet">'
         '<defs>'
         '<marker id="wd-arrow" viewBox="0 0 10 10" refX="9" refY="5" '
         'markerWidth="7" markerHeight="7" orient="auto">'
@@ -2614,8 +3040,8 @@ def render_similar_repos(vd: VerdictData) -> str:
 
     Reads ``repo.yaml.similar_repos`` — a manually curated list of slugs
     in our own corpus, with the trade-offs spelled out. We never
-    web-search; the comparison universe is exactly the 30 repos we've
-    evaluated. For each linked slug we pull the live score + category
+    web-search; the comparison universe is exactly this committed corpus.
+    For each linked slug we pull the live score + category
     so readers see how the alternatives rank too.
 
     Schema::
@@ -2734,9 +3160,9 @@ def render_similar_repos(vd: VerdictData) -> str:
         'data-zh="对比我们已经评测过的"></span></h2></div>'
         '<p class="similar-lead">'
         '<span class="i18n" '
-        'data-en="Comparison universe = the 30 repos in this repo-evals corpus. We do not web-search; '
+        'data-en="Comparison universe = this repo-evals corpus. We do not web-search; '
         'this is &quot;given what you already have access to, what are your alternatives.&quot;" '
-        'data-zh="对比范围 = 我们 repo-evals 已评测过的 30 个 repo。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。">'
+        'data-zh="对比范围 = 当前 repo-evals 语料库。不联网搜索;答的是「在你已经看过的这一批里,有哪些替代品」。">'
         '</span></p>'
         + (f'<div class="similar-grid">{"".join(cards)}</div>' if cards else '')
         + pending_html
@@ -2979,7 +3405,7 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
 
     # Product-facing pieces
     product_one_liner_html = product_one_liner(vd)
-    capability_cards_html = render_capability_cards(vd)
+    claim_summary_items_html = render_capability_cards(vd)
     best_for_html = render_best_for(vd)
     watch_out_html = render_watch_out(vd)
 
@@ -2997,10 +3423,10 @@ def render_html(vd: VerdictData, initial_lang: str = "auto") -> str:
     layer_section_html = render_layer_section(vd)
     layer_pill_html = render_layer_pill(vd)
     score_block_html = render_score_block(vd)
-    score_breakdown_html = render_score_breakdown(vd)
     scenarios_html = render_scenarios(vd)
     deployment_html = render_deployment_section(vd)
     benefits_html = render_benefits_section(vd)
+    output_samples_html = render_output_samples(vd)
     cost_summary_html = render_cost_summary(vd)
     category_chip_html = render_category_chip(vd)
     workflow_diagram_html = render_workflow_diagram(vd)
@@ -3084,7 +3510,7 @@ html[data-bucket="unusable"]      {{ --bucket:#f87171; --bucket-bg:rgba(248,113,
    so the page color tracks the top-level category, not the fine
    tier inside it. */
 html[data-category="production"] {{ --bucket:#4ade80; --bucket-bg:rgba(74,222,128,.10); --bucket-soft:rgba(74,222,128,.16); }}
-html[data-category="available"]  {{ --bucket:#60a5fa; --bucket-bg:rgba(96,165,250,.10); --bucket-soft:rgba(96,165,250,.16); }}
+html[data-category="available"]  {{ --bucket:#22c55e; --bucket-bg:rgba(34,197,94,.10); --bucket-soft:rgba(34,197,94,.18); }}
 html[data-category="risky"]      {{ --bucket:#f59e0b; --bucket-bg:rgba(245,158,11,.10); --bucket-soft:rgba(245,158,11,.16); }}
 html[data-category="dont_use"]   {{ --bucket:#f87171; --bucket-bg:rgba(248,113,113,.10); --bucket-soft:rgba(248,113,113,.16); }}
 
@@ -3125,26 +3551,108 @@ html[data-category="dont_use"]   {{ --bucket:#f87171; --bucket-bg:rgba(248,113,1
 
 /* --- Decision Card — top-of-dossier 5-second answer --------------- */
 .decision-card {{
-  margin: 0 0 36px;
-  padding: 16px 20px 18px;
-  background: var(--surface-1);
+  margin: 0 0 32px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.86fr) minmax(320px, 1.14fr);
+  gap: 1px;
+  background: var(--border-strong);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
+  overflow: hidden;
   box-shadow: 0 0 0 1px var(--bucket-soft);
 }}
-.dec-eyebrow {{
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--font-mono); font-size: 11px;
-  color: var(--bucket); text-transform: uppercase;
-  letter-spacing: 0.16em; font-weight: 700;
-  padding-bottom: 12px; margin-bottom: 12px;
-  border-bottom: 1px solid var(--border);
+.dec-primary,
+.dec-next-panel,
+.dec-boundaries {{
+  background: var(--surface-1);
+}}
+.dec-primary {{
+  padding: 24px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 230px;
+  border-left: 4px solid var(--bucket);
+  grid-row: span 2;
+}}
+.dec-kicker,
+.dec-panel-label {{
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--text-3); text-transform: uppercase;
+  letter-spacing: 0.14em; font-weight: 700;
 }}
 .dec-cat-emoji {{ font-size: 16px; }}
-.dec-score {{
-  margin-left: auto; font-family: var(--font-mono); font-size: 12px;
-  color: var(--text-2); letter-spacing: 0.06em;
+.dec-action {{
+  margin: 20px 0 14px;
+  font-size: clamp(36px, 6vw, 58px);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  color: var(--bucket);
 }}
+.dec-action-copy {{
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text);
+  max-width: 42ch;
+}}
+.dec-scoreline {{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}}
+.dec-scoreline span {{
+  padding: 4px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+}}
+.dec-next-panel {{
+  padding: 24px 26px;
+}}
+.dec-next-panel .dec-panel-label {{ color: var(--bucket); }}
+.dec-panel-body {{
+  margin-top: 10px;
+  font-size: 18px;
+  line-height: 1.52;
+  color: var(--text);
+  max-width: 62ch;
+}}
+.dec-boundaries {{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+}}
+.dec-boundary {{
+  background: var(--surface-1);
+  padding: 18px 20px 20px;
+}}
+.dec-dont .dec-panel-label {{ color: var(--warn); }}
+.dec-risk .dec-panel-label {{ color: var(--bad); }}
+.dec-boundary-body {{
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+}}
+@media (max-width: 860px) {{
+  .decision-card {{ grid-template-columns: 1fr; }}
+  .dec-primary {{ grid-row: auto; min-height: 0; }}
+  .dec-boundaries {{ grid-template-columns: 1fr; }}
+}}
+
+/* Legacy decision-row classes may appear in old committed HTML. Keep a
+   compact fallback so older dossiers remain readable before regeneration. */
 .dec-row {{
   display: grid; grid-template-columns: 24px 110px 1fr;
   gap: 10px; align-items: baseline;
@@ -3209,7 +3717,10 @@ html[data-category="dont_use"]   {{ --bucket:#f87171; --bucket-bg:rgba(248,113,1
   overflow-x: auto;
 }}
 .wp-canvas svg {{
-  display: block; max-width: 100%; height: auto;
+  display: block;
+  width: max(100%, var(--wp-width));
+  min-width: var(--wp-width);
+  height: auto;
   text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
 }}
 
@@ -3339,7 +3850,7 @@ html[lang="zh"] .wp-lang-zh {{ display: block; }}
 .cat-zone-range {{ font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-top: 4px; }}
 .cat-zone-dont_use.is-active   {{ background: rgba(248, 113, 113, 0.18); }}
 .cat-zone-risky.is-active      {{ background: rgba(245, 158, 11, 0.18); }}
-.cat-zone-available.is-active  {{ background: rgba(96, 165, 250, 0.18); }}
+.cat-zone-available.is-active  {{ background: rgba(34, 197, 94, 0.18); }}
 .cat-zone-production.is-active {{ background: rgba(74, 222, 128, 0.18); }}
 
 .cat-pointer-lane {{
@@ -3368,9 +3879,83 @@ html[lang="zh"] .wp-lang-zh {{ display: block; }}
 .cat-summary-score {{ font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }}
 .cat-summary-blurb {{ font-size: 14px; color: var(--text-2); }}
 .cat-summary-production {{ --bucket: #4ade80; }}
-.cat-summary-available  {{ --bucket: #60a5fa; }}
+.cat-summary-available  {{ --bucket: #22c55e; }}
 .cat-summary-risky      {{ --bucket: #f59e0b; }}
 .cat-summary-dont_use   {{ --bucket: #f87171; }}
+
+.score-proof {{
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--bucket-soft);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}}
+.score-proof-number,
+.score-proof-copy {{
+  background: var(--surface-1);
+}}
+.score-proof-number {{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 160px;
+  color: var(--bucket);
+}}
+.score-proof-number strong {{
+  font-size: 64px;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+}}
+.score-proof-number span {{
+  font-family: var(--font-mono);
+  color: var(--text-3);
+}}
+.score-proof-copy {{
+  padding: 22px 24px;
+}}
+.score-proof-label {{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bucket);
+  font-weight: 700;
+}}
+.score-proof-copy p {{
+  margin: 8px 0 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+  max-width: 76ch;
+}}
+.score-chip-row {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}}
+.score-chip {{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 12px;
+  color: var(--text-2);
+}}
+.score-chip b {{
+  color: var(--text);
+  font-family: var(--font-mono);
+}}
+@media (max-width: 680px) {{
+  .score-proof {{ grid-template-columns: 1fr; }}
+  .score-proof-number {{ min-height: 110px; }}
+}}
 
 /* "Why not at the next tier yet" — auto-derived one-liner under category strip */
 .why-not-next {{
@@ -3387,21 +3972,6 @@ html[lang="zh"] .wp-lang-zh {{ display: block; }}
   letter-spacing: 0.14em; margin-bottom: 4px;
 }}
 .why-not-body {{ font-size: 14px; line-height: 1.55; color: var(--text); }}
-
-/* "Next step to upgrade the score" — manually authored per repo */
-.next-step {{
-  margin-top: 10px;
-  padding: 12px 18px;
-  background: var(--bucket-bg);
-  border: 1px solid var(--bucket-soft);
-  border-radius: var(--radius-md);
-}}
-.next-step-eyebrow {{
-  font-family: var(--font-mono); font-size: 10px;
-  color: var(--bucket); text-transform: uppercase;
-  letter-spacing: 0.14em; margin-bottom: 4px; font-weight: 700;
-}}
-.next-step-body {{ font-size: 14px; line-height: 1.55; color: var(--text); white-space: pre-wrap; }}
 
 /* Trust strip — what we did vs didn't check */
 .trust-strip {{
@@ -3446,7 +4016,7 @@ html[lang="zh"] .wp-lang-zh {{ display: block; }}
 }}
 
 /* --- Similar repos comparison ------------------------------------- */
-.similar-section {{ margin-bottom: 80px; }}
+.similar-section {{ margin-bottom: 54px; }}
 .similar-lead {{ font-size: 13.5px; color: var(--text-2); margin: 0 0 18px; max-width: 75ch; line-height: 1.55; }}
 .similar-grid {{
   display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -3471,7 +4041,7 @@ html[lang="zh"] .wp-lang-zh {{ display: block; }}
   letter-spacing: 0.06em; white-space: nowrap;
 }}
 .similar-cat-pill.cat-production {{ color: #4ade80; }}
-.similar-cat-pill.cat-available  {{ color: #60a5fa; }}
+.similar-cat-pill.cat-available  {{ color: #22c55e; }}
 .similar-cat-pill.cat-risky      {{ color: #f59e0b; }}
 .similar-cat-pill.cat-dont_use   {{ color: #f87171; }}
 .similar-layer-pill {{
@@ -3516,7 +4086,7 @@ html[lang="zh"] .wp-lang-zh {{ display: block; }}
 .similar-pending-row + .similar-pending-row {{ margin-top: 8px; }}
 
 /* --- Workflow diagram (atom / molecule / compound) ----------------- */
-.workflow-diagram-section {{ margin-bottom: 80px; }}
+.workflow-diagram-section {{ margin-bottom: 54px; }}
 .wd-why {{
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -3549,9 +4119,17 @@ html[lang="zh"] .wp-lang-zh {{ display: block; }}
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 14px;
-  overflow-x: auto;
+  overflow-x: hidden;
 }}
-.wd-canvas svg {{ display: block; max-width: 100%; height: auto; color: var(--text-2); }}
+.wd-canvas svg {{
+  display: block;
+  width: 100%;
+  max-width: var(--wd-width);
+  min-width: 0;
+  height: auto;
+  margin: 0 auto;
+  color: var(--text-2);
+}}
 
 .wd-shape {{ stroke-width: 1.5; }}
 .wd-atom     {{ fill: rgba(96, 165, 250, 0.10); stroke: rgba(96, 165, 250, 0.55); }}
@@ -3590,8 +4168,221 @@ html[lang="zh"] .wd-label {{ font-size: 11.5px; letter-spacing: 0; }}
   letter-spacing: 0.04em;
 }}
 
+/* --- Output samples: high-position proof gallery -------------------- */
+.sample-proof-section {{
+  margin: -18px 0 34px;
+}}
+.sample-proof-head {{
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}}
+.sample-proof-kicker,
+.sample-mini-label {{
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+}}
+.sample-proof-head h2 {{
+  margin: 8px 0 6px;
+  font-size: clamp(26px, 3.5vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}}
+.sample-proof-head p {{
+  margin: 0;
+  max-width: 72ch;
+  color: var(--text-2);
+  font-size: 14px;
+}}
+.sample-proof-grid {{
+  display: grid;
+  grid-template-columns: minmax(260px, 0.76fr) minmax(420px, 1.24fr);
+  gap: 1px;
+  background: var(--border-strong);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}}
+.sample-input-panel,
+.sample-output-panel {{
+  position: relative;
+  background: var(--surface-1);
+  padding: 24px 26px;
+}}
+.sample-input-panel {{
+  border-left: 4px solid var(--bucket);
+}}
+.sample-step {{
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  font-family: var(--font-mono);
+  font-size: 42px;
+  line-height: 1;
+  color: var(--text-3);
+  opacity: 0.18;
+  font-weight: 800;
+}}
+.sample-input-panel h3 {{
+  margin: 10px 48px 10px 0;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}}
+.sample-input-panel p {{
+  margin: 0;
+  color: var(--text-2);
+  font-size: 14.5px;
+  line-height: 1.62;
+}}
+.sample-prompt,
+.sample-validation {{
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}}
+.sample-prompt blockquote {{
+  margin: 8px 0 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--bucket);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--bucket-bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+}}
+.sample-validation p {{
+  margin: 8px 0 0;
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.55;
+}}
+.sample-checks {{
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}}
+.sample-checks li {{
+  color: var(--text-2);
+  font-size: 12.5px;
+  line-height: 1.45;
+}}
+.sample-checks li::before {{
+  content: "✓";
+  color: var(--ok);
+  margin-right: 8px;
+  font-family: var(--font-mono);
+}}
+.sample-output-grid {{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.52fr);
+  gap: 14px;
+  margin-top: 12px;
+  align-items: start;
+}}
+.sample-output {{
+  margin: 0;
+}}
+.sample-output a {{
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: #ffffff;
+}}
+.sample-output img {{
+  display: block;
+  width: 100%;
+  height: auto;
+}}
+.sample-output.sample-wide {{
+  grid-column: 1 / -1;
+}}
+.sample-output.sample-square {{
+  max-width: 340px;
+}}
+.sample-output figcaption {{
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.35;
+}}
+.sample-output figcaption small {{
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}}
+.sample-file,
+.sample-text-output {{
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}}
+.sample-file {{
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}}
+.sample-file a,
+.sample-text-output a,
+.sample-source-line a {{
+  color: var(--bucket);
+  text-decoration: none;
+  border-bottom: 1px solid var(--bucket-soft);
+}}
+.sample-file-kind {{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.12em;
+}}
+.sample-file small {{
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}}
+.sample-text-output pre {{
+  margin: 8px 0 10px;
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+}}
+.sample-source-line {{
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}}
+@media (max-width: 860px) {{
+  .sample-proof-grid {{ grid-template-columns: 1fr; }}
+  .sample-output-grid {{ grid-template-columns: 1fr; }}
+  .sample-output.sample-wide {{ grid-column: auto; }}
+}}
+
 /* --- Benefits section: 4 cards (persona / scenario / without / with) --- */
-.benefits-section {{ margin-bottom: 80px; }}
+.benefits-section {{ margin-bottom: 54px; }}
 .benefits-grid {{
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 20px;
@@ -3864,7 +4655,7 @@ h1.repo-title {{
 
 /* tier-driven accent — overrides --bucket */
 .score-hero.tier-recommend  .score-num {{ color: #4ade80; }}
-.score-hero.tier-team       .score-num {{ color: #60a5fa; }}
+.score-hero.tier-team       .score-num {{ color: #22c55e; }}
 .score-hero.tier-self       .score-num {{ color: #c084fc; }}
 .score-hero.tier-try        .score-num {{ color: #f59e0b; }}
 .score-hero.tier-risky      .score-num {{ color: #f87171; }}
@@ -4057,7 +4848,7 @@ details.score-breakdown[open] > summary::after {{ content: "−"; }}
 
 .section-head {{
   display: flex; align-items: baseline; gap: 16px;
-  margin-bottom: 36px; padding-bottom: 18px;
+  margin-bottom: 24px; padding-bottom: 14px;
   border-bottom: 1px solid var(--border);
 }}
 .section-head h2 {{
@@ -4069,7 +4860,7 @@ details.score-breakdown[open] > summary::after {{ content: "−"; }}
   color: var(--text-3); letter-spacing: 0.08em;
   text-transform: uppercase;
 }}
-section {{ margin-bottom: 56px; }}
+section {{ margin-bottom: 44px; }}
 
 .capabilities-grid {{
   display: grid;
@@ -4140,6 +4931,105 @@ section {{ margin-bottom: 56px; }}
   white-space: pre-wrap;
 }}
 
+.claim-summary-section {{
+  margin-top: 6px;
+}}
+.claim-summary-lead {{
+  margin: -8px 0 18px;
+  max-width: 74ch;
+  color: var(--text-2);
+  font-size: 15px;
+  line-height: 1.6;
+}}
+.claim-list {{
+  list-style: none;
+  padding: 0;
+  margin: 22px 0 0;
+  border-top: 1px solid var(--border);
+}}
+.claim-item {{
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 18px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}}
+.claim-marker {{
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  font-size: 18px;
+}}
+.claim-topline {{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}}
+.claim-id {{
+  color: var(--text-2);
+}}
+.claim-priority {{
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}}
+.claim-status {{
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}}
+.claim-status-pass {{ background: var(--ok-bg); color: var(--ok); }}
+.claim-status-partial {{ background: var(--warn-bg); color: var(--warn); }}
+.claim-status-fail {{ background: var(--bad-bg); color: var(--bad); }}
+.claim-status-skip {{ background: var(--skip-bg); color: var(--skip); }}
+.claim-title {{
+  margin: 0;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}}
+.claim-description {{
+  margin: 6px 0 0;
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 86ch;
+}}
+.claim-evidence {{
+  display: flex;
+  gap: 10px;
+  margin-top: 9px;
+  color: var(--text-3);
+  font-size: 12.5px;
+  line-height: 1.55;
+  max-width: 92ch;
+}}
+.claim-evidence > span:first-child {{
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--bucket);
+  font-size: 10px;
+  padding-top: 2px;
+}}
+@media (max-width: 640px) {{
+  .claim-item {{ grid-template-columns: 1fr; gap: 10px; }}
+}}
+
 details.section-fold {{
   background: var(--surface-0);
   border: 1px solid var(--border);
@@ -4170,7 +5060,7 @@ details.section-fold[open] > summary::after {{ transform: rotate(45deg); color: 
 details.section-fold > summary:hover {{ color: var(--text); background: var(--surface-1); }}
 details.section-fold > .body {{ padding: 8px 28px 32px; border-top: 1px solid var(--border); }}
 
-.subsection {{ margin: 28px 0; }}
+.subsection {{ margin: 28px 0; overflow-x: auto; }}
 .subsection h3 {{
   font-family: var(--font-mono); font-size: 11px;
   text-transform: uppercase; letter-spacing: 0.14em;
@@ -4247,11 +5137,14 @@ details.section-fold > .body {{ padding: 8px 28px 32px; border-top: 1px solid va
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 20px 24px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }}
 .layer-card-head {{
   display: flex; align-items: baseline;
   justify-content: space-between; gap: 12px; flex-wrap: wrap;
   margin-bottom: 6px;
+  min-width: 0;
 }}
 .layer-card-head h3 {{
   margin: 0;
@@ -4263,6 +5156,8 @@ details.section-fold > .body {{ padding: 8px 28px 32px; border-top: 1px solid va
   text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--text-3); padding: 2px 8px;
   border: 1px solid var(--border); border-radius: 4px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }}
 .layer-card-summary {{ color: var(--text-2); margin: 4px 0 14px; line-height: 1.55; }}
 
@@ -4372,6 +5267,33 @@ details.section-fold > .body {{ padding: 8px 28px 32px; border-top: 1px solid va
 
 .metric-tiles {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }}
 @media (max-width: 640px) {{ .metric-tiles {{ grid-template-columns: 1fr; }} }}
+.metric-empty {{
+  grid-column: 1 / -1;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--text-3);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+}}
+.metric-empty strong {{
+  display: block;
+  color: var(--text);
+  font-size: 15px;
+  margin-bottom: 6px;
+}}
+.metric-empty p {{
+  margin: 0;
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.55;
+  max-width: 78ch;
+}}
+.metric-empty-foot {{
+  margin-top: 10px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}}
 .metric-tile {{
   background: var(--surface-1);
   border: 1px solid var(--border);
@@ -4444,6 +5366,9 @@ details.section-fold > .body {{ padding: 8px 28px 32px; border-top: 1px solid va
   font-family: var(--font-mono); font-size: 12px;
   background: var(--surface-2); padding: 6px 12px;
   border-radius: var(--radius-sm); color: var(--text-2);
+}}
+.run-metric-note {{
+  border-left: 2px solid var(--text-3);
 }}
 .run-metric b {{ color: var(--text-3); font-weight: 500; margin-right: 6px; }}
 .run-metric .v {{ color: var(--text); font-weight: 600; }}
@@ -4532,7 +5457,7 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
 
   <header class="hero">
     <div class="eyebrow">
-      <span class="i18n" data-en="Verdict report" data-zh="评测结论"></span>
+      <span class="i18n" data-en="Adoption report" data-zh="采用建议"></span>
       <span class="sep">·</span>
       <span>{_esc(vd.date)}</span>
       {version_chip}
@@ -4544,6 +5469,8 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
     <p class="tagline">{product_one_liner_html}</p>
 
   </header>
+
+  {output_samples_html}
 
   {decision_card_html}
 
@@ -4566,26 +5493,24 @@ html[lang="zh"] .i18n::before {{ content: attr(data-zh); }}
     {watch_out_html or ''}
   </div>
 
-  <details class="section-fold">
-    <summary><span class="i18n" data-en="Score breakdown · how the {int(vd.verdict_input.get("score") or 0)} was computed" data-zh="分数明细 · {int(vd.verdict_input.get("score") or 0)} 是怎么算的"></span></summary>
-    <div class="body">
-      <div class="claim-stats-row">
-        <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · {total_claims} <span class="i18n" data-en="total" data-zh="共"></span></div>
-        <div class="stats-bar">{stats_bar_html}</div>
-        <div class="stats-legend">{stats_legend_html}</div>
-      </div>
-      {score_breakdown_html}
-    </div>
-  </details>
-
-  <section>
+  <section class="claim-summary-section">
     <div class="section-head">
-      <h2><span class="i18n" data-en="What we verified" data-zh="我们验证了什么"></span></h2>
+      <h2><span class="i18n" data-en="Why the score is high" data-zh="为什么分数高"></span></h2>
       <span class="count">{covered} / {total_claims}</span>
     </div>
-    <div class="capabilities-grid">
-      {capability_cards_html}
+    <p class="claim-summary-lead">
+      <span class="i18n"
+        data-en="These are the user-facing promises we checked. The list separates what was actually verified from what remains only documented or untested."
+        data-zh="下面是我们核过的用户承诺。它把真正验证过的东西，和仍停留在文档或未测试的东西分开。"></span>
+    </p>
+    <div class="claim-stats-row">
+      <div class="label"><span class="i18n" data-en="Claim results" data-zh="Claim 结果"></span> · {total_claims} <span class="i18n" data-en="total" data-zh="共"></span></div>
+      <div class="stats-bar">{stats_bar_html}</div>
+      <div class="stats-legend">{stats_legend_html}</div>
     </div>
+    <ol class="claim-list">
+      {claim_summary_items_html}
+    </ol>
   </section>
 
   {("<section><div class='section-head'><h2><span class='i18n' "
@@ -4725,6 +5650,14 @@ def main() -> int:
             "persists in localStorage."
         ),
     )
+    parser.add_argument(
+        "--no-dashboard",
+        action="store_true",
+        help=(
+            "Do not refresh dashboard/all-evals.html after rendering. "
+            "Batch jobs should use this and rebuild the dashboard once at the end."
+        ),
+    )
     args = parser.parse_args()
 
     vd = load_verdict(args.slug, args.date)
@@ -4746,7 +5679,17 @@ def main() -> int:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     html_text = render_html(vd, initial_lang=args.lang)
     out_path.write_text(html_text)
-    print(f"Wrote {out_path}")
+    print(f"Wrote {out_path}", flush=True)
+
+    if not args.no_dashboard:
+        dashboard_script = REPO_EVALS_ROOT / "scripts" / "build_master_dashboard.py"
+        result = subprocess.run(
+            [sys.executable, str(dashboard_script)],
+            cwd=REPO_EVALS_ROOT,
+            check=False,
+        )
+        if result.returncode != 0:
+            return result.returncode
 
     if args.open:
         webbrowser.open(f"file://{out_path}")

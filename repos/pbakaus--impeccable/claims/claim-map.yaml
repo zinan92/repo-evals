@@ -1,0 +1,163 @@
+# Claim map — impeccable
+# Support layer = deterministic code (verified statically + one live detector run).
+# Core layer    = LLM-driven design quality (NOT verified live → caps compound ceiling).
+
+claims:
+  # --- Support layer (deterministic, verified) ---------------------------
+
+  - id: claim-001
+    user_icon: "🚦"
+    user_title:
+      en: "Deterministic detector runs with no API key"
+      zh: "确定性检查器无需 API key 即可运行"
+    user_description:
+      en: "The CLI detector flags AI-design tells (overused fonts, gradient palettes, bounce easing) with line numbers and fix rationale — no LLM, no model, no key."
+      zh: "CLI 检查器在故意写的 slop HTML 上标出反模式（滥用字体、渐变配色、bounce 动效），附行号和修改理由 —— 不用 LLM、不用模型、不用 key。"
+    title: 确定性 detector 无 API key 运行成功
+    source: README
+    source_ref: "44 deterministic detector rules; no LLM and no API key"
+    priority: critical
+    area: support-detector
+    statement: |
+      `node cli/bin/cli.js detect <slop.html>` 在无任何 API key 的环境下运行，
+      正确报出 AI 设计反模式，带行号和修复理由。
+    evidence_needed: |
+      隔离 clone 中实跑输出 + 命中的规则列表。
+    status: passed
+    evidence: |
+      实跑：对故意写的 slop.html 报出 5 条 anti-patterns —— overused-font(Inter)、
+      bounce-easing、design-system-font、2×design-system-color。零网络、零 key。
+
+  - id: claim-002
+    user_icon: "📏"
+    user_title:
+      en: "44 deterministic rules actually exist"
+      zh: "44 条确定性规则确实存在"
+    user_description:
+      en: "The README claims 44 rules. Source inspection finds 36 core rule ids in checks.mjs plus provider-tell + design-system rules — 48 rule ids total across the engine."
+      zh: "README 声称 44 条。源码核查：checks.mjs 有 36 个核心 rule id，加上 provider-tell + design-system 规则，整个引擎共 48 个 rule id。"
+    title: 规则数量与 README 声明一致或更多
+    source: README
+    source_ref: "44 deterministic detector rules"
+    priority: high
+    area: support-detector
+    statement: |
+      detector 引擎中确定性规则数量 ≥ README 声称的 44。
+    evidence_needed: |
+      grep rule id 计数。
+    status: passed
+    evidence: |
+      grep cli/engine 共 48 个唯一 rule id（checks.mjs 36 + registry/provider/design-system）。
+      44 这个数字保守，实际更多。
+
+  - id: claim-003
+    user_icon: "🧩"
+    user_title:
+      en: "23 commands ship in the skill"
+      zh: "skill 内含 23 条命令"
+    user_description:
+      en: "The /impeccable router exposes 23 design commands (polish, audit, critique, craft, …), each backed by a reference doc."
+      zh: "/impeccable 路由暴露 23 条设计命令（polish、audit、critique、craft 等），每条都有对应 reference 文档。"
+    title: 23 命令存在且有 reference 文档
+    source: README
+    source_ref: "23 Commands table"
+    priority: high
+    area: support-skill-integrity
+    statement: |
+      skill reference/ 目录中存在覆盖 README 表格的 23 条命令文档。
+    evidence_needed: |
+      文件列表 + 命令计数。
+    status: passed
+    evidence: |
+      .claude/skills/impeccable/reference/ 含 28 个 .md（23 命令 + brand/codex/hooks/
+      interaction-design/product 等支撑文档）。README 中 26 个唯一 /impeccable X 引用。
+
+  - id: claim-004
+    user_icon: "🔗"
+    user_title:
+      en: "SKILL.md references all resolve"
+      zh: "SKILL.md 的引用全部解析得到"
+    user_description:
+      en: "Every reference/*.md path SKILL.md points to exists on disk — the agent won't hit a missing file."
+      zh: "SKILL.md 引用的每个 reference/*.md 路径都真实存在 —— agent 不会撞到缺失文件。"
+    title: SKILL.md 相对引用完整
+    source: SKILL.md
+    source_ref: ""
+    priority: medium
+    area: support-skill-integrity
+    statement: |
+      SKILL.md 引用的相对路径全部存在。
+    evidence_needed: |
+      grep + 文件存在检查。
+    status: passed
+    evidence: |
+      抽查 reference/*.md 引用全部 OK，无 MISSING。
+
+  - id: claim-005
+    user_icon: "🔌"
+    user_title:
+      en: "Installs across 14 agent harnesses"
+      zh: "可装入 14 种 agent harness"
+    user_description:
+      en: "The build ships skill payloads for Claude Code, Cursor, Codex, Gemini, opencode, kiro, pi, qoder, trae, rovodev, agents, github, plugin and more."
+      zh: "构建产物为 Claude Code、Cursor、Codex、Gemini、opencode、kiro、pi、qoder、trae、rovodev、agents、github、plugin 等多种 harness 提供 skill payload。"
+    title: 跨 harness 安装
+    source: README
+    source_ref: "Works with Cursor, Claude Code, Gemini CLI, Codex CLI, and every other supported tool"
+    priority: medium
+    area: support-install
+    statement: |
+      仓库为 ≥10 种 harness 提供 skills/impeccable payload 目录。
+    evidence_needed: |
+      目录列表。
+    status: passed
+    evidence: |
+      clone 根目录含 .claude .codex .cursor .gemini .opencode .kiro .pi .qoder
+      .trae .trae-cn .rovodev .agents .github plugin —— 14 个 harness payload。
+      且 ~/.claude/skills/impeccable 在本机已存在。
+
+  # --- Core layer (LLM-driven — NOT verified live → ceiling cap) ---------
+
+  - id: claim-101
+    user_icon: "🎨"
+    user_title:
+      en: "Actually makes AI output better at design"
+      zh: "真的让 AI 产出更会设计"
+    user_description:
+      en: "The headline promise: with the skill loaded, a real agent session produces frontends that avoid the slop tells and meet SKILL.md's quality contract. Needs a live multi-turn run to verify."
+      zh: "头部承诺：装上 skill 后，真实 agent 会话产出的前端能避开 slop tells、达到 SKILL.md 的质量契约。需要 live 多轮会话才能验证。"
+    title: 真实 LLM 会话产出达到质量契约
+    source: README/DESIGN.md
+    source_ref: "The design language that makes your AI harness better at design"
+    priority: critical
+    area: core-llm
+    statement: |
+      在真实 agent 会话里跑 /impeccable craft + critique，产出符合 SKILL.md 质量契约
+      且确定性 detector 零命中。
+    evidence_needed: |
+      transcript + 产物 + detector 复检 + 对照 quality contract 打分。
+    status: untested
+    skip_reason: |
+      需要真实多 harness LLM 会话生成 UI 并逐项打分；本次为静态 + 单次确定性 detector
+      评估，未做 live design-generation run。compound 层天花板因此未解锁。
+
+  - id: claim-102
+    user_icon: "🚫"
+    user_title:
+      en: "Anti-slop rules followed in real output"
+      zh: "Anti-slop 规则在真实产出里被遵守"
+    user_description:
+      en: "Patterns SKILL.md forbids (Inter, purple gradients, nested cards, bounce easing) don't appear in the agent's actual generated UI."
+      zh: "SKILL.md 禁止的模式（Inter、紫渐变、卡片套卡片、bounce）在 agent 实际生成的 UI 里不出现。"
+    title: Anti-slop 规则在真实产出中被遵守
+    source: SKILL.md
+    source_ref: "Anti-Patterns section"
+    priority: high
+    area: core-llm
+    statement: |
+      真实产出经 detector 复检，禁止模式零命中。
+    evidence_needed: |
+      产出 + detector --json 复检结果。
+    status: untested
+    skip_reason: |
+      同 claim-101，依赖 live run。

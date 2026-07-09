@@ -1,0 +1,58 @@
+kind: sample_generation
+sample:
+  title:
+    en: "Finished article in, WeChat cover pair out"
+    zh: "一篇成稿文章进去，一套公众号封面对出来"
+  input:
+    type: article
+    title:
+      en: "Skill is a capability product"
+      zh: "Skill 是能力商品"
+    summary:
+      en: "A finished short essay arguing that a Skill should package experience, workflow, and taste into a reusable capability unit, not remain a loose prompt. The sample asks the repo to turn that article into a WeChat 21:9 header plus 1:1 share card in a Swiss / IKB-blue visual language."
+      zh: "这次输入是一篇已经写好的短文，核心观点是：Skill 不是提示词，而是把经验、工作流和品味封装成可复用、可分发、可迭代的能力单元。评测要求它把这篇文章做成公众号 21:9 头图 + 1:1 分享卡，并使用 Swiss / IKB 蓝视觉语言。"
+    prompt:
+      en: "Turn this article into a WeChat cover pair: 21:9 main cover + 1:1 share card, Swiss IKB blue, visually consistent."
+      zh: "把这篇文章做成公众号封面对：21:9 头图 + 1:1 分享卡，Swiss IKB 蓝，视觉一致。"
+  outputs:
+    - path: artifacts/sample_wechat-21x9.png
+      type: image
+      layout: wide
+      label:
+        en: "WeChat 21:9 main cover"
+        zh: "公众号 21:9 头图"
+      dimensions: "2100 x 900"
+      caption:
+        en: "Rendered PNG from the eval run"
+        zh: "评测 run 实际渲染出的 PNG"
+    - path: artifacts/sample_wechat-1x1.png
+      type: image
+      layout: square
+      label:
+        en: "WeChat 1:1 share card"
+        zh: "公众号 1:1 分享卡"
+      dimensions: "1080 x 1080"
+      caption:
+        en: "Rendered PNG from the eval run"
+        zh: "评测 run 实际渲染出的 PNG"
+    - path: artifacts/live-e2e_wechat-cover-pair_deck.html
+      type: html
+      label:
+        en: "Source deck HTML"
+        zh: "样品源 HTML"
+      caption:
+        en: "Validated before PNG capture"
+        zh: "截图前已跑版式校验"
+  validation:
+    summary:
+      en: "The layout validator first caught a real title-wrap issue. After shortening the title, the second pass returned 2 clean sections, 0 fails, 0 warnings; both PNGs were visually inspected."
+      zh: "版式校验器第一轮抓到了真实标题换行问题；缩短标题后第二轮 2 个 section 全 clean，0 fail，0 warning；两张 PNG 也做了肉眼检查。"
+    checks:
+      - en: "21:9 and 1:1 outputs rendered at exact target sizes."
+        zh: "21:9 和 1:1 输出均按目标尺寸渲染。"
+      - en: "Chinese text stayed legible; no glyph garbling was observed."
+        zh: "中文可读，没有发现字体乱码。"
+      - en: "IKB blue accent stayed disciplined and did not bleed across the layout."
+        zh: "IKB 蓝只作为克制强调色，没有在版面里失控扩散。"
+      - en: "The final validator pass reported 0 fail / 0 warning."
+        zh: "最终版式校验为 0 fail / 0 warning。"

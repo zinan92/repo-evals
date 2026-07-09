@@ -121,8 +121,8 @@ scripts/verdict_calculator.py repos/<slug>/verdicts/<date>-verdict-input.yaml --
 # (when no sidecar verdict-input exists, render_verdict_html.py derives one
 #  from repo.yaml + claim-map.yaml — that's the path we usually take)
 
-# 8. Render dossier (the HTML the user actually reads)
-scripts/render_verdict_html.py <slug> --lang zh   # --lang auto (default) | en
+# 8. Publish dossier (the HTML the user actually reads) + refresh dashboard
+scripts/publish_eval.py <slug> --lang zh          # accepts owner--repo or owner/repo
 ```
 
 ## Archetype picker
